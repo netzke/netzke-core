@@ -39,10 +39,10 @@ module Netzke
       {
         :title => short_widget_class_name,
         :listeners => js_listeners,
-        :tools => "this.widgetConfig.tools".l,
-        :actions => "this.widgetConfig.actions".l,
-        :tbar => "this.widgetConfig.tbar".l,
-        :bbar => "this.widgetConfig.bbar".l,
+        :tools => "config.tools".l,
+        :actions => "config.actions".l,
+        :tbar => "config.tbar".l,
+        :bbar => "config.bbar".l,
         :items => js_items,
         :height => 400,
         :width => 800,
@@ -81,9 +81,9 @@ module Netzke
         res["#{aggr_name}_config".to_sym] = aggregatee_instance(aggr_name.to_sym).js_config
       end
       
-      # api
-      api = api_points.inject({}){|h,apip| h.merge(apip => widget_action(apip))}
-      res.merge!(:api => api)
+      # interface
+      interface = interface_points.inject({}){|h,interfacep| h.merge(interfacep => widget_action(interfacep))}
+      res.merge!(:interface => interface)
       
       res.merge!(:widget_class_name => short_widget_class_name)
 

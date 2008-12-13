@@ -40,9 +40,9 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_equal 'Widget', Widget.short_widget_class_name
   end
   
-  test "api" do
+  test "interface" do
     widget_class = Widget
-    assert_equal [:get_widget, :method_one, :method_two], widget_class.api_points
+    assert_equal [:get_widget, :method_one, :method_two], widget_class.interface_points
   end
 
   test "aggregatees" do

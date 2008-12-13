@@ -42,10 +42,10 @@ Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
 // Methods common to all widget classes
 Ext.widgetMixIn = {
 	widgetInit:function(config){
-		this.widgetConfig = config || {}; // TODO: replace it with initialConfig
+		config = config || {}; // TODO: replace it with initialConfig
     this.app = Ext.getCmp('application');
-    if (this.widgetConfig.tools) Ext.each(this.widgetConfig.tools, function(i){i.on.click = this[i.on.click].createDelegate(this)}, this);
-    if (this.widgetConfig.actions) Ext.each(this.widgetConfig.actions, function(i){i.handler = this[i.handler].createDelegate(this);}, this);
+    if (config.tools) Ext.each(config.tools, function(i){i.on.click = this[i.on.click].createDelegate(this)}, this);
+    if (config.actions) Ext.each(config.actions, function(i){i.handler = this[i.handler].createDelegate(this);}, this);
 	},
 
 	setEvents: function(){

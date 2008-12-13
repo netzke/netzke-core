@@ -1,5 +1,5 @@
 class Widget < Netzke::Base
-  api :method_one, :method_two
+  interface :method_one, :method_two
   def initial_aggregatees
     {
       :nested_one => {:widget_class_name => 'NestedWidgetOne'},

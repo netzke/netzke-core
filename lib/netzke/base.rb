@@ -48,34 +48,34 @@ module Netzke
     #
     # Use this class-method to declare connection points between client side of a widget and its server side. A method in a widget class with the same name will be (magically) called by the client-side of the widget. See Grid widget for an example
     #
-    def self.api(*api_points)
-      apip = read_inheritable_attribute(:api_points) || []
-      api_points.each{|p| apip << p}
-      write_inheritable_attribute(:api_points, apip)
+    def self.interface(*interface_points)
+      interfacep = read_inheritable_attribute(:interface_points) || []
+      interface_points.each{|p| interfacep << p}
+      write_inheritable_attribute(:interface_points, interfacep)
       
-      api_points.each do |apip|
+      interface_points.each do |interfacep|
         module_eval <<-END, __FILE__, __LINE__
-        def api_#{apip}(*args)
-          #{apip}(*args).to_js
+        def interface_#{interfacep}(*args)
+          #{interfacep}(*args).to_js
         end
         # FIXME: commented out because otherwise ColumnOperations stop working
-        # def #{apip}(*args)
-        #   flash :warning => "API point '#{apip}' is not implemented for widget '#{short_widget_class_name}'"
+        # def #{interfacep}(*args)
+        #   flash :warning => "API point '#{interfacep}' is not implemented for widget '#{short_widget_class_name}'"
         #   {:flash => @flash}
         # end
         END
       end
     end
     
-    def self.api_points
-      read_inheritable_attribute(:api_points)
+    def self.interface_points
+      read_inheritable_attribute(:interface_points)
     end
     
-    def api_points
-      self.class.api_points
+    def interface_points
+      self.class.interface_points
     end
 
-    api :get_widget # default
+    interface :get_widget # default
 
     ## Dependencies
     def dependencies
@@ -167,9 +167,9 @@ module Netzke
       action = !action.empty? && action.join("__").to_sym
       
       if action && aggregatees[widget]
-        # only actions starting with "api_" are accessible
-        api_action = action.to_s.index('__') ? action : "api_#{action}"
-        aggregatee_instance(widget).send(api_action, params)
+        # only actions starting with "interface_" are accessible
+        interface_action = action.to_s.index('__') ? action : "interface_#{action}"
+        aggregatee_instance(widget).send(interface_action, params)
       else
         super
       end
