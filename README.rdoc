@@ -1,7 +1,7 @@
 NetzkeCore
 ==========
 
-Create ExtJS/Rails reusable components with minimum effort.
+Create ExtJS/Rails reusable components (widgets) with minimum effort.
 
 Example
 =======
