@@ -88,7 +88,7 @@ module Netzke
       res.merge!(:widget_class_name => short_widget_class_name)
 
       res.merge!(config[:ext_config])
-      res.merge!(:id => @infold_name)
+      res.merge!(:id => @id_name)
       
       # include tools and actions
       res.merge!(:tools => tools)

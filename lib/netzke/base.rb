@@ -24,7 +24,7 @@ module Netzke
 
     def initialize(config = {}, parent = nil)
       @logger = Logger.new("log/development.log")
-      @config = config
+      @config = initial_config.recursive_merge(config)
       @parent = parent
       @id_name = parent.nil? ? config[:name].to_s : "#{parent.id_name}__#{config[:name]}"
       
@@ -34,6 +34,10 @@ module Netzke
       @config[:ext_config] ||= {} # configuration used to instantiate JS class
       
       process_permissions_config
+    end
+    
+    def initial_config
+      {}
     end
 
     # 'Netzke::Grid' => 'Grid'
@@ -115,7 +119,7 @@ module Netzke
         aggr = aggr.to_sym
         # TODO: should we put all the classes under Netzke::-scope?
         # widget_class = full_widget_class_name(aggregator.aggregatees[aggr][:widget_class_name]).constantize
-        widget_class = aggregator.aggregatees[aggr][:widget_class_name].constantize
+        widget_class = "Netzke::#{aggregator.aggregatees[aggr][:widget_class_name]}".constantize
         aggregator = widget_class.new(aggregator.aggregatees[aggr].merge(:name => aggr), aggregator)
       end
       aggregator

@@ -3,7 +3,9 @@ require 'netzke/js_class_builder'
 require 'netzke/base'
 require 'netzke/core_ext'
 require 'netzke/controller_extensions'
-# require 'netzke/with_properties'
+
+# Vendor
+require 'vendor/facets/hash/recursive_merge'
 
 
 %w{ models }.each do |dir|

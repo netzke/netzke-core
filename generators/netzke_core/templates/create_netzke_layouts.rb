@@ -1,6 +1,6 @@
 class CreateNetzkeLayouts < ActiveRecord::Migration
   def self.up
-    create_table :layouts do |t|
+    create_table :netzke_layouts do |t|
       t.string  :widget_name
       t.string  :items_class
       t.integer :user_id
@@ -9,6 +9,6 @@ class CreateNetzkeLayouts < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :layouts
+    drop_table :netzke_layouts
   end
 end

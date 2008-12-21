@@ -24,6 +24,8 @@ class Logger
 end
 
 class NetzkeCoreTest < ActiveSupport::TestCase
+  include Netzke
+  
   def setup
     object = mock()
     object.stubs(:normalized_value)
@@ -85,5 +87,12 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_equal({:read => true, :update => true}, widget.permissions)
   end
   
+  test "default config" do
+    widget = Widget.new
+    assert_equal({:ext_config => {}, :config_uno => true, :config_dos => false}, widget.config)
+
+    widget = Widget.new(:name => 'widget', :config_uno => false)
+    assert_equal({:name => 'widget', :ext_config => {}, :config_uno => false, :config_dos => false}, widget.config)
+  end
   
 end
