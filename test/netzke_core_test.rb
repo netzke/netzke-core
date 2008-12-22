@@ -1,27 +1,65 @@
 require 'test_helper'
 
-# Fake ActiveRecord
-module ActiveRecord
-  class Base
-    def find
+require 'netzke_core'
+
+# test widgets
+module Netzke
+  class Widget < Base
+    interface :method_one, :method_two
+    def initial_aggregatees
+      {
+        :nested_one => {:widget_class_name => 'NestedWidgetOne'},
+        :nested_two => {:widget_class_name => 'NestedWidgetTwo'}
+      }
+    end
+  
+    def available_permissions
+      %w(read update)
+    end
+    
+    def initial_config
+      {
+        :config_uno => true,
+        :config_dos => false
+      }
     end
   end
+
+  class NestedWidgetOne < Base
+  end
+
+  class NestedWidgetTwo < Base
+    def initial_aggregatees
+      {
+        :nested => {:widget_class_name => 'DeepNestedWidget'}
+      }
+    end
+  end
+
+  class DeepNestedWidget < Base
+  end
 end
+
+# Fake ActiveRecord
+# module ActiveRecord
+#   class Base
+#     def find
+#     end
+#   end
+# end
 
 # Fake ActionController
-module ActionController
-  class Base
-  end
-end
+# module ActionController
+#   class Base
+#   end
+# end
 
-require 'netzke_core'
-require 'test_widgets'
 
 # Logger don't open files
-class Logger
-  def initialize(*args)
-  end
-end
+# class Logger
+#   def initialize(*args)
+#   end
+# end
 
 class NetzkeCoreTest < ActiveSupport::TestCase
   include Netzke

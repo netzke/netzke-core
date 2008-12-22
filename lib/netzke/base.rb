@@ -1,7 +1,7 @@
 require 'json'
 module Netzke
   class Base
-    # Helper class to read/write from/to widget's persistent preferences
+    # Helper class to read/write from/to widget's persistent preferences. TODO: rework it.
     class Config
       def initialize(widget_name)
         @widget_name = widget_name
@@ -23,7 +23,7 @@ module Netzke
     attr_reader :pref
 
     def initialize(config = {}, parent = nil)
-      @logger = Logger.new("log/development.log")
+      @logger = Logger.new("debug.log")
       @config = initial_config.recursive_merge(config)
       @parent = parent
       @id_name = parent.nil? ? config[:name].to_s : "#{parent.id_name}__#{config[:name]}"
