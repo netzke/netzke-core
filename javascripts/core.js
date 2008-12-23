@@ -1,5 +1,7 @@
-Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif"
+Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.componentCache = {};
+
+Ext.namespace('Ext.netzke');
 
 // helper method to do multiple Ext.apply's
 Ext.chainApply = function(objectArray){
@@ -120,3 +122,5 @@ Ext.override(Ext.Panel, {
 		
 	}
 })
+
+

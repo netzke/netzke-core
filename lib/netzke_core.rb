@@ -8,7 +8,7 @@ require 'netzke/controller_extensions'
 require 'vendor/facets/hash/recursive_merge'
 
 
-%w{ models }.each do |dir|
+%w{ models controllers }.each do |dir|
   path = File.join(File.dirname(__FILE__), 'app', dir)
   $LOAD_PATH << path
   ActiveSupport::Dependencies.load_paths << path
@@ -18,3 +18,5 @@ end
 ActionController::Base.class_eval do
   include Netzke::ControllerExtensions
 end
+
+# Netzke::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"

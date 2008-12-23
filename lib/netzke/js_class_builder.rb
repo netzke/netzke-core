@@ -53,6 +53,17 @@ module Netzke
     # declaration of widget's class (stored directly in the cache storage at the client side to be reused at the moment of widget instantiation)
     def js_class
       <<-JS
+      
+      /* Wow, look...
+      Wow, look...
+      Wow, look...
+      Wow, look...
+      Wow, look...
+      Wow, look...
+      Wow, look...
+      Wow, look...
+      */
+      
       Ext.componentCache['#{short_widget_class_name}'] = Ext.extend(#{js_base_class}, Ext.chainApply([Ext.widgetMixIn, {
         constructor: function(config){
           this.widgetInit(config);
@@ -103,7 +114,7 @@ module Netzke
         dependency_class = "Netzke::#{dep_name}".constantize
         result << dependency_class.new(config).js_missing_code(dependencies_to_exclude)
       end
-      result << js_class unless dependencies_to_exclude.include?(short_widget_class_name) && !config[:no_caching]
+      result << js_class.strip_js_comments unless dependencies_to_exclude.include?(short_widget_class_name) && !config[:no_caching]
       result
     end
    

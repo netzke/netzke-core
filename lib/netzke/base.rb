@@ -1,6 +1,13 @@
 require 'json'
 module Netzke
   class Base
+    # Global Netzke configuration
+    def self.config
+      @@config ||= {
+        :javascripts => ["#{File.dirname(__FILE__)}/../../javascripts/core.js"] # locations of javascript files (which automatically will be collected into one file and sent as netzke.js)
+      }
+    end
+    
     # Helper class to read/write from/to widget's persistent preferences. TODO: rework it.
     class Config
       def initialize(widget_name)
