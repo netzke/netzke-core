@@ -1,23 +1,11 @@
-require 'rake'
-require 'rake/testtask'
-require 'rake/rdoctask'
+require 'echoe'
 
-desc 'Default: run unit tests.'
-task :default => :test
-
-desc 'Test the netzke_core plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
-end
-
-desc 'Generate documentation for the netzke_core plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'NetzkeCore'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+Echoe.new("netzke_core") do |p|
+  p.author = "Sergei Kozlov"
+  p.email = "sergei@writelesscode.com"
+  p.summary = "Build ExtJS/Rails widgets with minimum effort"
+  p.url = "http://writelesscode.com"
+  # p.runtime_dependencies = ["searchlogic >=1.6.2"]
+  p.development_dependencies = []
+  p.test_pattern = 'test/**/*_test.rb'
 end
