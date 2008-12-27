@@ -1,0 +1,11 @@
+NetzkeCore
+==========
+
+Create ExtJS/Rails reusable components (widgets) with minimum effort.
+
+Example
+=======
+
+See the tutorials on http://blog.writelesscode.com
+
+Copyright (c) 2008 Sergei Kozlov, released under the MIT license
