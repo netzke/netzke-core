@@ -1,6 +1,6 @@
 require 'test_helper'
 
-require 'netzke_core'
+require 'netzke-core'
 
 # test widgets
 module Netzke
