@@ -1,4 +1,4 @@
-NetzkeCore
+netzke-core
 ==========
 
 Create ExtJS/Rails reusable components (widgets) with minimum effort.
