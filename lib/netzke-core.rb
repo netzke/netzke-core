@@ -20,3 +20,6 @@ ActionController::Base.class_eval do
 end
 
 # Netzke::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"
+
+# Make this plugin reloadable for easier development
+ActiveSupport::Dependencies.load_once_paths.delete(File.join(File.dirname(__FILE__)))
