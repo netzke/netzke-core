@@ -8,7 +8,7 @@ Ext.chainApply = function(objectArray){
 	var res = {};
 	Ext.each(objectArray, function(obj){Ext.apply(res, obj)});
 	return res;
-}
+};
 
 // implementation of totalProperty, successProperty and root configuration options for ArrayReader
 Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
@@ -85,7 +85,7 @@ Ext.widgetMixIn = {
 	},
 	
 	onWidgetLoad:Ext.emptyFn // gets overridden
-}
+};
 
 // Make Panel with layout 'fit' capable to dynamically load widgets
 Ext.override(Ext.Panel, {
@@ -121,6 +121,4 @@ Ext.override(Ext.Panel, {
 		)
 		
 	}
-})
-
-
+});
