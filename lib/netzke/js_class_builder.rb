@@ -97,13 +97,13 @@ module Netzke
     end
 
     # class definition of the widget plus that of all the dependencies, minus those that are specified as dependencies_to_exclude
-    def js_missing_code(dependencies_to_exclude = [])
+    def js_missing_code(cached_dependencies = [])
       result = ""
       dependencies.each do |dep_name|
         dependency_class = "Netzke::#{dep_name}".constantize
-        result << dependency_class.new(config).js_missing_code(dependencies_to_exclude)
+        result << dependency_class.js_class_code(cached_dependencies)
       end
-      result << js_class.strip_js_comments unless dependencies_to_exclude.include?(short_widget_class_name) && !config[:no_caching]
+      result << js_class.strip_js_comments unless cached_dependencies.include?(short_widget_class_name) && !config[:no_caching]
       result
     end
    

@@ -8,6 +8,10 @@ module Netzke
       }
     end
     
+    def self.js_class_code(cached_dependencies = [])
+      self.new(:js_class => true).js_missing_code(cached_dependencies)
+    end
+    
     # Helper class to read/write from/to widget's persistent preferences. TODO: rework it.
     class Config
       def initialize(widget_name)
@@ -90,11 +94,15 @@ module Netzke
 
     ## Dependencies
     def dependencies
-      @dependencies ||= initial_dependencies
+      @dependencies ||= begin
+        non_late_aggregatees_widget_classes = aggregatees.values.map{|v| v[:widget_class_name]}
+        (initial_dependencies + non_late_aggregatees_widget_classes).uniq
+      end
     end
     
+    # override this method if you need some extra dependencies, which are not the aggregatees
     def initial_dependencies
-      config[:dependencies] || []
+      []
     end
     
     ### Aggregation
@@ -104,6 +112,10 @@ module Netzke
     
     def aggregatees
       @aggregatees ||= initial_aggregatees.merge(initial_late_aggregatees.each_pair{|k,v| v.merge!(:late_aggregation => true)})
+    end
+    
+    def non_late_aggregatees
+      aggregatees.reject{|k,v| v[:late_aggregation]}
     end
     
     def add_aggregatee(aggr)
@@ -164,8 +176,8 @@ module Netzke
         config[:allow] = [config[:allow]] if config[:allow].is_a?(Symbol) # so that config[:allow] => :write works
         config[:allow] && config[:allow].each{|p| @permissions.merge!(p.to_sym => true)} # allow
         
-        # ... and then merge it with NetzkePreferences
-        available_permissions.each do |p|
+        # ... and then merge it with NetzkePreferences (if not instantiated to only generate JS-class code)
+        !config[:js_class] && available_permissions.each do |p|
           @permissions[p.to_sym] = @pref["permissions.#{p}"] if !@pref["permissions.#{p}"].nil?
         end
       end

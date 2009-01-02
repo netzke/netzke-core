@@ -62,13 +62,21 @@ module Netzke
           end
           
           def #{name}_class_definition
+            result = ""
             config = controller.class.widget_config_storage[:#{name}]
-            Netzke::#{config[:widget_class_name]}.new(config).js_missing_code
+            @@generated_widget_classes ||= []
+            # do not duplicate javascript code on the same page
+            unless @@generated_widget_classes.include?("#{config[:widget_class_name]}")
+              @@generated_widget_classes << "#{config[:widget_class_name]}"
+              result = Netzke::#{config[:widget_class_name]}.js_class_code
+            end
+            result
           end
         END_EVAL
       
         # add controller action which will render a simple HTML page containing the widget
         define_method("#{name}_test") do
+          @widget_name = name
           render :inline => %Q(
           <script type="text/javascript" charset="utf-8">
           <%= #{name}_class_definition %>

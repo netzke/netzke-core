@@ -15,6 +15,8 @@ require 'vendor/facets/hash/recursive_merge'
   ActiveSupport::Dependencies.load_once_paths.delete(path)
 end
 
+# raise 'test'
+
 ActionController::Base.class_eval do
   include Netzke::ControllerExtensions
 end

@@ -13,6 +13,10 @@ module Netzke
       }
     end
   
+    # def initial_dependencies
+    #   %w{NestedWidgetOne NestedWidgetTwo DeepNestedWidget}
+    # end
+  
     def available_permissions
       %w(read update)
     end
@@ -39,27 +43,6 @@ module Netzke
   class DeepNestedWidget < Base
   end
 end
-
-# Fake ActiveRecord
-# module ActiveRecord
-#   class Base
-#     def find
-#     end
-#   end
-# end
-
-# Fake ActionController
-# module ActionController
-#   class Base
-#   end
-# end
-
-
-# Logger don't open files
-# class Logger
-#   def initialize(*args)
-#   end
-# end
 
 class NetzkeCoreTest < ActiveSupport::TestCase
   include Netzke
@@ -131,6 +114,20 @@ class NetzkeCoreTest < ActiveSupport::TestCase
 
     widget = Widget.new(:name => 'widget', :config_uno => false)
     assert_equal({:name => 'widget', :ext_config => {}, :config_uno => false, :config_dos => false}, widget.config)
+  end
+
+  test "dependencies calculated based on aggregations" do
+    widget = Widget.new
+    assert(widget.dependencies.include?('NestedWidgetOne'))
+    assert(widget.dependencies.include?('NestedWidgetTwo'))
+    assert(!widget.dependencies.include?('DeepNestedWidget'))
+  end
+  
+  test "dependencies in JS class generators" do
+    js_code = Widget.js_class_code
+    assert(js_code.index("Ext.componentCache['NestedWidgetOne']"))
+    assert(js_code.index("Ext.componentCache['NestedWidgetTwo']"))
+    assert(js_code.index("Ext.componentCache['DeepNestedWidget']"))
   end
   
 end
