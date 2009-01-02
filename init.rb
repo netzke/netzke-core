@@ -1,1 +1,1 @@
-# require 'netzke-core'
+require 'netzke-core'

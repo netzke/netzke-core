@@ -5,7 +5,6 @@ Echoe.new("netzke-core") do |p|
   p.email = "sergei@writelesscode.com"
   p.summary = "Build ExtJS/Rails widgets with minimum effort"
   p.url = "http://writelesscode.com"
-  # p.runtime_dependencies = ["searchlogic >=1.6.2"]
   p.development_dependencies = []
   p.test_pattern = 'test/**/*_test.rb'
   p.retain_gemspec = true

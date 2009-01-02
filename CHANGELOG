@@ -1,3 +1,9 @@
+v0.1.2
+Fixed the bug with <widget>_class_definition returning empty string on sequential loading.
+
+v0.1.1.1
+Meta: moving from GitHub to RubyForge
+
 v0.1.1
 Inter-widget dependencies code reworked
 JS-class code generation code slightly reworked
