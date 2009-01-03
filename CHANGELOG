@@ -1,3 +1,12 @@
+v0.1.4
+Helpers added to facilitate ExtJS/netzke.js inclusion
+The route defined for netzke_controller
+netzke.html.erb-layout is not needed anymore, so not produced by the generator
+Now compliant with Rails' forgery protection
+
+v0.1.3
+Generators fixed
+
 v0.1.2
 Fixed the bug with <widget>_class_definition returning empty string on sequential loading.
 

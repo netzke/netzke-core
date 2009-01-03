@@ -77,16 +77,24 @@ module Netzke
         # add controller action which will render a simple HTML page containing the widget
         define_method("#{name}_test") do
           @widget_name = name
-          render :inline => %Q(
-          <script type="text/javascript" charset="utf-8">
-          <%= #{name}_class_definition %>
-          Ext.onReady(function(){
-          	<%= #{name}_widget_instance %>
-          	#{name.to_js}.render("#{name.to_s.split('_').join('-')}");
-          })
-        	</script>
-          <div id="#{name.to_s.split('_').join('-')}"></div>
-          ), :layout => "netzke"
+          render :inline => <<-HTML
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title><%= @widget_name %></title>
+	<%= netzke_js_include %>
+	<%= netzke_css_include %>
+  <script type="text/javascript" charset="utf-8">
+    <%= #{name}_class_definition %>
+    Ext.onReady(function(){
+    	<%= #{name}_widget_instance %>
+    	#{name.to_js}.render("#{name.to_s.split('_').join('-')}");
+    })
+	</script>
+</head>
+<body>
+  <div id="#{name.to_s.split('_').join('-')}"></div>
+</body>
+          HTML
         end
       end
     end

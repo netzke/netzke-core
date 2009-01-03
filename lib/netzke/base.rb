@@ -1,6 +1,10 @@
 require 'json'
+
 module Netzke
   class Base
+    # client-side code (generates JS-classes of the widgets)
+    include Netzke::JsClassBuilder
+
     # Global Netzke configuration
     def self.config
       @@config ||= {
@@ -27,9 +31,6 @@ module Netzke
       end
     end
   
-    # client-side code (generates JS-classes of the widgets)
-    include Netzke::JsClassBuilder
-
     attr_accessor :config, :server_confg, :parent, :logger, :id_name, :permissions
     attr_reader :pref
 

@@ -3,6 +3,11 @@ Ext.componentCache = {};
 
 Ext.namespace('Ext.netzke');
 
+// to comply with Rails' forgery protection
+Ext.Ajax.extraParams = {
+    'authenticity_token': Ext.authenticityToken
+};
+
 // helper method to do multiple Ext.apply's
 Ext.chainApply = function(objectArray){
 	var res = {};
