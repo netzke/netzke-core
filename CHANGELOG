@@ -1,3 +1,8 @@
+v0.2.0 *
+Some re-factoring and redesign. Now you can create compound widgets on the fly in the Controller.
+Added ext_widget[:quiet] configuration option to suppress widget's feedback.
+Support for extra CSS sources, similar to JS.
+
 v0.1.4
 Helpers added to facilitate ExtJS/netzke.js inclusion
 The route defined for netzke_controller

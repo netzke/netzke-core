@@ -61,7 +61,7 @@ module Netzke
             widget_instance.js_widget_instance
           end
           
-          def #{name}_class_definition
+          def #{name}_class_definition_old
             result = ""
             config = controller.class.widget_config_storage[:#{name}]
             @generated_widget_classes ||= []
@@ -71,6 +71,16 @@ module Netzke
               result = Netzke::#{config[:widget_class_name]}.js_class_code
             end
             result
+          end
+
+          def #{name}_class_definition
+            @generated_widget_classes ||= []
+            config = controller.class.widget_config_storage[:#{name}]
+            widget_instance = Netzke::#{config[:widget_class_name]}.new(config)
+            res = widget_instance.js_missing_code(@generated_widget_classes)
+            @generated_widget_classes += widget_instance.dependencies
+            @generated_widget_classes.uniq!
+            res
           end
         END_EVAL
       

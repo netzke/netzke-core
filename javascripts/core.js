@@ -67,6 +67,7 @@ Ext.widgetMixIn = {
 	},
 
 	feedback:function(msg){
+		if (this.initialConfig.quiet) return false;
 		if (this.app && !!this.app.showFeedback) {
 			this.app.showFeedback(msg)
 		} else {

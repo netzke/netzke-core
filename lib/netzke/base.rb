@@ -2,20 +2,6 @@ require 'json'
 
 module Netzke
   class Base
-    # client-side code (generates JS-classes of the widgets)
-    include Netzke::JsClassBuilder
-
-    # Global Netzke configuration
-    def self.config
-      @@config ||= {
-        :javascripts => ["#{File.dirname(__FILE__)}/../../javascripts/core.js"] # locations of javascript files (which automatically will be collected into one file and sent as netzke.js)
-      }
-    end
-    
-    def self.js_class_code(cached_dependencies = [])
-      self.new(:js_class => true).js_missing_code(cached_dependencies)
-    end
-    
     # Helper class to read/write from/to widget's persistent preferences. TODO: rework it.
     class Config
       def initialize(widget_name)
@@ -28,6 +14,57 @@ module Netzke
       def [](k)
         NetzkePreference.custom_field = @widget_name
         NetzkePreference[k]
+      end
+    end
+
+    # Client-side code (generates JS-class of the widget)
+    include Netzke::JsClassBuilder
+
+    # Class methods
+    class << self
+      # Global Netzke configuration
+      def config
+        @@config ||= {
+          # locations of javascript files (which automatically will be collected into one file and sent as netzke.js)
+          :javascripts => ["#{File.dirname(__FILE__)}/../../javascripts/core.js"],
+          :css => []
+        }
+      end
+      
+      def short_widget_class_name
+        name.split("::").last
+      end
+
+      #
+      # Use this class method to declare connection points between client side of a widget and its server side. A method in a widget class with the same name will be (magically) called by the client side of the widget. See Grid widget for an example
+      #
+      def interface(*interface_points)
+        interfacep = read_inheritable_attribute(:interface_points) || []
+        interface_points.each{|p| interfacep << p}
+        write_inheritable_attribute(:interface_points, interfacep)
+
+        interface_points.each do |interfacep|
+          module_eval <<-END, __FILE__, __LINE__
+          def interface_#{interfacep}(*args)
+            #{interfacep}(*args).to_js
+          end
+          # FIXME: commented out because otherwise ColumnOperations stop working
+          # def #{interfacep}(*args)
+          #   flash :warning => "API point '#{interfacep}' is not implemented for widget '#{short_widget_class_name}'"
+          #   {:flash => @flash}
+          # end
+          END
+        end
+      end
+
+      def interface_points
+        read_inheritable_attribute(:interface_points)
+      end
+      
+      # returns an instance of a widget defined in the config
+      def instance_by_config(config)
+        widget_class = "Netzke::#{config[:widget_class_name]}".constantize
+        widget_class.new(config)
       end
     end
   
@@ -57,47 +94,13 @@ module Netzke
       self.class.short_widget_class_name
     end
     
-    def self.short_widget_class_name
-      name.split("::").last
-    end
-    
-    #
-    # Use this class-method to declare connection points between client side of a widget and its server side. A method in a widget class with the same name will be (magically) called by the client-side of the widget. See Grid widget for an example
-    #
-    def self.interface(*interface_points)
-      interfacep = read_inheritable_attribute(:interface_points) || []
-      interface_points.each{|p| interfacep << p}
-      write_inheritable_attribute(:interface_points, interfacep)
-      
-      interface_points.each do |interfacep|
-        module_eval <<-END, __FILE__, __LINE__
-        def interface_#{interfacep}(*args)
-          #{interfacep}(*args).to_js
-        end
-        # FIXME: commented out because otherwise ColumnOperations stop working
-        # def #{interfacep}(*args)
-        #   flash :warning => "API point '#{interfacep}' is not implemented for widget '#{short_widget_class_name}'"
-        #   {:flash => @flash}
-        # end
-        END
-      end
-    end
-    
-    def self.interface_points
-      read_inheritable_attribute(:interface_points)
-    end
-    
-    def interface_points
-      self.class.interface_points
-    end
-
-    interface :get_widget # default
+    interface :get_widget # every widget gets this
 
     ## Dependencies
     def dependencies
       @dependencies ||= begin
-        non_late_aggregatees_widget_classes = aggregatees.values.map{|v| v[:widget_class_name]}
-        (initial_dependencies + non_late_aggregatees_widget_classes).uniq
+        non_late_aggregatees_widget_classes = non_late_aggregatees.values.map{|v| v[:widget_class_name]}
+        (initial_dependencies + non_late_aggregatees_widget_classes << self.class.short_widget_class_name).uniq
       end
     end
     
@@ -123,7 +126,7 @@ module Netzke
       aggregatees.merge!(aggr)
     end
     
-    # The difference between aggregatees and late aggregatees is the following: the former gets instantiated together with its aggregator and is normally instantly visible as a part of it. While a late aggregatee doesn't get instantiated along with its aggregator. Until it gets requested, it doesn't take any part in its aggregator's lifecycle. An example of late aggregatee could be a widget that is loaded by an application widget on user's request, or a preferences window that only gets instantiated when user wants to edit widget's preferences. An example of a normal aggregatee is any widget (like a grid) within a BorderLayout-based widget (i.e. aggregator) - it should get instantiated and shown along with its aggregator.
+    # The difference between aggregatees and late aggregatees is the following: the former gets instantiated together with its aggregator and is normally *instantly* visible as a part of it (for example, the widget in the initially expanded panel in an Accordion). A late aggregatee doesn't get instantiated along with its aggregator. Until it gets requested from the server, it doesn't take any part in its aggregator's life. An example of late aggregatee could be a widget that is loaded dynamically into a previously collapsed panel of an Accordion, or a preferences window (late aggregatee) for a widget (aggregator) that only gets shown when user wants to edit widget's preferences.
     def initial_late_aggregatees
       {}
     end
@@ -144,7 +147,6 @@ module Netzke
       end
       aggregator
     end
-    
     
     def full_widget_class_name(short_name)
       "Netzke::#{short_name}"
