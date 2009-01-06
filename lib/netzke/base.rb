@@ -1,6 +1,12 @@
 require 'json'
 
 module Netzke
+  # 
+  # Configuration:
+  # * Define NETZKE_BOOT_CONFIG in environment.rb to specify which Netzke functionality should be disabled 
+  # to reduce the size of /netzke/netzke.[js|css]. Those Netzke gems that use additional JS-code 
+  # should be aware of this constant.
+  #
   class Base
     # Helper class to read/write from/to widget's persistent preferences. TODO: rework it.
     class Config
@@ -8,11 +14,11 @@ module Netzke
         @widget_name = widget_name
       end
       def []=(k,v)
-        NetzkePreference.custom_field = @widget_name
+        NetzkePreference.widget_name = @widget_name
         NetzkePreference[k] = v
       end
       def [](k)
-        NetzkePreference.custom_field = @widget_name
+        NetzkePreference.widget_name = @widget_name
         NetzkePreference[k]
       end
     end
@@ -25,8 +31,8 @@ module Netzke
       # Global Netzke configuration
       def config
         @@config ||= {
-          # locations of javascript files (which automatically will be collected into one file and sent as netzke.js)
-          :javascripts => ["#{File.dirname(__FILE__)}/../../javascripts/core.js"],
+          # locations of javascript and css files (which will be automatically collected into one file and sent as /netzke/netzke.js and /netzke/netzke.css respectively)
+          :javascripts => [],
           :css => []
         }
       end

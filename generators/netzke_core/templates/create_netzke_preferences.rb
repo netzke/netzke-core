@@ -6,7 +6,7 @@ class CreateNetzkePreferences < ActiveRecord::Migration
       t.string :value
       t.integer :user_id
       t.integer :role_id
-      t.string :custom_field
+      t.string :widget_name
 
       t.timestamps
     end

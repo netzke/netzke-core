@@ -9,12 +9,12 @@ class NetzkePreference < ActiveRecord::Base
     @@user ||= nil
   end
   
-  def self.custom_field=(value)
-    @@custom_field = value
+  def self.widget_name=(value)
+    @@widget_name = value
   end
   
-  def self.custom_field
-    @@custom_field ||= nil
+  def self.widget_name
+    @@widget_name ||= nil
   end
   
   def normalized_value
@@ -48,7 +48,7 @@ class NetzkePreference < ActiveRecord::Base
   
   def self.[](pref_name)
     pref_name = pref_name.to_s
-    conditions = {:name => pref_name, :user_id => self.user, :custom_field => self.custom_field}
+    conditions = {:name => pref_name, :user_id => self.user, :widget_name => self.widget_name}
     pref = self.find(:first, :conditions => conditions)
     # pref = @@user.nil? ? self.find_by_name(pref_name) : self.find_by_name_and_user_id(pref_name, @@user.id)
     pref && pref.normalized_value
@@ -56,7 +56,7 @@ class NetzkePreference < ActiveRecord::Base
   
   def self.[]=(pref_name, new_value)
     pref_name = pref_name.to_s
-    conditions = {:name => pref_name, :user_id => self.user, :custom_field => self.custom_field}
+    conditions = {:name => pref_name, :user_id => self.user, :widget_name => self.widget_name}
     pref = self.find(:first, :conditions => conditions) || self.create(conditions)
     # pref = self.user.nil? ? self.find_or_create_by_name(pref_name) : self.find_or_create_by_name_and_user_id(pref_name, self.user.id)
     pref.normalized_value = new_value
