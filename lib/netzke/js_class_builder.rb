@@ -17,7 +17,7 @@ module Netzke
     def js_config
       res = {}
     
-      # recursively include configs of all (non-late) aggregatees, so that the widget can instantiate them, too
+      # recursively include configs of all (non-late) aggregatees, so that the widget can instantiate them
       aggregatees.each_pair do |aggr_name, aggr_config|
         next if aggr_config[:late_aggregation]
         res["#{aggr_name}_config".to_sym] = aggregatee_instance(aggr_name.to_sym).js_config

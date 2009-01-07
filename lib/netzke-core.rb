@@ -39,3 +39,5 @@ ActiveSupport::Dependencies.load_once_paths.delete(File.join(File.dirname(__FILE
 # Include the javascript
 Netzke::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"
 
+# Include CSS
+Netzke::Base.config[:css] << "#{File.dirname(__FILE__)}/../css/core.css"

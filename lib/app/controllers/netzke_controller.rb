@@ -9,10 +9,11 @@ class NetzkeController < ActionController::Base
           f = File.new(path)
           res << f.read
         end
-        render :text => res
+        render :text => res.strip_js_comments
       }
       
       format.css {
+        logger.debug { "!!! Netzke::Base.config[:css]: #{Netzke::Base.config[:css].inspect}" }
         res = ""
         Netzke::Base.config[:css].each do |path|
           f = File.new(path)

@@ -1,8 +1,13 @@
 v0.2.0
-Some re-factoring and redesign. Now compound widgets can be created on the fly in the controller.
-Added ext_widget[:quiet] configuration option to suppress widget's feedback.
-Support for extra CSS sources, similar to JS.
-NETZKE_BOOT_CONFIG introduced to specify which Netzke functionality should be disabled to reduce the size of /netzke/netzke.[js|css].
+* Some re-factoring and redesign. Now simple compound widgets can be created on the fly in the controller
+* Added ext_widget[:quiet] configuration option to suppress widget's feedback
+* Support for extra CSS sources, similar to JS
+* NETZKE_BOOT_CONFIG introduced to specify which Netzke functionality should be disabled to reduce the size of /netzke/netzke.[js|css]
+* FeedbackGhost widget added - invisible widget providing feedback to the user
+* netzke_widget controller class-method renamed into netzke
+* JS-comments now get stripped also from the extra files that get included in the netzke-* gems.
+
+Bug fixes
 
 v0.1.4
 Helpers added to facilitate ExtJS/netzke.js inclusion
