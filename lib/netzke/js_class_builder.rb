@@ -98,7 +98,7 @@ module Netzke
       # default config that is always passed into the constructor
       def js_default_config
         {
-          :title => short_widget_class_name,
+          :title => "config.id.humanize()".l,
           :listeners => js_listeners,
           :tools => "config.tools".l,
           :actions => "config.actions".l,

@@ -129,3 +129,21 @@ Ext.override(Ext.Panel, {
 		
 	}
 });
+
+// Some Rubyish String extensions
+// from http://code.google.com/p/inflection-js/
+String.prototype.capitalize=function()
+{
+  var str=this.toLowerCase();
+  str=str.substring(0,1).toUpperCase()+str.substring(1);
+  return str;
+};
+
+String.prototype.humanize=function(lowFirstLetter)
+{
+  var str=this.toLowerCase();
+  str=str.replace(new RegExp('_id','g'),'');
+  str=str.replace(new RegExp('_','g'),' ');
+  if(!lowFirstLetter)str=str.capitalize();
+  return str;
+};
