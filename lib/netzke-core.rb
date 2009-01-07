@@ -19,7 +19,7 @@ require 'vendor/facets/hash/recursive_merge'
 end
 
 if defined? ActionController
-  # Provide controllers with netzke_widget class method
+  # Provide controllers with netzke class method
   ActionController::Base.class_eval do
     include Netzke::ControllerExtensions
   end

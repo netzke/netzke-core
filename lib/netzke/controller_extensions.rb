@@ -36,7 +36,7 @@ module Netzke
       #
       # Use this method to declare a widget in the controller
       #
-      def netzke_widget(name, config={})
+      def netzke(name, config={})
         # which module is the widget?
         config[:widget_class_name] ||= name.to_s.classify
         config[:name] ||= name
