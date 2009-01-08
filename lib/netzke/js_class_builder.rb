@@ -38,6 +38,11 @@ module Netzke
       res.merge!(:bbar => tbar) if tbar
       res.merge!(:tbar => bbar) if bbar
 
+      # include permissions
+      res.merge!(:permissions => permissions) unless available_permissions.empty?
+      
+      # include eventual region_config
+      res.merge!(:region_config => config[:region_config])
       res
     end
    

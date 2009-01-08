@@ -13,7 +13,6 @@ class NetzkeController < ActionController::Base
       }
       
       format.css {
-        logger.debug { "!!! Netzke::Base.config[:css]: #{Netzke::Base.config[:css].inspect}" }
         res = ""
         Netzke::Base.config[:css].each do |path|
           f = File.new(path)

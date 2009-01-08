@@ -6,6 +6,7 @@ v0.2.0
 * FeedbackGhost widget added - invisible widget providing feedback to the user
 * netzke_widget controller class-method renamed into netzke
 * JS-comments now get stripped also from the extra files that get included in the netzke-* gems.
+* Permissions joined js_config
 
 Bug fixes
 

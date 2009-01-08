@@ -186,7 +186,7 @@ module Netzke
         config[:allow] && config[:allow].each{|p| @permissions.merge!(p.to_sym => true)} # allow
         
         # ... and then merge it with NetzkePreferences (if not instantiated to only generate JS-class code)
-        !config[:js_class] && available_permissions.each do |p|
+        available_permissions.each do |p|
           @permissions[p.to_sym] = @pref["permissions.#{p}"] if !@pref["permissions.#{p}"].nil?
         end
       end
