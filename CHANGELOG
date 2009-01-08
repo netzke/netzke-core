@@ -1,3 +1,7 @@
+v0.2.1
+Fixed the path to ext-base-min.js for production mode.
+Also works in Safari now.
+
 v0.2.0
 * Some re-factoring and redesign. Now simple compound widgets can be created on the fly in the controller
 * Added ext_widget[:quiet] configuration option to suppress widget's feedback
@@ -7,8 +11,7 @@ v0.2.0
 * netzke_widget controller class-method renamed into netzke
 * JS-comments now get stripped also from the extra files that get included in the netzke-* gems.
 * Permissions joined js_config
-
-Bug fixes
+* Bug fixes
 
 v0.1.4
 Helpers added to facilitate ExtJS/netzke.js inclusion
