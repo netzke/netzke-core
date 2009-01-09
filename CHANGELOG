@@ -1,3 +1,6 @@
+v0.2.2
+js_ext_config instance methods added for overwriting
+
 v0.2.1
 Fixed the path to ext-base-min.js for production mode.
 Also works in Safari now.

@@ -18,6 +18,7 @@ module Netzke
         NetzkePreference[k] = v
       end
       def [](k)
+        # return nil
         NetzkePreference.widget_name = @widget_name
         NetzkePreference[k]
       end

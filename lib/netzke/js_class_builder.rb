@@ -29,7 +29,7 @@ module Netzke
     
       res.merge!(:widget_class_name => short_widget_class_name)
 
-      res.merge!(config[:ext_config])
+      res.merge!(js_ext_config)
       res.merge!(:id => @id_name)
     
       # include tools and actions
@@ -41,11 +41,13 @@ module Netzke
       # include permissions
       res.merge!(:permissions => permissions) unless available_permissions.empty?
       
-      # include eventual region_config
-      res.merge!(:region_config => config[:region_config])
       res
     end
    
+    def js_ext_config
+      config[:ext_config] || {}
+    end
+    
     # Generate instantiating - used when a widget is generated stand-alone (as a part of a HTML page)
     def js_widget_instance
       %Q(var #{config[:name].to_js} = new Ext.componentCache['#{short_widget_class_name}'](#{js_config.to_js});)
