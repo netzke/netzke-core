@@ -16,9 +16,9 @@ module Netzke
       # Global Netzke::Base configuration
       def config
         set_default_config({
-          :javascripts => [],
-          :css => [],
-          :layout_manager => "NetzkeLayout",
+          :javascripts               => [],
+          :css                       => [],
+          :layout_manager            => "NetzkeLayout",
           :persistent_config_manager => "NetzkePreference"
         })
       end
@@ -97,8 +97,8 @@ module Netzke
     attr_reader :pref
 
     def initialize(config = {}, parent = nil)
-      @config = initial_config.recursive_merge(config)
-      @parent = parent
+      @config  = initial_config.recursive_merge(config)
+      @parent  = parent
       @id_name = parent.nil? ? config[:name].to_s : "#{parent.id_name}__#{config[:name]}"
       
       @flash = []

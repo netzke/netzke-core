@@ -5,14 +5,14 @@ module Netzke
       res = ""
 
       if ENV['RAILS_ENV'] == 'development'
-    	  res << javascript_include_tag("/extjs/adapter/ext/ext-base.js", "/extjs/ext-all-debug.js")
-  	  else
-  	    res << javascript_include_tag("/extjs/adapter/ext/ext-base.js", "/extjs/ext-all.js")
+        res << javascript_include_tag("/extjs/adapter/ext/ext-base.js", "/extjs/ext-all-debug.js")
+      else
+        res << javascript_include_tag("/extjs/adapter/ext/ext-base.js", "/extjs/ext-all.js")
       end
       res << javascript_tag( "Ext.authenticityToken = '#{form_authenticity_token}'") # forgery protection
-    	res << javascript_include_tag("/netzke/netzke.js")
+      res << javascript_include_tag("/netzke/netzke.js")
       
-    	res
+      res
     end
 
     def netzke_css_include(theme_name = :default)
