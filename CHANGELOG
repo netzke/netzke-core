@@ -1,5 +1,8 @@
 v0.2.2
-js_ext_config instance methods added for overwriting
+js_ext_config instance method added for overwriting
+Multiuser support
+Using Rails.logger for logging
+"config"-class method for every class inheriting Netzke::Base - for class-level configurations
 
 v0.2.1
 Fixed the path to ext-base-min.js for production mode.

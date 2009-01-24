@@ -4,42 +4,39 @@ module Netzke
   # 
   # Configuration:
   # * Define NETZKE_BOOT_CONFIG in environment.rb to specify which Netzke functionality should be disabled 
-  # to reduce the size of /netzke/netzke.[js|css]. Those Netzke gems that use additional JS-code 
+  # to reduce the size of /netzke/netzke.[js|css]. Those Netzke gems that use additional JS/CSS-code 
   # should be aware of this constant.
   #
   class Base
-    # Helper class to read/write from/to widget's persistent preferences. TODO: rework it.
-    class Config
-      def initialize(widget_name)
-        @widget_name = widget_name
-      end
-      def []=(k,v)
-        NetzkePreference.widget_name = @widget_name
-        NetzkePreference[k] = v
-      end
-      def [](k)
-        # return nil
-        NetzkePreference.widget_name = @widget_name
-        NetzkePreference[k]
-      end
-    end
-
     # Client-side code (generates JS-class of the widget)
     include Netzke::JsClassBuilder
 
-    # Class methods
-    class << self
-      # Global Netzke configuration
+    module ClassMethods
+
+      # Global Netzke::Base configuration
       def config
-        @@config ||= {
-          # locations of javascript and css files (which will be automatically collected into one file and sent as /netzke/netzke.js and /netzke/netzke.css respectively)
+        set_default_config({
           :javascripts => [],
-          :css => []
-        }
+          :css => [],
+          :layout_manager => "NetzkeLayout",
+          :persistent_config_manager => "NetzkePreference"
+        })
       end
-      
+
       def short_widget_class_name
         name.split("::").last
+      end
+
+      def user
+        @@user ||= nil
+      end
+
+      def user=(user)
+        @@user = user
+
+        # also set up the managers
+        persistent_config_manager_class && persistent_config_manager_class.user = user
+        layout_manager_class && layout_manager_class.user = user
       end
 
       #
@@ -73,23 +70,57 @@ module Netzke
         widget_class = "Netzke::#{config[:widget_class_name]}".constantize
         widget_class.new(config)
       end
+      
+      def persistent_config_manager_class
+        config[:persistent_config_manager].constantize
+      rescue NameError
+        nil
+      end
+
+      def layout_manager_class
+        Netzke::Base.config[:layout_manager].constantize
+      rescue NameError
+        nil
+      end
+      
+      private
+      def set_default_config(default_config)
+        @@config ||= {}
+        @@config[self.name] ||= default_config
+        @@config[self.name]
+      end
+      
     end
-  
+    extend ClassMethods
+    
     attr_accessor :config, :server_confg, :parent, :logger, :id_name, :permissions
     attr_reader :pref
 
     def initialize(config = {}, parent = nil)
-      @logger = Logger.new("debug.log")
       @config = initial_config.recursive_merge(config)
       @parent = parent
       @id_name = parent.nil? ? config[:name].to_s : "#{parent.id_name}__#{config[:name]}"
       
       @flash = []
-      @pref = Config.new(@id_name)
       
       @config[:ext_config] ||= {} # configuration used to instantiate JS class
-      
+
       process_permissions_config
+    end
+
+    # Rails' logger
+    def logger
+      Rails.logger
+    end
+    
+    # Store some setting in the database as if it was a hash, e.g.:
+    #     persistent_config["window.size"] = 100
+    #     persistent_config["window.size"] => 100
+    # This method is current_user-aware
+    def persistent_config
+      config_klass = self.class.persistent_config_manager_class
+      config_klass && config_klass.widget_name = id_name # pass to the config class our unique name
+      config_klass || {} # if we don't have the presistent config manager, all the calls to it will always return nil, and the "="-operation will be ignored
     end
     
     def initial_config
@@ -186,9 +217,10 @@ module Netzke
         config[:allow] = [config[:allow]] if config[:allow].is_a?(Symbol) # so that config[:allow] => :write works
         config[:allow] && config[:allow].each{|p| @permissions.merge!(p.to_sym => true)} # allow
         
-        # ... and then merge it with NetzkePreferences (if not instantiated to only generate JS-class code)
+        # ... and then merge it with NetzkePreferences
         available_permissions.each do |p|
-          @permissions[p.to_sym] = @pref["permissions.#{p}"] if !@pref["permissions.#{p}"].nil?
+          persistent_permisson = persistent_config["permissions.#{p}"]
+          @permissions[p.to_sym] = persistent_permisson unless persistent_permisson.nil?
         end
       end
     end

@@ -1,8 +1,22 @@
 class NetzkeLayout < ActiveRecord::Base
   UNRELATED_ATTRS = %w(created_at updated_at position layout_id)
 
+  # Multi user support
+  def self.user
+    @@user ||= nil
+  end
+  
+  def self.user=(user)
+    @@user = user
+  end
+  
   def self.user_id
-    @@user_id ||= nil
+    user && user.id
+  end
+  
+  # normal create, but with a user_id merged-in
+  def self.create_with_user(config)
+    create(config.merge(:user_id => user_id))
   end
   
   def layout_items
@@ -10,7 +24,7 @@ class NetzkeLayout < ActiveRecord::Base
   end
   
   def self.by_widget(widget_name)
-    self.find(:first, :conditions => {:widget_name => widget_name, :user_id => self.user_id})
+    self.find(:first, :conditions => {:widget_name => widget_name, :user_id => user_id})
   end
 
   def move_item(old_index, new_index)

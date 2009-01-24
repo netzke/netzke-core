@@ -40,15 +40,24 @@ module Netzke
   end
 end
 
+# mocking the User class
+class User
+  attr_accessor :id
+  def initialize(id)
+    @id = id
+  end
+end
+
 class NetzkeCoreTest < ActiveSupport::TestCase
   include Netzke
   
   def setup
-    object = mock()
-    object.stubs(:normalized_value)
-    object.stubs(:normalized_value=)
-    # object.stubs(:save!)
-    NetzkePreference.stubs(:find).returns(object)
+    # object = mock()
+    # object.stubs(:normalized_value)
+    # object.stubs(:normalized_value=)
+    # # object.stubs(:save!)
+    # NetzkePreference.stubs(:find).returns(object)
+    
   end
   
   test "base class loaded" do
@@ -131,4 +140,21 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert(Widget, widget.class)
     assert('a_widget', widget.config[:name])
   end
+  
+  # test "multiuser" do
+  #   Netzke::Base.current_user = User.new(1)
+  #   Widget.new(:prohibit => :all, :name => 'widget')
+  #   
+  #   Netzke::Base.current_user = User.new(2)
+  #   Widget.new(:prohibit => :read, :name => 'widget')
+  #   
+  #   Netzke::Base.current_user = User.new(1)
+  #   widget = Widget.new(:name => 'widget')
+  #   assert_equal({:read => false, :update => false}, widget.permissions)
+  # 
+  #   Netzke::Base.current_user = User.new(2)
+  #   widget = Widget.new(:name => 'widget')
+  #   assert_equal({:read => false, :update => true}, widget.permissions)
+  #   
+  # end
 end

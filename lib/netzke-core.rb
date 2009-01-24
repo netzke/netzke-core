@@ -19,25 +19,21 @@ require 'vendor/facets/hash/recursive_merge'
 end
 
 if defined? ActionController
-  # Provide controllers with netzke class method
   ActionController::Base.class_eval do
     include Netzke::ControllerExtensions
   end
 
-  # Include the route to netzke controller
+  # Include the route to the Netzke controller
   ActionController::Routing::RouteSet::Mapper.send :include, Netzke::Routing::MapperExtensions
 end
 
 if defined? ActionView
-  # Helpers to be put into layouts
   ActionView::Base.send :include, Netzke::ActionViewExt
 end  
 
-# Make this plugin auto-reloaded for easier development
+# Make this plugin auto-reloadable for easier development
 ActiveSupport::Dependencies.load_once_paths.delete(File.join(File.dirname(__FILE__)))
 
-# Include the javascript
+# Include javascript & styles
 Netzke::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"
-
-# Include CSS
 Netzke::Base.config[:css] << "#{File.dirname(__FILE__)}/../css/core.css"
