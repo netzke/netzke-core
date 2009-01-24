@@ -1,6 +1,6 @@
 /* feedback */
 .netzke-feedback {
-    position:absolute;
+    position:fixed;
     left:25%;
     top:0;
     width:300px;

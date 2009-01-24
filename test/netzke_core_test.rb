@@ -140,6 +140,10 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert(Widget, widget.class)
     assert('a_widget', widget.config[:name])
   end
+
+  test "class configuration" do
+    assert_equal(NetzkeLayout, Netzke::Base.layout_manager_class)
+  end
   
   # test "multiuser" do
   #   Netzke::Base.current_user = User.new(1)
