@@ -72,7 +72,7 @@ module Netzke
       end
       
       def persistent_config_manager_class
-        config[:persistent_config_manager].constantize
+        Netzke::Base.config[:persistent_config_manager].constantize
       rescue NameError
         nil
       end

@@ -1,5 +1,7 @@
 v0.2.3
 FeedbackGhost will show the feedback on the top of the screen independent of the page scrolling.
+Ext.Panel#loadWidget will accept null as url to delete the currently loaded widget
+Bug fix: persistent_config works again
 
 v0.2.2
 js_ext_config instance method added for overwriting

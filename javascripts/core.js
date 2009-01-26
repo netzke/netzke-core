@@ -105,6 +105,8 @@ Ext.override(Ext.Panel, {
 		
 		this.remove(this.getWidget()); // first delete previous widget
 		
+		if (!url) return false;
+		
 		// we will let the server know which components we have cached
 		var cachedComponentNames = [];
 		for (name in Ext.componentCache) {

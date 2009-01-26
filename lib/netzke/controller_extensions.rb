@@ -88,6 +88,19 @@ module Netzke
             @generated_widget_classes.uniq!
             res
           end
+          
+          def #{name}_widget_html
+            config = controller.class.widget_config_storage[:#{name}]
+            widget_instance = Netzke::Base.instance_by_config(config)
+            widget_instance.js_widget_html
+          end
+          
+          def #{name}_widget_render
+            config = controller.class.widget_config_storage[:#{name}]
+            widget_instance = Netzke::Base.instance_by_config(config)
+            widget_instance.js_widget_render
+          end
+          
         END_EVAL
       
         # add controller action which will render a simple HTML page containing the widget
@@ -103,12 +116,12 @@ module Netzke
     <%= #{name}_class_definition %>
     Ext.onReady(function(){
     	<%= #{name}_widget_instance %>
-    	#{name.to_js}.render("#{name.to_s.split('_').join('-')}");
+    	<%= #{name}_widget_render %>
     })
 	</script>
 </head>
 <body>
-  <div id="#{name.to_s.split('_').join('-')}"></div>
+  <%= #{name}_widget_html %>
 </body>
           HTML
         end

@@ -48,10 +48,28 @@ module Netzke
       config[:ext_config] || {}
     end
     
-    # Generate instantiating - used when a widget is generated stand-alone (as a part of a HTML page)
+    #
+    # The following methods are used when a widget is generated stand-alone (as a part of a HTML page)
+    #
+
+    # instantiating
     def js_widget_instance
-      %Q(var #{config[:name].to_js} = new Ext.componentCache['#{short_widget_class_name}'](#{js_config.to_js});)
+      %Q{var #{config[:name].to_js} = new Ext.componentCache['#{short_widget_class_name}'](#{js_config.to_js});}
     end
+
+    # rendering
+    def js_widget_render
+      %Q{#{config[:name].to_js}.render("#{config[:name].to_s.split('_').join('-')}");}
+    end
+
+    # container for rendering
+    def js_widget_html
+      %Q{<div id="#{config[:name].to_s.split('_').join('-')}"></div>}
+    end
+
+    #
+    #
+    #
 
     # All the JS-code required by this *instance* of the widget. It includes the JS-class for the widget
     # itself, as well as JS-classes for all widgets (non-late) aggregatees.
