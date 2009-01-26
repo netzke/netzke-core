@@ -33,10 +33,10 @@ module Netzke
       res.merge!(:id => @id_name)
     
       # include tools and actions
-      res.merge!(:tools => tools) if tools
+      res.merge!(:tools   => tools)   if tools
       res.merge!(:actions => actions) if actions
-      res.merge!(:bbar => tbar) if tbar
-      res.merge!(:tbar => bbar) if bbar
+      res.merge!(:bbar    => tbar)    if tbar
+      res.merge!(:tbar    => bbar)    if bbar
 
       # include permissions
       res.merge!(:permissions => permissions) unless available_permissions.empty?
@@ -123,17 +123,17 @@ module Netzke
       # default config that is always passed into the constructor
       def js_default_config
         {
-          :title => "config.id.humanize()".l,
+          :title     => "config.id.humanize()".l,
           :listeners => js_listeners,
-          :tools => "config.tools".l,
-          :actions => "config.actions".l,
-          :tbar => "config.tbar".l,
-          :bbar => "config.bbar".l,
-          # :items => "config.items".l,
-          # :items => js_items,
-          :height => 400,
-          :width => 800,
-          :border => false
+          :tools     => "config.tools".l,
+          :actions   => "config.actions".l,
+          :tbar      => "config.tbar".l,
+          :bbar      => "config.bbar".l,
+          # :items   => "config.items".l,
+          # :items   => js_items,
+          :height    => 400,
+          :width     => 800,
+          :border    => false
         }
       end
 
