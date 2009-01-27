@@ -24,7 +24,7 @@ class NetzkeLayout < ActiveRecord::Base
   end
   
   def self.by_widget(widget_name)
-    self.find(:first, :conditions => {:widget_name => widget_name, :user_id => user_id})
+    self.find(:first, :conditions => {:widget_name => widget_name.to_s, :user_id => user_id})
   end
 
   def move_item(old_index, new_index)

@@ -1,3 +1,6 @@
+v0.2.4
+Other minor improvements.
+
 v0.2.3
 FeedbackGhost will show the feedback on the top of the screen independent of the page scrolling.
 Ext.Panel#loadWidget will accept null as url to delete the currently loaded widget
