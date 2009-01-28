@@ -1,5 +1,8 @@
+v0.2.5
+Minor code restructuring.
+
 v0.2.4
-Other minor improvements.
+Some minor improvements.
 
 v0.2.3
 FeedbackGhost will show the feedback on the top of the screen independent of the page scrolling.

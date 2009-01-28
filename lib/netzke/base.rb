@@ -8,9 +8,6 @@ module Netzke
   # should be aware of this constant.
   #
   class Base
-    # Client-side code (generates JS-class of the widget)
-    include Netzke::JsClassBuilder
-
     module ClassMethods
 
       # Global Netzke::Base configuration
@@ -83,6 +80,13 @@ module Netzke
         nil
       end
       
+      # include extra modules if they exist
+      def include_extras
+        include instance_eval("#{self.name}Extras::JsBuilder")
+        include instance_eval("#{self.name}Extras::Interface")
+      rescue NameError
+      end
+      
       private
       def set_default_config(default_config)
         @@config ||= {}
@@ -92,6 +96,9 @@ module Netzke
       
     end
     extend ClassMethods
+    
+    # include extra modules
+    include_extras
     
     attr_accessor :config, :server_confg, :parent, :logger, :id_name, :permissions
     attr_reader :pref
@@ -240,13 +247,5 @@ module Netzke
       end
     end
 
-    #### Interface
-    def get_widget(params = {})
-      # if browser does not have our component class cached (and all dependencies), send it to him
-      components_cache = (JSON.parse(params[:components_cache]) if params[:components_cache]) || []
-      
-      {:config => js_config, :class_definition => js_missing_code(components_cache)}
-    end
-   
   end
 end
