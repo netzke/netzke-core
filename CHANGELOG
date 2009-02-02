@@ -1,3 +1,9 @@
+v0.2.6
+FeedackGhost is now capable of displaying multiple flash messages.
+Dependencies slightly refactored.
+An informative exception added to Base#aggregatee_instance.
+Code readability improvements.
+
 v0.2.5
 Minor code restructuring.
 

@@ -129,11 +129,18 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   end
   
   # test "dependencies in JS class generators" do
-  #   js_code = Widget.js_class
-  #   assert(js_code.index("Ext.componentCache['NestedWidgetOne']"))
-  #   assert(js_code.index("Ext.componentCache['NestedWidgetTwo']"))
-  #   assert(js_code.index("Ext.componentCache['DeepNestedWidget']"))
+  #   widget = Widget.new
+  #   assert(widget.js_missing_code.index("Ext.netzke.cache['NestedWidgetOne']"))
+  #   assert(widget.js_missing_code.index("Ext.netzke.cache['NestedWidgetTwo']"))
+  #   assert(widget.js_missing_code.index("Ext.netzke.cache['DeepNestedWidget']"))
+  #   assert(widget.js_missing_code.index("Ext.netzke.cache['Widget']"))
   # end
+
+  test "dependency classes" do
+    widget = Widget.new
+    # not testing the order
+    assert(%w{DeepNestedWidget NestedWidgetOne NestedWidgetTwo Widget}.inject(true){|r, k| r && widget.dependency_classes.include?(k)})
+  end
 
   test "widget instance by config" do
     widget = Netzke::Base.instance_by_config({:widget_class_name => 'Widget', :name => 'a_widget'})

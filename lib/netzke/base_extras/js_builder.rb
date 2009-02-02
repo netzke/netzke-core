@@ -49,13 +49,29 @@ module Netzke
         config[:ext_config] || {}
       end
     
+      # All the JS-code required by this instance of the widget to be instantiated in the browser.
+      # It includes the JS-class for the widget itself, as well as JS-classes for all widgets' (non-late) aggregatees.
+      def js_missing_code(cached_dependencies = [])
+        dependency_classes.inject("") do |r,k| 
+          cached_dependencies.include?(k) ? r : r + "Netzke::#{k}".constantize.js_class.strip_js_comments
+        end
+      end
+    
+      def dependency_classes
+        res = []
+        non_late_aggregatees.each_key do |aggr|
+          res << aggregatee_instance(aggr).short_widget_class_name
+        end
+        res.uniq
+      end
+    
       #
       # The following methods are used when a widget is generated stand-alone (as a part of a HTML page)
       #
 
       # instantiating
       def js_widget_instance
-        %Q{var #{config[:name].to_js} = new Ext.componentCache['#{short_widget_class_name}'](#{js_config.to_js});}
+        %Q{var #{config[:name].to_js} = new Ext.netzke.cache['#{short_widget_class_name}'](#{js_config.to_js});}
       end
 
       # rendering
@@ -71,19 +87,6 @@ module Netzke
       #
       #
       #
-
-      # All the JS-code required by this *instance* of the widget. It includes the JS-class for the widget
-      # itself, as well as JS-classes for all widgets (non-late) aggregatees.
-      def js_missing_code(cached_dependencies = [])
-        result = ""
-        dependencies.each do |dep_name|
-          unless cached_dependencies.include?(dep_name)
-            dependency_class = "Netzke::#{dep_name}".constantize
-            result << dependency_class.js_class
-          end
-        end
-        result
-      end
    
       # widget's actions, tools and toolbars that are loaded at the moment of instantiating a widget
       def actions; nil; end
@@ -105,23 +108,7 @@ module Netzke
         # the JS (Ext) class that we inherit from on JS-level
         def js_base_class; "Ext.Panel"; end
 
-        # functions and properties that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
-        def js_extend_properties; {}; end
-    
-        # code executed before and after the constructor
-        def js_before_constructor; ""; end
-        def js_after_constructor; ""; end
-
-        # widget's listeners
-        def js_listeners; {}; end
-    
-        # widget's menus
-        def js_menus; []; end
-    
-        # items
-        def js_items; null; end
-
-        # default config that is always passed into the constructor
+        # default config that gets merged with Base#js_config
         def js_default_config
           {
             :title     => "config.id.humanize()".l,
@@ -138,33 +125,51 @@ module Netzke
           }
         end
 
-        # Declaration of widget's class (stored in the cache storage (Ext.componentCache) at the client side 
+        # functions and properties that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
+        def js_extend_properties; {}; end
+    
+        # code executed before and after the constructor
+        def js_before_constructor; ""; end
+        def js_after_constructor; ""; end
+
+        # widget's listeners
+        def js_listeners; {}; end
+    
+        # widget's menus
+        def js_menus; []; end
+    
+        # items
+        def js_items; null; end
+
+        # Declaration of widget's class (stored in the cache storage (Ext.netzke.cache) at the client side 
         # to be reused at the moment of widget instantiation)
         def js_class
-          <<-JS
-          Ext.componentCache['#{short_widget_class_name}'] = Ext.extend(#{js_base_class}, Ext.chainApply([Ext.widgetMixIn, {
-            constructor: function(config){
-              this.widgetInit(config);
-              #{js_before_constructor}
-              Ext.componentCache['#{short_widget_class_name}'].superclass.constructor.call(this, Ext.apply(#{js_default_config.to_js}, config));
-              #{js_after_constructor}
-              this.setEvents();
-              this.addMenus(#{js_menus.to_js});
-            }
-          }, #{js_extend_properties.to_js}]))
-          JS
+          js_add_menus = "this.addMenus(#{js_menus.to_js});" unless js_menus.empty?
+
+<<-JS
+Ext.netzke.cache['#{short_widget_class_name}'] = Ext.extend(#{js_base_class}, Ext.chainApply([Ext.widgetMixIn, {
+  constructor: function(config){
+    // comment
+    #{js_before_constructor}
+    Ext.netzke.cache['#{short_widget_class_name}'].superclass.constructor.call(this, Ext.apply(#{js_default_config.to_js}, config));
+    this.widgetInit(config);
+    #{js_after_constructor}
+    #{js_add_menus}
+  }
+}, #{js_extend_properties.to_js}]))
+JS
         end
 
         # class definition of the widget plus that of all the dependencies, minus those that are specified as cached_dependencies
-        def js_missing_code(cached_dependencies = [])
-          result = ""
-          dependencies.each do |dep_name|
-            dependency_class = "Netzke::#{dep_name}".constantize
-            result << dependency_class.js_class_code(cached_dependencies)
-          end
-          result << js_class.strip_js_comments unless cached_dependencies.include?(short_widget_class_name) && !config[:no_caching]
-          result
-        end
+        # def js_missing_code(cached_dependencies = [])
+        #   result = ""
+        #   dependencies.each do |dep_name|
+        #     dependency_class = "Netzke::#{dep_name}".constantize
+        #     result << dependency_class.js_class_code(cached_dependencies)
+        #   end
+        #   result << js_class.strip_js_comments unless cached_dependencies.include?(short_widget_class_name) && !config[:no_caching]
+        #   result
+        # end
       
         def this; "this".l; end
         def null; "null".l; end

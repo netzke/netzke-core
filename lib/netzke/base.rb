@@ -80,11 +80,15 @@ module Netzke
         nil
       end
       
-      # include extra modules if they exist
-      def include_extras
-        include instance_eval("#{self.name}Extras::JsBuilder")
-        include instance_eval("#{self.name}Extras::Interface")
-      rescue NameError
+      # include eventual extra modules
+      def include_extras(file = __FILE__)
+        extras_dir = File.join(File.dirname(file), short_widget_class_name.underscore + "_extras")
+        file_list = Dir.glob("#{extras_dir}/*.rb")
+        for file_name in file_list
+          require file_name
+          module_name = "#{self.name}Extras::#{File.basename(file_name, ".rb").classify}"
+          include module_name.constantize
+        end
       end
       
       private
@@ -120,10 +124,19 @@ module Netzke
       Rails.logger
     end
     
+    def dependency_classes
+      res = []
+      non_late_aggregatees.keys.each do |aggr|
+        res += aggregatee_instance(aggr).dependency_classes
+      end
+      res << short_widget_class_name
+      res.uniq
+    end
+    
     # Store some setting in the database as if it was a hash, e.g.:
     #     persistent_config["window.size"] = 100
     #     persistent_config["window.size"] => 100
-    # This method is current_user-aware
+    # This method is user-aware
     def persistent_config
       config_klass = self.class.persistent_config_manager_class
       config_klass && config_klass.widget_name = id_name # pass to the config class our unique name
@@ -185,9 +198,9 @@ module Netzke
       aggregator = self
       name.to_s.split('__').each do |aggr|
         aggr = aggr.to_sym
-        # TODO: should we put all the classes under Netzke::-scope?
-        # widget_class = full_widget_class_name(aggregator.aggregatees[aggr][:widget_class_name]).constantize
-        widget_class = "Netzke::#{aggregator.aggregatees[aggr][:widget_class_name]}".constantize
+        short_class_name = aggregator.aggregatees[aggr][:widget_class_name]
+        raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.config[:name]}" if short_class_name.nil?
+        widget_class = "Netzke::#{short_class_name}".constantize
         aggregator = widget_class.new(aggregator.aggregatees[aggr].merge(:name => aggr), aggregator)
       end
       aggregator

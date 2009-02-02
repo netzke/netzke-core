@@ -63,10 +63,14 @@ class String
     self.camelize(:lower)
   end
   
-  # removes JS-comments (both single-line and multiple-line) from the string
+  # removes JS-comments (both single- and multi-line) from the string
   def strip_js_comments
     regexp = /\/\/.*$|(?m:\/\*.*?\*\/)/
-    self.gsub(regexp, '')
+    self.gsub!(regexp, '')
+
+    # also remove empty lines
+    regexp = /^\s*\n/
+    self.gsub!(regexp, '')
   end
 end
 
