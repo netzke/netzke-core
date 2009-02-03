@@ -91,8 +91,6 @@ Ext.widgetMixIn = {
     }
   },
   
-  bla:function(){alert('bla');},
-  
   onWidgetLoad:Ext.emptyFn // gets overridden
 };
 

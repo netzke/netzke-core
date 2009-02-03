@@ -1,6 +1,4 @@
 class NetzkeLayout < ActiveRecord::Base
-  UNRELATED_ATTRS = %w(created_at updated_at position layout_id)
-
   # Multi user support
   def self.user
     @@user ||= nil
@@ -19,7 +17,7 @@ class NetzkeLayout < ActiveRecord::Base
     create(config.merge(:user_id => user_id))
   end
   
-  def layout_items
+  def items
     items_class.constantize.find_all_by_layout_id(id, :order => 'position')
   end
   
@@ -28,13 +26,17 @@ class NetzkeLayout < ActiveRecord::Base
   end
 
   def move_item(old_index, new_index)
-    layout_item = layout_items[old_index]
+    layout_item = items[old_index]
     layout_item.remove_from_list
     layout_item.insert_at(new_index + 1)
   end
 
-  def items_hash
-    layout_items.map(&:attributes).map{|item| item.delete_if{|k,v| UNRELATED_ATTRS.include?(k)}}.map{ |i| i.convert_keys{ |k| k.to_sym } }
+  def items_arry
+    items.map(&:attributes).map{ |i| i.convert_keys {|k| k.to_sym}}
   end
   
+  def items_arry_without_hidden
+    items_arry.reject{|i| i[:hidden]}
+  end
+
 end
