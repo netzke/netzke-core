@@ -53,7 +53,7 @@ module Netzke
       # It includes the JS-class for the widget itself, as well as JS-classes for all widgets' (non-late) aggregatees.
       def js_missing_code(cached_dependencies = [])
         dependency_classes.inject("") do |r,k| 
-          cached_dependencies.include?(k) ? r : r + "Netzke::#{k}".constantize.js_class.strip_js_comments
+          cached_dependencies.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached_dependencies).strip_js_comments
         end
       end
     
@@ -140,12 +140,26 @@ module Netzke
     
         # items
         def js_items; null; end
+        
+        # are we using JS inheritance? for now, if js_base_class is a Netzke class - yes
+        def js_inheritance
+          js_base_class.is_a?(Class)
+        end
 
         # Declaration of widget's class (stored in the cache storage (Ext.netzke.cache) at the client side 
         # to be reused at the moment of widget instantiation)
         def js_class
-          js_add_menus = "this.addMenus(#{js_menus.to_js});" unless js_menus.empty?
+          if js_inheritance
+<<-JS
+Ext.netzke.cache['#{short_widget_class_name}'] = Ext.extend(Ext.netzke.cache.#{js_base_class.short_widget_class_name}, Ext.chainApply([Ext.widgetMixIn, {
+  constructor: function(config){
+    Ext.netzke.cache['#{short_widget_class_name}'].superclass.constructor.call(this, config);
+  }
+}, #{js_extend_properties.to_js}]))
 
+JS
+          else
+            js_add_menus = "this.addMenus(#{js_menus.to_js});" unless js_menus.empty?
 <<-JS
 Ext.netzke.cache['#{short_widget_class_name}'] = Ext.extend(#{js_base_class}, Ext.chainApply([Ext.widgetMixIn, {
   constructor: function(config){
@@ -158,6 +172,30 @@ Ext.netzke.cache['#{short_widget_class_name}'] = Ext.extend(#{js_base_class}, Ex
   }
 }, #{js_extend_properties.to_js}]))
 JS
+          end
+          
+
+          # is js_base_class a Netzke class?
+          # base_class = js_inheritance ? "Ext.netzke.cache.#{js_base_class.short_widget_class_name}" : js_base_class
+          
+          # to prevent calling widgetInit multiple times when using JS inheritance
+          # js_widget_init = "this.widgetInit(config);" unless js_inheritance
+
+          # js_before_constructor_code = js_before_constructor unless js_inheritance
+          
+          # js_after_constructor_code = js_after_constructor unless js_inheritance
+        end
+        
+        # all the JS code needed for this class
+        def js_code(cached_dependencies)
+          res = ""
+
+          # include the dependency if doing JS
+          res << js_base_class.js_class if js_inheritance && !cached_dependencies.include?(js_base_class.short_widget_class_name)
+
+          # our own JS class definition
+          res << js_class
+          res
         end
 
         # class definition of the widget plus that of all the dependencies, minus those that are specified as cached_dependencies

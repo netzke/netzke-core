@@ -38,6 +38,12 @@ module Netzke
 
   class DeepNestedWidget < Base
   end
+
+  class JsInheritanceWidget < Base
+    def self.js_base_class
+      Widget
+    end
+  end
 end
 
 # mocking the User class
@@ -152,6 +158,11 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_equal(NetzkeLayout, Netzke::Base.layout_manager_class)
   end
   
+  test "js inheritance" do
+    widget = JsInheritanceWidget.new
+    assert(widget.js_missing_code.index("Ext.netzke.cache['JsInheritanceWidget']"))
+    assert(widget.js_missing_code.index("Ext.netzke.cache['Widget']"))
+  end
   # test "multiuser" do
   #   Netzke::Base.current_user = User.new(1)
   #   Widget.new(:prohibit => :all, :name => 'widget')

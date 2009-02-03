@@ -68,7 +68,7 @@ Ext.widgetMixIn = {
   },
 
   feedback:function(msg){
-    if (this.initialConfig.quiet) return false;
+    if (this.initialConfig && this.initialConfig.quiet) return false;
     if (this.app && !!this.app.showFeedback) {
       this.app.showFeedback(msg)
     } else {
@@ -90,6 +90,8 @@ Ext.widgetMixIn = {
       Ext.each(menus, function(menu){this.app.hostMenu(menu, this)}, this)
     }
   },
+  
+  bla:function(){alert('bla');},
   
   onWidgetLoad:Ext.emptyFn // gets overridden
 };
