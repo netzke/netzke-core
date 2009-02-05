@@ -5,8 +5,7 @@ require 'netzke/controller_extensions'
 require 'netzke/core_ext'
 require 'netzke/routing'
 
-# require 'netzke/js_class_builder'
-# require 'netzke/feedback_ghost'
+require 'netzke/feedback_ghost'
 
 # Vendor
 require 'vendor/facets/hash/recursive_merge'
