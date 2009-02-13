@@ -31,7 +31,7 @@ module Netzke
               Ext.each(msg, function(m){
                 compoundMsg += m.msg + '<br>';
               })
-              showBox(compoundMsg, null) // the second parameter will be level
+              if (compoundMsg != "") showBox(compoundMsg, null) // the second parameter will be level
             } else {
               showBox(msg)
             }

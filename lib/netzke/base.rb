@@ -36,6 +36,10 @@ module Netzke
         layout_manager_class && layout_manager_class.user = user
       end
 
+      def user_has_role?(role)
+        user.login == 'sergei' && role.to_s == 'configurator'
+      end
+
       #
       # Use this class method to declare connection points between client side of a widget and its server side. A method in a widget class with the same name will be (magically) called by the client side of the widget. See Grid widget for an example
       #
@@ -245,19 +249,29 @@ module Netzke
       end
     end
 
-    ## method dispatcher - sends method to the proper aggregatee
+    # method dispatcher - sends method to the proper aggregatee
     def method_missing(method_name, params = {})
       widget, *action = method_name.to_s.split('__')
       widget = widget.to_sym
       action = !action.empty? && action.join("__").to_sym
       
-      if action && aggregatees[widget]
-        # only actions starting with "interface_" are accessible
-        interface_action = action.to_s.index('__') ? action : "interface_#{action}"
-        aggregatee_instance(widget).send(interface_action, params)
+      if action
+        if aggregatees[widget]
+          # only actions starting with "interface_" are accessible
+          interface_action = action.to_s.index('__') ? action : "interface_#{action}"
+          aggregatee_instance(widget).send(interface_action, params)
+        else
+          aggregatee_missing(widget)
+        end
       else
         super
       end
+    end
+
+    # called when the method_missing tries to processes a non-existing aggregatee
+    def aggregatee_missing(aggr)
+      flash :error => "Unknown aggregatee #{aggr} for widget #{config[:name]}"
+      {:success => false, :flash => @flash}.to_json
     end
 
   end

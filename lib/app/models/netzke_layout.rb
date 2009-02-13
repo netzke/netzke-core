@@ -1,4 +1,5 @@
 class NetzkeLayout < ActiveRecord::Base
+  EXT_UNRELATED_ATTRIBUTES = %w{ id layout_id position created_at updated_at }
   # Multi user support
   def self.user
     @@user ||= nil
@@ -32,11 +33,15 @@ class NetzkeLayout < ActiveRecord::Base
   end
 
   def items_arry
-    items.map(&:attributes).map{ |i| i.convert_keys {|k| k.to_sym}}
+    unrelated_attrs_eraser = EXT_UNRELATED_ATTRIBUTES.inject({}){|h,el| h.merge(el => nil)} # => {:id => nil, :layout_id => nil, ...}
+    items.map(&:attributes).map do |i| 
+      # delete unrelated attributes
+      i.merge(unrelated_attrs_eraser).convert_keys {|k| k.to_sym}
+    end
   end
   
   def items_arry_without_hidden
-    items_arry.reject{|i| i[:hidden]}
+    items_arry.reject{|i| i[:hidden] && !i[:name] == :id} # 'id' is exceptional, should always be sent
   end
 
 end

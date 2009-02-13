@@ -111,6 +111,7 @@ module Netzke
         # default config that gets merged with Base#js_config
         def js_default_config
           {
+            # :header    => user_has_role?(:configurator) ? true : nil,
             :title     => "config.id.humanize()".l,
             :listeners => js_listeners,
             :tools     => "config.tools".l,
@@ -173,17 +174,6 @@ Ext.netzke.cache['#{short_widget_class_name}'] = Ext.extend(#{js_base_class}, Ex
 }, #{js_extend_properties.to_js}]))
 JS
           end
-          
-
-          # is js_base_class a Netzke class?
-          # base_class = js_inheritance ? "Ext.netzke.cache.#{js_base_class.short_widget_class_name}" : js_base_class
-          
-          # to prevent calling widgetInit multiple times when using JS inheritance
-          # js_widget_init = "this.widgetInit(config);" unless js_inheritance
-
-          # js_before_constructor_code = js_before_constructor unless js_inheritance
-          
-          # js_after_constructor_code = js_after_constructor unless js_inheritance
         end
         
         # all the JS code needed for this class
@@ -198,17 +188,6 @@ JS
           res
         end
 
-        # class definition of the widget plus that of all the dependencies, minus those that are specified as cached_dependencies
-        # def js_missing_code(cached_dependencies = [])
-        #   result = ""
-        #   dependencies.each do |dep_name|
-        #     dependency_class = "Netzke::#{dep_name}".constantize
-        #     result << dependency_class.js_class_code(cached_dependencies)
-        #   end
-        #   result << js_class.strip_js_comments unless cached_dependencies.include?(short_widget_class_name) && !config[:no_caching]
-        #   result
-        # end
-      
         def this; "this".l; end
         def null; "null".l; end
       

@@ -2,6 +2,8 @@ Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.namespace('Ext.netzke');
 Ext.netzke.cache = {};
 
+Ext.QuickTips.init(); // seems obligatory in Ext v2.2.1, otherwise destroy() stops working properly
+
 // to comply with Rails' forgery protection
 Ext.Ajax.extraParams = {
     'authenticity_token': Ext.authenticityToken
@@ -47,13 +49,18 @@ Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
 
 // Methods common to all widget classes
 Ext.widgetMixIn = {
-  widgetInit:function(config){
+  actionHandler : function(action){
+    if (this.fireEvent(action.handlerName+'click', action)) this[action.handlerName](action);
+  },
+
+  widgetInit : function(config){
     this.app = Ext.getCmp('feedback_ghost');
     if (config.tools) Ext.each(config.tools, function(i){
-      i.on.click = this[i.on.click].createDelegate(this)
+      i.on.click = this[i.on.click].createDelegate(this);
     }, this);
     if (config.actions) Ext.each(config.actions, function(i){
-      i.handler = this[i.handler].createDelegate(this);
+      this.addEvents(i.handlerName + 'click');
+      i.handler = this.actionHandler.createDelegate(this);
     }, this);
 
     // set events
@@ -103,7 +110,7 @@ Ext.override(Ext.Panel, {
   loadWidget: function(url, params){
     if (!params) params = {}
     
-    this.remove(this.getWidget()); // first delete previous widget
+    this.remove(this.getWidget()); // first delete previous widget 
     
     if (!url) return false; // don't load any widget if the url is null
 
@@ -121,24 +128,26 @@ Ext.override(Ext.Panel, {
         script:false,
         callback:function(panel, success, response){
           var responseObj = Ext.decode(response.responseText);
-
-          // evaluate widget's class if it was sent
-          if (responseObj.classDefinition) {
-            eval(responseObj.classDefinition);
-          }
-
-          responseObj.config.parent = this // we might want to know the parent panel in advance (e.g. to know its size)
-          var instance = new Ext.netzke.cache[responseObj.config.widgetClassName](responseObj.config)
+          if (responseObj.config) {
+            // we got a normal response
+            
+            // evaluate widget's class if it was sent
+            if (responseObj.classDefinition) {
+              eval(responseObj.classDefinition);
+            }
+          
+            responseObj.config.parent = this // we might want to know the parent panel in advance (e.g. to know its size)
+            var instance = new Ext.netzke.cache[responseObj.config.widgetClassName](responseObj.config)
         
-          this.add(instance);
-          this.doLayout();
+            this.add(instance);
+            this.doLayout();
+          } else {
+            // we didn't get normal response - desplay the flash with eventual errors
+            this.ownerCt.feedback(responseObj.flash)
+          }
+          
+          // reenable the panel
           this.enable();
-        }, 
-        success:function(){
-          // alert('success');
-        }, 
-        failure:function(){
-          // alert('failure');
         },
         scope:this
     })
