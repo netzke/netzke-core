@@ -55,12 +55,18 @@ Ext.widgetMixIn = {
 
   widgetInit : function(config){
     this.app = Ext.getCmp('feedback_ghost');
+
     if (config.tools) Ext.each(config.tools, function(i){
       i.on.click = this[i.on.click].createDelegate(this);
     }, this);
+
     if (config.actions) Ext.each(config.actions, function(i){
       this.addEvents(i.handlerName + 'click');
       i.handler = this.actionHandler.createDelegate(this);
+    }, this);
+
+    if (config.menu) Ext.each(config.menu, function(i){
+      this.addMenuItem(i)
     }, this);
 
     // set events
@@ -90,6 +96,16 @@ Ext.widgetMixIn = {
         if (compoundResponse != "") alert(compoundResponse);
       }
     };
+  },
+
+  addMenuItem : function(item){
+    if (this.hostMenuItem) { 
+      this.hostMenuItem(item, this); 
+    } else {
+      if (this.ownerCt && this.ownerCt.ownerCt) {
+        this.ownerCt.ownerCt.addMenuItem(item)
+      }
+    }
   },
 
   addMenus:function(menus){
