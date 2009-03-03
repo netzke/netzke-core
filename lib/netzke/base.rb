@@ -10,6 +10,18 @@ module Netzke
   class Base
     module ClassMethods
 
+      # Used to get access to the location of the source file of a Widget, e.g. to automatically include
+      # <widget_name>_extras/*.rb files
+      def widget_file=(file)
+        write_inheritable_attribute(:widget_file, file)
+      end
+      
+      def widget_file
+        read_inheritable_attribute(:widget_file) || __FILE__
+      end
+      #
+      #
+
       # Global Netzke::Base configuration
       def config
         set_default_config({
@@ -66,12 +78,39 @@ module Netzke
         read_inheritable_attribute(:interface_points)
       end
       
+      #
+      # Include extra code from Ext js library (e.g. examples)
+      #
+      def ext_js_include(*args)
+        included_ext_js = read_inheritable_attribute(:included_ext_js) || []
+        args.each {|f| included_ext_js << f}
+        write_inheritable_attribute(:included_ext_js, included_ext_js)
+      end
+      
+      # def js_include(*args)
+      #   included_js = read_inheritable_attribute(:included_js) || []
+      #   args.each {|f| included_js << f}
+      #   write_inheritable_attribute(:included_js, included_js)
+      # end
+      
+      # include eventual extra modules
+      def include_extras
+        extras_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras")
+        file_list = Dir.glob("#{extras_dir}/*.rb")
+        for file_name in file_list
+          require file_name
+          module_name = "#{self.name}Extras::#{File.basename(file_name, ".rb").classify}"
+          include module_name.constantize
+        end
+      end
+
       # returns an instance of a widget defined in the config
       def instance_by_config(config)
         widget_class = "Netzke::#{config[:widget_class_name]}".constantize
         widget_class.new(config)
       end
       
+      # persistent_config and layout manager classes
       def persistent_config_manager_class
         Netzke::Base.config[:persistent_config_manager].constantize
       rescue NameError
@@ -84,16 +123,6 @@ module Netzke
         nil
       end
       
-      # include eventual extra modules
-      def include_extras(file = __FILE__)
-        extras_dir = File.join(File.dirname(file), short_widget_class_name.underscore + "_extras")
-        file_list = Dir.glob("#{extras_dir}/*.rb")
-        for file_name in file_list
-          require file_name
-          module_name = "#{self.name}Extras::#{File.basename(file_name, ".rb").classify}"
-          include module_name.constantize
-        end
-      end
       
       private
       def set_default_config(default_config)

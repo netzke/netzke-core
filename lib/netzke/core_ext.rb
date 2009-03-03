@@ -79,3 +79,11 @@ class Symbol
     self.to_s.camelize(:lower).to_sym
   end
 end
+
+module ActiveSupport
+  class TimeWithZone
+    def to_json
+      self.to_s(:db).to_json
+    end
+  end
+end

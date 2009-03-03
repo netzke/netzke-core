@@ -1,3 +1,6 @@
+v0.2.8
+Support for extra javascripts and stylesheets per widget.
+
 v0.2.7
 QuickTips get initialized now, as otherwise Ext 2.2.1 doesn't properly destroy() BoxComponents for me.
 

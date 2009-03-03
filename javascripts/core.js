@@ -146,10 +146,18 @@ Ext.override(Ext.Panel, {
           var responseObj = Ext.decode(response.responseText);
           if (responseObj.config) {
             // we got a normal response
+
+            // evaluate widget's stylesheets
+            if (responseObj.css){
+              var linkTag = document.createElement('style')
+              linkTag.type = 'text/css';
+              linkTag.innerHTML = responseObj.css;
+              document.body.appendChild(linkTag);
+            }
             
-            // evaluate widget's class if it was sent
-            if (responseObj.classDefinition) {
-              eval(responseObj.classDefinition);
+            // evaluate widget's javascript
+            if (responseObj.js) {
+              eval(responseObj.js);
             }
           
             responseObj.config.parent = this // we might want to know the parent panel in advance (e.g. to know its size)

@@ -56,13 +56,11 @@ module Netzke
           cached_dependencies.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached_dependencies).strip_js_comments
         end
       end
-    
-      def dependency_classes
-        res = []
-        non_late_aggregatees.each_key do |aggr|
-          res << aggregatee_instance(aggr).short_widget_class_name
+      
+      def css_missing_code(cached_dependencies = [])
+        dependency_classes.inject("") do |r,k| 
+          cached_dependencies.include?(k) ? r : r + "Netzke::#{k}".constantize.css_code(cached_dependencies)
         end
-        res.uniq
       end
     
       #
@@ -176,15 +174,69 @@ JS
           end
         end
         
-        # all the JS code needed for this class
-        def js_code(cached_dependencies)
+        # returns all extra js-code (as string) required by this widget's class
+        def js_included
+          # from extjs - defined in the widget class with ext_js_include
+          extjs_dir = "#{RAILS_ROOT}/public/extjs" # TODO: make extjs location configurable
+          included_ext_js = read_inheritable_attribute(:included_ext_js) || []
+          res = included_ext_js.inject("") do |r, path|
+            f = File.new("#{extjs_dir}/#{path}")
+            r << f.read
+          end
+
+          res << "\n"
+          
+          # from <widget_name>_extras/javascripts - all *.js files found there
+          js_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras", "javascripts") 
+          file_list = Dir.glob("#{js_dir}/*.js")
+
+          for file_name in file_list
+            f = File.new(file_name)
+            res << f.read
+          end
+          
+          res
+        end
+        
+        # all JS code needed for this class, including one from the ancestor widget
+        def js_code(cached_dependencies = [])
           res = ""
 
-          # include the dependency if doing JS
-          res << js_base_class.js_class if js_inheritance && !cached_dependencies.include?(js_base_class.short_widget_class_name)
+          # include the base-class javascript if doing JS inheritance
+          res << js_base_class.js_code << "\n" if js_inheritance && !cached_dependencies.include?(js_base_class.short_widget_class_name)
+
+          # include static javascripts
+          res << js_included << "\n"
 
           # our own JS class definition
           res << js_class
+          res
+        end
+
+        # returns all css code require by this widget's class
+        def css_included
+          res = ""
+          # from <widget_name>_extras/stylesheets - all *.css files found there
+          js_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras", "stylesheets") 
+          file_list = Dir.glob("#{js_dir}/*.css")
+
+          for file_name in file_list
+            f = File.new(file_name)
+            res << f.read
+          end
+          
+          res
+        end
+
+        # all JS code needed for this class including the one from the ancestor widget
+        def css_code(cached_dependencies = [])
+          res = ""
+
+          # include the base-class javascript if doing JS inheritance
+          res << js_base_class.css_code << "\n" if js_inheritance && !cached_dependencies.include?(js_base_class.short_widget_class_name)
+          
+          res << css_included << "\n"
+          
           res
         end
 

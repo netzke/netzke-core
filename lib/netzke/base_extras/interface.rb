@@ -2,9 +2,18 @@ module Netzke
   module BaseExtras
     module Interface
       def get_widget(params = {})
-        # if browser does not have our component class cached (and all dependencies), send it to him
         components_cache = (JSON.parse(params[:components_cache]) if params[:components_cache]) || []
-        {:config => js_config, :class_definition => js_missing_code(components_cache)}
+
+        js = js_missing_code(components_cache)
+        css = css_missing_code(components_cache)
+
+        css = nil if css.blank?
+
+        # if browser does not have our widget's (and all its dependencies') class and styles, send it over
+        { :config => js_config, 
+          :js => js,
+          :css => css
+        }
       end
     end
   end
