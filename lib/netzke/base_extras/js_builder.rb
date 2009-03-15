@@ -17,29 +17,35 @@ module Netzke
       # The config that is sent from the server and is used for instantiating a widget
       def js_config
         res = {}
+        
+        # Unique id of the widget
+        res.merge!(:id => @id_name)
     
-        # recursively include configs of all (non-late) aggregatees, so that the widget can instantiate them
+        # Recursively include configs of all non-late aggregatees, so that the widget can instantiate them in
+        # in the browser immediately.
         aggregatees.each_pair do |aggr_name, aggr_config|
           next if aggr_config[:late_aggregation]
           res["#{aggr_name}_config".to_sym] = aggregatee_instance(aggr_name.to_sym).js_config
         end
     
-        # interface
+        # Interface
         interface = self.class.interface_points.inject({}){|h,interfacep| h.merge(interfacep => widget_action(interfacep))}
         res.merge!(:interface => interface)
     
+        # Widget class name
         res.merge!(:widget_class_name => short_widget_class_name)
-
+        
+        # Include
         res.merge!(js_ext_config)
-        res.merge!(:id => @id_name)
     
-        # include tools and actions
-        res.merge!(:tools   => tools)   if tools
-        res.merge!(:actions => actions) if actions
-        res.merge!(:bbar    => tbar)    if tbar
-        res.merge!(:tbar    => bbar)    if bbar
+        # Actions, toolbars and menus
+        tools   && res.merge!(:tools   => tools)
+        actions && res.merge!(:actions => actions)
+        tbar    && res.merge!(:tbar    => tbar)
+        bbar    && res.merge!(:bbar    => bbar)
+        menu    && res.merge!(:menu    => menu)
 
-        # include permissions
+        # Permissions
         res.merge!(:permissions => permissions) unless available_permissions.empty?
       
         res
@@ -88,9 +94,10 @@ module Netzke
    
       # widget's actions, tools and toolbars that are loaded at the moment of instantiating a widget
       def actions; nil; end
-      def tools; nil; end
       def tbar; nil; end
       def bbar; nil; end
+      def menu; nil; end
+      def tools; nil; end
 
       # little helpers
       def this; "this".l; end
@@ -164,8 +171,9 @@ Ext.netzke.cache['#{short_widget_class_name}'] = Ext.extend(#{js_base_class}, Ex
   constructor: function(config){
     // comment
     #{js_before_constructor}
+    this.beforeConstructor(config);
     Ext.netzke.cache['#{short_widget_class_name}'].superclass.constructor.call(this, Ext.apply(#{js_default_config.to_js}, config));
-    this.widgetInit(config);
+    this.afterConstructor(config);
     #{js_after_constructor}
     #{js_add_menus}
   }
@@ -174,26 +182,75 @@ JS
           end
         end
         
+        #
+        # Include extra code from Ext js library (e.g. examples)
+        #
+        def ext_js_include(*args)
+          included_ext_js = read_inheritable_attribute(:included_ext_js) || []
+          args.each {|f| included_ext_js << f}
+          write_inheritable_attribute(:included_ext_js, included_ext_js)
+        end
+
+        #
+        # Include extra Javascript code. This code will be loaded along with the widget's class and in front of it.
+        #
+        # Example usage:
+        # js_include "File.dirname(__FILE__)/form_panel_extras/javascripts/xdatetime.js", 
+        #     :ext_examples => ["grid-filtering/menu/EditableItem.js", "grid-filtering/menu/RangeMenu.js"],
+        #     "File.dirname(__FILE__)/form_panel_extras/javascripts/xcheckbox.js"
+        #
+        def js_include(*args)
+          included_js = read_inheritable_attribute(:included_js) || []
+          args.each do |inclusion|
+            if inclusion.is_a?(Hash)
+              # we are signalized a non-default file location (e.g. Ext examples)
+              case inclusion.keys.first
+              when :ext_examples
+                location = Netzke::Base.config[:ext_location] + "/examples/"
+              end
+              files = inclusion.values.first
+            else
+              location = ""
+              files = inclusion
+            end
+            
+            files = [files] if files.is_a?(String)
+            
+            for f in files
+              included_js << location + f
+            end
+          end
+          write_inheritable_attribute(:included_js, included_js)
+        end
+
         # returns all extra js-code (as string) required by this widget's class
         def js_included
           # from extjs - defined in the widget class with ext_js_include
-          extjs_dir = "#{RAILS_ROOT}/public/extjs" # TODO: make extjs location configurable
-          included_ext_js = read_inheritable_attribute(:included_ext_js) || []
-          res = included_ext_js.inject("") do |r, path|
-            f = File.new("#{extjs_dir}/#{path}")
+          # extjs_dir = "#{RAILS_ROOT}/public/extjs" # TODO: make extjs location configurable
+          # begin
+          # res = super
+          # rescue
+          #   raise self.superclass.to_s
+          # end
+
+          res = ""
+          
+          included_js = read_inheritable_attribute(:included_js) || []
+          res << included_js.inject("") do |r, path|
+            f = File.new(path)
             r << f.read
           end
 
-          res << "\n"
-          
-          # from <widget_name>_extras/javascripts - all *.js files found there
-          js_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras", "javascripts") 
-          file_list = Dir.glob("#{js_dir}/*.js")
-
-          for file_name in file_list
-            f = File.new(file_name)
-            res << f.read
-          end
+          # res << "\n"
+          # 
+          # # from <widget_name>_extras/javascripts - all *.js files found there
+          # js_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras", "javascripts") 
+          # file_list = Dir.glob("#{js_dir}/*.js")
+          # 
+          # for file_name in file_list
+          #   f = File.new(file_name)
+          #   res << f.read
+          # end
           
           res
         end
@@ -214,19 +271,19 @@ JS
         end
 
         # returns all css code require by this widget's class
-        def css_included
-          res = ""
-          # from <widget_name>_extras/stylesheets - all *.css files found there
-          js_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras", "stylesheets") 
-          file_list = Dir.glob("#{js_dir}/*.css")
-
-          for file_name in file_list
-            f = File.new(file_name)
-            res << f.read
-          end
-          
-          res
-        end
+        # def css_included
+        #   res = ""
+        #   # from <widget_name>_extras/stylesheets - all *.css files found there
+        #   js_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras", "stylesheets") 
+        #   file_list = Dir.glob("#{js_dir}/*.css")
+        # 
+        #   for file_name in file_list
+        #     f = File.new(file_name)
+        #     res << f.read
+        #   end
+        #   
+        #   res
+        # end
 
         # all JS code needed for this class including the one from the ancestor widget
         def css_code(cached_dependencies = [])
@@ -235,7 +292,7 @@ JS
           # include the base-class javascript if doing JS inheritance
           res << js_base_class.css_code << "\n" if js_inheritance && !cached_dependencies.include?(js_base_class.short_widget_class_name)
           
-          res << css_included << "\n"
+          # res << css_included << "\n"
           
           res
         end

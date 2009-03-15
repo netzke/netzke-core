@@ -1,3 +1,7 @@
+/*
+This file gets loaded along with the rest of Ext library at the initial load
+*/
+
 /* feedback */
 .netzke-feedback {
     position:fixed;

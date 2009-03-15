@@ -8,48 +8,38 @@ module Netzke
   # should be aware of this constant.
   #
   class Base
+    
+    # Class-level Netzke::Base configuration. The defaults also get specified here.
+    def self.config
+      set_default_config({
+        # which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
+        :javascripts               => [],
+        :stylesheets               => [],
+        
+        :layout_manager            => "NetzkeLayout",
+        :persistent_config_manager => "NetzkePreference",
+        
+        :ext_location              => "#{RAILS_ROOT}/public/extjs"
+      })
+    end
+
+    include BaseExtras::JsBuilder
+    include BaseExtras::Interface
+    
     module ClassMethods
 
-      # Used to get access to the location of the source file of a Widget, e.g. to automatically include
-      # <widget_name>_extras/*.rb files
-      def widget_file=(file)
-        write_inheritable_attribute(:widget_file, file)
-      end
-      
-      def widget_file
-        read_inheritable_attribute(:widget_file) || __FILE__
-      end
-      #
-      #
-
-      # Global Netzke::Base configuration
-      def config
-        set_default_config({
-          :javascripts               => [],
-          :css                       => [],
-          :layout_manager            => "NetzkeLayout",
-          :persistent_config_manager => "NetzkePreference"
-        })
-      end
-
+      # "Netzke::SomeWidget" => "SomeWidget"
       def short_widget_class_name
-        name.split("::").last
+        self.name.split("::").last
       end
 
+      # Multi-user support
       def user
         @@user ||= nil
       end
 
       def user=(user)
         @@user = user
-
-        # also set up the managers
-        persistent_config_manager_class && persistent_config_manager_class.user = user
-        layout_manager_class && layout_manager_class.user = user
-      end
-
-      def user_has_role?(role)
-        user.login == 'sergei' && role.to_s == 'configurator'
       end
 
       #
@@ -78,32 +68,6 @@ module Netzke
         read_inheritable_attribute(:interface_points)
       end
       
-      #
-      # Include extra code from Ext js library (e.g. examples)
-      #
-      def ext_js_include(*args)
-        included_ext_js = read_inheritable_attribute(:included_ext_js) || []
-        args.each {|f| included_ext_js << f}
-        write_inheritable_attribute(:included_ext_js, included_ext_js)
-      end
-      
-      # def js_include(*args)
-      #   included_js = read_inheritable_attribute(:included_js) || []
-      #   args.each {|f| included_js << f}
-      #   write_inheritable_attribute(:included_js, included_js)
-      # end
-      
-      # include eventual extra modules
-      def include_extras
-        extras_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras")
-        file_list = Dir.glob("#{extras_dir}/*.rb")
-        for file_name in file_list
-          require file_name
-          module_name = "#{self.name}Extras::#{File.basename(file_name, ".rb").classify}"
-          include module_name.constantize
-        end
-      end
-
       # returns an instance of a widget defined in the config
       def instance_by_config(config)
         widget_class = "Netzke::#{config[:widget_class_name]}".constantize
@@ -123,7 +87,6 @@ module Netzke
         nil
       end
       
-      
       private
       def set_default_config(default_config)
         @@config ||= {}
@@ -133,9 +96,6 @@ module Netzke
       
     end
     extend ClassMethods
-    
-    # include extra modules
-    include_extras
     
     attr_accessor :config, :server_confg, :parent, :logger, :id_name, :permissions
     attr_reader :pref
@@ -171,9 +131,14 @@ module Netzke
     #     persistent_config["window.size"] => 100
     # This method is user-aware
     def persistent_config
-      config_klass = self.class.persistent_config_manager_class
-      config_klass && config_klass.widget_name = id_name # pass to the config class our unique name
-      config_klass || {} # if we don't have the presistent config manager, all the calls to it will always return nil, and the "="-operation will be ignored
+      config_klass = config[:persistent_config] && self.class.persistent_config_manager_class
+      if config_klass
+        config_klass.widget_name = id_name # pass to the config class our unique name
+        config_klass
+      else
+        # if we can't use presistent config, all the calls to it will always return nil, and the "="-operation will be ignored
+        {}
+      end
     end
     
     def initial_config
@@ -272,7 +237,11 @@ module Netzke
         
         # ... and then merge it with NetzkePreferences
         available_permissions.each do |p|
-          persistent_permisson = persistent_config["permissions.#{p}"]
+          # if nothing is stored in persistent_config, store the permission from the config; otherwise leave what's there
+          persistent_config["permissions/#{p}"].nil? && persistent_config["permissions/#{p}"] = @permissions[p.to_sym]
+
+          # what's stored in persistent_config has higher priority, so, if there's something there, use that
+          persistent_permisson = persistent_config["permissions/#{p}"]
           @permissions[p.to_sym] = persistent_permisson unless persistent_permisson.nil?
         end
       end
@@ -301,6 +270,31 @@ module Netzke
     def aggregatee_missing(aggr)
       flash :error => "Unknown aggregatee #{aggr} for widget #{config[:name]}"
       {:success => false, :flash => @flash}.to_json
+    end
+
+    def tools
+      persistent_config[:tools] ||= config[:tools] == false ? nil : config[:tools]
+    end
+
+    def bbar
+      persistent_config[:bottom_bar] ||= config[:bbar] == false ? nil : config[:bbar]
+    end
+
+    def tbar
+      persistent_config[:top_bar] ||= config[:tbar] == false ? nil : config[:tbar]
+    end
+
+    def menu
+      persistent_config[:menu] ||= config[:menu] == false ? nil : config[:menu]
+    end
+    
+    # some convenience for instances
+    def layout_manager_class
+      self.class.layout_manager_class
+    end
+
+    def persistent_config_manager_class
+      self.class.persistent_config_manager_class
     end
 
   end

@@ -34,6 +34,7 @@ end
 # Make this plugin auto-reloadable for easier development
 ActiveSupport::Dependencies.load_once_paths.delete(File.join(File.dirname(__FILE__)))
 
-# Include javascript & styles
+# Include javascript & styles required by all Netzke widgets. 
+# These files will get loaded at the initial load of the framework (along with Ext).
 Netzke::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"
-Netzke::Base.config[:css] << "#{File.dirname(__FILE__)}/../css/core.css"
+Netzke::Base.config[:stylesheets] << "#{File.dirname(__FILE__)}/../stylesheets/core.css"

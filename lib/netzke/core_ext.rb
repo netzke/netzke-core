@@ -12,7 +12,6 @@ class Hash
   
   # First camelizes the keys, then convert the whole hash to JSON
   def to_js
-    # self.delete_if{ |k,v| v.nil? } # we don't need to explicitely pass null values to javascript
     self.recursive_delete_if_nil.convert_keys{|k| k.camelize(:lower)}.to_json
   end
 
@@ -21,6 +20,7 @@ class Hash
     self.each_pair{|k,v| self[k] = v.to_s if v.is_a?(Symbol)}
   end
   
+  # We don't need to pass null values in JSON, they are null by simply being absent
   def recursive_delete_if_nil
     self.inject({}) do |h,(k,v)|
       if !v.nil?

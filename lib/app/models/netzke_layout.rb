@@ -1,16 +1,9 @@
 class NetzkeLayout < ActiveRecord::Base
   EXT_UNRELATED_ATTRIBUTES = %w{ id layout_id position created_at updated_at }
+
   # Multi user support
-  def self.user
-    @@user ||= nil
-  end
-  
-  def self.user=(user)
-    @@user = user
-  end
-  
   def self.user_id
-    user && user.id
+    Netzke::Base.user && Netzke::Base.user.id
   end
   
   # normal create, but with a user_id merged-in

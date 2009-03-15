@@ -14,7 +14,7 @@ class NetzkeController < ActionController::Base
       
       format.css {
         res = ""
-        Netzke::Base.config[:css].each do |path|
+        Netzke::Base.config[:stylesheets].each do |path|
           f = File.new(path)
           res << f.read
         end

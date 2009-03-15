@@ -1,8 +1,12 @@
+/*
+This file gets loaded along with the rest of Ext library at the initial load
+*/
+
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.namespace('Ext.netzke');
 Ext.netzke.cache = {};
 
-Ext.QuickTips.init(); // seems obligatory in Ext v2.2.1, otherwise destroy() stops working properly
+Ext.QuickTips.init(); // seems obligatory in Ext v2.2.1, otherwise Ext.Component#destroy() stops working properly
 
 // to comply with Rails' forgery protection
 Ext.Ajax.extraParams = {
@@ -16,7 +20,34 @@ Ext.chainApply = function(objectArray){
   return res;
 };
 
-// implementation of totalProperty, successProperty and root configuration options for ArrayReader
+// Type detection functions
+function isArray(o) {
+  return (o != null && typeof o == "object" && o.constructor.toString() == Array.toString());
+}
+
+function isObject(o) {
+  return (o != null && typeof o == "object" && o.constructor.toString() == Object.toString());
+}
+
+// Some Rubyish String extensions
+// from http://code.google.com/p/inflection-js/
+String.prototype.capitalize=function()
+{
+  var str=this.toLowerCase();
+  str=str.substring(0,1).toUpperCase()+str.substring(1);
+  return str;
+};
+
+String.prototype.humanize=function(lowFirstLetter)
+{
+  var str=this.toLowerCase();
+  str=str.replace(new RegExp('_id','g'),'');
+  str=str.replace(new RegExp('_','g'),' ');
+  if(!lowFirstLetter)str=str.capitalize();
+  return str;
+};
+
+// Implementation of totalProperty, successProperty and root configuration options for ArrayReader
 Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
   readRecords : function(o){
     var sid = this.meta ? this.meta.id : null;
@@ -49,34 +80,95 @@ Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
 
 // Methods common to all widget classes
 Ext.widgetMixIn = {
+  // Common handler for actions
   actionHandler : function(action){
-    if (this.fireEvent(action.handlerName+'click', action)) this[action.handlerName](action);
+    // If firing corresponding event doesn't return false, call the handler
+    if (this.fireEvent(action.name+'click', action)) this[action.name+"Handler"](action);
   },
 
-  widgetInit : function(config){
+  // Common handler for tools
+  toolActionHandler : function(tool){
+    // If firing corresponding event doesn't return false, call the handler
+    if (this.fireEvent(tool.id+'click')) this[tool+"Handler"]();
+  },
+
+  beforeConstructor : function(config){
+    this.actions = {};
+
+    // Create Ext.Actions based on config.actions
+    if (config.actions) {
+      for (var name in config.actions) {
+        // Create an event for each action (so that higher-level widgets could interfere)
+        this.addEvents(name+'click');
+
+        // Configure the action
+        var actionConfig = config.actions[name];
+        actionConfig.handler = this.actionHandler.createDelegate(this);
+        actionConfig.name = name;
+        this.actions[name] = new Ext.Action(actionConfig);
+      }
+
+      /* Parse the bbar and tbar (both Arrays), replacing the strings with the corresponding methods. For example:
+        replaceStringsWithActions( ['add', {text:'Menu', menu:['edit', 'delete']}] )
+        => [scope.actions['add'], {text:'Menu', menu:[scope.actions['edit'], scope.actions['delete']]}]
+      */
+      var replaceStringsWithActions = function(arry, scope){
+        var res = []; // new array
+        Ext.each(arry, function(o){
+          if (typeof o === "string") {
+            if (scope.actions[o]){
+              res.push(scope.actions[o]);
+            } else {
+              // if there's no action with this name, maybe it's a separator or something
+              res.push(o);
+            }
+          } else if (isObject(o)) {
+            // look inside the objects...
+            for (var key in o) {
+              if (isArray(o[key])) {
+                // ... and recursively process inner arrays found
+                o[key] = replaceStringsWithActions(o[key], scope);
+              }
+            }
+            res.push(o);
+          }
+        });
+        return res;
+      }
+      config.bbar = config.bbar && replaceStringsWithActions(config.bbar, this);
+      config.tbar = config.tbar && replaceStringsWithActions(config.tbar, this);
+      config.menu = config.menu && replaceStringsWithActions(config.menu, this);
+      
+    }
+
+    // Normalize tools
+    if (config.tools) {
+      var normTools = [];
+      Ext.each(config.tools, function(tool){
+        // Create an event for each action (so that higher-level widgets could interfere)
+        this.addEvents(tool.id+'click');
+
+        var handler = this.toolActionHandler.createDelegate(this, [tool]);
+        normTools.push({id : tool, handler : handler, scope : this});
+      }, this);
+      config.tools = normTools;
+    }
+    
+  },
+
+  afterConstructor : function(config){
     this.app = Ext.getCmp('feedback_ghost');
 
-    if (config.tools) Ext.each(config.tools, function(i){
-      i.on.click = this[i.on.click].createDelegate(this);
-    }, this);
-
-    if (config.actions) Ext.each(config.actions, function(i){
-      this.addEvents(i.handlerName + 'click');
-      i.handler = this.actionHandler.createDelegate(this);
-    }, this);
-
-    if (config.menu) Ext.each(config.menu, function(i){
-      this.addMenuItem(i)
-    }, this);
-
-    // set events
+    // cleaning up
     this.on('beforedestroy', function(){
-      // clean-up menus
-      if (this.app && !!this.app.unhostMenus) {
-        this.app.unhostMenus(this)
-      }
+      this.cleanUpMenu(this);
     }, this);
     
+    // After render, add the menus
+    this.on('render', function(){
+      if (this.initialConfig.menu) {this.addMenu(this.initialConfig.menu);}
+    }, this);
+
     this.on('render', this.onWidgetLoad, this);
   },
 
@@ -98,19 +190,25 @@ Ext.widgetMixIn = {
     };
   },
 
-  addMenuItem : function(item){
-    if (this.hostMenuItem) { 
-      this.hostMenuItem(item, this); 
+  addMenu : function(menu, owner){
+    if (!owner) {owner = this;}
+    if (!!this.hostMenu) { 
+      this.hostMenu(menu, owner); 
     } else {
       if (this.ownerCt && this.ownerCt.ownerCt) {
-        this.ownerCt.ownerCt.addMenuItem(item)
+        this.ownerCt.ownerCt.addMenu(menu, owner);
       }
     }
   },
-
-  addMenus:function(menus){
-    if (this.app && !!this.app.hostMenu) {
-      Ext.each(menus, function(menu){this.app.hostMenu(menu, this)}, this)
+  
+  cleanUpMenu : function(owner){
+    if (!owner) {owner = this;}
+    if (!!this.unhostMenu) { 
+      this.unhostMenu(owner); 
+    } else {
+      if (this.parent) {
+        this.parent.cleanUpMenu(owner);
+      }
     }
   },
   
@@ -160,7 +258,7 @@ Ext.override(Ext.Panel, {
               eval(responseObj.js);
             }
           
-            responseObj.config.parent = this // we might want to know the parent panel in advance (e.g. to know its size)
+            responseObj.config.parent = this.ownerCt; // we might want to know the parent panel in advance (e.g. to know its size)
             var instance = new Ext.netzke.cache[responseObj.config.widgetClassName](responseObj.config)
         
             this.add(instance);
@@ -178,20 +276,3 @@ Ext.override(Ext.Panel, {
   }
 });
 
-// Some Rubyish String extensions
-// from http://code.google.com/p/inflection-js/
-String.prototype.capitalize=function()
-{
-  var str=this.toLowerCase();
-  str=str.substring(0,1).toUpperCase()+str.substring(1);
-  return str;
-};
-
-String.prototype.humanize=function(lowFirstLetter)
-{
-  var str=this.toLowerCase();
-  str=str.replace(new RegExp('_id','g'),'');
-  str=str.replace(new RegExp('_','g'),' ');
-  if(!lowFirstLetter)str=str.capitalize();
-  return str;
-};

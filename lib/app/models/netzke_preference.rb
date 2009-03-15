@@ -6,19 +6,12 @@
 # etc
 #
 class NetzkePreference < ActiveRecord::Base
+  named_scope :for_current_user, lambda { {:conditions => {:user_id => user_id}} }
+  
   ELEMENTARY_CONVERTION_METHODS= {'Fixnum' => 'to_i', 'String' => 'to_s', 'Float' => 'to_f', 'Symbol' => 'to_sym'}
   
-  # Multi user support
-  def self.user
-    @@user ||= nil
-  end
-  
-  def self.user=(user)
-    @@user = user
-  end
-  
   def self.user_id
-    user && user.id
+    Netzke::Base.user && Netzke::Base.user.id
   end
   
   def self.widget_name=(value)
@@ -54,14 +47,14 @@ class NetzkePreference < ActiveRecord::Base
   end
   
   def self.[](pref_name)
-    pref_name  = pref_name.to_s
+    pref_name  = normalize_preference_name(pref_name)
     conditions = {:name => pref_name, :user_id => user_id, :widget_name => self.widget_name}
     pref       = self.find(:first, :conditions => conditions)
     pref && pref.normalized_value
   end
   
   def self.[]=(pref_name, new_value)
-    pref_name  = pref_name.to_s
+    pref_name  = normalize_preference_name(pref_name)
     conditions = {:name => pref_name, :user_id => user_id, :widget_name => self.widget_name}
     pref       = self.find(:first, :conditions => conditions)
     
@@ -73,6 +66,11 @@ class NetzkePreference < ActiveRecord::Base
       pref.normalized_value = new_value
       pref.save!
     end
+  end
+  
+  private
+  def self.normalize_preference_name(name)
+    name.to_s.gsub(".", "__").gsub("/", "__")
   end
   
 end
