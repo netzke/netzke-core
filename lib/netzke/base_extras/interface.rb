@@ -1,3 +1,5 @@
+require 'json'
+
 module Netzke
   module BaseExtras
     module Interface

@@ -1,4 +1,5 @@
-require 'json'
+require 'netzke/base_extras/js_builder'
+require 'netzke/base_extras/interface'
 
 module Netzke
   # 
@@ -19,12 +20,12 @@ module Netzke
         :layout_manager            => "NetzkeLayout",
         :persistent_config_manager => "NetzkePreference",
         
-        :ext_location              => "#{RAILS_ROOT}/public/extjs"
+        :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs"
       })
     end
 
-    include BaseExtras::JsBuilder
-    include BaseExtras::Interface
+    include Netzke::BaseExtras::JsBuilder
+    include Netzke::BaseExtras::Interface
     
     module ClassMethods
 

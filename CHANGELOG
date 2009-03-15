@@ -1,7 +1,7 @@
 v0.3.0
 Actions, toolbars and tools reworked for easier configuration.
 Menus introduced (based on actions).
-Major code clean-up.
+Significant code clean-up.
 
 v0.2.8
 Support for extra javascripts and stylesheets per widget.

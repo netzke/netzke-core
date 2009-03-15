@@ -1,5 +1,8 @@
+require 'active_support'
+
 # NetzkeCore
 require 'netzke/base'
+
 require 'netzke/action_view_ext'
 require 'netzke/controller_extensions'
 require 'netzke/core_ext'
