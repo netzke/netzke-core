@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2009-03-15}
+  s.date = %q{2009-03-17}
   s.description = %q{Build ExtJS/Rails widgets with minimum effort}
   s.email = %q{sergei@writelesscode.com}
   s.extra_rdoc_files = ["CHANGELOG", "lib/app/controllers/netzke_controller.rb", "lib/app/models/netzke_layout.rb", "lib/app/models/netzke_preference.rb", "lib/netzke/action_view_ext.rb", "lib/netzke/base.rb", "lib/netzke/base_extras/interface.rb", "lib/netzke/base_extras/js_builder.rb", "lib/netzke/controller_extensions.rb", "lib/netzke/core_ext.rb", "lib/netzke/feedback_ghost.rb", "lib/netzke/routing.rb", "lib/netzke-core.rb", "lib/vendor/facets/hash/recursive_merge.rb", "LICENSE", "README.mdown", "tasks/netzke_core_tasks.rake", "TODO"]

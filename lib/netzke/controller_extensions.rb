@@ -117,7 +117,7 @@ module Netzke
     Ext.onReady(function(){
     	<%= #{name}_widget_instance %>
     	<%= #{name}_widget_render %>
-    })
+    });
 	</script>
 </head>
 <body>

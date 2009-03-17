@@ -75,7 +75,7 @@ module Netzke
 
       # instantiating
       def js_widget_instance
-        %Q{var #{config[:name].to_js} = new Ext.netzke.cache['#{short_widget_class_name}'](#{js_config.to_js});}
+        %Q{var #{config[:name].to_js} = new Ext.netzke.cache.#{short_widget_class_name}(#{js_config.to_js});}
       end
 
       # rendering
@@ -157,27 +157,24 @@ module Netzke
         def js_class
           if js_inheritance
 <<-JS
-Ext.netzke.cache['#{short_widget_class_name}'] = Ext.extend(Ext.netzke.cache.#{js_base_class.short_widget_class_name}, Ext.chainApply([Ext.widgetMixIn, {
-  constructor: function(config){
-    Ext.netzke.cache['#{short_widget_class_name}'].superclass.constructor.call(this, config);
-  }
-}, #{js_extend_properties.to_js}]))
+Ext.netzke.cache.#{short_widget_class_name} = function(config){
+  Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, config);
+};
+Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, Ext.netzke.cache.#{js_base_class.short_widget_class_name}, Ext.apply(Ext.widgetMixIn, #{js_extend_properties.to_js}));
 
 JS
           else
             js_add_menus = "this.addMenus(#{js_menus.to_js});" unless js_menus.empty?
 <<-JS
-Ext.netzke.cache['#{short_widget_class_name}'] = Ext.extend(#{js_base_class}, Ext.chainApply([Ext.widgetMixIn, {
-  constructor: function(config){
-    // comment
+Ext.netzke.cache.#{short_widget_class_name} = function(config){
     #{js_before_constructor}
     this.beforeConstructor(config);
-    Ext.netzke.cache['#{short_widget_class_name}'].superclass.constructor.call(this, Ext.apply(#{js_default_config.to_js}, config));
+    Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, Ext.apply(#{js_default_config.to_js}, config));
     this.afterConstructor(config);
     #{js_after_constructor}
     #{js_add_menus}
-  }
-}, #{js_extend_properties.to_js}]))
+};
+Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, #{js_base_class}, Ext.apply(Ext.widgetMixIn, #{js_extend_properties.to_js}));
 JS
           end
         end
