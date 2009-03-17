@@ -160,8 +160,8 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   
   test "js inheritance" do
     widget = JsInheritanceWidget.new
-    assert(widget.js_missing_code.index("Ext.netzke.cache['JsInheritanceWidget']"))
-    assert(widget.js_missing_code.index("Ext.netzke.cache['Widget']"))
+    assert(widget.js_missing_code.index("Ext.netzke.cache.JsInheritanceWidget"))
+    assert(widget.js_missing_code.index("Ext.netzke.cache.Widget"))
   end
   # test "multiuser" do
   #   Netzke::Base.current_user = User.new(1)
