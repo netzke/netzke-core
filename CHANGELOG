@@ -2,6 +2,8 @@ v0.3.0
 Actions, toolbars and tools reworked for easier configuration.
 Menus introduced (based on actions).
 Significant code clean-up.
+Bug fix (nasty one): Ext.widgetMixIn was getting messed up along with dynamic widget loading.
+Must work in IE now.
 
 v0.2.8
 Support for extra javascripts and stylesheets per widget.

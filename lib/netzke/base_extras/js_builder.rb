@@ -160,7 +160,7 @@ module Netzke
 Ext.netzke.cache.#{short_widget_class_name} = function(config){
   Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, config);
 };
-Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, Ext.netzke.cache.#{js_base_class.short_widget_class_name}, Ext.apply(Ext.widgetMixIn, #{js_extend_properties.to_js}));
+Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, Ext.netzke.cache.#{js_base_class.short_widget_class_name}, Ext.applyIf(#{js_extend_properties.to_js}, Ext.widgetMixIn));
 
 JS
           else
@@ -174,7 +174,7 @@ Ext.netzke.cache.#{short_widget_class_name} = function(config){
     #{js_after_constructor}
     #{js_add_menus}
 };
-Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, #{js_base_class}, Ext.apply(Ext.widgetMixIn, #{js_extend_properties.to_js}));
+Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_js}, Ext.widgetMixIn));
 JS
           end
         end

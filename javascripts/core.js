@@ -83,7 +83,7 @@ Ext.widgetMixIn = {
   // Common handler for actions
   actionHandler : function(action){
     // If firing corresponding event doesn't return false, call the handler
-    if (this.fireEvent(action.name+'click', action)) this[action.name+"Handler"](action);
+    if (this.fireEvent(action.name+'click', action)) this[(action.fn || action.name)+"Handler"](action);
   },
 
   // Common handler for tools
