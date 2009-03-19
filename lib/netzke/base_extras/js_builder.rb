@@ -3,7 +3,7 @@ module Netzke
     # 
     # Module which provides JS-class generation functionality for the widgets ("client-side"). This code is executed only once per widget class, and the results are cached at the server (unless widget specifies config[:no_caching] => true).
     # Included into Netzke::Base class
-    # Most of the methods below are meant to be overwritten by a concrete widget class.
+    # Most of the methods below are meant to be overwritten
     # 
     module JsBuilder
       def self.included(base)
@@ -222,14 +222,6 @@ JS
 
         # returns all extra js-code (as string) required by this widget's class
         def js_included
-          # from extjs - defined in the widget class with ext_js_include
-          # extjs_dir = "#{RAILS_ROOT}/public/extjs" # TODO: make extjs location configurable
-          # begin
-          # res = super
-          # rescue
-          #   raise self.superclass.to_s
-          # end
-
           res = ""
           
           included_js = read_inheritable_attribute(:included_js) || []
@@ -238,17 +230,6 @@ JS
             r << f.read
           end
 
-          # res << "\n"
-          # 
-          # # from <widget_name>_extras/javascripts - all *.js files found there
-          # js_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras", "javascripts") 
-          # file_list = Dir.glob("#{js_dir}/*.js")
-          # 
-          # for file_name in file_list
-          #   f = File.new(file_name)
-          #   res << f.read
-          # end
-          
           res
         end
         
@@ -266,21 +247,6 @@ JS
           res << js_class
           res
         end
-
-        # returns all css code require by this widget's class
-        # def css_included
-        #   res = ""
-        #   # from <widget_name>_extras/stylesheets - all *.css files found there
-        #   js_dir = File.join(File.dirname(widget_file), short_widget_class_name.underscore + "_extras", "stylesheets") 
-        #   file_list = Dir.glob("#{js_dir}/*.css")
-        # 
-        #   for file_name in file_list
-        #     f = File.new(file_name)
-        #     res << f.read
-        #   end
-        #   
-        #   res
-        # end
 
         # all JS code needed for this class including the one from the ancestor widget
         def css_code(cached_dependencies = [])

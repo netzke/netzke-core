@@ -1,4 +1,4 @@
-v0.3.0
+v0.2.9
 Actions, toolbars and tools reworked for easier configuration.
 Menus introduced (based on actions).
 Significant code clean-up.

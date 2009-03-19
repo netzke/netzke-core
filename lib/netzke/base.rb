@@ -2,12 +2,6 @@ require 'netzke/base_extras/js_builder'
 require 'netzke/base_extras/interface'
 
 module Netzke
-  # 
-  # Configuration:
-  # * Define NETZKE_BOOT_CONFIG in environment.rb to specify which Netzke functionality should be disabled 
-  # to reduce the size of /netzke/netzke.[js|css]. Those Netzke gems that use additional JS/CSS-code 
-  # should be aware of this constant.
-  #
   class Base
     
     # Class-level Netzke::Base configuration. The defaults also get specified here.
