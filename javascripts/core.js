@@ -31,6 +31,22 @@ function isObject(o) {
 
 // Some Rubyish String extensions
 // from http://code.google.com/p/inflection-js/
+String.prototype.camelize=function(lowFirstLetter)
+{
+  var str=this.toLowerCase();
+  var str_path=str.split('/');
+  for(var i=0;i<str_path.length;i++)
+  {
+    var str_arr=str_path[i].split('_');
+    var initX=((lowFirstLetter&&i+1==str_path.length)?(1):(0));
+    for(var x=initX;x<str_arr.length;x++)
+      str_arr[x]=str_arr[x].charAt(0).toUpperCase()+str_arr[x].substring(1);
+    str_path[i]=str_arr.join('');
+  }
+  str=str_path.join('::');
+  return str;
+};
+
 String.prototype.capitalize=function()
 {
   var str=this.toLowerCase();
@@ -83,13 +99,17 @@ Ext.widgetMixIn = {
   // Common handler for actions
   actionHandler : function(action){
     // If firing corresponding event doesn't return false, call the handler
-    if (this.fireEvent(action.name+'click', action)) this[(action.fn || action.name)+"Handler"](action);
+    if (this.fireEvent(action.name+'click', action)) {
+      this[(action.fn || action.name)](action);
+    }
   },
 
   // Common handler for tools
   toolActionHandler : function(tool){
     // If firing corresponding event doesn't return false, call the handler
-    if (this.fireEvent(tool.id+'click')) this[tool+"Handler"]();
+    if (this.fireEvent(tool.id+'click')) {
+      this[tool]();
+    }
   },
 
   beforeConstructor : function(config){
@@ -116,8 +136,9 @@ Ext.widgetMixIn = {
         var res = []; // new array
         Ext.each(arry, function(o){
           if (typeof o === "string") {
-            if (scope.actions[o]){
-              res.push(scope.actions[o]);
+            var camelized = o.camelize(true);
+            if (scope.actions[camelized]){
+              res.push(scope.actions[camelized]);
             } else {
               // if there's no action with this name, maybe it's a separator or something
               res.push(o);
@@ -157,7 +178,7 @@ Ext.widgetMixIn = {
   },
 
   afterConstructor : function(config){
-    this.app = Ext.getCmp('feedback_ghost');
+    this.feedbackGhost = Ext.getCmp('feedback_ghost');
 
     // cleaning up
     this.on('beforedestroy', function(){
@@ -173,36 +194,47 @@ Ext.widgetMixIn = {
   },
 
   feedback:function(msg){
-    if (this.initialConfig && this.initialConfig.quiet) return false;
-    if (this.app && !!this.app.showFeedback) {
-      this.app.showFeedback(msg)
+    if (this.initialConfig && this.initialConfig.quiet) {
+      return false;
+    }
+    
+    if (this.feedbackGhost) {
+      this.feedbackGhost.showFeedback(msg);
     } else {
       // there's no application to show the feedback - so, we do it ourselves
       if (typeof msg == 'string'){
-        alert(msg)
+        alert(msg);
       } else {
-        var compoundResponse = ""
+        var compoundResponse = "";
         Ext.each(msg, function(m){
           compoundResponse += m.msg + "\n"
-        })
-        if (compoundResponse != "") alert(compoundResponse);
+        });
+        if (compoundResponse != "") {
+          alert(compoundResponse);
+        }
       }
-    };
+    }
   },
 
   addMenu : function(menu, owner){
-    if (!owner) {owner = this;}
+    if (!owner) {
+      owner = this;
+    }
+    
     if (!!this.hostMenu) { 
       this.hostMenu(menu, owner); 
     } else {
-      if (this.ownerCt && this.ownerCt.ownerCt) {
-        this.ownerCt.ownerCt.addMenu(menu, owner);
+      if (this.parent) {
+        this.parent.addMenu(menu, owner);
       }
     }
   },
   
   cleanUpMenu : function(owner){
-    if (!owner) {owner = this;}
+    if (!owner) {
+      owner = this;
+    }
+    
     if (!!this.unhostMenu) { 
       this.unhostMenu(owner); 
     } else {
@@ -218,11 +250,13 @@ Ext.widgetMixIn = {
 // Make Panel with layout 'fit' capable to dynamically load widgets
 Ext.override(Ext.Panel, {
   getWidget: function(){
-    return this.items.get(0)
+    return this.items.get(0);
   },
   
   loadWidget: function(url, params){
-    if (!params) params = {}
+    if (!params) {
+      params = {};
+    }
     
     this.remove(this.getWidget()); // first delete previous widget 
     
@@ -247,7 +281,7 @@ Ext.override(Ext.Panel, {
 
             // evaluate widget's stylesheets
             if (responseObj.css){
-              var linkTag = document.createElement('style')
+              var linkTag = document.createElement('style');
               linkTag.type = 'text/css';
               linkTag.innerHTML = responseObj.css;
               document.body.appendChild(linkTag);
@@ -265,7 +299,7 @@ Ext.override(Ext.Panel, {
             this.doLayout();
           } else {
             // we didn't get normal response - desplay the flash with eventual errors
-            this.ownerCt.feedback(responseObj.flash)
+            this.ownerCt.feedback(responseObj.flash);
           }
           
           // reenable the panel

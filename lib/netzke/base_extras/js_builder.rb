@@ -167,8 +167,8 @@ JS
             js_add_menus = "this.addMenus(#{js_menus.to_js});" unless js_menus.empty?
 <<-JS
 Ext.netzke.cache.#{short_widget_class_name} = function(config){
-    #{js_before_constructor}
     this.beforeConstructor(config);
+    #{js_before_constructor}
     Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, Ext.apply(#{js_default_config.to_js}, config));
     this.afterConstructor(config);
     #{js_after_constructor}
