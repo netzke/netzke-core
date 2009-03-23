@@ -30,7 +30,7 @@ class NetzkePreference < ActiveRecord::Base
     when nil             then r = norm_value  # do not cast
     when 'Boolean'       then r = norm_value == 'false' ? false : (norm_value == 'true' || norm_value)
     when 'NilClass'      then r = nil
-    when 'Array', 'Hash' then r = JSON.parse(norm_value)
+    when 'Array', 'Hash' then r = ActiveSupport::JSON.decode(norm_value)
     else
       r = norm_value.send(ELEMENTARY_CONVERTION_METHODS[klass])
     end

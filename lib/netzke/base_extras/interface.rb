@@ -1,10 +1,8 @@
-require 'json'
-
 module Netzke
   module BaseExtras
     module Interface
       def get_widget(params = {})
-        components_cache = (JSON.parse(params[:components_cache]) if params[:components_cache]) || []
+        components_cache = (ActiveSupport::JSON.decode(params[:components_cache]) if params[:components_cache]) || []
 
         js = js_missing_code(components_cache)
         css = css_missing_code(components_cache)

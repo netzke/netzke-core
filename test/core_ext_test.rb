@@ -1,14 +1,12 @@
 require 'test_helper'
 require 'netzke/core_ext'
 
-require 'json'
-
 class CoreExtTest < ActiveSupport::TestCase
   test "to_js" do
-    assert_equal({"aProperty" => true}, JSON.parse({:a_property => true}.to_js))
-    assert_equal({"aProperty" => true}, JSON.parse({:a_property => true, :nil_property => nil}.to_js))
-    assert_equal([{"aProperty" => true}, {"anotherProperty" => false}], JSON.parse([{:a_property => true}, {:another_property => false}].to_js))
-    assert_equal([{"aProperty" => true}, {"anotherProperty" =>false}], JSON.parse([{:a_property => true, :nil_property => nil}, {:another_property => false}].to_js))
+    assert_equal({"aProperty" => true}, ActiveSupport::JSON.decode({:a_property => true}.to_js))
+    assert_equal({"aProperty" => true}, ActiveSupport::JSON.decode({:a_property => true, :nil_property => nil}.to_js))
+    assert_equal([{"aProperty" => true}, {"anotherProperty" => false}], ActiveSupport::JSON.decode([{:a_property => true}, {:another_property => false}].to_js))
+    assert_equal([{"aProperty" => true}, {"anotherProperty" =>false}], ActiveSupport::JSON.decode([{:a_property => true, :nil_property => nil}, {:another_property => false}].to_js))
   end
   
   test "recursive delete if nil" do

@@ -53,7 +53,7 @@ end
 class String
   # Converts self to "literal JSON"-string - one that doesn't get quotes appended when being sent "to_json" method
   def l
-    def self.to_json
+    def self.to_json(options={})
       self
     end
     self

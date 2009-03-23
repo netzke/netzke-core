@@ -1,3 +1,6 @@
+v0.2.10
+Removed dependency on 'json' gem.
+
 v0.2.9
 Actions, toolbars and tools reworked for easier configuration.
 Menus introduced (based on actions).
