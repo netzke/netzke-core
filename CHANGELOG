@@ -1,5 +1,6 @@
 v0.2.10
 Removed dependency on 'json' gem.
+Rails v2.3.2 compatibility.
 
 v0.2.9
 Actions, toolbars and tools reworked for easier configuration.
