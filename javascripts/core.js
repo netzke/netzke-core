@@ -3,29 +3,26 @@ This file gets loaded along with the rest of Ext library at the initial load
 */
 
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
-Ext.namespace('Ext.netzke');
+Ext.namespace('Ext.netzke'); // namespace for extensions that depend on Ext
+Ext.namespace('Netzke'); // namespace for extensions that do not depend on Ext
 Ext.netzke.cache = {};
 
 Ext.QuickTips.init(); // seems obligatory in Ext v2.2.1, otherwise Ext.Component#destroy() stops working properly
 
 // to comply with Rails' forgery protection
 Ext.Ajax.extraParams = {
-    'authenticity_token': Ext.authenticityToken
+  authenticity_token : Ext.authenticityToken
 };
 
 // helper method to do multiple Ext.apply's
-Ext.chainApply = function(objectArray){
+Ext.netzke.chainApply = function(objectArray){
   var res = {};
   Ext.each(objectArray, function(obj){Ext.apply(res, obj)});
   return res;
 };
 
 // Type detection functions
-function isArray(o) {
-  return (o != null && typeof o == "object" && o.constructor.toString() == Array.toString());
-}
-
-function isObject(o) {
+Netzke.isObject = function(o) {
   return (o != null && typeof o == "object" && o.constructor.toString() == Object.toString());
 }
 
@@ -143,10 +140,10 @@ Ext.widgetMixIn = {
               // if there's no action with this name, maybe it's a separator or something
               res.push(o);
             }
-          } else if (isObject(o)) {
+          } else if (Netzke.isObject(o)) {
             // look inside the objects...
             for (var key in o) {
-              if (isArray(o[key])) {
+              if (Ext.isArray(o[key])) {
                 // ... and recursively process inner arrays found
                 o[key] = replaceStringsWithActions(o[key], scope);
               }

@@ -1,9 +1,9 @@
 module Netzke
   module BaseExtras
     # 
-    # Module which provides JS-class generation functionality for the widgets ("client-side"). This code is executed only once per widget class, and the results are cached at the server (unless widget specifies config[:no_caching] => true).
-    # Included into Netzke::Base class
-    # Most of the methods below are meant to be overwritten
+    # Module which provides JS-class generation functionality for the widgets ("client-side"). This code is executed only once per widget class, and the results are cached at the server.
+    # Included into Netzke::Base class.
+    # Most of the methods below are meant to be overwritten.
     # 
     module JsBuilder
       def self.included(base)
