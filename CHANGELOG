@@ -1,3 +1,6 @@
+v0.2.11
+Introduction of getOwnerWidget()-method to Ext.Component. It provides the Netzke widget this Component belongs to.
+
 v0.2.10
 Removed dependency on 'json' gem.
 Rails v2.3.2 compatibility.

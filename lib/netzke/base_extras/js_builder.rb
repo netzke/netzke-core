@@ -127,7 +127,8 @@ module Netzke
             # :items   => js_items,
             :height    => 400,
             :width     => 800,
-            :border    => false
+            :border    => false,
+            :is_netzke => true # to distinguish a Netzke widget from regular Ext components
           }
         end
 

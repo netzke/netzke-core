@@ -221,8 +221,8 @@ Ext.widgetMixIn = {
     if (!!this.hostMenu) { 
       this.hostMenu(menu, owner); 
     } else {
-      if (this.parent) {
-        this.parent.addMenu(menu, owner);
+      if (this.ownerWidget) {
+        this.ownerWidget.addMenu(menu, owner);
       }
     }
   },
@@ -235,8 +235,8 @@ Ext.widgetMixIn = {
     if (!!this.unhostMenu) { 
       this.unhostMenu(owner); 
     } else {
-      if (this.parent) {
-        this.parent.cleanUpMenu(owner);
+      if (this.ownerWidget) {
+        this.ownerWidget.cleanUpMenu(owner);
       }
     }
   },
@@ -244,7 +244,27 @@ Ext.widgetMixIn = {
   onWidgetLoad:Ext.emptyFn // gets overridden
 };
 
-// Make Panel with layout 'fit' capable to dynamically load widgets
+// Netzke extensions for Ext.Container
+Ext.override(Ext.Container, {
+  /** 
+    Get Netzke widget that this Ext.Container is part of. 
+    It searches up the Ext.Container hierarchy until it finds a Container that has isNetzke property set to true
+    (or until it reaches the top).
+  */
+  getOwnerWidget : function(){
+    if (this.initialConfig.isNetzke) {
+      return this;
+    } else {
+      if (this.ownerCt){
+        return this.ownerCt.getOwnerWidget()
+      } else {
+        return null
+      }
+    }
+  }
+});
+
+// Make Panel with layout 'fit' capable of dynamic widgets loading
 Ext.override(Ext.Panel, {
   getWidget: function(){
     return this.items.get(0);
@@ -289,11 +309,12 @@ Ext.override(Ext.Panel, {
               eval(responseObj.js);
             }
           
-            responseObj.config.parent = this.ownerCt; // we might want to know the parent panel in advance (e.g. to know its size)
+            responseObj.config.ownerWidget = this.getOwnerWidget();
             var instance = new Ext.netzke.cache[responseObj.config.widgetClassName](responseObj.config)
         
             this.add(instance);
             this.doLayout();
+            
           } else {
             // we didn't get normal response - desplay the flash with eventual errors
             this.ownerCt.feedback(responseObj.flash);
