@@ -28,13 +28,22 @@ module Netzke
         self.name.split("::").last
       end
 
-      # Multi-user support
+      # Multi-user support (deprecated in favor of controller sessions)
       def user
         @@user ||= nil
       end
 
       def user=(user)
         @@user = user
+      end
+
+      # Access to controller sessions
+      def session
+        @@session ||= {}
+      end
+
+      def session=(session)
+        @@session = session
       end
 
       #
@@ -92,7 +101,7 @@ module Netzke
     end
     extend ClassMethods
     
-    attr_accessor :config, :server_confg, :parent, :logger, :id_name, :permissions
+    attr_accessor :config, :server_confg, :parent, :logger, :id_name, :permissions, :session
     attr_reader :pref
 
     def initialize(config = {}, parent = nil)
@@ -103,6 +112,8 @@ module Netzke
       @flash = []
       
       @config[:ext_config] ||= {} # configuration used to instantiate JS class
+      
+      @session = Netzke::Base.session
 
       process_permissions_config
     end

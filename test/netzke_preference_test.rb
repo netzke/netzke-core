@@ -33,4 +33,15 @@ class NetzkePreferenceTest < ActiveSupport::TestCase
     
     assert_equal(nil, p[:non_existing])
   end
+  
+  test "multiuser support" do
+    admin_role = Role.create(:name => 'admin')
+    user_role = Role.create(:name => 'user')
+    
+    User.create(:login => 'admin1', :role => admin_role)
+    User.create(:login => 'user1', :role => user_role)
+    
+    Netzke::Base.session[:masq_role] = user_role
+    assert_equal(true, false)
+  end
 end

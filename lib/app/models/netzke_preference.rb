@@ -6,7 +6,7 @@
 # etc
 #
 class NetzkePreference < ActiveRecord::Base
-  named_scope :for_current_user, lambda { {:conditions => {:user_id => user_id}} }
+  # named_scope :for_current_user, lambda { {:conditions => {:user_id => user_id}} }
   
   ELEMENTARY_CONVERTION_METHODS= {'Fixnum' => 'to_i', 'String' => 'to_s', 'Float' => 'to_f', 'Symbol' => 'to_sym'}
   
@@ -48,25 +48,56 @@ class NetzkePreference < ActiveRecord::Base
   
   def self.[](pref_name)
     pref_name  = normalize_preference_name(pref_name)
-    conditions = {:name => pref_name, :user_id => user_id, :widget_name => self.widget_name}
-    pref       = self.find(:first, :conditions => conditions)
+    pref       = self.pref_to_read(pref_name)
     pref && pref.normalized_value
   end
   
   def self.[]=(pref_name, new_value)
     pref_name  = normalize_preference_name(pref_name)
-    conditions = {:name => pref_name, :user_id => user_id, :widget_name => self.widget_name}
-    pref       = self.find(:first, :conditions => conditions)
+    pref       = self.pref_to_write(pref_name)
     
     # if assigning nil, simply delete the eventually found preference
     if new_value.nil?
       pref && pref.destroy
     else
-      pref ||= self.new(conditions)
+      pref ||= self.new(conditions(pref_name))
       pref.normalized_value = new_value
       pref.save!
     end
   end
+  
+  # Override this method if you want a different strategy of finding the correct preference, based on your
+  # authorization strategy
+  def self.pref_to_read(name)
+    session = Netzke::Base.session
+    cond = {:name => name, :widget_name => self.widget_name}
+    
+    if session[:masq_user] || session[:masq_role]
+      cond.merge!({:user_id => session[:masq_user].try(:id), :role_id => session[:masq_role].try(:id)})
+      res = self.find(:first, :conditions => cond)
+    elsif session[:user]
+      res = self.find(:first, :conditions => cond.merge({:user_id => session[:user].id}))
+      res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:user].role.id}))
+    end
+    
+    res      
+  end
+  
+  def self.pref_to_write(name)
+    self.new
+  end
+  # def self.conditions(pref_name)
+  #   cond = {:name => pref_name, :widget_name => self.widget_name}
+  #   
+  #   
+  #   if session[:masq_user]
+  #     cond.merge!({:user_id => session[:masq_user].id})
+  #   elsif session[:masq_role]
+  #     cond.merge!({:role_id => session[:masq_role].id})
+  #   end
+  # 
+  #   cond
+  # end
   
   private
   def self.normalize_preference_name(name)
