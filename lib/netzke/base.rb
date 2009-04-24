@@ -46,6 +46,18 @@ module Netzke
         @@session = session
       end
 
+      def update_session
+        if session[:just_logged_in]
+          session[:masq_user] = session[:masq_role] = nil
+          session[:config_mode] = nil
+          
+          session[:just_logged_in] = nil
+        end
+        
+        # backward compatibility deprecated
+        Netzke::Base.user = session[:user]
+      end
+
       #
       # Use this class method to declare connection points between client side of a widget and its server side. A method in a widget class with the same name will be (magically) called by the client side of the widget. See Grid widget for an example
       #

@@ -9,9 +9,7 @@ module Netzke
     def set_user
       Netzke::Base.session = session
       Netzke::Base.session[:user] = current_user if defined?(current_user)
-
-      # deprecated
-      Netzke::Base.user = current_user if defined?(current_user)
+      Netzke::Base.update_session
     end
     
     def method_missing(method_name)

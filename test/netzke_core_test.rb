@@ -47,12 +47,12 @@ module Netzke
 end
 
 # mocking the User class
-class User
-  attr_accessor :id
-  def initialize(id)
-    @id = id
-  end
-end
+# class User
+#   attr_accessor :id
+#   def initialize(id)
+#     @id = id
+#   end
+# end
 
 class NetzkeCoreTest < ActiveSupport::TestCase
   include Netzke

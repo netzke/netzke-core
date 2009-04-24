@@ -1,5 +1,5 @@
 #
-# TODO: would be great to support somethnig like:
+# TODO: would be great to support something like this:
 # NetzkePreference["name"].merge!({:a => 1, :b => 2}) # if NetzkePreference["name"] returns a hash
 # or
 # NetzkePreference["name"] << 2 # if NetzkePreference["name"] returns an array
@@ -7,6 +7,8 @@
 #
 class NetzkePreference < ActiveRecord::Base
   # named_scope :for_current_user, lambda { {:conditions => {:user_id => user_id}} }
+  belongs_to :user
+  belongs_to :role
   
   ELEMENTARY_CONVERTION_METHODS= {'Fixnum' => 'to_i', 'String' => 'to_s', 'Float' => 'to_f', 'Symbol' => 'to_sym'}
   
@@ -60,15 +62,26 @@ class NetzkePreference < ActiveRecord::Base
     if new_value.nil?
       pref && pref.destroy
     else
-      pref ||= self.new(conditions(pref_name))
+      # pref ||= self.new(conditions(pref_name))
       pref.normalized_value = new_value
       pref.save!
     end
   end
-  
-  # Override this method if you want a different strategy of finding the correct preference, based on your
-  # authorization strategy
+
+  #
+  # Overwrite pref_to_read and pref_to_write methods if you want a different way of identifying the proper preference
+  # based on your own authorization strategy.
+  #
+  # The default strategy is:
+  #   1) if no masq_user or masq_role defined
+  #     pref_to_read will search for the preference for user first, then for user's role
+  #     pref_to_write will always find or create a preference for the current user (never for its role)
+  #   2) if masq_user or masq_role is defined
+  #     pref_to_read and pref_to_write will always take the masquerade into account, e.g. reads/writes will go to
+  #     the user/role specified
+  #   
   def self.pref_to_read(name)
+    name = name.to_s
     session = Netzke::Base.session
     cond = {:name => name, :widget_name => self.widget_name}
     
@@ -78,26 +91,48 @@ class NetzkePreference < ActiveRecord::Base
     elsif session[:user]
       res = self.find(:first, :conditions => cond.merge({:user_id => session[:user].id}))
       res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:user].role.id}))
+    else
+      res = self.find(:first, :conditions => cond)
     end
     
     res      
   end
   
   def self.pref_to_write(name)
-    self.new
+    name = name.to_s
+    session = Netzke::Base.session
+    cond = {:name => name, :widget_name => self.widget_name}
+    
+    if session[:masq_user] || session[:masq_role]
+      cond.merge!({:user_id => session[:masq_user].try(:id), :role_id => session[:masq_role].try(:id)})
+      res = self.find(:first, :conditions => cond)
+      res ||= self.new(cond)
+    elsif session[:user]
+      res = self.find(:first, :conditions => cond.merge({:user_id => session[:user].id}))
+      res ||= self.new(cond.merge({:user_id => session[:user].id}))
+    else
+      res = self.find(:first, :conditions => cond)
+      res ||= self.new(cond)
+    end
+    res
   end
-  # def self.conditions(pref_name)
-  #   cond = {:name => pref_name, :widget_name => self.widget_name}
-  #   
-  #   
-  #   if session[:masq_user]
-  #     cond.merge!({:user_id => session[:masq_user].id})
-  #   elsif session[:masq_role]
-  #     cond.merge!({:role_id => session[:masq_role].id})
-  #   end
-  # 
-  #   cond
-  # end
+  
+  def self.find_all_for_widget(name)
+    session = Netzke::Base.session
+    cond = {:widget_name => name}
+    
+    if session[:masq_user] || session[:masq_role]
+      cond.merge!({:user_id => session[:masq_user].try(:id), :role_id => session[:masq_role].try(:id)})
+      res = self.find(:all, :conditions => cond)
+    elsif session[:user]
+      res = self.find(:all, :conditions => cond.merge({:user_id => session[:user].id}))
+      res += self.find(:all, :conditions => cond.merge({:role_id => session[:user].role.id}))
+    else
+      res = self.find(:all, :conditions => cond)
+    end
+    
+    res      
+  end
   
   private
   def self.normalize_preference_name(name)

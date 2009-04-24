@@ -1,6 +1,16 @@
 require 'test_helper'
 require 'netzke-core'
 class NetzkePreferenceTest < ActiveSupport::TestCase
+  test "pref to read-write" do
+    p = NetzkePreference
+    session = Netzke::Base.session
+    session.clear
+    
+    assert_not_nil(p.pref_to_write(:test))
+    p[:test] = "a value"
+    assert_not_nil(p.pref_to_read(:test))
+  end
+  
   test "basic values" do
     an_integer = 1976
     a_float = 1976.1345
@@ -11,7 +21,7 @@ class NetzkePreferenceTest < ActiveSupport::TestCase
     a_hash = {"a" => an_integer, "b" => a_true, "c" => nil, "d" => a_float}
     an_array = [1, "a", a_hash, [1,3,4], a_true, a_false, a_nil, a_float]
     
-
+  
     p = NetzkePreference
     p[:a_hash] = a_hash
     p["an_integer"] = an_integer
@@ -34,14 +44,60 @@ class NetzkePreferenceTest < ActiveSupport::TestCase
     assert_equal(nil, p[:non_existing])
   end
   
-  test "multiuser support" do
+  test "multi-user/multi-role support" do
+    p = NetzkePreference
+    session = Netzke::Base.session
+    
     admin_role = Role.create(:name => 'admin')
     user_role = Role.create(:name => 'user')
     
-    User.create(:login => 'admin1', :role => admin_role)
-    User.create(:login => 'user1', :role => user_role)
+    admin1 = User.create(:login => 'admin1', :role => admin_role)
+    user1 = User.create(:login => 'user1', :role => user_role)
+    user2 = User.create(:login => 'user2', :role => user_role)
+
+    #
+    # assign a value for a role, then read it back by users with the same role
+    #
+    session.clear
+    session[:masq_role] = user_role
+    p[:test] = 100
+
+    # first user
+    session.clear
+    session[:user] = user1
+    assert_equal(100, p[:test])
+
+    # second user
+    session.clear
+    session[:user] = user2
+    assert_equal(100, p[:test])
     
-    Netzke::Base.session[:masq_role] = user_role
-    assert_equal(true, false)
+    #
+    # now overwrite the value for user2
+    #
+    p[:test] = 200
+    assert_equal(200, p[:test])
+    # .. and check that its still the same for user1
+    session.clear
+    session[:user] = user1
+    assert_equal(100, p[:test])
+    
+    #
+    # now overwrite it for user1 by means of masq_user
+    #
+    session.clear
+    session[:masq_user] = user1
+    p[:test] = 300
+    assert_equal(300, p[:test])
+    # .. and check it's still the same for user2
+    session.clear
+    session[:masq_user] = user2
+    assert_equal(200, p[:test])
+    # .. and that a new user with role 'user' will still read the original value assigned for the role
+    user3 = User.create(:login => "user3", :role => user_role)
+    session.clear
+    session[:user] = user3
+    assert_equal(100, p[:test])
+    
   end
 end
