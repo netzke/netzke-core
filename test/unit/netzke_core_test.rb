@@ -46,24 +46,10 @@ module Netzke
   end
 end
 
-# mocking the User class
-# class User
-#   attr_accessor :id
-#   def initialize(id)
-#     @id = id
-#   end
-# end
-
 class NetzkeCoreTest < ActiveSupport::TestCase
   include Netzke
   
   def setup
-    # object = mock()
-    # object.stubs(:normalized_value)
-    # object.stubs(:normalized_value=)
-    # # object.stubs(:save!)
-    # NetzkePreference.stubs(:find).returns(object)
-    
   end
   
   test "base class loaded" do
@@ -163,6 +149,9 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert(widget.js_missing_code.index("Ext.netzke.cache.JsInheritanceWidget"))
     assert(widget.js_missing_code.index("Ext.netzke.cache.Widget"))
   end
+
+  
+  
   # test "multiuser" do
   #   Netzke::Base.current_user = User.new(1)
   #   Widget.new(:prohibit => :all, :name => 'widget')

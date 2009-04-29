@@ -29,6 +29,18 @@ class Hash
       h
     end
   end
+
+  # Javascrit-like access to Hash values
+  def method_missing(method, *args)
+    if method.to_s =~ /=$/ 
+      method_base = method.to_s.sub(/=$/,'').to_sym
+      key = self[method_base.to_s].nil? ? method_base : method_base.to_s
+      self[key] = args.first
+    else
+      key = self[method.to_s].nil? ? method : method.to_s
+      self[key]
+    end
+  end
   
 end
 

@@ -68,6 +68,17 @@ class NetzkePreference < ActiveRecord::Base
     end
   end
 
+  # execute set/get operation for a specified widget, e.g.:
+  # NetzkePreference.for_widget('my_widget') { |p| p[:key] = "value" }
+  def self.for_widget(widget, &block)
+    raise ArgumentError, "Block is required for #{self.name}\#for_widget" if !block_given?
+    backup_widget_name = self.widget_name
+    self.widget_name = widget
+    res = yield(self)
+    self.widget_name = backup_widget_name
+    res
+  end
+
   #
   # Overwrite pref_to_read and pref_to_write methods if you want a different way of identifying the proper preference
   # based on your own authorization strategy.

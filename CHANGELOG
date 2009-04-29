@@ -1,3 +1,7 @@
+v0.2.12
+for_widget-method for persistent_config accepting a block
+autotest compatibility
+
 v0.2.11
 Introduction of getOwnerWidget()-method to Ext.Component. It provides the Netzke widget this Component belongs to.
 
