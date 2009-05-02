@@ -84,6 +84,11 @@ class String
     regexp = /^\s*\n/
     self.gsub!(regexp, '')
   end
+  
+  # "false" => false, "whatever_else" => true
+  def to_b
+    self != "false"
+  end
 end
 
 class Symbol

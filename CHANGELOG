@@ -1,6 +1,8 @@
 v0.2.12
 for_widget-method for persistent_config accepting a block
 autotest compatibility
+String#to_b converts a string to true/false
+New: weak_default_config and strong_default_config can be now specified in Netzke::Base.session, which gets merged with configuration of *every* widget
 
 v0.2.11
 Introduction of getOwnerWidget()-method to Ext.Component. It provides the Netzke widget this Component belongs to.

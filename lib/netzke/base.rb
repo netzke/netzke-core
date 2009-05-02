@@ -117,7 +117,13 @@ module Netzke
     attr_reader :pref
 
     def initialize(config = {}, parent = nil)
-      @config  = initial_config.recursive_merge(config)
+      @session = Netzke::Base.session
+
+      @config  = (session[:weak_default_config] || {}).
+        recursive_merge(initial_config).
+        recursive_merge(config).
+        recursive_merge(session[:strong_default_config] || {})
+        
       @parent  = parent
       @id_name = parent.nil? ? config[:name].to_s : "#{parent.id_name}__#{config[:name]}"
       
@@ -125,7 +131,6 @@ module Netzke
       
       @config[:ext_config] ||= {} # configuration used to instantiate JS class
       
-      @session = Netzke::Base.session
 
       process_permissions_config
     end

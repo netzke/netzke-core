@@ -101,7 +101,7 @@ class NetzkePreference < ActiveRecord::Base
       res = self.find(:first, :conditions => cond)
     elsif session[:user]
       res = self.find(:first, :conditions => cond.merge({:user_id => session[:user].id}))
-      res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:user].role.id}))
+      res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:user].role.try(:id)}))
     else
       res = self.find(:first, :conditions => cond)
     end
@@ -137,7 +137,7 @@ class NetzkePreference < ActiveRecord::Base
       res = self.find(:all, :conditions => cond)
     elsif session[:user]
       res = self.find(:all, :conditions => cond.merge({:user_id => session[:user].id}))
-      res += self.find(:all, :conditions => cond.merge({:role_id => session[:user].role.id}))
+      res += self.find(:all, :conditions => cond.merge({:role_id => session[:user].role.try(:id)}))
     else
       res = self.find(:all, :conditions => cond)
     end

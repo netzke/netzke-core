@@ -5,10 +5,9 @@ module Netzke
       base.send(:before_filter, :set_user)
     end
     
-    # pickup 
     def set_user
       Netzke::Base.session = session
-      Netzke::Base.session[:user] = current_user if defined?(current_user)
+      session[:user] = current_user if defined?(current_user)
       Netzke::Base.update_session
     end
     
