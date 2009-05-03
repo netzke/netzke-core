@@ -317,7 +317,7 @@ Ext.override(Ext.Panel, {
             
           } else {
             // we didn't get normal response - desplay the flash with eventual errors
-            this.ownerCt.feedback(responseObj.flash);
+            this.getOwnerWidget().feedback(responseObj.flash);
           }
           
           // reenable the panel

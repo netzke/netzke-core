@@ -1,10 +1,11 @@
 v0.3.0
-Refactoring: got rid of NetzkeLayout model, now all layouts are stored in netzke_preferences
+Refactor: got rid of NetzkeLayout model, now all layouts are stored in netzke_preferences
 New: persistent_config now has a method for_widget that accepts a block
 autotest compatibility
-String#to_b converts a string to true/false
-Netzke::Base.session introduced for session data
-New: weak_default_config and strong_default_config can be now specified in Netzke::Base.session, which gets merged with configuration of *every* widget
+New: String#to_b converts a string to true/false
+New: Netzke::Base.session introduced for session data
+New: weak_default_config and strong_default_config can now be specified in Netzke::Base.session, which get merged with configuration of *each* widget (application-wide)
+Fix: (degradation) flash message is now shown again in case of erroneous attempt to load a widget
 
 v0.2.11
 Introduction of getOwnerWidget()-method to Ext.Component. It provides the Netzke widget this Component belongs to.

@@ -47,10 +47,10 @@ module Netzke
       end
 
       def update_session
-        if session[:just_logged_in]
+        if session[:just_logged_in] || session[:just_logged_out]
           session[:masq_user] = session[:masq_role] = nil
           session[:config_mode] = nil
-          # session[:just_logged_in] = nil
+          session[:just_logged_in] = session[:just_logged_out] = nil
         end
         
         # backward compatibility deprecated
