@@ -1,8 +1,6 @@
 require 'test_helper'
-
 require 'netzke-core'
 
-# test widgets
 module Netzke
   class Widget < Base
     interface :method_one, :method_two
@@ -120,14 +118,6 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert(!widget.dependencies.include?('DeepNestedWidget'))
   end
   
-  # test "dependencies in JS class generators" do
-  #   widget = Widget.new
-  #   assert(widget.js_missing_code.index("Ext.netzke.cache['NestedWidgetOne']"))
-  #   assert(widget.js_missing_code.index("Ext.netzke.cache['NestedWidgetTwo']"))
-  #   assert(widget.js_missing_code.index("Ext.netzke.cache['DeepNestedWidget']"))
-  #   assert(widget.js_missing_code.index("Ext.netzke.cache['Widget']"))
-  # end
-
   test "dependency classes" do
     widget = Widget.new
     # not testing the order
@@ -150,22 +140,4 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert(widget.js_missing_code.index("Ext.netzke.cache.Widget"))
   end
 
-  
-  
-  # test "multiuser" do
-  #   Netzke::Base.current_user = User.new(1)
-  #   Widget.new(:prohibit => :all, :name => 'widget')
-  #   
-  #   Netzke::Base.current_user = User.new(2)
-  #   Widget.new(:prohibit => :read, :name => 'widget')
-  #   
-  #   Netzke::Base.current_user = User.new(1)
-  #   widget = Widget.new(:name => 'widget')
-  #   assert_equal({:read => false, :update => false}, widget.permissions)
-  # 
-  #   Netzke::Base.current_user = User.new(2)
-  #   widget = Widget.new(:name => 'widget')
-  #   assert_equal({:read => false, :update => true}, widget.permissions)
-  #   
-  # end
 end

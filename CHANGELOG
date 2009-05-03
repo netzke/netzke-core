@@ -1,7 +1,9 @@
-v0.2.12
-for_widget-method for persistent_config accepting a block
+v0.3.0
+Refactoring: got rid of NetzkeLayout model, now all layouts are stored in netzke_preferences
+New: persistent_config now has a method for_widget that accepts a block
 autotest compatibility
 String#to_b converts a string to true/false
+Netzke::Base.session introduced for session data
 New: weak_default_config and strong_default_config can be now specified in Netzke::Base.session, which gets merged with configuration of *every* widget
 
 v0.2.11

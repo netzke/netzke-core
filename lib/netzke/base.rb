@@ -50,8 +50,7 @@ module Netzke
         if session[:just_logged_in]
           session[:masq_user] = session[:masq_role] = nil
           session[:config_mode] = nil
-          
-          session[:just_logged_in] = nil
+          # session[:just_logged_in] = nil
         end
         
         # backward compatibility deprecated
