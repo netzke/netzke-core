@@ -130,10 +130,6 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert('a_widget', widget.config[:name])
   end
 
-  test "class configuration" do
-    assert_equal(NetzkeLayout, Netzke::Base.layout_manager_class)
-  end
-  
   test "js inheritance" do
     widget = JsInheritanceWidget.new
     assert(widget.js_missing_code.index("Ext.netzke.cache.JsInheritanceWidget"))

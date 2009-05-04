@@ -11,7 +11,6 @@ module Netzke
         :javascripts               => [],
         :stylesheets               => [],
         
-        :layout_manager            => "NetzkeLayout",
         :persistent_config_manager => "NetzkePreference",
         
         :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs"
