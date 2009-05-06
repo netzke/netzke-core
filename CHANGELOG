@@ -4,8 +4,9 @@ New: persistent_config now has a method for_widget that accepts a block
 autotest compatibility
 New: String#to_b converts a string to true/false
 New: Netzke::Base.session introduced for session data
-New: weak_default_config and strong_default_config can now be specified in Netzke::Base.session, which get merged with configuration of *each* widget (application-wide)
+New: weak_children_config and strong_children_config can now be declared by a widget, which specifies weak and strong configuration that every child of this widget will receive (e.g. display/hide configuration tool)
 Fix: (degradation) flash message is now shown again in case of erroneous attempt to load a widget
+New: widgets now can check session[:netzke_just_logged_in] and session[:netzke_just_logged_out] automatically set by Netzke after login/logout
 
 v0.2.11
 Introduction of getOwnerWidget()-method to Ext.Component. It provides the Netzke widget this Component belongs to.

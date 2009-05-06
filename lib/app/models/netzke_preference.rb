@@ -12,9 +12,9 @@ class NetzkePreference < ActiveRecord::Base
   
   ELEMENTARY_CONVERTION_METHODS= {'Fixnum' => 'to_i', 'String' => 'to_s', 'Float' => 'to_f', 'Symbol' => 'to_sym'}
   
-  def self.user_id
-    Netzke::Base.user && Netzke::Base.user.id
-  end
+  # def self.user_id
+  #   Netzke::Base.user && Netzke::Base.user.id
+  # end
   
   def self.widget_name=(value)
     @@widget_name = value
@@ -96,9 +96,13 @@ class NetzkePreference < ActiveRecord::Base
     session = Netzke::Base.session
     cond = {:name => name, :widget_name => self.widget_name}
     
-    if session[:masq_user] || session[:masq_role]
-      cond.merge!({:user_id => session[:masq_user].try(:id), :role_id => session[:masq_role].try(:id)})
-      res = self.find(:first, :conditions => cond)
+    if session[:masq_user]
+      # first, get the prefs for this user it they exist
+      res = self.find(:first, :conditions => cond.merge({:user_id => session[:masq_user].id}))
+      # if it doesn't exist, get them for the user's role
+      res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:masq_user].role.id}))
+    elsif session[:masq_role]
+      res = self.find(:first, :conditions => cond.merge({:role_id => session[:masq_role].id}))
     elsif session[:user]
       res = self.find(:first, :conditions => cond.merge({:user_id => session[:user].id}))
       res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:user].role.try(:id)}))
@@ -114,8 +118,17 @@ class NetzkePreference < ActiveRecord::Base
     session = Netzke::Base.session
     cond = {:name => name, :widget_name => self.widget_name}
     
-    if session[:masq_user] || session[:masq_role]
-      cond.merge!({:user_id => session[:masq_user].try(:id), :role_id => session[:masq_role].try(:id)})
+    if session[:masq_user]
+      cond.merge!({:user_id => session[:masq_user].id})
+      res = self.find(:first, :conditions => cond)
+      res ||= self.new(cond)
+    elsif session[:masq_role]
+      # first, delete all the corresponding preferences for the users that have this role
+      logger.debug "!!! session: #{session.inspect}"
+      Role.find(session[:masq_role].id).users.each do |u|
+        self.delete_all(cond.merge({:user_id => u.id}))
+      end
+      cond.merge!({:role_id => session[:masq_role].id})
       res = self.find(:first, :conditions => cond)
       res ||= self.new(cond)
     elsif session[:user]

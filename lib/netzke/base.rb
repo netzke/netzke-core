@@ -41,19 +41,18 @@ module Netzke
         @@session ||= {}
       end
 
-      def session=(session)
-        @@session = session
+      def session=(s)
+        @@session = s
       end
 
-      def update_session
-        if session[:just_logged_in] || session[:just_logged_out]
-          session[:masq_user] = session[:masq_role] = nil
-          session[:config_mode] = nil
-          session[:just_logged_in] = session[:just_logged_out] = nil
-        end
-        
-        # backward compatibility deprecated
-        Netzke::Base.user = session[:user]
+      # called by controller at the moment of successfull login
+      def login
+        session[:_netzke_next_request_is_first_after_login] = true
+      end
+      
+      # called by controller at the moment of logout
+      def logout
+        session[:_netzke_next_request_is_first_after_logout] = true
       end
 
       #
@@ -95,12 +94,7 @@ module Netzke
         nil
       end
 
-      def layout_manager_class
-        Netzke::Base.config[:layout_manager].constantize
-      rescue NameError
-        nil
-      end
-      
+
       private
       def set_default_config(default_config)
         @@config ||= {}
@@ -117,18 +111,20 @@ module Netzke
     def initialize(config = {}, parent = nil)
       @session = Netzke::Base.session
 
-      @config  = (session[:weak_default_config] || {}).
-        recursive_merge(initial_config).
-        recursive_merge(config).
-        recursive_merge(session[:strong_default_config] || {})
+      # @config  = (session[:weak_default_config] || {}).
+      #   recursive_merge(initial_config).
+      #   recursive_merge(config).
+      #   recursive_merge(session[:strong_default_config] || {})
+
+      @config  = initial_config.recursive_merge(config)
         
       @parent  = parent
+      
       @id_name = parent.nil? ? config[:name].to_s : "#{parent.id_name}__#{config[:name]}"
       
       @flash = []
       
       @config[:ext_config] ||= {} # configuration used to instantiate JS class
-      
 
       process_permissions_config
     end
@@ -136,6 +132,24 @@ module Netzke
     # Rails' logger
     def logger
       Rails.logger
+    end
+
+    # configuration of all children will get recursive_merge'd with strong_children_config
+    def strong_children_config= (c)
+      @strong_children_config = c
+    end
+    
+    def strong_children_config
+      @strong_children_config ||= {}
+    end
+    
+    # configuration of all children will get reverse_recursive_merge'd with weak_children_config
+    def weak_children_config= (c)
+      @weak_children_config = c
+    end
+    
+    def weak_children_config
+      @weak_children_config ||= {}
     end
     
     def dependency_classes
@@ -220,7 +234,18 @@ module Netzke
         short_class_name = aggregator.aggregatees[aggr][:widget_class_name]
         raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.config[:name]}" if short_class_name.nil?
         widget_class = "Netzke::#{short_class_name}".constantize
-        aggregator = widget_class.new(aggregator.aggregatees[aggr].merge(:name => aggr), aggregator)
+
+        conf = weak_children_config.
+          recursive_merge(aggregator.aggregatees[aggr]).
+          recursive_merge(strong_children_config).
+          merge(:name => aggr)
+
+        logger.debug "!!! strong_children_config: #{strong_children_config.inspect}"
+        logger.debug "!!! conf: #{conf.inspect}"
+          
+        aggregator = widget_class.new(conf, aggregator) # params: config, parent
+        aggregator.weak_children_config = weak_children_config
+        aggregator.strong_children_config = strong_children_config
       end
       aggregator
     end
@@ -310,10 +335,6 @@ module Netzke
     end
     
     # some convenience for instances
-    def layout_manager_class
-      self.class.layout_manager_class
-    end
-
     def persistent_config_manager_class
       self.class.persistent_config_manager_class
     end

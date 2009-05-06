@@ -20,7 +20,7 @@ module Netzke
             }
 
             var showBox = function(msg, lvl){
-              if (!lvl) lvl = 'notice';
+              if (!lvl) {lvl = 'notice'};
               var msgCt = Ext.DomHelper.insertFirst(document.body, {'class':'netzke-feedback'}, true);
               var m = Ext.DomHelper.append(msgCt, {html:createBox(msg,lvl)}, true);
               m.slideIn('t').pause(2).ghost("b", {remove:true});
@@ -30,10 +30,10 @@ module Netzke
               var compoundMsg = "";
               Ext.each(msg, function(m){
                 compoundMsg += m.msg + '<br>';
-              })
-              if (compoundMsg != "") showBox(compoundMsg, null) // the second parameter will be level
+              });
+              if (compoundMsg != "") showBox(compoundMsg, null); // the second parameter will be level
             } else {
-              showBox(msg)
+              showBox(msg);
             }
         	}
         JS
