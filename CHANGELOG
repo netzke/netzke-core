@@ -1,4 +1,5 @@
 v0.3.0
+2009-05-07
 Refactor: got rid of NetzkeLayout model, now all layouts are stored in netzke_preferences
 New: persistent_config now has a method for_widget that accepts a block
 autotest compatibility
