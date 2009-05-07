@@ -6,9 +6,8 @@ module Netzke
     end
     
     def set_session_data
-      logger.debug "!!! session: #{session.inspect}"
       Netzke::Base.session = session
-      session[:user] = current_user if defined?(current_user)
+      session[:user] = defined?(current_user) ? current_user : nil
 
       Netzke::Base.user = session[:user] # for backward compatibility (TODO: eliminate the need for this)
       

@@ -6,7 +6,6 @@
 # etc
 #
 class NetzkePreference < ActiveRecord::Base
-  # named_scope :for_current_user, lambda { {:conditions => {:user_id => user_id}} }
   belongs_to :user
   belongs_to :role
   
@@ -124,7 +123,6 @@ class NetzkePreference < ActiveRecord::Base
       res ||= self.new(cond)
     elsif session[:masq_role]
       # first, delete all the corresponding preferences for the users that have this role
-      logger.debug "!!! session: #{session.inspect}"
       Role.find(session[:masq_role].id).users.each do |u|
         self.delete_all(cond.merge({:user_id => u.id}))
       end

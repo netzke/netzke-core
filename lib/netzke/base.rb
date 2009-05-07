@@ -111,6 +111,7 @@ module Netzke
     def initialize(config = {}, parent = nil)
       @session = Netzke::Base.session
 
+      # Uncomment for application-wide weak/strong default config for widgets
       # @config  = (session[:weak_default_config] || {}).
       #   recursive_merge(initial_config).
       #   recursive_merge(config).
@@ -240,9 +241,6 @@ module Netzke
           recursive_merge(strong_children_config).
           merge(:name => aggr)
 
-        logger.debug "!!! strong_children_config: #{strong_children_config.inspect}"
-        logger.debug "!!! conf: #{conf.inspect}"
-          
         aggregator = widget_class.new(conf, aggregator) # params: config, parent
         aggregator.weak_children_config = weak_children_config
         aggregator.strong_children_config = strong_children_config
