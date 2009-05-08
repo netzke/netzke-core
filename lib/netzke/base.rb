@@ -89,12 +89,29 @@ module Netzke
       
       # persistent_config and layout manager classes
       def persistent_config_manager_class
-        Netzke::Base.config[:persistent_config_manager].constantize
+        Netzke::Base.config[:persistent_config_manager].try(:constantize)
       rescue NameError
         nil
       end
 
-
+      # Return persistent config class
+      def persistent_config
+        # if the class is not present, fake it (it will not store anything, and always return nil)
+        if persistent_config_manager_class.nil?
+          fake_config = {}
+          class << fake_config
+            def for_widget(*params, &block)
+              yield({})
+            end
+            def widget_name=(*params)
+            end
+          end
+          fake_config
+        else
+          persistent_config_manager_class
+        end
+      end
+      
       private
       def set_default_config(default_config)
         @@config ||= {}
@@ -167,10 +184,10 @@ module Netzke
     #     persistent_config["window.size"] => 100
     # This method is user-aware
     def persistent_config
-      config_klass = config[:persistent_config] && self.class.persistent_config_manager_class
-      if config_klass
-        config_klass.widget_name = id_name # pass to the config class our unique name
-        config_klass
+      if config[:persistent_config]
+        config_class = self.class.persistent_config
+        config_class.widget_name = id_name # pass to the config class our unique name
+        config_class
       else
         # if we can't use presistent config, all the calls to it will always return nil, and the "="-operation will be ignored
         {}
