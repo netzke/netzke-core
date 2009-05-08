@@ -1,4 +1,5 @@
 v0.3.1
+2009-05-07
 Fix: persistent_config_manager can now be set to nil, and it will work fine
 
 v0.3.0
