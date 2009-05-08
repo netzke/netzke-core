@@ -1,3 +1,6 @@
+v0.3.1
+Fix: persistent_config_manager can now be set to nil, and it will work fine
+
 v0.3.0
 2009-05-07
 Refactor: got rid of NetzkeLayout model, now all layouts are stored in netzke_preferences
