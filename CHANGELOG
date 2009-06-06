@@ -1,3 +1,7 @@
+v0.3.2
+2009-06-05
+Netzke doesn't overwrite session[:user] anymore to not cause authentication-related problems.
+
 v0.3.1
 2009-05-07
 Fix: persistent_config_manager can now be set to nil, and it will work fine

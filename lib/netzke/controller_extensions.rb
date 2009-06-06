@@ -7,9 +7,9 @@ module Netzke
     
     def set_session_data
       Netzke::Base.session = session
-      session[:user] = defined?(current_user) ? current_user : nil
+      session[:netzke_user] = defined?(current_user) ? current_user : nil
 
-      Netzke::Base.user = session[:user] # for backward compatibility (TODO: eliminate the need for this)
+      Netzke::Base.user = session[:netzke_user] # for backward compatibility (TODO: eliminate the need for this)
       
       # set netzke_just_logged_in and netzke_just_logged_out states (may be used by Netzke widgets)
       if session[:_netzke_next_request_is_first_after_login]

@@ -102,9 +102,9 @@ class NetzkePreference < ActiveRecord::Base
       res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:masq_user].role.id}))
     elsif session[:masq_role]
       res = self.find(:first, :conditions => cond.merge({:role_id => session[:masq_role].id}))
-    elsif session[:user]
-      res = self.find(:first, :conditions => cond.merge({:user_id => session[:user].id}))
-      res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:user].role.try(:id)}))
+    elsif session[:netzke_user]
+      res = self.find(:first, :conditions => cond.merge({:user_id => session[:netzke_user].id}))
+      res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:netzke_user].role.try(:id)}))
     else
       res = self.find(:first, :conditions => cond)
     end
@@ -129,9 +129,9 @@ class NetzkePreference < ActiveRecord::Base
       cond.merge!({:role_id => session[:masq_role].id})
       res = self.find(:first, :conditions => cond)
       res ||= self.new(cond)
-    elsif session[:user]
-      res = self.find(:first, :conditions => cond.merge({:user_id => session[:user].id}))
-      res ||= self.new(cond.merge({:user_id => session[:user].id}))
+    elsif session[:netzke_user]
+      res = self.find(:first, :conditions => cond.merge({:user_id => session[:netzke_user].id}))
+      res ||= self.new(cond.merge({:user_id => session[:netzke_user].id}))
     else
       res = self.find(:first, :conditions => cond)
       res ||= self.new(cond)
@@ -146,9 +146,9 @@ class NetzkePreference < ActiveRecord::Base
     if session[:masq_user] || session[:masq_role]
       cond.merge!({:user_id => session[:masq_user].try(:id), :role_id => session[:masq_role].try(:id)})
       res = self.find(:all, :conditions => cond)
-    elsif session[:user]
-      res = self.find(:all, :conditions => cond.merge({:user_id => session[:user].id}))
-      res += self.find(:all, :conditions => cond.merge({:role_id => session[:user].role.try(:id)}))
+    elsif session[:netzke_user]
+      res = self.find(:all, :conditions => cond.merge({:user_id => session[:netzke_user].id}))
+      res += self.find(:all, :conditions => cond.merge({:role_id => session[:netzke_user].role.try(:id)}))
     else
       res = self.find(:all, :conditions => cond)
     end
