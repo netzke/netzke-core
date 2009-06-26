@@ -190,7 +190,7 @@ JS
         end
 
         #
-        # Include extra Javascript code. This code will be loaded along with the widget's class and in front of it.
+        # Include extra Javascript code. This code will be loaded along with the widget's class and before it.
         #
         # Example usage:
         # js_include "File.dirname(__FILE__)/form_panel_extras/javascripts/xdatetime.js", 
