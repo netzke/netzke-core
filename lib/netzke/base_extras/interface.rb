@@ -10,10 +10,11 @@ module Netzke
         css = nil if css.blank?
 
         # if browser does not have our widget's (and all its dependencies') class and styles, send it over
-        { :config => js_config, 
-          :js => js,
-          :css => css
-        }
+        # { :config => js_config, 
+        #   :js => js,
+        #   :css => css
+        # }
+        [{:eval_js => js, :eval_css => css}, {:instantiate_child => js_config}]
       end
     end
   end

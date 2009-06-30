@@ -93,6 +93,74 @@ Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
 
 // Methods common to all widget classes
 Ext.widgetMixIn = {
+  /*
+  Instantiates and inserts a widget into a container with layout 'fit'.
+  Arg: an JS object with the following keys:
+    - id: id of the receiving container
+    - config: configuration of the widget to be instantiated and inserted into the container
+  */
+  renderWidgetInContainer : function(params){
+    var cont = Ext.getCmp(params.id);
+    cont.instantiateChild(params.config);
+  },
+  
+  /*
+  Evaluates CSS
+  */
+  evalCss : function(code){
+    var linkTag = document.createElement('style');
+    linkTag.type = 'text/css';
+    linkTag.innerHTML = code;
+    document.body.appendChild(linkTag);
+  },
+  
+  /*
+  Evaluates JS
+  */
+  evalJs : function(code){
+    eval(code);
+  },
+  
+  /*
+  Executes a bunch of methods. This method is called everytime a communication to the server takes place. Thus the server side of a widget can provide any set of commands to its client side!
+  Args:
+    - methods: array of methods, in the order of execution. Each item is an object in one of the following 2 formats:
+      1) {method1:args1, method2:args2}, where methodN is a name of a public method of this widget; these methods are called in no particular order
+      2) {widget:widget_id, methods:arrayOfMethods}, used for recursive call to bulkExecute on some child widget
+
+  Example: 
+    - [
+        // the same as this.feedback("Your order is accepted")
+        {feedback: "You order is accepted"}, 
+
+        // the same as this.getChildWidget('users').bulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}])
+        {widget:'users', methods:[{setTitle:'Suprise!'}, {setDisabled:true}] },
+
+        // ... etc:
+        {updateStore:{records:[[1, 'Name1'],[2, 'Name2']], total:10}},
+        {setColums:[{},{}]},
+        {setMenus:[{},{}]},
+        ...
+      ]
+  */
+  bulkExecute : function(methods){
+    Ext.each(methods, function(methodSet){
+      if (methodSet.widget) {
+        this.getChildWidget(methodSet.widget).bulkExecute(methodSet.methods);
+      } else {
+        for (var method in methodSet) {
+          this[method].apply(this, [methodSet[method]]);
+          // this[method].apply(this, Ext.isArray(methodSet[method]) ? methodSet[method] : [methodSet[method]]);
+        }
+      }
+    }, this);
+  },
+  
+  // Get the child widget
+  getChildWidget : function(id){
+    return Ext.getCmp(this.id+"__"+id);
+  },
+  
   // Common handler for actions
   actionHandler : function(action){
     // If firing corresponding event doesn't return false, call the handler
@@ -109,8 +177,31 @@ Ext.widgetMixIn = {
     }
   },
 
+  // Does the call to the server and processes the response
+  callServer : function(intp, params){
+    if (!params) params = {};
+    Ext.Ajax.request({
+      params : params,
+      url : this.id + "__" + intp,
+      callback : function(options, success, response){
+        if (success) this.bulkExecute(Ext.decode(response.responseText));
+      },
+      scope : this
+    });
+  },
+
   beforeConstructor : function(config){
     this.actions = {};
+
+    // Create methods for interface points
+    if (config.interface){
+      Ext.each(config.interface, function(intp){
+        // intp = "update_panels";
+        // eval("this[intp.camelize(true)] = function(args){ alert('"+intp+"') }");
+        this[intp.camelize(true)] = function(args){ this.callServer(intp, args); }
+        // eval("this[intp.camelize(true)] = function(args){ this.callServer('"+intp+"', args); }");
+      }, this);
+    }
 
     // Create Ext.Actions based on config.actions
     if (config.actions) {
@@ -190,6 +281,21 @@ Ext.widgetMixIn = {
     this.on('render', this.onWidgetLoad, this);
   },
 
+  // Set size of this component by resizing the fit panel it belongs to
+  // TODO: implement more related functions when needed, like setSize, setPosition, etc
+  // setWidth : function(w){
+  //   this.ownerCt.setWidth(w);
+  // },
+  // setHeight : function(h){
+  //   this.ownerCt.setHeight(h);
+  // },
+
+  // Each widget can provide feedback to the user
+  // setFeedback : function(msg){
+  //   this.feedback(msg);
+  // },
+  
+  // for backward compatibility
   feedback:function(msg){
     if (this.initialConfig && this.initialConfig.quiet) {
       return false;
@@ -261,16 +367,32 @@ Ext.override(Ext.Container, {
         return null
       }
     }
+  },
+  
+  // Get the widget that we are hosting
+  getWidget: function(){
+    return this.items.get(0);
+  },
+  
+  removeChild : function(){
+    this.remove(this.getWidget());
+  },
+
+  instantiateChild : function(config){
+    this.remove(this.getWidget()); // first delete previous widget 
+
+    if (!config) return false; // simply remove current widget if null is passed
+
+    var instance = new Ext.netzke.cache[config.widgetClassName](config);
+    this.add(instance);
+    this.doLayout();
   }
 });
 
 // Make Panel with layout 'fit' capable of dynamic widgets loading
 Ext.override(Ext.Panel, {
-  getWidget: function(){
-    return this.items.get(0);
-  },
-  
-  loadWidget: function(url, params){
+  // Load a new hosted widget from the server
+  loadWidgetOBSOLETE: function(url, params){
     if (!params) {
       params = {};
     }
@@ -310,11 +432,11 @@ Ext.override(Ext.Panel, {
             }
           
             responseObj.config.ownerWidget = this.getOwnerWidget();
-            var instance = new Ext.netzke.cache[responseObj.config.widgetClassName](responseObj.config)
-        
-            this.add(instance);
-            this.doLayout();
-            
+            // var instance = new Ext.netzke.cache[responseObj.config.widgetClassName](responseObj.config);
+            //         
+            // this.add(instance);
+            // this.doLayout();
+            this.instantiateChild(responseObj.config);
           } else {
             // we didn't get normal response - desplay the flash with eventual errors
             this.getOwnerWidget().feedback(responseObj.flash);

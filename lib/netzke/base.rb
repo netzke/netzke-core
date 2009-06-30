@@ -18,7 +18,7 @@ module Netzke
     end
 
     include Netzke::BaseExtras::JsBuilder
-    include Netzke::BaseExtras::Interface
+    # include Netzke::BaseExtras::Interface
     
     module ClassMethods
 
@@ -203,7 +203,7 @@ module Netzke
       self.class.short_widget_class_name
     end
     
-    interface :get_widget # every widget gets this
+    # interface :get_widget # every widget gets this
 
     ## Dependencies
     def dependencies

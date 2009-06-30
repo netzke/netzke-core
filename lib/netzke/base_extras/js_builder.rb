@@ -29,8 +29,8 @@ module Netzke
         end
     
         # Interface
-        interface = self.class.interface_points.inject({}){|h,interfacep| h.merge(interfacep => widget_action(interfacep))}
-        res.merge!(:interface => interface)
+        # interface = self.class.interface_points.inject({}){|h,interfacep| h.merge(interfacep => widget_action(interfacep))}
+        res.merge!(:interface => self.class.interface_points)
     
         # Widget class name
         res.merge!(:widget_class_name => short_widget_class_name)
@@ -58,15 +58,17 @@ module Netzke
       # All the JS-code required by this instance of the widget to be instantiated in the browser.
       # It includes the JS-class for the widget itself, as well as JS-classes for all widgets' (non-late) aggregatees.
       def js_missing_code(cached_dependencies = [])
-        dependency_classes.inject("") do |r,k| 
+        code = dependency_classes.inject("") do |r,k| 
           cached_dependencies.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached_dependencies).strip_js_comments
         end
+        code.blank? ? nil : code
       end
       
       def css_missing_code(cached_dependencies = [])
-        dependency_classes.inject("") do |r,k| 
+        code = dependency_classes.inject("") do |r,k| 
           cached_dependencies.include?(k) ? r : r + "Netzke::#{k}".constantize.css_code(cached_dependencies)
         end
+        code.blank? ? nil : code
       end
     
       #
@@ -133,7 +135,9 @@ module Netzke
         end
 
         # functions and properties that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
-        def js_extend_properties; {}; end
+        def js_extend_properties; {
+          
+        }; end
     
         # code executed before and after the constructor
         def js_before_constructor; ""; end
