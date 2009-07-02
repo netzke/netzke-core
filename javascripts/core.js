@@ -143,21 +143,42 @@ Ext.widgetMixIn = {
         ...
       ]
   */
-  bulkExecute : function(methods){
-    Ext.each(methods, function(methodSet){
-      if (methodSet.widget) {
-        this.getChildWidget(methodSet.widget).bulkExecute(methodSet.methods);
-      } else {
-        for (var method in methodSet) {
-          this[method].apply(this, [methodSet[method]]);
-          // this[method].apply(this, Ext.isArray(methodSet[method]) ? methodSet[method] : [methodSet[method]]);
+  bulkExecute : function(instructions){
+    if (Ext.isArray(instructions)) {
+      Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
+    } else {
+      for (var widget in instructions) {
+        if (widget == 'this') {
+          var methods = instructions[widget];
+          if (Ext.isArray(methods)) {
+            Ext.each(methods, function(method){
+              this.bulkExecute({this:method});
+            }, this);
+          } else {
+            for (var method in methods) {
+              this[method].apply(this, [methods[method]]);
+            }
+          }
+        } else {
+          this.getChildWidget(widget).bulkExecute({this:instructions[widget]});
         }
       }
-    }, this);
+    }
+    // Ext.each(methods, function(methodSet){
+    //   if (methodSet.widget) {
+    //     this.getChildWidget(methodSet.widget).bulkExecute(methodSet.methods);
+    //   } else {
+    //     for (var method in methodSet) {
+    //       this[method].apply(this, [methodSet[method]]);
+    //       // this[method].apply(this, Ext.isArray(methodSet[method]) ? methodSet[method] : [methodSet[method]]);
+    //     }
+    //   }
+    // }, this);
   },
   
   // Get the child widget
   getChildWidget : function(id){
+    console.info(id);
     return Ext.getCmp(this.id+"__"+id);
   },
   

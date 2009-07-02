@@ -77,6 +77,7 @@ module Netzke
 
       # instantiating
       def js_widget_instance
+        logger.debug "!!! js_config: #{js_config.inspect}"
         %Q{var #{config[:name].to_js} = new Ext.netzke.cache.#{short_widget_class_name}(#{js_config.to_js});}
       end
 

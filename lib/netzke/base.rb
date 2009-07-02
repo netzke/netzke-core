@@ -245,7 +245,7 @@ module Netzke
     end
 
     # recursively instantiates an aggregatee based on its "path": e.g. if we have an aggregatee :aggr1 which in its turn has an aggregatee :aggr10, the path to the latter would be "aggr1__aggr10"
-    def aggregatee_instance(name)
+    def aggregatee_instance(name, strong_config = {})
       aggregator = self
       name.to_s.split('__').each do |aggr|
         aggr = aggr.to_sym
@@ -256,6 +256,7 @@ module Netzke
         conf = weak_children_config.
           recursive_merge(aggregator.aggregatees[aggr]).
           recursive_merge(strong_children_config).
+          recursive_merge(strong_config). # we may want to reconfigure the aggregatee at the moment of instantiation
           merge(:name => aggr)
 
         aggregator = widget_class.new(conf, aggregator) # params: config, parent
