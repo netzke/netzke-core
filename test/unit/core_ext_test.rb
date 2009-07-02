@@ -2,13 +2,6 @@ require 'test_helper'
 require 'netzke/core_ext'
 
 class CoreExtTest < ActiveSupport::TestCase
-  test "to_js" do
-    assert_equal({"aProperty" => true}, ActiveSupport::JSON.decode({:a_property => true}.to_js))
-    assert_equal({"aProperty" => true}, ActiveSupport::JSON.decode({:a_property => true, :nil_property => nil}.to_js))
-    assert_equal([{"aProperty" => true}, {"anotherProperty" => false}], ActiveSupport::JSON.decode([{:a_property => true}, {:another_property => false}].to_js))
-    assert_equal([{"aProperty" => true}, {"anotherProperty" =>false}], ActiveSupport::JSON.decode([{:a_property => true, :nil_property => nil}, {:another_property => false}].to_js))
-  end
-  
   test "recursive delete if nil" do
     assert_equal({:a => 1, :b => {:c => 4, :d => 5}}, {:a => 1, :aa => nil, :b => {:c => 4, :d => 5, :cc => nil}}.recursive_delete_if_nil)
 

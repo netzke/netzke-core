@@ -66,7 +66,7 @@ module Netzke
         interface_points.each do |interfacep|
           module_eval <<-END, __FILE__, __LINE__
           def interface_#{interfacep}(*args)
-            #{interfacep}(*args).to_js
+            #{interfacep}(*args).to_nifty_json
           end
           # FIXME: commented out because otherwise ColumnOperations stop working
           # def #{interfacep}(*args)

@@ -12,21 +12,17 @@ class Hash
 
   def jsonify
     self.inject({}) do |h,(k,v)|
-      new_value = v.instance_of?(Array) || v.instance_of?(Hash) ? v.jsonify : v
       new_key = k.instance_of?(String) || k.instance_of?(Symbol) ? k.jsonify : k
+      new_value = v.instance_of?(Array) || v.instance_of?(Hash) ? v.jsonify : v
       h.merge(new_key => new_value)
     end
   end
   
   # First camelizes the keys, then convert the whole hash to JSON
-  def to_js
+  def to_nifty_json
     self.recursive_delete_if_nil.jsonify.to_json
-    # self.recursive_delete_if_nil.convert_keys{|k| k.to_js}.to_json
-    # res = {}
-    # self.recursive_delete_if_nil.each_pair{ |k,v| res.merge!(k.to_js =>  v) }
-    # res.to_json
   end
-
+  
   # Converts values to strings
   def stringify_values!
     self.each_pair{|k,v| self[k] = v.to_s if v.is_a?(Symbol)}
@@ -62,9 +58,8 @@ class Array
   end
   
   # Camelizes the keys of hashes and converts them to JSON
-  def to_js
-    # self.recursive_delete_if_nil.map{|el| el.is_a?(Hash) ? el.convert_keys{|k| k.camelize(:lower)} : el}.to_json
-    jsonify.to_json
+  def to_nifty_json
+    self.recursive_delete_if_nil.jsonify.to_json
   end
   
   # Applies convert_keys to each element which responds to convert_keys
@@ -80,15 +75,9 @@ class Array
 end
 
 class LiteralString < String
-  
   def to_json(*args)
     self
   end
-  
-  # def to_js
-  #   self
-  # end
-  # 
 end
 
 class String
@@ -99,11 +88,6 @@ class String
   # Converts self to "literal JSON"-string - one that doesn't get quotes appended when being sent "to_json" method
   def l
     LiteralString.new(self)
-  end
-  
-  def to_js
-    # self.camelize(:lower)
-    jsonify
   end
   
   # removes JS-comments (both single- and multi-line) from the string
@@ -124,10 +108,6 @@ end
 
 class Symbol
   def jsonify
-    self.to_s.camelize(:lower).to_sym
-  end
-  
-  def to_js
     self.to_s.camelize(:lower).to_sym
   end
   

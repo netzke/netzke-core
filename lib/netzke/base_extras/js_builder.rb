@@ -77,13 +77,12 @@ module Netzke
 
       # instantiating
       def js_widget_instance
-        logger.debug "!!! js_config: #{js_config.inspect}"
-        %Q{var #{config[:name].to_js} = new Ext.netzke.cache.#{short_widget_class_name}(#{js_config.to_js});}
+        %Q{var #{config[:name].jsonify} = new Ext.netzke.cache.#{short_widget_class_name}(#{js_config.to_nifty_json});}
       end
 
       # rendering
       def js_widget_render
-        %Q{#{config[:name].to_js}.render("#{config[:name].to_s.split('_').join('-')}");}
+        %Q{#{config[:name].jsonify}.render("#{config[:name].to_s.split('_').join('-')}");}
       end
 
       # container for rendering
@@ -166,21 +165,21 @@ module Netzke
 Ext.netzke.cache.#{short_widget_class_name} = function(config){
   Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, config);
 };
-Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, Ext.netzke.cache.#{js_base_class.short_widget_class_name}, Ext.applyIf(#{js_extend_properties.to_js}, Ext.widgetMixIn));
+Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, Ext.netzke.cache.#{js_base_class.short_widget_class_name}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
 
 JS
           else
-            js_add_menus = "this.addMenus(#{js_menus.to_js});" unless js_menus.empty?
+            js_add_menus = "this.addMenus(#{js_menus.to_nifty_json});" unless js_menus.empty?
 <<-JS
 Ext.netzke.cache.#{short_widget_class_name} = function(config){
     this.beforeConstructor(config);
     #{js_before_constructor}
-    Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, Ext.apply(#{js_default_config.to_js}, config));
+    Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, Ext.apply(#{js_default_config.to_nifty_json}, config));
     this.afterConstructor(config);
     #{js_after_constructor}
     #{js_add_menus}
 };
-Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_js}, Ext.widgetMixIn));
+Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
 JS
           end
         end
