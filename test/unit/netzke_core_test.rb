@@ -3,7 +3,7 @@ require 'netzke-core'
 
 module Netzke
   class Widget < Base
-    interface :method_one, :method_two
+    api :method_one, :method_two
     
     def self.config
       super.merge({
@@ -74,9 +74,9 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_equal 'Widget', Widget.short_widget_class_name
   end
   
-  test "interface" do
+  test "api" do
     widget_class = Widget
-    assert_equal [:method_one, :method_two], widget_class.interface_points
+    assert_equal [:load_aggregatee, :method_one, :method_two], widget_class.api_points
   end
 
   test "aggregatees" do

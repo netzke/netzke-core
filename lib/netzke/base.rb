@@ -1,5 +1,5 @@
 require 'netzke/base_extras/js_builder'
-require 'netzke/base_extras/interface'
+require 'netzke/base_extras/api'
 
 module Netzke
   
@@ -19,7 +19,7 @@ module Netzke
   
   class Base
     
-    # interface
+    # api
     def load_aggregatee(params)
       widget = aggregatee_instance(params[:id])
       {:this => [{:eval_js => widget.js_missing_code, :eval_css => css_missing_code}, {:render_widget_in_container => {:container => "#{self.id_name}_#{params[:id]}", :config => widget.js_config}}]}
@@ -78,28 +78,28 @@ module Netzke
       #
       # Use this class method to declare connection points between client side of a widget and its server side. A method in a widget class with the same name will be (magically) called by the client side of the widget. See Grid widget for an example
       #
-      def interface(*interface_points)
-        interfacep = read_inheritable_attribute(:interface_points) || []
-        interface_points.each{|p| interfacep << p}
-        write_inheritable_attribute(:interface_points, interfacep)
+      def api(*api_points)
+        apip = read_inheritable_attribute(:api_points) || []
+        api_points.each{|p| apip << p}
+        write_inheritable_attribute(:api_points, apip)
 
         # It may be needed later for security
-        interface_points.each do |interfacep|
+        api_points.each do |apip|
           module_eval <<-END, __FILE__, __LINE__
-          def interface_#{interfacep}(*args)
-            #{interfacep}(*args).to_nifty_json
+          def api_#{apip}(*args)
+            #{apip}(*args).to_nifty_json
           end
           # FIXME: commented out because otherwise ColumnOperations stop working
-          # def #{interfacep}(*args)
-          #   flash :warning => "API point '#{interfacep}' is not implemented for widget '#{short_widget_class_name}'"
+          # def #{apip}(*args)
+          #   flash :warning => "API point '#{apip}' is not implemented for widget '#{short_widget_class_name}'"
           #   {:flash => @flash}
           # end
           END
         end
       end
 
-      def interface_points
-        read_inheritable_attribute(:interface_points)
+      def api_points
+        read_inheritable_attribute(:api_points)
       end
       
       # returns an instance of a widget defined in the config
@@ -146,7 +146,7 @@ module Netzke
     attr_accessor :config, :server_confg, :parent, :logger, :id_name, :permissions, :session
     attr_reader :pref
 
-    interface :load_aggregatee # every widget has this interface
+    api :load_aggregatee # every widget has this api
 
     def initialize(config = {}, parent = nil)
       @session = Netzke::Base.session
@@ -226,7 +226,7 @@ module Netzke
       self.class.short_widget_class_name
     end
     
-    # interface :get_widget # every widget gets this
+    # api :get_widget # every widget gets this
 
     ## Dependencies
     def dependencies
@@ -359,7 +359,7 @@ module Netzke
       self.class.persistent_config_manager_class
     end
 
-    # this should go into base_extras/interface.rb
+    # this should go into base_extras/api.rb
     def load_aggregatee(params)
       widget = aggregatee_instance(params[:id])
       {:this => [{:eval_js => widget.js_missing_code, :eval_css => css_missing_code}, {:render_widget_in_container => {:container => params[:container], :config => widget.js_config}}]}
@@ -370,7 +370,7 @@ module Netzke
     #   users__center__get_data
     #     instantiates aggregatee "users", and calls "center__get_data" on it
     #   books__move_column
-    #     instantiates aggregatee "books", and calls "interface_move_column" on it
+    #     instantiates aggregatee "books", and calls "api_move_column" on it
     def method_missing(method_name, params = {})
       widget, *action = method_name.to_s.split('__')
       widget = widget.to_sym
@@ -378,9 +378,9 @@ module Netzke
       
       if action
         if aggregatees[widget]
-          # only actions starting with "interface_" are accessible
-          interface_action = action.to_s.index('__') ? action : "interface_#{action}"
-          aggregatee_instance(widget).send(interface_action, params)
+          # only actions starting with "api_" are accessible
+          api_action = action.to_s.index('__') ? action : "api_#{action}"
+          aggregatee_instance(widget).send(api_action, params)
         else
           aggregatee_missing(widget)
         end

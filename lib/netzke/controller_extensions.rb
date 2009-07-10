@@ -35,16 +35,16 @@ module Netzke
         widget = widget.to_sym
         action = !action.empty? && action.join("__").to_sym
       
-        # only widget's actions starting with "interface_" are accessible from outside (security)
+        # only widget's actions starting with "api_" are accessible from outside (security)
         if action
-          interface_action = action.to_s.index('__') ? action : "interface_#{action}"
+          api_action = action.to_s.index('__') ? action : "api_#{action}"
 
           # widget module
           widget_class = "Netzke::#{self.class.widget_config_storage[widget][:widget_class_name]}".constantize
 
           # instantiate the server part of the widget
           widget_instance = widget_class.new(self.class.widget_config_storage[widget].merge(:controller => self)) # OPTIMIZE: top-level widgets have access to the controller - can we avoid that?
-          render :text => widget_instance.send(interface_action, params)
+          render :text => widget_instance.send(api_action, params)
         end
       end
     end

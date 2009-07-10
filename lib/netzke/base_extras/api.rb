@@ -1,6 +1,6 @@
 module Netzke
   module BaseExtras
-    module Interface
+    module Api
       
       # def get_widget(params = {})
       #   components_cache = (ActiveSupport::JSON.decode(params[:components_cache]) if params[:components_cache]) || []

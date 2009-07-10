@@ -212,9 +212,9 @@ Ext.widgetMixIn = {
   beforeConstructor : function(config){
     this.actions = {};
 
-    // Create methods for interface points
-    if (config.interface){
-      Ext.each(config.interface, function(intp){
+    // Create methods for api points
+    if (config.api){
+      Ext.each(config.api, function(intp){
         // intp = "update_panels";
         // eval("this[intp.camelize(true)] = function(args){ alert('"+intp+"') }");
         this[intp.camelize(true)] = function(args){ this.callServer(intp, args); }

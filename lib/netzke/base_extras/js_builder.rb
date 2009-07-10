@@ -28,9 +28,9 @@ module Netzke
           res["#{aggr_name}_config".to_sym] = aggregatee_instance(aggr_name.to_sym).js_config
         end
     
-        # Interface
-        # interface = self.class.interface_points.inject({}){|h,interfacep| h.merge(interfacep => widget_action(interfacep))}
-        res.merge!(:interface => self.class.interface_points)
+        # Api
+        # api = self.class.api_points.inject({}){|h,apip| h.merge(apip => widget_action(apip))}
+        res.merge!(:api => self.class.api_points)
     
         # Widget class name
         res.merge!(:widget_class_name => short_widget_class_name)
