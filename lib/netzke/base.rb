@@ -2,23 +2,43 @@ require 'netzke/base_extras/js_builder'
 require 'netzke/base_extras/interface'
 
 module Netzke
+  
+  # Base class for every Netzke widget
+  #
+  # To instantiate a widget in the controller do
+  #
+  #   netzke :widgetname, configuration_hash
+  # 
+  # Configuration hash may contain the following config options common for every widget:
+  # 
+  # * <tt>:widget_class_name</tt> - name of the widget class in the scope of the Netzke module, e.g. "FormPanel"
+  # * <tt>:ext_config</tt> - a config hash that is used to create a javascript instance of the widget. With the other words, every configuration that comes here will be available inside the javascript instance of the widget. For example:
+  #
+  #     netzke :books, :widget_class_name => "GridPanel", :ext_config => {:icon_cls => 'icon-grid', :title => "Books"}
+  # 
+  
   class Base
     
+    # interface
+    def load_aggregatee(params)
+      widget = aggregatee_instance(params[:id])
+      {:this => [{:eval_js => widget.js_missing_code, :eval_css => css_missing_code}, {:render_widget_in_container => {:container => "#{self.id_name}_#{params[:id]}", :config => widget.js_config}}]}
+    end
+
+
+
     # Class-level Netzke::Base configuration. The defaults also get specified here.
     def self.config
       set_default_config({
         # which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
         :javascripts               => [],
         :stylesheets               => [],
-        
         :persistent_config_manager => "NetzkePreference",
-        
         :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs"
       })
     end
 
     include Netzke::BaseExtras::JsBuilder
-    # include Netzke::BaseExtras::Interface
     
     module ClassMethods
 
@@ -63,6 +83,7 @@ module Netzke
         interface_points.each{|p| interfacep << p}
         write_inheritable_attribute(:interface_points, interfacep)
 
+        # It may be needed later for security
         interface_points.each do |interfacep|
           module_eval <<-END, __FILE__, __LINE__
           def interface_#{interfacep}(*args)
@@ -124,6 +145,8 @@ module Netzke
     
     attr_accessor :config, :server_confg, :parent, :logger, :id_name, :permissions, :session
     attr_reader :pref
+
+    interface :load_aggregatee # every widget has this interface
 
     def initialize(config = {}, parent = nil)
       @session = Netzke::Base.session
@@ -309,25 +332,6 @@ module Netzke
       end
     end
 
-    # method dispatcher - sends method to the proper aggregatee
-    def method_missing(method_name, params = {})
-      widget, *action = method_name.to_s.split('__')
-      widget = widget.to_sym
-      action = !action.empty? && action.join("__").to_sym
-      
-      if action
-        if aggregatees[widget]
-          # only actions starting with "interface_" are accessible
-          interface_action = action.to_s.index('__') ? action : "interface_#{action}"
-          aggregatee_instance(widget).send(interface_action, params)
-        else
-          aggregatee_missing(widget)
-        end
-      else
-        super
-      end
-    end
-
     # called when the method_missing tries to processes a non-existing aggregatee
     def aggregatee_missing(aggr)
       flash :error => "Unknown aggregatee #{aggr} for widget #{config[:name]}"
@@ -355,5 +359,35 @@ module Netzke
       self.class.persistent_config_manager_class
     end
 
+    # this should go into base_extras/interface.rb
+    def load_aggregatee(params)
+      widget = aggregatee_instance(params[:id])
+      {:this => [{:eval_js => widget.js_missing_code, :eval_css => css_missing_code}, {:render_widget_in_container => {:container => params[:container], :config => widget.js_config}}]}
+    end
+
+    # Method dispatcher - instantiates an aggregatee and calls the method on it
+    # E.g.: 
+    #   users__center__get_data
+    #     instantiates aggregatee "users", and calls "center__get_data" on it
+    #   books__move_column
+    #     instantiates aggregatee "books", and calls "interface_move_column" on it
+    def method_missing(method_name, params = {})
+      widget, *action = method_name.to_s.split('__')
+      widget = widget.to_sym
+      action = !action.empty? && action.join("__").to_sym
+      
+      if action
+        if aggregatees[widget]
+          # only actions starting with "interface_" are accessible
+          interface_action = action.to_s.index('__') ? action : "interface_#{action}"
+          aggregatee_instance(widget).send(interface_action, params)
+        else
+          aggregatee_missing(widget)
+        end
+      else
+        super
+      end
+    end
+    
   end
 end

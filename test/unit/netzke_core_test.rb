@@ -4,6 +4,14 @@ require 'netzke-core'
 module Netzke
   class Widget < Base
     interface :method_one, :method_two
+    
+    def self.config
+      super.merge({
+        :pref_one => 1,
+        :pref_two => 2
+      })
+    end
+    
     def initial_aggregatees
       {
         :nested_one => {:widget_class_name => 'NestedWidgetOne'},
@@ -42,6 +50,14 @@ module Netzke
       Widget
     end
   end
+  
+  class InheritedWidget < Widget
+    def self.config
+      super.merge({
+        :pref_one => -1
+      })
+    end
+  end
 end
 
 class NetzkeCoreTest < ActiveSupport::TestCase
@@ -60,7 +76,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   
   test "interface" do
     widget_class = Widget
-    assert_equal [:get_widget, :method_one, :method_two], widget_class.interface_points
+    assert_equal [:method_one, :method_two], widget_class.interface_points
   end
 
   test "aggregatees" do
@@ -134,6 +150,21 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     widget = JsInheritanceWidget.new
     assert(widget.js_missing_code.index("Ext.netzke.cache.JsInheritanceWidget"))
     assert(widget.js_missing_code.index("Ext.netzke.cache.Widget"))
+  end
+
+  test "class-level configuration" do
+    # predefined defaults
+    assert(1, Netzke::Widget.config[:pref_one])
+    assert(2, Netzke::Widget.config[:pref_two])
+    assert(-1, Netzke::InheritedWidget.config[:pref_one])
+    assert(2, Netzke::InheritedWidget.config[:pref_two])
+
+    Netzke::Widget.config[:pref_for_widget] = 1
+    Netzke::InheritedWidget.config[:pref_for_widget] = 2
+    
+    assert(1, Netzke::Widget.config[:pref_for_widget])
+    assert(2, Netzke::InheritedWidget.config[:pref_for_widget])
+    
   end
 
 end

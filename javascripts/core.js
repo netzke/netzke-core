@@ -66,7 +66,6 @@ Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
     var sid = this.meta ? this.meta.id : null;
     var recordType = this.recordType, fields = recordType.prototype.fields;
     var records = [];
-    // console.info(this.meta);
     var root = o[this.meta.root] || o, totalRecords = o[this.meta.totalProperty], success = o[this.meta.successProperty];
     for(var i = 0; i < root.length; i++){
       var n = root[i];
@@ -100,7 +99,7 @@ Ext.widgetMixIn = {
     - config: configuration of the widget to be instantiated and inserted into the container
   */
   renderWidgetInContainer : function(params){
-    var cont = Ext.getCmp(params.id);
+    var cont = Ext.getCmp(params.container);
     cont.instantiateChild(params.config);
   },
   
@@ -178,7 +177,6 @@ Ext.widgetMixIn = {
   
   // Get the child widget
   getChildWidget : function(id){
-    console.info(id);
     return Ext.getCmp(this.id+"__"+id);
   },
   

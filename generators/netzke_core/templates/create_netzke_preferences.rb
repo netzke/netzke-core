@@ -3,7 +3,7 @@ class CreateNetzkePreferences < ActiveRecord::Migration
     create_table :netzke_preferences do |t|
       t.string :name
       t.string :pref_type
-      t.string :value
+      t.string :value, :limit => 65535
       t.integer :user_id
       t.integer :role_id
       t.string :widget_name

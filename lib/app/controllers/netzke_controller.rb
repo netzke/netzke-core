@@ -23,15 +23,15 @@ class NetzkeController < ActionController::Base
     end
   end
   
-  def method_missing(action)
-    respond_to do |format|
-      format.js {
-        render :text => "#{action}.js"
-      }
-      format.css {
-        render :text => "#{action}.css"
-      }
-    end
-  end
+  # def method_missing(action)
+  #   respond_to do |format|
+  #     format.js {
+  #       render :text => "#{action}.js"
+  #     }
+  #     format.css {
+  #       render :text => "#{action}.css"
+  #     }
+  #   end
+  # end
   
 end
