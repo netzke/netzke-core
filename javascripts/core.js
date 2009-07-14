@@ -93,6 +93,54 @@ Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
 // Methods common to all widget classes
 Ext.widgetMixIn = {
   /*
+  Loads aggregatee into a container. Sends the widgets cache info to the server.
+  */
+  loadAggregatee: function(params){
+    // build the cached widget list
+    var cachedWidgetNames = [];
+    for (name in Ext.netzke.cache) {
+      cachedWidgetNames.push(name);
+    }
+        
+    params.cache = Ext.encode(cachedWidgetNames);
+    this.loadAggregateeWithCache(params);
+  },
+  
+  /*
+  Returns the parent widget
+  */
+  getParent: function(){
+    // simply cutting the last part of the id: some_parent__a_kid__a_great_kid => some_parent__a_kid
+    var idSplit = this.id.split("__");
+    idSplit.pop();
+    var parentId = idSplit.join("__");
+    
+    return parentId === "" ? null : Ext.getCmp(parentId);
+  },
+  
+  /*
+  Reloads current widget (calls the parent to reload it as its aggregatee)
+  */
+  reload : function(){
+    var parent = this.getParent();
+    if (parent) {
+      parent.loadAggregatee({id:this.localId(parent), container:this.ownerCt.id});
+    } else {
+      window.location.reload();
+    }
+  },
+  
+  /*
+  Gets id in the context of provided parent. 
+  For example, the widgets "properties", being a child of "books" has global id "books__properties", 
+  which *is* its widegt's real id. This methods, with the instance of "books" passed as parameter, 
+  returns "properties".
+  */
+  localId : function(parent){
+    return this.id.replace(parent.id + "__", "");
+  },
+  
+  /*
   Instantiates and inserts a widget into a container with layout 'fit'.
   Arg: an JS object with the following keys:
     - id: id of the receiving container
@@ -116,7 +164,7 @@ Ext.widgetMixIn = {
   /*
   Evaluates JS
   */
-  evalJs : function(code){
+  js : function(code){
     eval(code);
   },
   
@@ -163,16 +211,6 @@ Ext.widgetMixIn = {
         }
       }
     }
-    // Ext.each(methods, function(methodSet){
-    //   if (methodSet.widget) {
-    //     this.getChildWidget(methodSet.widget).bulkExecute(methodSet.methods);
-    //   } else {
-    //     for (var method in methodSet) {
-    //       this[method].apply(this, [methodSet[method]]);
-    //       // this[method].apply(this, Ext.isArray(methodSet[method]) ? methodSet[method] : [methodSet[method]]);
-    //     }
-    //   }
-    // }, this);
   },
   
   // Get the child widget
@@ -300,21 +338,6 @@ Ext.widgetMixIn = {
     this.on('render', this.onWidgetLoad, this);
   },
 
-  // Set size of this component by resizing the fit panel it belongs to
-  // TODO: implement more related functions when needed, like setSize, setPosition, etc
-  // setWidth : function(w){
-  //   this.ownerCt.setWidth(w);
-  // },
-  // setHeight : function(h){
-  //   this.ownerCt.setHeight(h);
-  // },
-
-  // Each widget can provide feedback to the user
-  // setFeedback : function(msg){
-  //   this.feedback(msg);
-  // },
-  
-  // for backward compatibility
   feedback:function(msg){
     if (this.initialConfig && this.initialConfig.quiet) {
       return false;
@@ -390,7 +413,7 @@ Ext.override(Ext.Container, {
   
   // Get the widget that we are hosting
   getWidget: function(){
-    return this.items.get(0);
+    return this.items ? this.items.get(0) : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
   },
   
   removeChild : function(){
@@ -409,63 +432,63 @@ Ext.override(Ext.Container, {
 });
 
 // Make Panel with layout 'fit' capable of dynamic widgets loading
-Ext.override(Ext.Panel, {
-  // Load a new hosted widget from the server
-  loadWidgetOBSOLETE: function(url, params){
-    if (!params) {
-      params = {};
-    }
-    
-    this.remove(this.getWidget()); // first delete previous widget 
-    
-    if (!url) return false; // don't load any widget if the url is null
-
-    // we will let the server know which components we have cached
-    var cachedComponentNames = [];
-    for (name in Ext.netzke.cache) {
-      cachedComponentNames.push(name);
-    }
-    
-    this.disable(); // to visually emphasize loading
-    
-    Ext.Ajax.request({
-        url:url, 
-        params:Ext.apply(params, {components_cache:Ext.encode(cachedComponentNames)}), 
-        script:false,
-        callback:function(panel, success, response){
-          var responseObj = Ext.decode(response.responseText);
-          if (responseObj.config) {
-            // we got a normal response
-
-            // evaluate widget's stylesheets
-            if (responseObj.css){
-              var linkTag = document.createElement('style');
-              linkTag.type = 'text/css';
-              linkTag.innerHTML = responseObj.css;
-              document.body.appendChild(linkTag);
-            }
-            
-            // evaluate widget's javascript
-            if (responseObj.js) {
-              eval(responseObj.js);
-            }
-          
-            responseObj.config.ownerWidget = this.getOwnerWidget();
-            // var instance = new Ext.netzke.cache[responseObj.config.widgetClassName](responseObj.config);
-            //         
-            // this.add(instance);
-            // this.doLayout();
-            this.instantiateChild(responseObj.config);
-          } else {
-            // we didn't get normal response - desplay the flash with eventual errors
-            this.getOwnerWidget().feedback(responseObj.flash);
-          }
-          
-          // reenable the panel
-          this.enable();
-        },
-        scope:this
-    })
-  }
-});
-
+// Ext.override(Ext.Panel, {
+//   // Load a new hosted widget from the server
+//   loadWidgetOBSOLETE: function(url, params){
+//     if (!params) {
+//       params = {};
+//     }
+//     
+//     this.remove(this.getWidget()); // first delete previous widget 
+//     
+//     if (!url) return false; // don't load any widget if the url is null
+// 
+//     // we will let the server know which components we have cached
+//     var cachedComponentNames = [];
+//     for (name in Ext.netzke.cache) {
+//       cachedComponentNames.push(name);
+//     }
+//     
+//     this.disable(); // to visually emphasize loading
+//     
+//     Ext.Ajax.request({
+//         url:url, 
+//         params:Ext.apply(params, {components_cache:Ext.encode(cachedComponentNames)}), 
+//         script:false,
+//         callback:function(panel, success, response){
+//           var responseObj = Ext.decode(response.responseText);
+//           if (responseObj.config) {
+//             // we got a normal response
+// 
+//             // evaluate widget's stylesheets
+//             if (responseObj.css){
+//               var linkTag = document.createElement('style');
+//               linkTag.type = 'text/css';
+//               linkTag.innerHTML = responseObj.css;
+//               document.body.appendChild(linkTag);
+//             }
+//             
+//             // evaluate widget's javascript
+//             if (responseObj.js) {
+//               eval(responseObj.js);
+//             }
+//           
+//             responseObj.config.ownerWidget = this.getOwnerWidget();
+//             // var instance = new Ext.netzke.cache[responseObj.config.widgetClassName](responseObj.config);
+//             //         
+//             // this.add(instance);
+//             // this.doLayout();
+//             this.instantiateChild(responseObj.config);
+//           } else {
+//             // we didn't get normal response - desplay the flash with eventual errors
+//             this.getOwnerWidget().feedback(responseObj.flash);
+//           }
+//           
+//           // reenable the panel
+//           this.enable();
+//         },
+//         scope:this
+//     })
+//   }
+// });
+// 

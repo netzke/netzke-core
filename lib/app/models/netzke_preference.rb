@@ -56,8 +56,6 @@ class NetzkePreference < ActiveRecord::Base
   def self.[]=(pref_name, new_value)
     pref_name  = normalize_preference_name(pref_name)
     pref       = self.pref_to_write(pref_name)
-    logger.debug "!!! pref_name: #{pref_name.inspect}"
-    logger.debug "!!! pref: #{pref.inspect}"
     
     # if assigning nil, simply delete the eventually found preference
     if new_value.nil?

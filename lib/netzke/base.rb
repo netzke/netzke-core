@@ -18,15 +18,6 @@ module Netzke
   # 
   
   class Base
-    
-    # api
-    def load_aggregatee(params)
-      widget = aggregatee_instance(params[:id])
-      {:this => [{:eval_js => widget.js_missing_code, :eval_css => css_missing_code}, {:render_widget_in_container => {:container => "#{self.id_name}_#{params[:id]}", :config => widget.js_config}}]}
-    end
-
-
-
     # Class-level Netzke::Base configuration. The defaults also get specified here.
     def self.config
       set_default_config({
@@ -143,11 +134,15 @@ module Netzke
     end
     extend ClassMethods
     
-    attr_accessor :config, :server_confg, :parent, :logger, :id_name, :permissions, :session
-    attr_reader :pref
+    attr_accessor :config, :parent, :id_name, :permissions, :session
 
-    api :load_aggregatee # every widget has this api
+    api :load_aggregatee_with_cache # every widget gets this api
 
+    # Widget initialization process
+    # * the config hash is available to the widget after the "super" call in the initializer
+    # * override/add new default configuration options in the "initial_config" method 
+    # (the config hash is not yet available)
+    #
     def initialize(config = {}, parent = nil)
       @session = Netzke::Base.session
 
@@ -164,10 +159,12 @@ module Netzke
       @id_name = parent.nil? ? config[:name].to_s : "#{parent.id_name}__#{config[:name]}"
       
       @flash = []
-      
-      @config[:ext_config] ||= {} # configuration used to instantiate JS class
 
       process_permissions_config
+    end
+
+    def initial_config
+      {:ext_config => {}}
     end
 
     # Rails' logger
@@ -217,17 +214,11 @@ module Netzke
       end
     end
     
-    def initial_config
-      {}
-    end
-
     # 'Netzke::Grid' => 'Grid'
     def short_widget_class_name
       self.class.short_widget_class_name
     end
     
-    # api :get_widget # every widget gets this
-
     ## Dependencies
     def dependencies
       @dependencies ||= begin
@@ -360,9 +351,17 @@ module Netzke
     end
 
     # this should go into base_extras/api.rb
-    def load_aggregatee(params)
-      widget = aggregatee_instance(params[:id])
-      {:this => [{:eval_js => widget.js_missing_code, :eval_css => css_missing_code}, {:render_widget_in_container => {:container => params[:container], :config => widget.js_config}}]}
+    def load_aggregatee_with_cache(params)
+      cache = ActiveSupport::JSON.decode(params[:cache])
+      widget = aggregatee_instance(params[:id].underscore)
+      {:this => [{
+        :js => widget.js_missing_code(cache), 
+        :eval_css => css_missing_code(cache)}, {
+        :render_widget_in_container => {
+          :container => params[:container], 
+          :config => widget.js_config}
+        }
+      ]}
     end
 
     # Method dispatcher - instantiates an aggregatee and calls the method on it

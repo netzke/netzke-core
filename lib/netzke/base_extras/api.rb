@@ -15,7 +15,7 @@ module Netzke
       #   #   :js => js,
       #   #   :css => css
       #   # }
-      #   [{:eval_js => js, :eval_css => css}, {:instantiate_child => js_config}]
+      #   [{:js => js, :eval_css => css}, {:instantiate_child => js_config}]
       # end
     end
   end
