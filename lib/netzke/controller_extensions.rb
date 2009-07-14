@@ -84,18 +84,6 @@ module Netzke
             widget_instance.js_widget_instance
           end
           
-          def #{name}_class_definition_old
-            result = ""
-            config = controller.class.widget_config_storage[:#{name}]
-            @generated_widget_classes ||= []
-            # do not duplicate javascript code on the same page
-            unless @generated_widget_classes.include?("#{config[:widget_class_name]}")
-              @generated_widget_classes << "#{config[:widget_class_name]}"
-              result = Netzke::#{config[:widget_class_name]}.js_class_code
-            end
-            result
-          end
-
           def #{name}_class_definition
             @generated_widget_classes ||= []
             config = controller.class.widget_config_storage[:#{name}]

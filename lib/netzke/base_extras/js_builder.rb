@@ -36,7 +36,7 @@ module Netzke
         res.merge!(:widget_class_name => short_widget_class_name)
         
         # Include
-        res.merge!(js_ext_config)
+        res.merge!(ext_config)
     
         # Actions, toolbars and menus
         tools   && res.merge!(:tools   => tools)
@@ -49,10 +49,6 @@ module Netzke
         res.merge!(:permissions => permissions) unless available_permissions.empty?
       
         res
-      end
-   
-      def js_ext_config
-        config[:ext_config] || {}
       end
     
       # All the JS-code required by this instance of the widget to be instantiated in the browser.

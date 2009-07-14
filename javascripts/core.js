@@ -154,7 +154,7 @@ Ext.widgetMixIn = {
   /*
   Evaluates CSS
   */
-  evalCss : function(code){
+  css : function(code){
     var linkTag = document.createElement('style');
     linkTag.type = 'text/css';
     linkTag.innerHTML = code;
@@ -169,11 +169,13 @@ Ext.widgetMixIn = {
   },
   
   /*
-  Executes a bunch of methods. This method is called everytime a communication to the server takes place. Thus the server side of a widget can provide any set of commands to its client side!
+  Executes a bunch of methods. This method is called almost every time a communication to the server takes place. 
+  Thus the server side of a widget can provide any set of commands to its client side.
   Args:
-    - methods: array of methods, in the order of execution. Each item is an object in one of the following 2 formats:
-      1) {method1:args1, method2:args2}, where methodN is a name of a public method of this widget; these methods are called in no particular order
-      2) {widget:widget_id, methods:arrayOfMethods}, used for recursive call to bulkExecute on some child widget
+    - instructions: array of methods, in the order of execution. 
+      Each item is an object in one of the following 2 formats:
+        1) {method1:args1, method2:args2}, where methodN is a name of a public method of this widget; these methods are called in no particular order
+        2) {widget:widget_id, methods:arrayOfMethods}, used for recursive call to bulkExecute on some child widget
 
   Example: 
     - [
@@ -194,20 +196,14 @@ Ext.widgetMixIn = {
     if (Ext.isArray(instructions)) {
       Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
     } else {
-      for (var widget in instructions) {
-        if (widget == 'this') {
-          var methods = instructions[widget];
-          if (Ext.isArray(methods)) {
-            Ext.each(methods, function(method){
-              this.bulkExecute({this:method});
-            }, this);
-          } else {
-            for (var method in methods) {
-              this[method].apply(this, [methods[method]]);
-            }
-          }
+      for (var instr in instructions) {
+        var childWidget = this.getChildWidget(instr);
+        if (childWidget) {
+          // it's not an instruction, rather a reference to a child widget
+          childWidget.bulkExecute(instructions[instr]);
         } else {
-          this.getChildWidget(widget).bulkExecute({this:instructions[widget]});
+          if (!this[instr]) throw "Unknown method '" + instr +"' in widget '" + this.id + "'"
+          this[instr].apply(this, [instructions[instr]]);
         }
       }
     }
@@ -215,7 +211,7 @@ Ext.widgetMixIn = {
   
   // Get the child widget
   getChildWidget : function(id){
-    return Ext.getCmp(this.id+"__"+id);
+    return id === 'parent' ? this.getParent() : Ext.getCmp(this.id+"__"+id);
   },
   
   // Common handler for actions
@@ -395,7 +391,7 @@ Ext.widgetMixIn = {
 // Netzke extensions for Ext.Container
 Ext.override(Ext.Container, {
   /** 
-    Get Netzke widget that this Ext.Container is part of. 
+    Get Netzke widget that this Ext.Container is part of (*not* the parent widget, for which call getParent)
     It searches up the Ext.Container hierarchy until it finds a Container that has isNetzke property set to true
     (or until it reaches the top).
   */

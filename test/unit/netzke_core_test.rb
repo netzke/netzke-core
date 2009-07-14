@@ -23,7 +23,7 @@ module Netzke
       %w(read update)
     end
     
-    def initial_config
+    def default_config
       {
         :config_uno => true,
         :config_dos => false
@@ -76,7 +76,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   
   test "api" do
     widget_class = Widget
-    assert_equal [:load_aggregatee, :method_one, :method_two], widget_class.api_points
+    assert_equal [:load_aggregatee_with_cache, :method_one, :method_two], widget_class.api_points
   end
 
   test "aggregatees" do
@@ -121,7 +121,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   
   test "default config" do
     widget = Widget.new
-    assert_equal({:ext_config => {}, :config_uno => true, :config_dos => false}, widget.config)
+    assert_equal({:config_uno => true, :config_dos => false}, widget.config)
 
     widget = Widget.new(:name => 'widget', :config_uno => false)
     assert_equal({:name => 'widget', :ext_config => {}, :config_uno => false, :config_dos => false}, widget.config)

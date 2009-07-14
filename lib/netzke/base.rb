@@ -134,13 +134,13 @@ module Netzke
     end
     extend ClassMethods
     
-    attr_accessor :config, :parent, :id_name, :permissions, :session
+    attr_accessor :parent, :id_name, :permissions, :session
 
     api :load_aggregatee_with_cache # every widget gets this api
 
     # Widget initialization process
     # * the config hash is available to the widget after the "super" call in the initializer
-    # * override/add new default configuration options in the "initial_config" method 
+    # * override/add new default configuration options in the "default_config" method 
     # (the config hash is not yet available)
     #
     def initialize(config = {}, parent = nil)
@@ -148,11 +148,12 @@ module Netzke
 
       # Uncomment for application-wide weak/strong default config for widgets
       # @config  = (session[:weak_default_config] || {}).
-      #   recursive_merge(initial_config).
+      #   recursive_merge(default_config).
       #   recursive_merge(config).
       #   recursive_merge(session[:strong_default_config] || {})
 
-      @config  = initial_config.recursive_merge(config)
+      # configuration passed at the moment of instantiation
+      @initial_config  = config
         
       @parent  = parent
       
@@ -163,8 +164,39 @@ module Netzke
       process_permissions_config
     end
 
-    def initial_config
-      {:ext_config => {}}
+    def default_config
+      {}
+    end
+
+    # Like normal config, but stored in session
+    def weak_session_config
+      widget_session[:weak_session_config] ||= {}
+    end
+
+    def strong_session_config
+      widget_session[:strong_session_config] ||= {}
+    end
+
+    # Access to the config that takes into account all possible ways to configure a widget, *read only*
+    # (in order of strength):
+    # 1) initial config (default for the widget)
+    # 2) weak session config
+    # 3) config specified at the moment of instantiating 
+    # (implicitly wrapped up in weak and strong configs specified by the parent)
+    # 4) strong session config
+    def config
+      default_config.
+      recursive_merge(weak_session_config).
+      recursive_merge(@initial_config).
+      recursive_merge(strong_session_config)
+    end
+
+    def ext_config
+      config[:ext_config] || {}
+    end
+
+    def widget_session
+      session[id_name] ||= {}
     end
 
     # Rails' logger
@@ -210,6 +242,7 @@ module Netzke
         config_class
       else
         # if we can't use presistent config, all the calls to it will always return nil, and the "="-operation will be ignored
+        logger.debug "==> NETZKE: no persistent config is set up for widget '#{id_name}'"
         {}
       end
     end
@@ -354,14 +387,15 @@ module Netzke
     def load_aggregatee_with_cache(params)
       cache = ActiveSupport::JSON.decode(params[:cache])
       widget = aggregatee_instance(params[:id].underscore)
-      {:this => [{
+      [{
         :js => widget.js_missing_code(cache), 
-        :eval_css => css_missing_code(cache)}, {
+        :css => css_missing_code(cache)
+      }, {
         :render_widget_in_container => {
           :container => params[:container], 
-          :config => widget.js_config}
+          :config => widget.js_config
         }
-      ]}
+      }]
     end
 
     # Method dispatcher - instantiates an aggregatee and calls the method on it
