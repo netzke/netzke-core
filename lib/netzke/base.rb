@@ -110,15 +110,7 @@ module Netzke
       def persistent_config
         # if the class is not present, fake it (it will not store anything, and always return nil)
         if persistent_config_manager_class.nil?
-          fake_config = {}
-          class << fake_config
-            def for_widget(*params, &block)
-              yield({})
-            end
-            def widget_name=(*params)
-            end
-          end
-          fake_config
+          {}
         else
           persistent_config_manager_class
         end
@@ -134,7 +126,7 @@ module Netzke
     end
     extend ClassMethods
     
-    attr_accessor :parent, :id_name, :permissions, :session
+    attr_accessor :parent, :name, :id_name, :permissions, :session
 
     api :load_aggregatee_with_cache # every widget gets this api
 
@@ -157,7 +149,9 @@ module Netzke
         
       @parent  = parent
       
-      @id_name = parent.nil? ? config[:name].to_s : "#{parent.id_name}__#{config[:name]}"
+      @name = config[:name].nil? ? short_widget_class_name.underscore : config[:name].to_s
+      
+      @id_name = parent.nil? ? @name : "#{parent.id_name}__#{@name}"
       
       @flash = []
 
@@ -297,7 +291,7 @@ module Netzke
       name.to_s.split('__').each do |aggr|
         aggr = aggr.to_sym
         short_class_name = aggregator.aggregatees[aggr][:widget_class_name]
-        raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.config[:name]}" if short_class_name.nil?
+        raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.name}" if short_class_name.nil?
         widget_class = "Netzke::#{short_class_name}".constantize
 
         conf = weak_children_config.
@@ -358,7 +352,7 @@ module Netzke
 
     # called when the method_missing tries to processes a non-existing aggregatee
     def aggregatee_missing(aggr)
-      flash :error => "Unknown aggregatee #{aggr} for widget #{config[:name]}"
+      flash :error => "Unknown aggregatee #{aggr} for widget #{name}"
       {:success => false, :flash => @flash}.to_json
     end
 
@@ -383,10 +377,16 @@ module Netzke
       self.class.persistent_config_manager_class
     end
 
+    # override this method to do stuff at the moment of loading by some parent
+    def before_load
+      
+    end
+
     # this should go into base_extras/api.rb
     def load_aggregatee_with_cache(params)
       cache = ActiveSupport::JSON.decode(params[:cache])
       widget = aggregatee_instance(params[:id].underscore)
+      widget.before_load # inform the widget that it's being loaded
       [{
         :js => widget.js_missing_code(cache), 
         :css => css_missing_code(cache)

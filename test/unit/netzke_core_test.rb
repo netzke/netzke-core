@@ -143,7 +143,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   test "widget instance by config" do
     widget = Netzke::Base.instance_by_config({:widget_class_name => 'Widget', :name => 'a_widget'})
     assert(Widget, widget.class)
-    assert('a_widget', widget.config[:name])
+    assert('a_widget', widget.name)
   end
 
   test "js inheritance" do

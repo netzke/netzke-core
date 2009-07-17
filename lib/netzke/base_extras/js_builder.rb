@@ -24,8 +24,10 @@ module Netzke
         # Recursively include configs of all non-late aggregatees, so that the widget can instantiate them in
         # in the browser immediately.
         aggregatees.each_pair do |aggr_name, aggr_config|
-          next if aggr_config[:late_aggregation]
-          res["#{aggr_name}_config".to_sym] = aggregatee_instance(aggr_name.to_sym).js_config
+          next if aggr_config[:late_aggregation] # only non-late aggregatees
+          aggr_instance = aggregatee_instance(aggr_name.to_sym)
+          aggr_instance.before_load
+          res["#{aggr_name}_config".to_sym] = aggr_instance.js_config
         end
     
         # Api
@@ -73,17 +75,17 @@ module Netzke
 
       # instantiating
       def js_widget_instance
-        %Q{var #{config[:name].jsonify} = new Ext.netzke.cache.#{short_widget_class_name}(#{js_config.to_nifty_json});}
+        %Q{var #{name.jsonify} = new Ext.netzke.cache.#{short_widget_class_name}(#{js_config.to_nifty_json});}
       end
 
       # rendering
       def js_widget_render
-        %Q{#{config[:name].jsonify}.render("#{config[:name].to_s.split('_').join('-')}");}
+        %Q{#{name.jsonify}.render("#{name.to_s.split('_').join('-')}");}
       end
 
       # container for rendering
       def js_widget_html
-        %Q{<div id="#{config[:name].to_s.split('_').join('-')}"></div>}
+        %Q{<div id="#{name.to_s.split('_').join('-')}"></div>}
       end
 
       #
