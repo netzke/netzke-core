@@ -40,4 +40,27 @@ class CoreExtTest < ActiveSupport::TestCase
     assert_equal({:aB => 1, "cD" => [[1, {:eF => "stay_same"}], {"literal_symbol" => :should_not_change, "literal_string".l => "also_should_not"}]}, {:a_b => 1, "c_d" => [[1, {:e_f => "stay_same"}], {:literal_symbol.l => :should_not_change, "literal_string".l => "also_should_not"}]}.jsonify)
   end
   
+  # test "flatten" do
+  #   assert_equal([{
+  #     :name => :one, :value => 1 
+  #   },{
+  #     :name => :two, :value => 2 
+  #   },{
+  #     :name => :three__four, :value => 4 
+  #   },{
+  #     :name => :three__five__six, :value => 6
+  #   }], 
+  #   {
+  #     :one => 1,
+  #     :two => 2,
+  #     :three => {
+  #       :four => 4,
+  #       :five => {
+  #         :six => 6
+  #       }
+  #     }
+  #   }.flatten
+  #   )
+  # end
+  
 end

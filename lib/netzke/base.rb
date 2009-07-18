@@ -117,9 +117,9 @@ module Netzke
       end
       
       private
-      def set_default_config(default_config)
+      def set_default_config(c)
         @@config ||= {}
-        @@config[self.name] ||= default_config
+        @@config[self.name] ||= c
         @@config[self.name]
       end
       
@@ -145,7 +145,7 @@ module Netzke
       #   recursive_merge(session[:strong_default_config] || {})
 
       # configuration passed at the moment of instantiation
-      @initial_config  = config
+      @passed_config  = config
         
       @parent  = parent
       
@@ -155,13 +155,97 @@ module Netzke
       
       @flash = []
 
-      process_permissions_config
+      # process_permissions_config
     end
 
+    # add flatten method to Hash
+    Hash.class_eval do 
+      def flatten(preffix = "")
+        res = []
+        self.each_pair do |k,v|
+          if v.is_a?(Hash)
+            res += v.flatten(k)
+          else
+            res <<  {
+              :name => ((preffix.to_s.empty? ? "" : preffix.to_s + "__") + k.to_s).to_sym, 
+              :value => v,
+              :type => (["TrueClass", "FalseClass"].include?(v.class.name) ? 'Boolean' : v.class.name).to_sym
+            }
+          end
+        end
+        res
+      end
+    end
+
+    # Access to the config that takes into account all possible ways to configure a widget. *Read only*.
+    # (in order of strength):
+    # 1) initial config (default for the widget)
+    # 2) weak session config
+    # 3) config specified at the moment of instantiating
+    # (implicitly wrapped up in weak and strong configs specified by the parent)
+    # 4) strong session config
+    def config
+      @config ||= default_config.
+                  recursive_merge(weak_session_config).
+                  recursive_merge(@passed_config).
+                  recursive_merge(persistent_config_hash).
+                  recursive_merge(strong_parent_config).
+                  recursive_merge(strong_session_config)
+    end
+    
+    def flat_config(key = nil)
+      fc = config.flatten
+      key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
+    end
+
+    def strong_parent_config
+      @strong_parent_config ||= parent.nil? ? {} : parent.strong_children_config
+    end
+
+    # Default widget config
     def default_config
       {}
     end
+    
+    # Config that is not overwritten by parents and sessions
+    def independent_config
+      @independent_config ||= default_config.recursive_merge(@passed_config).recursive_merge(persistent_config_hash)
+    end
 
+    def flat_independent_config(key = nil)
+      fc = independent_config.flatten
+      key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
+    end
+    
+    def flat_default_config(key = nil)
+      fc = default_config.flatten
+      key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
+    end
+
+    # Static, hardcoded, config. Consists of default values merged with config that was passed during instantiation
+    def initial_config
+      @initial_config ||= default_config.recursive_merge(@passed_config)
+    end
+    
+    def flat_initial_config(key = nil)
+      fc = initial_config.flatten
+      key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
+    end
+
+    def persistent_config_hash
+      if initial_config[:persistent_config]
+        PropertyEditorExtras::HelperModel.widget = self
+        # logger.debug "!!! PropertyEditorExtras::HelperModel.new.attributes: #{PropertyEditorExtras::HelperModel.new.attributes.inspect}"
+        PropertyEditorExtras::HelperModel.new.attributes
+      else
+        {}
+      end
+    end
+
+    def ext_config
+      config[:ext_config] || {}
+    end
+    
     # Like normal config, but stored in session
     def weak_session_config
       widget_session[:weak_session_config] ||= {}
@@ -171,24 +255,25 @@ module Netzke
       widget_session[:strong_session_config] ||= {}
     end
 
-    # Access to the config that takes into account all possible ways to configure a widget, *read only*
-    # (in order of strength):
-    # 1) initial config (default for the widget)
-    # 2) weak session config
-    # 3) config specified at the moment of instantiating 
-    # (implicitly wrapped up in weak and strong configs specified by the parent)
-    # 4) strong session config
-    def config
-      default_config.
-      recursive_merge(weak_session_config).
-      recursive_merge(@initial_config).
-      recursive_merge(strong_session_config)
-    end
+    # configuration of all children will get recursive_merge'd with strong_children_config
+    # def strong_children_config= (c)
+    #   @strong_children_config = c
+    # end
 
-    def ext_config
-      config[:ext_config] || {}
+    # This config will be picked up by all the descendants
+    def strong_children_config
+      @strong_children_config ||= parent.nil? ? {} : parent.strong_children_config
     end
-
+    
+    # configuration of all children will get reverse_recursive_merge'd with weak_children_config
+    # def weak_children_config= (c)
+    #   @weak_children_config = c
+    # end
+    
+    def weak_children_config
+      @weak_children_config ||= {}
+    end
+    
     def widget_session
       session[id_name] ||= {}
     end
@@ -198,24 +283,6 @@ module Netzke
       Rails.logger
     end
 
-    # configuration of all children will get recursive_merge'd with strong_children_config
-    def strong_children_config= (c)
-      @strong_children_config = c
-    end
-    
-    def strong_children_config
-      @strong_children_config ||= {}
-    end
-    
-    # configuration of all children will get reverse_recursive_merge'd with weak_children_config
-    def weak_children_config= (c)
-      @weak_children_config = c
-    end
-    
-    def weak_children_config
-      @weak_children_config ||= {}
-    end
-    
     def dependency_classes
       res = []
       non_late_aggregatees.keys.each do |aggr|
@@ -296,13 +363,13 @@ module Netzke
 
         conf = weak_children_config.
           recursive_merge(aggregator.aggregatees[aggr]).
-          recursive_merge(strong_children_config).
+          # recursive_merge(strong_children_config).
           recursive_merge(strong_config). # we may want to reconfigure the aggregatee at the moment of instantiation
           merge(:name => aggr)
 
         aggregator = widget_class.new(conf, aggregator) # params: config, parent
-        aggregator.weak_children_config = weak_children_config
-        aggregator.strong_children_config = strong_children_config
+        # aggregator.weak_children_config = weak_children_config
+        # aggregator.strong_children_config = strong_children_config
       end
       aggregator
     end
@@ -360,13 +427,13 @@ module Netzke
       persistent_config[:tools] ||= config[:tools] == false ? nil : config[:tools]
     end
 
-    def bbar
-      persistent_config[:bottom_bar] ||= config[:bbar] == false ? nil : config[:bbar]
-    end
+    # def bbar
+    #   persistent_config[:bottom_bar] ||= config[:bbar] == false ? nil : config[:bbar]
+    # end
 
-    def tbar
-      persistent_config[:top_bar] ||= config[:tbar] == false ? nil : config[:tbar]
-    end
+    # def tbar
+    #   persistent_config[:top_bar] ||= config[:tbar] == false ? nil : config[:tbar]
+    # end
 
     def menu
       persistent_config[:menu] ||= config[:menu] == false ? nil : config[:menu]

@@ -59,7 +59,7 @@ class NetzkePreferenceTest < ActiveSupport::TestCase
     # assign a value for a role, then read it back by users with the same role
     #
     session.clear
-    session[:masq_role] = user_role
+    session[:masq_role] = user_role.id
     p[:test] = 100
 
     # first user
@@ -86,12 +86,12 @@ class NetzkePreferenceTest < ActiveSupport::TestCase
     # now overwrite it for user1 by means of masq_user
     #
     session.clear
-    session[:masq_user] = user1
+    session[:masq_user] = user1.id
     p[:test] = 300
     assert_equal(300, p[:test])
     # .. and check it's still the same for user2
     session.clear
-    session[:masq_user] = user2
+    session[:masq_user] = user2.id
     assert_equal(200, p[:test])
     # .. and that a new user with role 'user' will still read the original value assigned for the role
     user3 = User.create(:login => "user3", :role => user_role)

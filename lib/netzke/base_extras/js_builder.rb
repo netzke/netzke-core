@@ -43,8 +43,8 @@ module Netzke
         # Actions, toolbars and menus
         tools   && res.merge!(:tools   => tools)
         actions && res.merge!(:actions => actions)
-        tbar    && res.merge!(:tbar    => tbar)
-        bbar    && res.merge!(:bbar    => bbar)
+        # tbar    && res.merge!(:tbar    => tbar)
+        # bbar    && res.merge!(:bbar    => bbar)
         menu    && res.merge!(:menu    => menu)
 
         # Permissions
@@ -94,8 +94,8 @@ module Netzke
    
       # widget's actions, tools and toolbars that are loaded at the moment of instantiating a widget
       def actions; nil; end
-      def tbar; nil; end
-      def bbar; nil; end
+      # def tbar; nil; end
+      # def bbar; nil; end
       def menu; nil; end
       def tools; nil; end
 

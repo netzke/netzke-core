@@ -85,11 +85,12 @@ class NetzkePreference < ActiveRecord::Base
     
     if session[:masq_user]
       # first, get the prefs for this user it they exist
-      res = self.find(:first, :conditions => cond.merge({:user_id => session[:masq_user].id}))
+      res = self.find(:first, :conditions => cond.merge({:user_id => session[:masq_user]}))
       # if it doesn't exist, get them for the user's role
-      res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:masq_user].role.id}))
+      user = User.find(session[:masq_user])
+      res ||= self.find(:first, :conditions => cond.merge({:role_id => user.role.id}))
     elsif session[:masq_role]
-      res = self.find(:first, :conditions => cond.merge({:role_id => session[:masq_role].id}))
+      res = self.find(:first, :conditions => cond.merge({:role_id => session[:masq_role]}))
     elsif session[:netzke_user]
       res = self.find(:first, :conditions => cond.merge({:user_id => session[:netzke_user].id}))
       res ||= self.find(:first, :conditions => cond.merge({:role_id => session[:netzke_user].role.try(:id)}))
@@ -106,15 +107,15 @@ class NetzkePreference < ActiveRecord::Base
     cond = {:name => name, :widget_name => self.widget_name}
     
     if session[:masq_user]
-      cond.merge!({:user_id => session[:masq_user].id})
+      cond.merge!({:user_id => session[:masq_user]})
       res = self.find(:first, :conditions => cond)
       res ||= self.new(cond)
     elsif session[:masq_role]
       # first, delete all the corresponding preferences for the users that have this role
-      Role.find(session[:masq_role].id).users.each do |u|
+      Role.find(session[:masq_role]).users.each do |u|
         self.delete_all(cond.merge({:user_id => u.id}))
       end
-      cond.merge!({:role_id => session[:masq_role].id})
+      cond.merge!({:role_id => session[:masq_role]})
       res = self.find(:first, :conditions => cond)
       res ||= self.new(cond)
     elsif session[:netzke_user]
@@ -132,7 +133,7 @@ class NetzkePreference < ActiveRecord::Base
     cond = {:widget_name => name}
     
     if session[:masq_user] || session[:masq_role]
-      cond.merge!({:user_id => session[:masq_user].try(:id), :role_id => session[:masq_role].try(:id)})
+      cond.merge!({:user_id => session[:masq_user], :role_id => session[:masq_role]})
       res = self.find(:all, :conditions => cond)
     elsif session[:netzke_user]
       res = self.find(:all, :conditions => cond.merge({:user_id => session[:netzke_user].id}))
