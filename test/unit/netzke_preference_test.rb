@@ -64,12 +64,12 @@ class NetzkePreferenceTest < ActiveSupport::TestCase
 
     # first user
     session.clear
-    session[:netzke_user] = user1
+    session[:netzke_user_id] = user1.id
     assert_equal(100, p[:test])
 
     # second user
     session.clear
-    session[:netzke_user] = user2
+    session[:netzke_user_id] = user2.id
     assert_equal(100, p[:test])
     
     #
@@ -79,7 +79,7 @@ class NetzkePreferenceTest < ActiveSupport::TestCase
     assert_equal(200, p[:test])
     # .. and check that its still the same for user1
     session.clear
-    session[:netzke_user] = user1
+    session[:netzke_user_id] = user1.id
     assert_equal(100, p[:test])
     
     #
@@ -96,7 +96,7 @@ class NetzkePreferenceTest < ActiveSupport::TestCase
     # .. and that a new user with role 'user' will still read the original value assigned for the role
     user3 = User.create(:login => "user3", :role => user_role)
     session.clear
-    session[:netzke_user] = user3
+    session[:netzke_user_id] = user3.id
     assert_equal(100, p[:test])
     
   end

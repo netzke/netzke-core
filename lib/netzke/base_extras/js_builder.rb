@@ -170,10 +170,10 @@ JS
             js_add_menus = "this.addMenus(#{js_menus.to_nifty_json});" unless js_menus.empty?
 <<-JS
 Ext.netzke.cache.#{short_widget_class_name} = function(config){
-    this.beforeConstructor(config);
+    this.commonBeforeConstructor(config);
     #{js_before_constructor}
     Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, Ext.apply(#{js_default_config.to_nifty_json}, config));
-    this.afterConstructor(config);
+    this.commonAfterConstructor(config);
     #{js_after_constructor}
     #{js_add_menus}
 };

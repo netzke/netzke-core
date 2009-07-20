@@ -101,9 +101,28 @@ Ext.widgetMixIn = {
     for (name in Ext.netzke.cache) {
       cachedWidgetNames.push(name);
     }
-        
+    
     params.cache = Ext.encode(cachedWidgetNames);
+    
+    // remember the passed callback
+    if (params.callback) {
+      this.callbackHash[params.id] = params.callback;
+    }
+    
     this.loadAggregateeWithCache(params);
+  },
+  
+  /*
+  Called by the server as callback about loaded widget
+  */
+  widgetLoaded : function(params){
+    if (this.fireEvent('widgetload')) {
+      if (this.callbackHash[params.id]) {
+        // provide the callback to that widget that was loading thi child, passing the child itself
+        this.callbackHash[params.id].call(params.scope || this, this.getChildWidget(params.id));
+        delete this.callbackHash[params.id];
+      }
+    }
   },
   
   /*
@@ -149,6 +168,13 @@ Ext.widgetMixIn = {
   renderWidgetInContainer : function(params){
     var cont = Ext.getCmp(params.container);
     cont.instantiateChild(params.config);
+  },
+  
+  /*
+  Reconfigures the widget
+  */
+  reconfigure: function(config){
+    this.ownerCt.instantiateChild(config)
   },
   
   /*
@@ -243,7 +269,7 @@ Ext.widgetMixIn = {
     });
   },
 
-  beforeConstructor : function(config){
+  commonBeforeConstructor : function(config){
     this.actions = {};
 
     // Create methods for api points
@@ -316,9 +342,11 @@ Ext.widgetMixIn = {
       config.tools = normTools;
     }
     
+    if (this.beforeConstructor) this.beforeConstructor(config);
+    
   },
 
-  afterConstructor : function(config){
+  commonAfterConstructor : function(config){
     this.feedbackGhost = Ext.getCmp('feedback_ghost');
 
     // cleaning up
@@ -332,6 +360,15 @@ Ext.widgetMixIn = {
     }, this);
 
     this.on('render', this.onWidgetLoad, this);
+    
+    // generic events
+    this.addEvents(
+      'widgetload' // called when a child is loaded
+    );
+    
+    this.callbackHash = {};
+    
+    if (this.afterConstructor) this.afterConstructor(config);
   },
 
   feedback:function(msg){

@@ -452,7 +452,8 @@ module Netzke
     # this should go into base_extras/api.rb
     def load_aggregatee_with_cache(params)
       cache = ActiveSupport::JSON.decode(params[:cache])
-      widget = aggregatee_instance(params[:id].underscore)
+      relative_widget_id = params[:id].underscore
+      widget = aggregatee_instance(relative_widget_id)
       widget.before_load # inform the widget that it's being loaded
       [{
         :js => widget.js_missing_code(cache), 
@@ -461,6 +462,10 @@ module Netzke
         :render_widget_in_container => {
           :container => params[:container], 
           :config => widget.js_config
+        }
+      }, {
+        :widget_loaded => {
+          :id => relative_widget_id
         }
       }]
     end

@@ -23,11 +23,14 @@ class Hash
     self.recursive_delete_if_nil.jsonify.to_json
   end
   
-  # Converts values to strings
-  def stringify_values!
-    self.each_pair{|k,v| self[k] = v.to_s if v.is_a?(Symbol)}
+  # Converts values of a Hash in such a way that they can be easily stored in the database: hashes and arrays are jsonified, symbols - stringified
+  def deebeefy_values
+    inject({}) do |options, (k, v)|
+      options[k] = v.is_a?(Symbol) ? v.to_s : (v.is_a?(Hash) || v.is_a?(Array)) ? v.to_json : v
+      options
+    end
   end
-  
+
   # We don't need to pass null values in JSON, they are null by simply being absent
   def recursive_delete_if_nil
     self.inject({}) do |h,(k,v)|
