@@ -19,7 +19,7 @@ module Netzke
         res = {}
         
         # Unique id of the widget
-        res.merge!(:id => @id_name)
+        res.merge!(:id => id_name)
     
         # Recursively include configs of all non-late aggregatees, so that the widget can instantiate them in
         # in the browser immediately.
@@ -223,12 +223,49 @@ JS
           write_inheritable_attribute(:included_js, included_js)
         end
 
+        def css_include(*args)
+          included_css = read_inheritable_attribute(:included_css) || []
+          args.each do |inclusion|
+            if inclusion.is_a?(Hash)
+              # we are signalized a non-default file location (e.g. Ext examples)
+              case inclusion.keys.first
+              when :ext_examples
+                location = Netzke::Base.config[:ext_location] + "/examples/"
+              end
+              files = inclusion.values.first
+            else
+              location = ""
+              files = inclusion
+            end
+            
+            files = [files] if files.is_a?(String)
+            
+            for f in files
+              included_css << location + f
+            end
+          end
+          write_inheritable_attribute(:included_css, included_css)
+        end
+
         # returns all extra js-code (as string) required by this widget's class
         def js_included
           res = ""
           
           included_js = read_inheritable_attribute(:included_js) || []
           res << included_js.inject("") do |r, path|
+            f = File.new(path)
+            r << f.read
+          end
+
+          res
+        end
+        
+        # returns all extra js-code (as string) required by this widget's class
+        def css_included
+          res = ""
+          
+          included_css = read_inheritable_attribute(:included_css) || []
+          res << included_css.inject("") do |r, path|
             f = File.new(path)
             r << f.read
           end
@@ -258,7 +295,7 @@ JS
           # include the base-class javascript if doing JS inheritance
           res << js_base_class.css_code << "\n" if js_inheritance && !cached_dependencies.include?(js_base_class.short_widget_class_name)
           
-          # res << css_included << "\n"
+          res << css_included << "\n"
           
           res
         end

@@ -136,25 +136,12 @@ module Netzke
     # (the config hash is not yet available)
     #
     def initialize(config = {}, parent = nil)
-      @session = Netzke::Base.session
-
-      # Uncomment for application-wide weak/strong default config for widgets
-      # @config  = (session[:weak_default_config] || {}).
-      #   recursive_merge(default_config).
-      #   recursive_merge(config).
-      #   recursive_merge(session[:strong_default_config] || {})
-
-      # configuration passed at the moment of instantiation
-      @passed_config  = config
-        
-      @parent  = parent
-      
-      @name = config[:name].nil? ? short_widget_class_name.underscore : config[:name].to_s
-      
-      @id_name = parent.nil? ? @name : "#{parent.id_name}__#{@name}"
-      
-      @flash = []
-
+      @session       = Netzke::Base.session
+      @passed_config = config # configuration passed at the moment of instantiation
+      @parent        = parent
+      @name          = config[:name].nil? ? short_widget_class_name.underscore : config[:name].to_s
+      @id_name       = parent.nil? ? @name : "#{parent.id_name}__#{@name}"
+      @flash         = []
       # process_permissions_config
     end
 
@@ -178,12 +165,6 @@ module Netzke
     end
 
     # Access to the config that takes into account all possible ways to configure a widget. *Read only*.
-    # (in order of strength):
-    # 1) initial config (default for the widget)
-    # 2) weak session config
-    # 3) config specified at the moment of instantiating
-    # (implicitly wrapped up in weak and strong configs specified by the parent)
-    # 4) strong session config
     def config
       @config ||= default_config.
                   recursive_merge(weak_session_config).
@@ -204,6 +185,9 @@ module Netzke
 
     # Default widget config
     def default_config
+      # {
+      #   :persistent_config => true
+      # }
       {}
     end
     
@@ -235,7 +219,6 @@ module Netzke
     def persistent_config_hash
       if initial_config[:persistent_config]
         PropertyEditorExtras::HelperModel.widget = self
-        # logger.debug "!!! PropertyEditorExtras::HelperModel.new.attributes: #{PropertyEditorExtras::HelperModel.new.attributes.inspect}"
         PropertyEditorExtras::HelperModel.new.attributes
       else
         {}
@@ -343,6 +326,13 @@ module Netzke
       aggregatees.merge!(aggr)
     end
     
+    def remove_aggregatee(aggr)
+      if config[:persistent_config]
+        persistent_config_manager_class.delete_all_for_widget("#{id_name}__#{aggr}")
+      end
+      aggregatees[aggr] = nil
+    end
+    
     # The difference between aggregatees and late aggregatees is the following: the former gets instantiated together with its aggregator and is normally *instantly* visible as a part of it (for example, the widget in the initially expanded panel in an Accordion). A late aggregatee doesn't get instantiated along with its aggregator. Until it gets requested from the server, it doesn't take any part in its aggregator's life. An example of late aggregatee could be a widget that is loaded dynamically into a previously collapsed panel of an Accordion, or a preferences window (late aggregatee) for a widget (aggregator) that only gets shown when user wants to edit widget's preferences.
     def initial_late_aggregatees
       {}
@@ -420,20 +410,12 @@ module Netzke
     # called when the method_missing tries to processes a non-existing aggregatee
     def aggregatee_missing(aggr)
       flash :error => "Unknown aggregatee #{aggr} for widget #{name}"
-      {:success => false, :flash => @flash}.to_json
+      {:feedback => @flash}.to_nifty_json
     end
 
     def tools
-      persistent_config[:tools] ||= config[:tools] == false ? nil : config[:tools]
+      persistent_config[:tools] ||= config[:tools] || []
     end
-
-    # def bbar
-    #   persistent_config[:bottom_bar] ||= config[:bbar] == false ? nil : config[:bbar]
-    # end
-
-    # def tbar
-    #   persistent_config[:top_bar] ||= config[:tbar] == false ? nil : config[:tbar]
-    # end
 
     def menu
       persistent_config[:menu] ||= config[:menu] == false ? nil : config[:menu]

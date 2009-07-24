@@ -223,13 +223,15 @@ Ext.widgetMixIn = {
       Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
     } else {
       for (var instr in instructions) {
-        var childWidget = this.getChildWidget(instr);
-        if (childWidget) {
-          // it's not an instruction, rather a reference to a child widget
-          childWidget.bulkExecute(instructions[instr]);
-        } else {
-          if (!this[instr]) throw "Unknown method '" + instr +"' in widget '" + this.id + "'"
+        if (this[instr]) {
           this[instr].apply(this, [instructions[instr]]);
+        } else {
+          var childWidget = this.getChildWidget(instr);
+          if (childWidget) {
+            childWidget.bulkExecute(instructions[instr]);
+          } else {
+            throw "Unknown method or child widget '" + instr +"' in widget '" + this.id + "'"
+          }
         }
       }
     }
@@ -257,13 +259,22 @@ Ext.widgetMixIn = {
   },
 
   // Does the call to the server and processes the response
-  callServer : function(intp, params){
+  callServer : function(intp, params, callback, scope){
     if (!params) params = {};
     Ext.Ajax.request({
       params : params,
       url : this.id + "__" + intp,
       callback : function(options, success, response){
-        if (success) this.bulkExecute(Ext.decode(response.responseText));
+        if (success) {
+          // execute commands from server
+          this.bulkExecute(Ext.decode(response.responseText));
+          
+          // provade callback if needed
+          if (typeof callback == 'function') { 
+            if (!scope) scope = this;
+            callback.apply(scope);
+          }
+        }
       },
       scope : this
     });
@@ -272,13 +283,10 @@ Ext.widgetMixIn = {
   commonBeforeConstructor : function(config){
     this.actions = {};
 
-    // Create methods for api points
+    // Generate methods for api points
     if (config.api){
       Ext.each(config.api, function(intp){
-        // intp = "update_panels";
-        // eval("this[intp.camelize(true)] = function(args){ alert('"+intp+"') }");
-        this[intp.camelize(true)] = function(args){ this.callServer(intp, args); }
-        // eval("this[intp.camelize(true)] = function(args){ this.callServer('"+intp+"', args); }");
+        this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
       }, this);
     }
 
@@ -358,6 +366,8 @@ Ext.widgetMixIn = {
     this.on('render', function(){
       if (this.initialConfig.menu) {this.addMenu(this.initialConfig.menu);}
     }, this);
+
+    // debugger
 
     this.on('render', this.onWidgetLoad, this);
     

@@ -147,6 +147,10 @@ class NetzkePreference < ActiveRecord::Base
     res      
   end
   
+  def self.delete_all_for_widget(name)
+    self.destroy(find_all_for_widget(name))
+  end
+  
   private
   def self.normalize_preference_name(name)
     name.to_s.gsub(".", "__").gsub("/", "__")
