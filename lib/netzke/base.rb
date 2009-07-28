@@ -143,6 +143,7 @@ module Netzke
       @id_name       = parent.nil? ? @name : "#{parent.id_name}__#{@name}"
       @flash         = []
       # process_permissions_config
+      
     end
 
     # add flatten method to Hash
@@ -231,11 +232,11 @@ module Netzke
     
     # Like normal config, but stored in session
     def weak_session_config
-      widget_session[:weak_session_config] ||= {}
+      widget_session[:weak_session_config] || {}
     end
 
     def strong_session_config
-      widget_session[:strong_session_config] ||= {}
+      widget_session[:strong_session_config] || {}
     end
 
     # configuration of all children will get recursive_merge'd with strong_children_config
@@ -347,12 +348,14 @@ module Netzke
       aggregator = self
       name.to_s.split('__').each do |aggr|
         aggr = aggr.to_sym
-        short_class_name = aggregator.aggregatees[aggr][:widget_class_name]
-        raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.name}" if short_class_name.nil?
+        aggregatee_config = aggregator.aggregatees[aggr]
+        raise ArgumentError, "No aggregatee '#{aggr}' defined for widget '#{aggregator.id_name}'" if aggregatee_config.nil?
+        short_class_name = aggregatee_config[:widget_class_name]
+        raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.id_name}" if short_class_name.nil?
         widget_class = "Netzke::#{short_class_name}".constantize
 
         conf = weak_children_config.
-          recursive_merge(aggregator.aggregatees[aggr]).
+          recursive_merge(aggregatee_config).
           # recursive_merge(strong_children_config).
           recursive_merge(strong_config). # we may want to reconfigure the aggregatee at the moment of instantiation
           merge(:name => aggr)
@@ -432,10 +435,10 @@ module Netzke
     end
 
     # this should go into base_extras/api.rb
-    def load_aggregatee_with_cache(params)
+    def load_aggregatee_with_cache(params, strong_config = {})
       cache = ActiveSupport::JSON.decode(params[:cache])
       relative_widget_id = params[:id].underscore
-      widget = aggregatee_instance(relative_widget_id)
+      widget = aggregatee_instance(relative_widget_id, strong_config)
       widget.before_load # inform the widget that it's being loaded
       [{
         :js => widget.js_missing_code(cache), 

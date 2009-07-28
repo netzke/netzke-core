@@ -107,8 +107,15 @@ Ext.widgetMixIn = {
     // remember the passed callback
     if (params.callback) {
       this.callbackHash[params.id] = params.callback;
+      delete params.callback;
+      delete params.scope;
     }
     
+    // visually disable the container while the widget is being loaded
+    // Ext.getCmp(params.container).disable();
+    Ext.getCmp(params.container).removeChild(); // simply cleanup the area, which speaks for itself
+    
+    // remote api call
     this.loadAggregateeWithCache(params);
   },
   
@@ -117,8 +124,11 @@ Ext.widgetMixIn = {
   */
   widgetLoaded : function(params){
     if (this.fireEvent('widgetload')) {
+      // Enable the container after the widget is succesfully loaded
+      // this.getChildWidget(params.id).ownerCt.enable();
+      
+      // provide the callback to that widget that was loading thi child, passing the child itself
       if (this.callbackHash[params.id]) {
-        // provide the callback to that widget that was loading thi child, passing the child itself
         this.callbackHash[params.id].call(params.scope || this, this.getChildWidget(params.id));
         delete this.callbackHash[params.id];
       }
@@ -292,6 +302,7 @@ Ext.widgetMixIn = {
 
     // Create Ext.Actions based on config.actions
     if (config.actions) {
+      this.testActions = {};
       for (var name in config.actions) {
         // Create an event for each action (so that higher-level widgets could interfere)
         this.addEvents(name+'click');
@@ -303,6 +314,7 @@ Ext.widgetMixIn = {
         this.actions[name] = new Ext.Action(actionConfig);
       }
 
+      // delete config.actions;
       /* Parse the bbar and tbar (both Arrays), replacing the strings with the corresponding methods. For example:
         replaceStringsWithActions( ['add', {text:'Menu', menu:['edit', 'delete']}] )
         => [scope.actions['add'], {text:'Menu', menu:[scope.actions['edit'], scope.actions['delete']]}]
@@ -334,6 +346,9 @@ Ext.widgetMixIn = {
       config.bbar = config.bbar && replaceStringsWithActions(config.bbar, this);
       config.tbar = config.tbar && replaceStringsWithActions(config.tbar, this);
       config.menu = config.menu && replaceStringsWithActions(config.menu, this);
+      
+      // TODO: need to rething this action related stuff
+      config.actions = this.actions;
       
     }
 
@@ -473,65 +488,3 @@ Ext.override(Ext.Container, {
     this.doLayout();
   }
 });
-
-// Make Panel with layout 'fit' capable of dynamic widgets loading
-// Ext.override(Ext.Panel, {
-//   // Load a new hosted widget from the server
-//   loadWidgetOBSOLETE: function(url, params){
-//     if (!params) {
-//       params = {};
-//     }
-//     
-//     this.remove(this.getWidget()); // first delete previous widget 
-//     
-//     if (!url) return false; // don't load any widget if the url is null
-// 
-//     // we will let the server know which components we have cached
-//     var cachedComponentNames = [];
-//     for (name in Ext.netzke.cache) {
-//       cachedComponentNames.push(name);
-//     }
-//     
-//     this.disable(); // to visually emphasize loading
-//     
-//     Ext.Ajax.request({
-//         url:url, 
-//         params:Ext.apply(params, {components_cache:Ext.encode(cachedComponentNames)}), 
-//         script:false,
-//         callback:function(panel, success, response){
-//           var responseObj = Ext.decode(response.responseText);
-//           if (responseObj.config) {
-//             // we got a normal response
-// 
-//             // evaluate widget's stylesheets
-//             if (responseObj.css){
-//               var linkTag = document.createElement('style');
-//               linkTag.type = 'text/css';
-//               linkTag.innerHTML = responseObj.css;
-//               document.body.appendChild(linkTag);
-//             }
-//             
-//             // evaluate widget's javascript
-//             if (responseObj.js) {
-//               eval(responseObj.js);
-//             }
-//           
-//             responseObj.config.ownerWidget = this.getOwnerWidget();
-//             // var instance = new Ext.netzke.cache[responseObj.config.widgetClassName](responseObj.config);
-//             //         
-//             // this.add(instance);
-//             // this.doLayout();
-//             this.instantiateChild(responseObj.config);
-//           } else {
-//             // we didn't get normal response - desplay the flash with eventual errors
-//             this.getOwnerWidget().feedback(responseObj.flash);
-//           }
-//           
-//           // reenable the panel
-//           this.enable();
-//         },
-//         scope:this
-//     })
-//   }
-// });
-// 
