@@ -23,15 +23,41 @@ class NetzkeController < ActionController::Base
     end
   end
   
-  # def method_missing(action)
-  #   respond_to do |format|
-  #     format.js {
-  #       render :text => "#{action}.js"
-  #     }
-  #     format.css {
-  #       render :text => "#{action}.css"
-  #     }
-  #   end
-  # end
+  #
+  # Primitive tests to quickly test the widgets
+  #
   
+  # FormPanel
+  netzke :form_panel, :columns => %w{ field_one field_two }
+  
+  # BorderLayoutPanel
+  netzke :border_layout_panel, :regions => {
+    :west => {
+      :widget_class_name => "Panel",
+      :region_config => {:width => 300, :split => true}
+    },
+    :center => {
+      :widget_class_name => "Panel"
+    }
+  }
+  
+  # TabPanel
+  netzke :tab_panel, :items => [{
+    :widget_class_name => "Panel",
+    :ext_config => {
+      :html => "Panel 1",  
+    },
+    :active => true
+  },{
+    :widget_class_name => "Panel",
+    :ext_config => {
+      :html => "Panel 2",  
+    },
+  }]
+  
+  # BasicApp
+  netzke :basic_app
+  
+  
+
 end

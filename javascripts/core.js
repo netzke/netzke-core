@@ -90,8 +90,13 @@ Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
   }
 });
 
-// Methods common to all widget classes
+// Properties/methods common to all widget classes
 Ext.widgetMixIn = {
+  height: 400,
+  width: 800,
+  border: false,
+  is_netzke: true, // to distinguish Netzke components from regular Ext components
+  
   /*
   Loads aggregatee into a container. Sends the widgets cache info to the server.
   */
@@ -290,6 +295,7 @@ Ext.widgetMixIn = {
     });
   },
 
+  // Every Netzke widget 
   commonBeforeConstructor : function(config){
     this.actions = {};
 
@@ -347,7 +353,7 @@ Ext.widgetMixIn = {
       config.tbar = config.tbar && replaceStringsWithActions(config.tbar, this);
       config.menu = config.menu && replaceStringsWithActions(config.menu, this);
       
-      // TODO: need to rething this action related stuff
+      // TODO: need to rethink this action related stuff
       config.actions = this.actions;
       
     }
@@ -365,7 +371,11 @@ Ext.widgetMixIn = {
       config.tools = normTools;
     }
     
-    if (this.beforeConstructor) this.beforeConstructor(config);
+    // Set title
+    if (!config.title) config.title = config.id.humanize();
+    
+    
+    // if (this.beforeConstructor) this.beforeConstructor(config);
     
   },
 

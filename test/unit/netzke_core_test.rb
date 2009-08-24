@@ -45,10 +45,7 @@ module Netzke
   class DeepNestedWidget < Base
   end
 
-  class JsInheritanceWidget < Base
-    def self.js_base_class
-      Widget
-    end
+  class JsInheritanceWidget < Widget
   end
   
   class InheritedWidget < Widget

@@ -1,9 +1,6 @@
 v0.4.0
-2009-07-14
-Refactor: complete rewrite of the client-server communication code.
-New: widget_session is now available for widgets, where a widget can separately store its session data.
-New: weak/strong_session_config is similar to the normal config hash, but the values are consistent over requests. Can be used by parent widget to alter the behavior of its child.
-Code clean-up.
+2009-08-24
+Major refactoring.
 
 v0.3.2
 2009-06-05

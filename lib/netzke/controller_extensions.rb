@@ -43,7 +43,10 @@ module Netzke
           widget_class = "Netzke::#{self.class.widget_config_storage[widget][:widget_class_name]}".constantize
 
           # instantiate the server part of the widget
-          widget_instance = widget_class.new(self.class.widget_config_storage[widget].merge(:controller => self)) # OPTIMIZE: top-level widgets have access to the controller - can we avoid that?
+          widget_instance = widget_class.new(self.class.widget_config_storage[widget])
+          # (OLD VERSION)
+          # widget_instance = widget_class.new(self.class.widget_config_storage[widget].merge(:controller => self)) # OPTIMIZE: top-level widgets have access to the controller - can we avoid that?
+          
           render :text => widget_instance.send(api_action, params)
         end
       end

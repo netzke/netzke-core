@@ -10,9 +10,6 @@ require 'netzke/routing'
 
 require 'netzke/feedback_ghost'
 
-# Vendor
-require 'vendor/facets/hash/recursive_merge'
-
 # Load models and controllers from lib/app
 %w{ models controllers }.each do |dir|
   path = File.join(File.dirname(__FILE__), 'app', dir)

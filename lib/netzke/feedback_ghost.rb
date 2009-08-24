@@ -9,7 +9,7 @@ module Netzke
 
     def self.js_extend_properties
       {
-        :show_feedback => <<-JS.l,
+        :show_feedback => <<-END_OF_JAVASCRIPT.l,
           function(msg){
             var createBox = function(s, l){
                 return ['<div class="msg">',
@@ -36,7 +36,7 @@ module Netzke
               showBox(msg);
             }
         	}
-        JS
+        END_OF_JAVASCRIPT
       }
     end
   end
