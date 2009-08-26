@@ -57,7 +57,15 @@ class NetzkeController < ActionController::Base
   
   # BasicApp
   netzke :basic_app
-  
-  
+
+  def test_widgets
+    html = "<h3>Quick primitive widgets tests</h3>"
+    
+    self.class.widget_config_storage.each_key.map(&:to_s).sort.each do |w|
+      html << "<a href='#{w}_test'>#{w.to_s.humanize}</a><br/>\n"
+    end
+    
+    render :text => html
+  end
 
 end

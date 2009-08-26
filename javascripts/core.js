@@ -132,7 +132,7 @@ Ext.widgetMixIn = {
       // Enable the container after the widget is succesfully loaded
       // this.getChildWidget(params.id).ownerCt.enable();
       
-      // provide the callback to that widget that was loading thi child, passing the child itself
+      // provide the callback to that widget that was loading the child, passing the child itself
       if (this.callbackHash[params.id]) {
         this.callbackHash[params.id].call(params.scope || this, this.getChildWidget(params.id));
         delete this.callbackHash[params.id];
@@ -373,36 +373,28 @@ Ext.widgetMixIn = {
     
     // Set title
     if (!config.title) config.title = config.id.humanize();
-    
-    
-    // if (this.beforeConstructor) this.beforeConstructor(config);
-    
   },
 
+  // At this moment component is fully initializied
   commonAfterConstructor : function(config){
+    // From everywhere accessible FeedbackGhost
     this.feedbackGhost = Ext.getCmp('feedback_ghost');
 
-    // cleaning up
-    this.on('beforedestroy', function(){
-      this.cleanUpMenu(this);
-    }, this);
-    
-    // After render, add the menus
-    this.on('render', function(){
-      if (this.initialConfig.menu) {this.addMenu(this.initialConfig.menu);}
-    }, this);
+    // Add the menus
+    if (this.initialConfig.menu) {this.addMenu(this.initialConfig.menu, this);}
 
-    // debugger
-
-    this.on('render', this.onWidgetLoad, this);
-    
     // generic events
     this.addEvents(
-      'widgetload' // called when a child is loaded
+      'widgetload' // fired when a child is dynamically loaded
     );
+
+    // Cleaning up on destroy
+    this.on('beforedestroy', function(){
+      this.cleanUpMenu();
+    }, this);
     
     this.callbackHash = {};
-    
+
     if (this.afterConstructor) this.afterConstructor(config);
   },
 

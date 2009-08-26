@@ -57,6 +57,7 @@ module Netzke
       # widget_config_storage for all widgets
       def widget_config_storage
         @@widget_config_storage ||= {}
+        @@widget_config_storage[self.name] ||= {} # specific for controller
       end
     
       #

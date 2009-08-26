@@ -132,8 +132,8 @@ module Netzke
       # end
   
       # code evaluated before and after the constructor
-      def js_before_constructor; ""; end
-      def js_after_constructor; ""; end
+      # def js_before_constructor; ""; end
+      # def js_after_constructor; ""; end
 
       # widget's menus
       def js_menus; []; end
@@ -168,22 +168,15 @@ module Netzke
             // process actions, tools, toolbars
             this.commonBeforeConstructor(config);
             
-            // Javascript code that the widget needs to evaluate before calling the contstructor of the 
-            // inherited class. For example, a grid may want to prepare the column model, the stor, etc.
-            #{js_before_constructor}
-            
             // Call the constructor of the inherited class
             Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, config);
 
-            #{js_after_constructor}
             // What every widget should do after calling the constructor of the inherited class, like
             // setting extra events
             this.commonAfterConstructor(config);
           };
           Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
           END_OF_JAVASCRIPT
-
-            #{js_add_menus}
         end
       end
       
