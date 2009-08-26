@@ -117,24 +117,9 @@ module Netzke
 
       # functions and properties that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
       def js_extend_properties 
-        # {
-        #   :height => 400,
-        #   :width => 800,
-        #   :border => false,
-        #   :is_netzke => true, # to distinguish Netzke components from regular Ext components
-        #   :widget_class_name => short_widget_class_name
-        # }
         {}
       end
-
-      # def default_ext_config
-      #   config[:default_config][:ext_config]
-      # end
   
-      # code evaluated before and after the constructor
-      # def js_before_constructor; ""; end
-      # def js_after_constructor; ""; end
-
       # widget's menus
       def js_menus; []; end
   
@@ -234,11 +219,6 @@ module Netzke
           f = File.new(path)
           res << f.read << "\n"
         end
-        # included_js = read_inheritable_attribute(:included_js) || []
-        # res << included_js.inject("") do |r, path|
-        #   f = File.new(path)
-        #   r << f.read
-        # end
 
         res
       end

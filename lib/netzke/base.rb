@@ -34,8 +34,12 @@ module Netzke
       end
 
       def configure(*args)
-        # first arg is a Symbol
-        config[args.first] = args.last
+        if args.first.is_a?(Symbol)
+          # first arg is a Symbol
+          config[args.first] = args.last
+        else
+          config.deep_merge!(args.first)
+        end
 
         enforce_config_consistency
       end
