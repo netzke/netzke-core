@@ -295,6 +295,36 @@ Ext.widgetMixIn = {
     });
   },
 
+  /* Parse the bbar and tbar (both Arrays), replacing the strings with the corresponding methods. For example:
+    replaceStringsWithActions( ['add', {text:'Menu', menu:['edit', 'delete']}] )
+    => [scope.actions['add'], {text:'Menu', menu:[scope.actions['edit'], scope.actions['delete']]}]
+  */
+  normalizeMenuItems: function(arry, scope){
+    var res = []; // new array
+    Ext.each(arry, function(o){
+      if (typeof o === "string") {
+        var camelized = o.camelize(true);
+        if (scope.actions[camelized]){
+          res.push(scope.actions[camelized]);
+        } else {
+          // if there's no action with this name, maybe it's a separator or something
+          res.push(o);
+        }
+      } else if (Netzke.isObject(o)) {
+        // look inside the objects...
+        for (var key in o) {
+          if (Ext.isArray(o[key])) {
+            // ... and recursively process inner arrays found
+            o[key] = this.normalizeMenuItems(o[key], scope);
+          }
+        }
+        res.push(o);
+      }
+    }, this);
+    return res;
+  },
+  
+
   // Every Netzke widget 
   commonBeforeConstructor : function(config){
     this.actions = {};
@@ -320,38 +350,10 @@ Ext.widgetMixIn = {
         this.actions[name] = new Ext.Action(actionConfig);
       }
 
-      // delete config.actions;
-      /* Parse the bbar and tbar (both Arrays), replacing the strings with the corresponding methods. For example:
-        replaceStringsWithActions( ['add', {text:'Menu', menu:['edit', 'delete']}] )
-        => [scope.actions['add'], {text:'Menu', menu:[scope.actions['edit'], scope.actions['delete']]}]
-      */
-      var replaceStringsWithActions = function(arry, scope){
-        var res = []; // new array
-        Ext.each(arry, function(o){
-          if (typeof o === "string") {
-            var camelized = o.camelize(true);
-            if (scope.actions[camelized]){
-              res.push(scope.actions[camelized]);
-            } else {
-              // if there's no action with this name, maybe it's a separator or something
-              res.push(o);
-            }
-          } else if (Netzke.isObject(o)) {
-            // look inside the objects...
-            for (var key in o) {
-              if (Ext.isArray(o[key])) {
-                // ... and recursively process inner arrays found
-                o[key] = replaceStringsWithActions(o[key], scope);
-              }
-            }
-            res.push(o);
-          }
-        });
-        return res;
-      }
-      config.bbar = config.bbar && replaceStringsWithActions(config.bbar, this);
-      config.tbar = config.tbar && replaceStringsWithActions(config.tbar, this);
-      config.menu = config.menu && replaceStringsWithActions(config.menu, this);
+      config.bbar = config.bbar && this.normalizeMenuItems(config.bbar, this);
+      config.tbar = config.tbar && this.normalizeMenuItems(config.tbar, this);
+      config.menu = config.menu && this.normalizeMenuItems(config.menu, this);
+      config.contextMenu = config.contextMenu && this.normalizeMenuItems(config.contextMenu, this);
       
       // TODO: need to rethink this action related stuff
       config.actions = this.actions;

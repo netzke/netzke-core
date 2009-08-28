@@ -108,6 +108,7 @@ module Netzke
       
       # returns an instance of a widget defined in the config
       def instance_by_config(config)
+        Rails.logger.debug "!!! instance_by_config \n"
         widget_class = "Netzke::#{config[:widget_class_name]}".constantize
         widget_class.new(config)
       end
@@ -149,6 +150,7 @@ module Netzke
     # (the config hash is not yet available)
     #
     def initialize(config = {}, parent = nil)
+      logger.debug "!!! initialize config: #{config.inspect}\n"
       @session       = Netzke::Base.session
       @passed_config = config # configuration passed at the moment of instantiation
       @parent        = parent
@@ -206,7 +208,6 @@ module Netzke
 
     # Config that is not overwritten by parents and sessions
     def independent_config
-      # @independent_config ||= default_config.deep_merge(@passed_config).deep_merge(persistent_config_hash)
       @independent_config ||= initial_config.deep_merge(persistent_config_hash)
     end
 
@@ -411,33 +412,33 @@ module Netzke
     end
 
     # permissions
-    def available_permissions
-      []
-    end
+    # def available_permissions
+    #   []
+    # end
 
-    def process_permissions_config
-      if !available_permissions.empty?
-        # First, process permissions from the config
-        @permissions = available_permissions.inject({}){|h,p| h.merge(p.to_sym => true)} # by default anything is allowed
-
-        config[:prohibit] = available_permissions if config[:prohibit] == :all # short-cut for all permissions
-        config[:prohibit] = [config[:prohibit]] if config[:prohibit].is_a?(Symbol) # so that config[:prohibit] => :write works
-        config[:prohibit] && config[:prohibit].each{|p| @permissions.merge!(p.to_sym => false)} # prohibit
-
-        config[:allow] = [config[:allow]] if config[:allow].is_a?(Symbol) # so that config[:allow] => :write works
-        config[:allow] && config[:allow].each{|p| @permissions.merge!(p.to_sym => true)} # allow
-        
-        # ... and then merge it with NetzkePreferences
-        available_permissions.each do |p|
-          # if nothing is stored in persistent_config, store the permission from the config; otherwise leave what's there
-          persistent_config["permissions/#{p}"].nil? && persistent_config["permissions/#{p}"] = @permissions[p.to_sym]
-
-          # what's stored in persistent_config has higher priority, so, if there's something there, use that
-          persistent_permisson = persistent_config["permissions/#{p}"]
-          @permissions[p.to_sym] = persistent_permisson unless persistent_permisson.nil?
-        end
-      end
-    end
+    # def process_permissions_config
+    #   if !available_permissions.empty?
+    #     # First, process permissions from the config
+    #     @permissions = available_permissions.inject({}){|h,p| h.merge(p.to_sym => true)} # by default anything is allowed
+    # 
+    #     config[:prohibit] = available_permissions if config[:prohibit] == :all # short-cut for all permissions
+    #     config[:prohibit] = [config[:prohibit]] if config[:prohibit].is_a?(Symbol) # so that config[:prohibit] => :write works
+    #     config[:prohibit] && config[:prohibit].each{|p| @permissions.merge!(p.to_sym => false)} # prohibit
+    # 
+    #     config[:allow] = [config[:allow]] if config[:allow].is_a?(Symbol) # so that config[:allow] => :write works
+    #     config[:allow] && config[:allow].each{|p| @permissions.merge!(p.to_sym => true)} # allow
+    #     
+    #     # ... and then merge it with NetzkePreferences
+    #     available_permissions.each do |p|
+    #       # if nothing is stored in persistent_config, store the permission from the config; otherwise leave what's there
+    #       persistent_config["permissions/#{p}"].nil? && persistent_config["permissions/#{p}"] = @permissions[p.to_sym]
+    # 
+    #       # what's stored in persistent_config has higher priority, so, if there's something there, use that
+    #       persistent_permisson = persistent_config["permissions/#{p}"]
+    #       @permissions[p.to_sym] = persistent_permisson unless persistent_permisson.nil?
+    #     end
+    #   end
+    # end
 
     # called when the method_missing tries to processes a non-existing aggregatee
     def aggregatee_missing(aggr)
@@ -463,11 +464,13 @@ module Netzke
       
     end
 
-    # this should go into base_extras/api.rb
-    def load_aggregatee_with_cache(params, strong_config = {})
-      cache = ActiveSupport::JSON.decode(params[:cache])
-      relative_widget_id = params[:id].underscore
-      widget = aggregatee_instance(relative_widget_id, strong_config)
+    # API
+    def load_aggregatee_with_cache(params)
+      cache = ActiveSupport::JSON.decode(params.delete(:cache))
+      relative_widget_id = params.delete(:id).underscore
+      passed_config = params[:config] && ActiveSupport::JSON.decode(params[:config]) || {}
+      passed_config = passed_config.symbolize_keys
+      widget = aggregatee_instance(relative_widget_id, passed_config)
       widget.before_load # inform the widget that it's being loaded
       [{
         :js => widget.js_missing_code(cache), 

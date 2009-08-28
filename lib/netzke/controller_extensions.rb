@@ -73,41 +73,37 @@ module Netzke
 
         # provide widget helpers
         ActionView::Base.module_eval <<-END_EVAL, __FILE__, __LINE__
+          def #{name}_server_instance(config = {})
+            default_config = controller.class.widget_config_storage[:#{name}]
+            if config.empty?
+              # only cache when the config is empty (which means that config specified in controller is used)
+              @widget_instance_cache ||= Netzke::Base.instance_by_config(default_config)
+            else
+              # if helper is called with parameters - always return a fresh instance of widget, no caching
+              Netzke::Base.instance_by_config(default_config.deep_merge(config))
+            end
+          end
+        
           def #{name}_widget_instance(config = {})
-            # get the global config from the controller's singleton class
-            global_config = controller.class.widget_config_storage[:#{name}]
-
-            # when instantiating a client side instance, the configuration may be overwritten 
-            # (but the server side will know nothing about it!)
-            local_config = global_config.merge(config)
-
-            # instantiate it
-            widget_instance = Netzke::#{config[:widget_class_name]}.new(local_config)
-          
-            # return javascript code for instantiating on the javascript level
-            widget_instance.js_widget_instance
+            #{name}_server_instance(config).js_widget_instance
           end
           
           def #{name}_class_definition
             @generated_widget_classes ||= []
-            config = controller.class.widget_config_storage[:#{name}]
-            widget_instance = Netzke::#{config[:widget_class_name]}.new(config)
-            res = widget_instance.js_missing_code(@generated_widget_classes)
-            @generated_widget_classes += widget_instance.dependencies
+            res = #{name}_server_instance.js_missing_code(@generated_widget_classes)
+            
+            # prevent duplication of javascript when multiple homogeneous widgets are on the same page
+            @generated_widget_classes += #{name}_server_instance.dependencies
             @generated_widget_classes.uniq!
             res
           end
           
           def #{name}_widget_html
-            config = controller.class.widget_config_storage[:#{name}]
-            widget_instance = Netzke::Base.instance_by_config(config)
-            widget_instance.js_widget_html
+            #{name}_server_instance.js_widget_html
           end
           
           def #{name}_widget_render
-            config = controller.class.widget_config_storage[:#{name}]
-            widget_instance = Netzke::Base.instance_by_config(config)
-            widget_instance.js_widget_render
+            #{name}_server_instance.js_widget_render
           end
           
         END_EVAL
