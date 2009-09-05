@@ -1,0 +1,12 @@
+= netzke-core
+Create Ext JS + Rails reusable components (widgets) with minimum effort.
+
+Introduction to Netzke framework: http://github.com/skozlov/netzke/tree/master
+
+Tutorials: http://blog.writelesscode.com
+
+Live-demo: http://netzke-demo.writelesscode.com
+
+Also see netzke-basepack (pre-programmed widgets) project: http://github.com/skozlov/netzke-basepack/tree/master
+
+Copyright (c) 2009 Sergei Kozlov, released under the MIT license

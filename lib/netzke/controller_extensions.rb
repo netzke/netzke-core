@@ -77,7 +77,8 @@ module Netzke
             default_config = controller.class.widget_config_storage[:#{name}]
             if config.empty?
               # only cache when the config is empty (which means that config specified in controller is used)
-              @widget_instance_cache ||= Netzke::Base.instance_by_config(default_config)
+              @widget_instance_cache ||= {}
+              @widget_instance_cache[:#{name}] ||= Netzke::Base.instance_by_config(default_config)
             else
               # if helper is called with parameters - always return a fresh instance of widget, no caching
               Netzke::Base.instance_by_config(default_config.deep_merge(config))

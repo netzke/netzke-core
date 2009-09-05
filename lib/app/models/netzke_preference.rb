@@ -11,10 +11,6 @@ class NetzkePreference < ActiveRecord::Base
   
   ELEMENTARY_CONVERTION_METHODS= {'Fixnum' => 'to_i', 'String' => 'to_s', 'Float' => 'to_f', 'Symbol' => 'to_sym'}
   
-  # def self.user_id
-  #   Netzke::Base.user && Netzke::Base.user.id
-  # end
-  
   def self.widget_name=(value)
     @@widget_name = value
   end

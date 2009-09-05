@@ -1,5 +1,9 @@
 class NetzkeController < ActionController::Base
 
+  def index
+    redirect_to :action => :test_widgets
+  end
+
   # collect javascripts from all plugins that registered it in Netzke::Base.config[:javascripts]
   def netzke
     respond_to do |format|
@@ -28,7 +32,10 @@ class NetzkeController < ActionController::Base
   #
   
   # FormPanel
-  netzke :form_panel, :columns => %w{ field_one field_two }
+  netzke :form_panel, :persistent_config => false, :label_align => "top", :columns => [
+    {:name => 'field_one', :xtype => 'textarea'},
+    {:name => 'field_two', :xtype => 'textarea'}
+  ]
   
   # BorderLayoutPanel
   netzke :border_layout_panel, :regions => {
@@ -52,7 +59,21 @@ class NetzkeController < ActionController::Base
     :widget_class_name => "Panel",
     :ext_config => {
       :html => "Panel 2",  
-    },
+    }
+  }]
+  
+  # AccordionPanel
+  netzke :accordion_panel, :items => [{
+    :widget_class_name => "Panel",
+    :ext_config => {
+      :html => "Panel 1",
+    }
+    # :active => true
+  },{
+    :widget_class_name => "Panel",
+    :ext_config => {
+      :html => "Panel 2",  
+    }
   }]
   
   # BasicApp

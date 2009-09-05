@@ -9,16 +9,9 @@ Ext.netzke.cache = {};
 
 Ext.QuickTips.init(); // seems obligatory in Ext v2.2.1, otherwise Ext.Component#destroy() stops working properly
 
-// to comply with Rails' forgery protection
+// To comply with Rails' forgery protection
 Ext.Ajax.extraParams = {
   authenticity_token : Ext.authenticityToken
-};
-
-// helper method to do multiple Ext.apply's
-Ext.netzke.chainApply = function(objectArray){
-  var res = {};
-  Ext.each(objectArray, function(obj){Ext.apply(res, obj)});
-  return res;
 };
 
 // Type detection functions
@@ -26,7 +19,7 @@ Netzke.isObject = function(o) {
   return (o != null && typeof o == "object" && o.constructor.toString() == Object.toString());
 }
 
-// Some Rubyish String extensions
+// Some Ruby-ish String extensions
 // from http://code.google.com/p/inflection-js/
 String.prototype.camelize=function(lowFirstLetter)
 {
@@ -330,11 +323,11 @@ Ext.widgetMixIn = {
     this.actions = {};
 
     // Generate methods for api points
-    if (config.api){
-      Ext.each(config.api, function(intp){
-        this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
-      }, this);
-    }
+    if (!config.api) { config.api = []; }
+    config.api.push('load_aggregatee_with_cache'); // all netzke widgets get this API
+    Ext.each(config.api, function(intp){
+      this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
+    }, this);
 
     // Create Ext.Actions based on config.actions
     if (config.actions) {

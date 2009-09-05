@@ -1,19 +1,41 @@
 require 'netzke/base_js'
 
 module Netzke
+  # = Base
   # Base class for every Netzke widget
   #
   # To instantiate a widget in the controller:
   #
-  #     netzke :widgetname, configuration_hash
+  #     netzke :widget_name, configuration_hash
   # 
-  # Configuration hash may contain the following config options common for every widget:
+  # == Configuration
+  # * <tt>:widget_class_name</tt> - name of the widget class in the scope of the Netzke module, e.g. "FormPanel".
+  # When a widget is defined in the controller and this option is omitted, widget class is deferred from the widget's
+  # name. E.g.:
   # 
-  # * <tt>:widget_class_name</tt> - name of the widget class in the scope of the Netzke module, e.g. "FormPanel"
+  #   netzke :grid_panel, :data_class_name => "User"
+  # 
+  # In this case <tt>:widget_class_name</tt> is assumed to be "GridPanel"
+  # 
   # * <tt>:ext_config</tt> - a config hash that is used to create a javascript instance of the widget. Every
-  # configuration that comes here will be available inside the javascript instance of the widget. For example:
+  # configuration that comes here will be available inside the javascript instance of the widget. 
+  # * <tt>:persistent_config</tt> - if set to <tt>true</tt>, the widget will use persistent storage to store its state;
+  # for instance, Netzke::GridPanel stores there its columns state (width, visibility, order, headers, etc).
+  # A widget may or may not provide interface to its persistent settings. GridPanel and FormPanel from netzke-basepack
+  # are examples of widgets that by default do.
+  # 
+  # Examples of configuration:
   #
-  #     netzke :books, :widget_class_name => "GridPanel", :ext_config => {:icon_cls => 'icon-grid', :title => "Books"}
+  #     netzke :books, 
+  #       :widget_class_name => "GridPanel", 
+  #       :data_class_name => "Book", # GridPanel specific option
+  #       :ext_config => {
+  #         :icon_cls => 'icon-grid', 
+  #         :title => "My books"
+  #       }
+  # 
+  #     netzke :form_panel, 
+  #       :data_class_name => "User" # FormPanel specific option
   class Base
     include Netzke::BaseJs # javascript (client-side)
 
@@ -24,6 +46,7 @@ module Netzke
           # which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
           :javascripts               => [],
           :stylesheets               => [],
+          
           :persistent_config_manager => "NetzkePreference",
           :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
           :default_config => {
@@ -79,9 +102,9 @@ module Netzke
         session[:_netzke_next_request_is_first_after_logout] = true
       end
 
-      #
-      # Use this class method to declare connection points between client side of a widget and its server side. A method in a widget class with the same name will be (magically) called by the client side of the widget. See Grid widget for an example
-      #
+      # Use this class method to declare connection points between client side of a widget and its server side. 
+      # A method in a widget class with the same name will be (magically) called by the client side of the widget. 
+      # See netzke-basepack's GridPanel for an example.
       def api(*api_points)
         apip = read_inheritable_attribute(:api_points) || []
         api_points.each{|p| apip << p}
@@ -108,7 +131,6 @@ module Netzke
       
       # returns an instance of a widget defined in the config
       def instance_by_config(config)
-        Rails.logger.debug "!!! instance_by_config \n"
         widget_class = "Netzke::#{config[:widget_class_name]}".constantize
         widget_class.new(config)
       end
@@ -134,7 +156,6 @@ module Netzke
       def set_default_config(c)
         @@config ||= {}
         @@config[self.name] ||= c
-        # @@config[self.name]
       end
       
     end
@@ -146,11 +167,9 @@ module Netzke
 
     # Widget initialization process
     # * the config hash is available to the widget after the "super" call in the initializer
-    # * override/add new default configuration options in the "default_config" method 
+    # * override/add new default configuration options into the "default_config" method 
     # (the config hash is not yet available)
-    #
     def initialize(config = {}, parent = nil)
-      logger.debug "!!! initialize config: #{config.inspect}\n"
       @session       = Netzke::Base.session
       @passed_config = config # configuration passed at the moment of instantiation
       @parent        = parent
@@ -184,13 +203,12 @@ module Netzke
 
     # Access to the config that takes into account all possible ways to configure a widget. *Read only*.
     def config
-      # @config ||= default_config.
-      #             # deep_merge(weak_session_config).
-      #             deep_merge(@passed_config).
-      #             deep_merge(persistent_config_hash).
-      #             deep_merge(strong_parent_config).
-      #             deep_merge(strong_session_config)
-                  
+      # Translates into something like this:
+      #     @config ||= default_config.
+      #                 deep_merge(@passed_config).
+      #                 deep_merge(persistent_config_hash).
+      #                 deep_merge(strong_parent_config).
+      #                 deep_merge(strong_session_config)
       @config ||= independent_config.
                     deep_merge(strong_parent_config).
                     deep_merge(strong_session_config)
@@ -461,15 +479,17 @@ module Netzke
 
     # override this method to do stuff at the moment of loading by some parent
     def before_load
-      
+      widget_session.clear
     end
 
     # API
     def load_aggregatee_with_cache(params)
+      logger.debug "!!! params: #{params.inspect}\n"
       cache = ActiveSupport::JSON.decode(params.delete(:cache))
       relative_widget_id = params.delete(:id).underscore
       passed_config = params[:config] && ActiveSupport::JSON.decode(params[:config]) || {}
       passed_config = passed_config.symbolize_keys
+      logger.debug "!!! passed_config: #{passed_config.inspect}\n"
       widget = aggregatee_instance(relative_widget_id, passed_config)
       widget.before_load # inform the widget that it's being loaded
       [{

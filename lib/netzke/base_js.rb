@@ -1,5 +1,7 @@
 module Netzke
   # == BaseJs
+  # *TODO: outdated*
+  # 
   # Module which provides JS-class generation functionality for the widgets ("client-side"). The generated code 
   # is evaluated once per widget class, and the results are cached in the browser. Included into Netzke::Base class.
   # 
@@ -13,8 +15,7 @@ module Netzke
   # * Widget executes its specific initialization code which is provided by +js_before_consttructor+ class method. 
   # For example, a grid may define its column model, a form - its fields, a tab panel - its tabs ("items").
   # * Widget calls the constructor of the inherited class (see +js_class+ class method) with a parameter that is a merge of 
-  # 1) common widget's configuration (for example, a grid may specify the earlier defined column model), which is provided by +js_common_config_for_constructor+ class method, 
-  # 2) configuration parameter passed to the widget's constructor.
+  # 1) configuration parameter passed to the widget's constructor.
   module BaseJs
     def self.included(base)
       base.extend ClassMethods
@@ -39,8 +40,8 @@ module Netzke
         res["#{aggr_name}_config".to_sym] = aggr_instance.js_config
       end
   
-      # Api
-      res.merge!(:api => self.class.api_points)
+      # Api (besides the default "load_aggregatee_with_cache" - JavaScript side already knows about it)
+      res.merge!(:api => self.class.api_points.reject{ |p| p == :load_aggregatee_with_cache })
   
       # Widget class name. Needed for dynamic instantiation in javascript.
       res.merge!(:widget_class_name => short_widget_class_name)
@@ -124,7 +125,7 @@ module Netzke
       def js_menus; []; end
   
       # items
-      def js_items; null; end
+      # def js_items; null; end
       
       # are we using JS inheritance? for now, if js_base_class is a Netzke class - yes
       def js_inheritance?
