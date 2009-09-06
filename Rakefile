@@ -2,9 +2,9 @@ require 'echoe'
 
 Echoe.new("netzke-core") do |p|
   p.author = "Sergei Kozlov"
-  p.email = "sergei@writelesscode.com"
+  p.email = "sergei@playcode.nl"
   p.summary = "Build ExtJS/Rails widgets with minimum effort"
-  p.url = "http://writelesscode.com"
+  p.url = "http://playcode.nl"
   p.development_dependencies = []
   p.test_pattern = 'test/**/*_test.rb'
   p.retain_gemspec = true

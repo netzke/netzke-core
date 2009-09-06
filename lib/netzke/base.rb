@@ -484,14 +484,15 @@ module Netzke
 
     # API
     def load_aggregatee_with_cache(params)
-      logger.debug "!!! params: #{params.inspect}\n"
       cache = ActiveSupport::JSON.decode(params.delete(:cache))
       relative_widget_id = params.delete(:id).underscore
       passed_config = params[:config] && ActiveSupport::JSON.decode(params[:config]) || {}
       passed_config = passed_config.symbolize_keys
-      logger.debug "!!! passed_config: #{passed_config.inspect}\n"
       widget = aggregatee_instance(relative_widget_id, passed_config)
-      widget.before_load # inform the widget that it's being loaded
+      
+      # inform the widget that it's being loaded
+      widget.before_load
+      
       [{
         :js => widget.js_missing_code(cache), 
         :css => css_missing_code(cache)
