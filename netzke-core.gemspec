@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{netzke-core}
-  s.version = "0.4.0"
+  s.version = "0.4.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2009-09-05}
+  s.date = %q{2009-09-06}
   s.description = %q{Build ExtJS/Rails widgets with minimum effort}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = ["CHANGELOG", "LICENSE", "README.rdoc", "TODO", "lib/app/controllers/netzke_controller.rb", "lib/app/models/netzke_preference.rb", "lib/netzke-core.rb", "lib/netzke/action_view_ext.rb", "lib/netzke/base.rb", "lib/netzke/base_js.rb", "lib/netzke/controller_extensions.rb", "lib/netzke/core_ext.rb", "lib/netzke/feedback_ghost.rb", "lib/netzke/routing.rb", "tasks/netzke_core_tasks.rake"]

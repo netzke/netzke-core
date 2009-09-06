@@ -1,3 +1,7 @@
+v0.4.1
+2009-09-06
+Version bumb to force github rebuild the gem (Manifest is now included)
+
 v0.4.0
 2009-09-05
 Major refactoring.
