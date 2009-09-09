@@ -126,13 +126,10 @@ Ext.widgetMixIn = {
       // this.getChildWidget(params.id).ownerCt.enable();
       
       // provide the callback to that widget that was loading the child, passing the child itself
-      console.info(this.callbackHash);
-      console.info(params.id);
       var callbackFn = this.callbackHash[params.id.camelize(true)];
       if (callbackFn) {
         callbackFn.call(params.scope || this, this.getChildWidget(params.id));
-        // delete this.callbackHash[params.id];
-        delete callbackFn;
+        delete this.callbackHash[params.id.camelize(true)];
       }
     }
   },
