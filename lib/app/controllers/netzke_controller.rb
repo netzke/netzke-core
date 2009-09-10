@@ -54,7 +54,7 @@ class NetzkeController < ActionController::Base
     :ext_config => {
       :html => "Panel 1",  
     },
-    :active => true
+    # :active => true
   },{
     :widget_class_name => "Panel",
     :ext_config => {
@@ -67,8 +67,8 @@ class NetzkeController < ActionController::Base
     :widget_class_name => "Panel",
     :ext_config => {
       :html => "Panel 1",
-    }
-    # :active => true
+    },
+    :active => true
   },{
     :widget_class_name => "Panel",
     :ext_config => {
@@ -78,6 +78,8 @@ class NetzkeController < ActionController::Base
   
   # BasicApp
   netzke :basic_app
+
+  netzke :panel, :ext_config => {:html => "Panel", :title => "Test panel", :border => true}
 
   def test_widgets
     html = "<h3>Quick primitive widgets tests</h3>"

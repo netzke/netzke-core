@@ -41,7 +41,8 @@ module Netzke
       end
   
       # Api (besides the default "load_aggregatee_with_cache" - JavaScript side already knows about it)
-      res.merge!(:api => self.class.api_points.reject{ |p| p == :load_aggregatee_with_cache })
+      api_points = self.class.api_points.reject{ |p| p == :load_aggregatee_with_cache }
+      res.merge!(:api => api_points) unless api_points.empty?
   
       # Widget class name. Needed for dynamic instantiation in javascript.
       res.merge!(:widget_class_name => short_widget_class_name)
