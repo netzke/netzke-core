@@ -495,7 +495,7 @@ module Netzke
       
       [{
         :js => widget.js_missing_code(cache), 
-        :css => css_missing_code(cache)
+        :css => widget.css_missing_code(cache)
       }, {
         :render_widget_in_container => {
           :container => params[:container], 

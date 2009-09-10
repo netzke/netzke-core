@@ -167,31 +167,29 @@ module Netzke
         end
       end
       
-      def css_include(*args)
-        included_css = read_inheritable_attribute(:included_css) || []
-        args.each do |inclusion|
-          if inclusion.is_a?(Hash)
-            # we are signalized a non-default file location (e.g. Ext examples)
-            case inclusion.keys.first
-            when :ext_examples
-              location = Netzke::Base.config[:ext_location] + "/examples/"
-            end
-            files = inclusion.values.first
-          else
-            location = ""
-            files = inclusion
-          end
-          
-          files = [files] if files.is_a?(String)
-          
-          for f in files
-            included_css << location + f
-          end
-        end
-        write_inheritable_attribute(:included_css, included_css)
+      #
+      # Extra JavaScript
+      # 
+      
+      # Override this method. Must return an array of paths to javascript files that we depend on. 
+      # This javascript code will be loaded along with the widget's class, and before it.
+      def include_js
+        []
       end
+      
+      # Returns all extra JavaScript-code (as string) required by this widget's class
+      def js_included
+        res = ""
 
-      # all JS code needed for this class, including one from the ancestor widget
+        include_js.each do |path|
+          f = File.new(path)
+          res << f.read << "\n"
+        end
+
+        res
+      end
+      
+      # All JavaScript code needed for this class, including one from the ancestor widget
       def js_code(cached_dependencies = [])
         res = ""
 
@@ -206,40 +204,28 @@ module Netzke
         res
       end
 
+      #
+      # Extra CSS
+      # 
 
-      # Override this method. Must return an array of paths to javascript files that we depend on. 
-      # This javascript code will be loaded along with the widget's class, and before it.
-      def include_js
+      # Override this method. Must return an array of paths to css files that we depend on. 
+      def include_css
         []
       end
-
-      # returns all extra js-code (as string) required by this widget's class
-      def js_included
+      
+      # Returns all extra CSS code (as string) required by this widget's class
+      def css_included
         res = ""
-
-        include_js.each do |path|
+        
+        include_css.each do |path|
           f = File.new(path)
           res << f.read << "\n"
         end
 
         res
       end
-
       
-      # returns all extra js-code (as string) required by this widget's class
-      def css_included
-        res = ""
-        
-        included_css = read_inheritable_attribute(:included_css) || []
-        res << included_css.inject("") do |r, path|
-          f = File.new(path)
-          r << f.read
-        end
-
-        res
-      end
-      
-      # all JS code needed for this class including the one from the ancestor widget
+      # All CSS code needed for this class including the one from the ancestor widget
       def css_code(cached_dependencies = [])
         res = ""
 
@@ -251,7 +237,11 @@ module Netzke
         res
       end
 
+      
+      # Little helper
       def this; "this".l; end
+
+      # Little helper
       def null; "null".l; end
     
     end
