@@ -1,4 +1,5 @@
--- edge --
+v0.4.2
+2009-09-11
 Fix: the API call (at the JavaScript side) was ignoring the callback parameter.
 Impr: if the array of API points is empty, it's not added into js_config anymore.
 New: new testing widgets in netzke_controller.
