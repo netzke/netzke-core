@@ -1,5 +1,4 @@
 *.log
 pkg
 doc
-Manifest
 .DS_Store
