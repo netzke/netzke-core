@@ -1,12 +1,30 @@
 = netzke-core
 Create Ext JS + Rails reusable components (widgets) with minimum effort.
 
+This is the bare bones of the Netzke framework. Use it to build your own widgets from scratch. For pre-built widgets (like panels, grids, forms, trees, applications), see the netzke-basepack project.
+
+The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a widget, and then embed it (or load it dynamically) into your Ext-based applications or HTML pages. For more info, see the links below.
+
+== Instalation
+From RubyForge:
+  
+    sudo gem install netzke-core
+    
+From github:
+
+    sudo gem install skozlov-netzke-core
+    
+If you want the most recent changes, install this as a plugin:
+
+    script/plugin install git://github.com/skozlov/netzke-core.git
+    
+== Usage
 Introduction to Netzke framework: http://github.com/skozlov/netzke/tree/master
 
 Tutorials: http://blog.writelesscode.com
 
 Live-demo: http://netzke-demo.writelesscode.com
 
-Also see netzke-basepack (pre-programmed widgets) project: http://github.com/skozlov/netzke-basepack/tree/master
+The netzke-basepack project (pre-built full-featured widgets): http://github.com/skozlov/netzke-basepack/tree/master
 
 Copyright (c) 2009 Sergei Kozlov, released under the MIT license
