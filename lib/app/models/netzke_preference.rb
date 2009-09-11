@@ -85,12 +85,21 @@ class NetzkePreference < ActiveRecord::Base
       # if it doesn't exist, get them for the user's role
       user = User.find(session[:masq_user])
       res ||= self.find(:first, :conditions => cond.merge({:role_id => user.role.id}))
+      # if it doesn't exist either, get them for the World (role_id = 0)
+      res ||= self.find(:first, :conditions => cond.merge({:role_id => 0}))
     elsif session[:masq_role]
+      # first, get the prefs for this role
       res = self.find(:first, :conditions => cond.merge({:role_id => session[:masq_role]}))
+      # if it doesn't exist, get them for the World (role_id = 0)
+      res ||= self.find(:first, :conditions => cond.merge({:role_id => 0}))
     elsif session[:netzke_user_id]
       user = User.find(session[:netzke_user_id])
+      # first, get the prefs for this user
       res = self.find(:first, :conditions => cond.merge({:user_id => user.id}))
+      # if it doesn't exist, get them for the user's role
       res ||= self.find(:first, :conditions => cond.merge({:role_id => user.role.id}))
+      # if it doesn't exist either, get them for the World (role_id = 0)
+      res ||= self.find(:first, :conditions => cond.merge({:role_id => 0}))
     else
       res = self.find(:first, :conditions => cond)
     end
@@ -105,7 +114,9 @@ class NetzkePreference < ActiveRecord::Base
     
     if session[:masq_user]
       cond.merge!({:user_id => session[:masq_user]})
+      # first, try to find the preference for masq_user
       res = self.find(:first, :conditions => cond)
+      # if it doesn't exist, create it
       res ||= self.new(cond)
     elsif session[:masq_role]
       # first, delete all the corresponding preferences for the users that have this role
@@ -115,6 +126,11 @@ class NetzkePreference < ActiveRecord::Base
       cond.merge!({:role_id => session[:masq_role]})
       res = self.find(:first, :conditions => cond)
       res ||= self.new(cond)
+    elsif session[:masq_world]
+      # first, delete all the corresponding preferences for all users and roles
+      self.delete_all(cond)
+      # then, create the new preference for the World (role_id = 0)
+      res = self.new(cond.merge(:role_id => 0))
     elsif session[:netzke_user_id]
       res = self.find(:first, :conditions => cond.merge({:user_id => session[:netzke_user_id]}))
       res ||= self.new(cond.merge({:user_id => session[:netzke_user_id]}))

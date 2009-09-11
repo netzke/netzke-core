@@ -2,6 +2,7 @@
 Impr: if the array of API points is empty, it's not added into js_config anymore.
 New: new testing widgets in netzke_controller.
 Fix: extra CSS includes now take effect.
+New: Support for masquerading as "World". In this mode all the "touched" persistent preferences will be overwritten for all roles and users.
 
 v0.4.1
 Fix: the API call (at the JavaScript side) was ignoring the callback parameter.
