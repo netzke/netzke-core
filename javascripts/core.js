@@ -91,30 +91,31 @@ Ext.widgetMixIn = {
   is_netzke: true, // to distinguish Netzke components from regular Ext components
   
   /*
-  Loads aggregatee into a container. Sends the widgets cache info to the server.
+  Loads aggregatee into a container.
   */
   loadAggregatee: function(params){
-    // build the cached widget list
+    // params that will be provided for the server API call (load_aggregatee_with_cache); all what's passed in params.params is merged in
+    var apiParams = Ext.apply({id: params.id, container: params.container}, params.params); 
+    
+    // build the cached widgets list to send it to the server
     var cachedWidgetNames = [];
     for (name in Ext.netzke.cache) {
       cachedWidgetNames.push(name);
     }
+    apiParams.cache = Ext.encode(cachedWidgetNames);
     
-    params.cache = Ext.encode(cachedWidgetNames);
-    
-    // remember the passed callback
+    // remember the passed callback for the future
     if (params.callback) {
-      this.callbackHash[params.id] = params.callback;
-      delete params.callback;
-      delete params.scope;
+      this.callbackHash[params.id] = params.callback; // per loaded widget, as there may be simultaneous calls
     }
     
     // visually disable the container while the widget is being loaded
     // Ext.getCmp(params.container).disable();
-    Ext.getCmp(params.container).removeChild(); // simply cleanup the area, which speaks for itself
+
+    Ext.getCmp(params.container).removeChild(); // remove the old widget
     
-    // remote api call
-    this.loadAggregateeWithCache(params);
+    // do the remote API call
+    this.loadAggregateeWithCache(apiParams);
   },
   
   /*

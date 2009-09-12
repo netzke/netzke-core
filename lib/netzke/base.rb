@@ -429,35 +429,6 @@ module Netzke
       "#{@id_name}__#{action_name}"
     end
 
-    # permissions
-    # def available_permissions
-    #   []
-    # end
-
-    # def process_permissions_config
-    #   if !available_permissions.empty?
-    #     # First, process permissions from the config
-    #     @permissions = available_permissions.inject({}){|h,p| h.merge(p.to_sym => true)} # by default anything is allowed
-    # 
-    #     config[:prohibit] = available_permissions if config[:prohibit] == :all # short-cut for all permissions
-    #     config[:prohibit] = [config[:prohibit]] if config[:prohibit].is_a?(Symbol) # so that config[:prohibit] => :write works
-    #     config[:prohibit] && config[:prohibit].each{|p| @permissions.merge!(p.to_sym => false)} # prohibit
-    # 
-    #     config[:allow] = [config[:allow]] if config[:allow].is_a?(Symbol) # so that config[:allow] => :write works
-    #     config[:allow] && config[:allow].each{|p| @permissions.merge!(p.to_sym => true)} # allow
-    #     
-    #     # ... and then merge it with NetzkePreferences
-    #     available_permissions.each do |p|
-    #       # if nothing is stored in persistent_config, store the permission from the config; otherwise leave what's there
-    #       persistent_config["permissions/#{p}"].nil? && persistent_config["permissions/#{p}"] = @permissions[p.to_sym]
-    # 
-    #       # what's stored in persistent_config has higher priority, so, if there's something there, use that
-    #       persistent_permisson = persistent_config["permissions/#{p}"]
-    #       @permissions[p.to_sym] = persistent_permisson unless persistent_permisson.nil?
-    #     end
-    #   end
-    # end
-
     # called when the method_missing tries to processes a non-existing aggregatee
     def aggregatee_missing(aggr)
       flash :error => "Unknown aggregatee #{aggr} for widget #{name}"
@@ -486,9 +457,7 @@ module Netzke
     def load_aggregatee_with_cache(params)
       cache = ActiveSupport::JSON.decode(params.delete(:cache))
       relative_widget_id = params.delete(:id).underscore
-      passed_config = params[:config] && ActiveSupport::JSON.decode(params[:config]) || {}
-      passed_config = passed_config.symbolize_keys
-      widget = aggregatee_instance(relative_widget_id, passed_config)
+      widget = aggregatee_instance(relative_widget_id)
       
       # inform the widget that it's being loaded
       widget.before_load
