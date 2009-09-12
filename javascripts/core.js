@@ -104,7 +104,7 @@ Ext.widgetMixIn = {
     
     // remember the passed callback
     if (params.callback) {
-      this.callbackHash[params.id] = params.callback;
+      this.callbackHash[params.id.camelize(true)] = params.callback;
       delete params.callback;
       delete params.scope;
     }

@@ -1,3 +1,6 @@
+- edge -
+Fix: another bug preventing the callback after a JavaScript API call.
+
 v0.4.2
 2009-09-11
 Fix: the API call (at the JavaScript side) was ignoring the callback parameter.
