@@ -1,4 +1,4 @@
-- edge -
+v0.4.3
 Fix: reworking loadAggregatee()-related code, closing a security flaw when a malicious browser could send any configuration options to instantiate the widget being loaded.
 
 v0.4.2
