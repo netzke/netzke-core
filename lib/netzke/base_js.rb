@@ -85,12 +85,12 @@ module Netzke
 
     # rendering
     def js_widget_render
-      %Q{#{name.jsonify}.render("#{name.to_s.split('_').join('-')}");}
+      %Q{#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-div");}
     end
 
     # container for rendering
     def js_widget_html
-      %Q{<div id="#{name.to_s.split('_').join('-')}"></div>}
+      %Q{<div id="#{name.to_s.split('_').join('-')}-div"></div>}
     end
 
     #
