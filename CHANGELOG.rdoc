@@ -1,5 +1,6 @@
 -- edge --
 Fix: solving the "Node cannot be inserted at the specified point in the hierarchy" problem by being more strict with duplicated IDs for elements on the same page.
+Fix: Ext 3.0 compatibility.
 
 v0.4.3
 Fix: reworking loadAggregatee()-related code, closing a security flaw when a malicious browser could send any configuration options to instantiate the widget being loaded.

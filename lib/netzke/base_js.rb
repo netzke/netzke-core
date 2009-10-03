@@ -90,7 +90,7 @@ module Netzke
 
     # container for rendering
     def js_widget_html
-      %Q{<div id="#{name.to_s.split('_').join('-')}-div"></div>}
+      %Q{<div id="#{name.to_s.split('_').join('-')}-div" style="width:800px;"></div>}
     end
 
     #

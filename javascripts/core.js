@@ -86,7 +86,7 @@ Ext.data.ArrayReader = Ext.extend(Ext.data.JsonReader, {
 // Properties/methods common to all widget classes
 Ext.widgetMixIn = {
   height: 400,
-  width: 800,
+  // width: 800,
   border: false,
   is_netzke: true, // to distinguish Netzke components from regular Ext components
   

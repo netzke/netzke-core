@@ -6,13 +6,8 @@ This is the bare bones of the Netzke framework. Use it to build your own widgets
 The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a widget, and then embed it (or load it dynamically) into your Ext-based applications or HTML pages. For more info, see the links below.
 
 == Instalation
-From RubyForge:
   
     sudo gem install netzke-core
-    
-From github:
-
-    sudo gem install skozlov-netzke-core
     
 If you want the most recent changes, install this as a plugin:
 
