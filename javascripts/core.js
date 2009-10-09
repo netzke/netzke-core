@@ -23,7 +23,7 @@ Netzke.isObject = function(o) {
 // from http://code.google.com/p/inflection-js/
 String.prototype.camelize=function(lowFirstLetter)
 {
-  var str=this.toLowerCase();
+  var str=this; //.toLowerCase();
   var str_path=str.split('/');
   for(var i=0;i<str_path.length;i++)
   {
@@ -240,7 +240,7 @@ Ext.widgetMixIn = {
           if (childWidget) {
             childWidget.bulkExecute(instructions[instr]);
           } else {
-            throw "Unknown method or child widget '" + instr +"' in widget '" + this.id + "'"
+            throw "Netzke: Unknown method or child widget '" + instr +"' in widget '" + this.id + "'"
           }
         }
       }
@@ -256,7 +256,9 @@ Ext.widgetMixIn = {
   actionHandler : function(action){
     // If firing corresponding event doesn't return false, call the handler
     if (this.fireEvent(action.name+'click', action)) {
-      this[(action.fn || action.name)](action);
+      var methodName = action.fn || "on"+action.name.camelize();
+      if (!this[methodName]) {throw "Netzke: handler for action '"+action.name+"' is undefined"}
+      this[methodName](action);
     }
   },
 
@@ -264,7 +266,9 @@ Ext.widgetMixIn = {
   toolActionHandler : function(tool){
     // If firing corresponding event doesn't return false, call the handler
     if (this.fireEvent(tool.id+'click')) {
-      this[tool]();
+      var methodName = "on"+tool.camelize();
+      if (!this[methodName]) {throw "Netzke: handler for tool '"+tool+"' is undefined"}
+      this[methodName]();
     }
   },
 

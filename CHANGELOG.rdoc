@@ -1,6 +1,7 @@
--- edge --
-Fix: solving the "Node cannot be inserted at the specified point in the hierarchy" problem by being more strict with duplicated IDs for elements on the same page.
-Fix: Ext 3.0 compatibility.
+-- edge (minor version update)--
+* API change: default handlers for actions and tools are now supposed to be prefixed with "on". E.g.: if you declare an action named <tt>clear_table</tt>, the handler must be called (in Ruby) <tt>on_clear_table</tt> (mapped to <tt>onClearTable</tt> in JavaScript).
+* Fix: solving the "Node cannot be inserted at the specified point in the hierarchy" problem by being more strict with duplicated IDs for elements on the same page.
+* Fix: Ext 3.0 compatibility.
 
 v0.4.3
 Fix: reworking loadAggregatee()-related code, closing a security flaw when a malicious browser could send any configuration options to instantiate the widget being loaded.
