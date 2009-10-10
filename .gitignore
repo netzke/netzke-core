@@ -4,3 +4,4 @@ doc
 Manifest
 .DS_Store
 rdoc
+netzke-core.gemspec
