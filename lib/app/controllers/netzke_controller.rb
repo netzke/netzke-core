@@ -28,7 +28,7 @@ class NetzkeController < ActionController::Base
   end
   
   #
-  # Primitive tests to quickly test the widgets
+  # Primitive tests to quickly test the widgets (TODO: move to the basepack)
   #
   
   # FormPanel

@@ -18,7 +18,7 @@ module Netzke
   # In this case <tt>:widget_class_name</tt> is assumed to be "GridPanel"
   # 
   # * <tt>:ext_config</tt> - a config hash that is used to create a javascript instance of the widget. Every
-  # configuration that comes here will be available inside the javascript instance of the widget. 
+  # configuration that comes here will be available inside the javascript instance of the widget.
   # * <tt>:persistent_config</tt> - if set to <tt>true</tt>, the widget will use persistent storage to store its state;
   # for instance, Netzke::GridPanel stores there its columns state (width, visibility, order, headers, etc).
   # A widget may or may not provide interface to its persistent settings. GridPanel and FormPanel from netzke-basepack
@@ -29,6 +29,7 @@ module Netzke
   #     netzke :books, 
   #       :widget_class_name => "GridPanel", 
   #       :data_class_name => "Book", # GridPanel specific option
+  #       :persistent_config => false, # don't use persistent config for this instance
   #       :ext_config => {
   #         :icon_cls => 'icon-grid', 
   #         :title => "My books"
@@ -50,8 +51,7 @@ module Netzke
           :persistent_config_manager => "NetzkePreference",
           :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
           :default_config => {
-            :persistent_config => true,
-            :ext_config => {}
+            :persistent_config => true
           }
         })
       end
@@ -160,6 +160,10 @@ module Netzke
       
     end
     extend ClassMethods
+    
+    def persistent_config_enabled
+      !persistent_config_manager_class.nil? && config[:persistent_config]
+    end
     
     attr_accessor :parent, :name, :id_name, :permissions, :session
 

@@ -1,5 +1,6 @@
 -- edge (minor version update)--
 * API change: default handlers for actions and tools are now supposed to be prefixed with "on". E.g.: if you declare an action named <tt>clear_table</tt>, the handler must be called (in Ruby) <tt>on_clear_table</tt> (mapped to <tt>onClearTable</tt> in JavaScript).
+* Internal: the JavaScript instance now knows if persistent config is enabled (by checking this.persistentConfig).
 * Fix: solving the "Node cannot be inserted at the specified point in the hierarchy" problem by being more strict with duplicated IDs for elements on the same page.
 * Fix: Ext 3.0 compatibility.
 
