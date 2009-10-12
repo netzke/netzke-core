@@ -249,7 +249,16 @@ Ext.widgetMixIn = {
   
   // Get the child widget
   getChildWidget : function(id){
-    return id === 'parent' ? this.getParent() : Ext.getCmp(this.id+"__"+id);
+    if (id === "") {return this};
+    
+    var split = id.split("__");
+    if (split[0] === 'parent') {
+      split.shift();
+      var childInParentScope = split.join("__");
+      return this.getParent().getChildWidget(childInParentScope);
+    } else {
+      return Ext.getCmp(this.id+"__"+id);
+    }
   },
   
   // Common handler for actions
@@ -257,7 +266,7 @@ Ext.widgetMixIn = {
     // If firing corresponding event doesn't return false, call the handler
     if (this.fireEvent(action.name+'click', action)) {
       var methodName = action.fn || "on"+action.name.camelize();
-      if (!this[methodName]) {throw "Netzke: handler for action '"+action.name+"' is undefined"}
+      if (!this[methodName]) {throw "Netzke: handler for action '" + action.name + "' is undefined"}
       this[methodName](action);
     }
   },

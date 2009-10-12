@@ -53,7 +53,7 @@ module Netzke
       menu    && res.merge!(:menu    => menu)
 
       # Inform the JavaScript side if persistent_config is enabled
-      res[:persistent_config] = persistent_config_enabled
+      res[:persistent_config] = persistent_config_enabled?
 
       # Merge with all config options passed as hash to config[:ext_config]
       res.merge!(ext_config)

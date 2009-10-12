@@ -161,7 +161,8 @@ module Netzke
     end
     extend ClassMethods
     
-    def persistent_config_enabled
+    # If the widget has persistent config in its disposal
+    def persistent_config_enabled?
       !persistent_config_manager_class.nil? && config[:persistent_config]
     end
     
@@ -457,7 +458,8 @@ module Netzke
       widget_session.clear
     end
 
-    # API
+    # API: provides all that is necessary for the browser to render a widget.
+    # <tt>params</tt>
     def load_aggregatee_with_cache(params)
       cache = ActiveSupport::JSON.decode(params.delete(:cache))
       relative_widget_id = params.delete(:id).underscore
