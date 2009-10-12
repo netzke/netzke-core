@@ -30,7 +30,7 @@
 = v0.3.0 - 2009-05-07
 * Refactor: got rid of NetzkeLayout model, now all layouts are stored in netzke_preferences
 * New: persistent_config now has a method for_widget that accepts a block
-autotest compatibility
+* autotest compatibility
 * New: String#to_b converts a string to true/false
 * New: Netzke::Base.session introduced for session data
 * New: weak_children_config and strong_children_config can now be declared by a widget, which specifies weak and strong configuration that every child of this widget will receive (e.g. display/hide configuration tool)
@@ -124,5 +124,5 @@ autotest compatibility
 = v0.1.0.1 
 * Meta work: replacing underscore with dash in the name
 
-= v0.1.0 
+= v0.1.0 - 2008-12-11
 * Initial release
