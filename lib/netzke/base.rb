@@ -439,14 +439,29 @@ module Netzke
       widget_session.clear
     end
 
-    def normalize_child_id(id)
-      id.split("__").each do |variable|
-        
+    # Returns global id of a widget in the hierarchy, based on passed reference that follows
+    # the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will 
+    # result in <tt>nil</tt>, while referring to a non-existent aggregatee will simply provide an erroneous ID.
+    # Example:
+    # <tt>parent__parent__child__subchild</tt> will traverse the hierarchy 2 levels up, then going down to "child",
+    # and further to "subchild". If such a widget exists in the hierarchy, its global id will be returned, otherwise
+    # <tt>nil</tt> will be returned.
+    def global_id_by_reference(ref)
+      ref = ref.to_s
+      return parent && parent.global_id if ref == "parent"
+      substr = ref.sub(/^parent__/, "")
+      if substr == ref # there's no "parent__" in the beginning
+        return global_id + "__" + ref
+      else
+        return parent.global_id_by_reference(substr)
       end
     end
 
-    # API: provides all that is necessary for the browser to render a widget.
-    # <tt>params</tt>
+    # API: provides what is necessary for the browser to render a widget.
+    # <tt>params</tt> should contain: 
+    # * <tt>:cache</tt> - an array of widget classes cached at the browser
+    # * <tt>:id</tt> - reference to the aggregatee
+    # * <tt>:container</tt> - Ext id of the container where in which the aggregatee will be rendered
     def load_aggregatee_with_cache(params)
       cache = ActiveSupport::JSON.decode(params.delete(:cache))
       relative_widget_id = params.delete(:id).underscore
