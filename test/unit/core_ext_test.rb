@@ -40,27 +40,31 @@ class CoreExtTest < ActiveSupport::TestCase
     assert_equal({:aB => 1, "cD" => [[1, {:eF => "stay_same"}], {"literal_symbol" => :should_not_change, "literal_string".l => "also_should_not"}]}, {:a_b => 1, "c_d" => [[1, {:e_f => "stay_same"}], {:literal_symbol.l => :should_not_change, "literal_string".l => "also_should_not"}]}.jsonify)
   end
   
-  # test "flatten" do
-  #   assert_equal([{
-  #     :name => :one, :value => 1 
-  #   },{
-  #     :name => :two, :value => 2 
-  #   },{
-  #     :name => :three__four, :value => 4 
-  #   },{
-  #     :name => :three__five__six, :value => 6
-  #   }], 
-  #   {
-  #     :one => 1,
-  #     :two => 2,
-  #     :three => {
-  #       :four => 4,
-  #       :five => {
-  #         :six => 6
-  #       }
-  #     }
-  #   }.flatten
-  #   )
-  # end
+  test "flatten_with_type" do
+    test_flatten_with_type = {
+      :one => 1,
+      :two => 2.5,
+      :three => {
+        :four => true,
+        :five => {
+          :six => "a string"
+        }
+      }
+    }.flatten_with_type
+    
+    assert_equal(4, test_flatten_with_type.size)
+    
+    test_flatten_with_type.each do |i|
+      assert([{
+        :name => :one, :value => 1, :type => :Fixnum
+      },{
+        :name => :two, :value => 2.5, :type => :Float
+      },{
+        :name => :three__four, :value => true, :type => :Boolean
+      },{
+        :name => :three__five__six, :value => "a string", :type => :String
+      }].include?(i))
+    end
+  end
   
 end

@@ -40,6 +40,24 @@ class Hash
       h
     end
   end
+  
+  # add flatten_with_type method to Hash
+  def flatten_with_type(preffix = "")
+    res = []
+    self.each_pair do |k,v|
+      name = ((preffix.to_s.empty? ? "" : preffix.to_s + "__") + k.to_s).to_sym
+      if v.is_a?(Hash)
+        res += v.flatten_with_type(name)
+      else
+        res << {
+          :name => name, 
+          :value => v,
+          :type => (["TrueClass", "FalseClass"].include?(v.class.name) ? 'Boolean' : v.class.name).to_sym
+        }
+      end
+    end
+    res
+  end
 
   # Javascrit-like access to Hash values
   def method_missing(method, *args)

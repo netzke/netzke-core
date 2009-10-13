@@ -183,25 +183,6 @@ module Netzke
       @flash         = []
     end
 
-    # add flatten method to Hash
-    Hash.class_eval do 
-      def flatten(preffix = "")
-        res = []
-        self.each_pair do |k,v|
-          if v.is_a?(Hash)
-            res += v.flatten(k)
-          else
-            res << {
-              :name => ((preffix.to_s.empty? ? "" : preffix.to_s + "__") + k.to_s).to_sym, 
-              :value => v,
-              :type => (["TrueClass", "FalseClass"].include?(v.class.name) ? 'Boolean' : v.class.name).to_sym
-            }
-          end
-        end
-        res
-      end
-    end
-
     def default_config
       self.class.config[:default_config].nil? ? {} : {}.merge!(self.class.config[:default_config])
     end
@@ -221,7 +202,7 @@ module Netzke
     end
     
     def flat_config(key = nil)
-      fc = config.flatten
+      fc = config.flatten_with_type
       key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
     end
 
@@ -235,12 +216,12 @@ module Netzke
     end
 
     def flat_independent_config(key = nil)
-      fc = independent_config.flatten
+      fc = independent_config.flatten_with_type
       key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
     end
     
     def flat_default_config(key = nil)
-      fc = default_config.flatten
+      fc = default_config.flatten_with_type
       key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
     end
 
@@ -250,7 +231,7 @@ module Netzke
     end
     
     def flat_initial_config(key = nil)
-      fc = initial_config.flatten
+      fc = initial_config.flatten_with_type
       key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
     end
 
@@ -456,6 +437,12 @@ module Netzke
     # override this method to do stuff at the moment of loading by some parent
     def before_load
       widget_session.clear
+    end
+
+    def normalize_child_id(id)
+      id.split("__").each do |variable|
+        
+      end
     end
 
     # API: provides all that is necessary for the browser to render a widget.

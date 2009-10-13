@@ -96,26 +96,6 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_equal 'my_widget__nested_two__nested', deep_nested_widget.global_id
   end
   
-  # test "permissions" do
-  #   widget = Widget.new
-  #   assert_equal({:read => true, :update => true}, widget.permissions)
-  # 
-  #   widget = Widget.new(:prohibit => :all)
-  #   assert_equal({:read => false, :update => false}, widget.permissions)
-  # 
-  #   widget = Widget.new(:prohibit => :read)
-  #   assert_equal({:read => false, :update => true}, widget.permissions)
-  # 
-  #   widget = Widget.new(:prohibit => [:read, :update])
-  #   assert_equal({:read => false, :update => false}, widget.permissions)
-  # 
-  #   widget = Widget.new(:prohibit => :all, :allow => :read)
-  #   assert_equal({:read => true, :update => false}, widget.permissions)
-  # 
-  #   widget = Widget.new(:prohibit => :all, :allow => [:read, :update])
-  #   assert_equal({:read => true, :update => true}, widget.permissions)
-  # end
-  
   test "default config" do
     widget = Widget.new
     assert_equal({:config_uno => true, :config_dos => false}, widget.config)
