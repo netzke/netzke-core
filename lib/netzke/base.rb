@@ -166,7 +166,7 @@ module Netzke
       !persistent_config_manager_class.nil? && config[:persistent_config]
     end
     
-    attr_accessor :parent, :name, :id_name, :permissions, :session
+    attr_accessor :parent, :name, :global_id, :permissions, :session
 
     api :load_aggregatee_with_cache # every widget gets this api
 
@@ -179,7 +179,7 @@ module Netzke
       @passed_config = config # configuration passed at the moment of instantiation
       @parent        = parent
       @name          = config[:name].nil? ? short_widget_class_name.underscore : config[:name].to_s
-      @id_name       = parent.nil? ? @name : "#{parent.id_name}__#{@name}"
+      @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
     end
 
@@ -257,7 +257,7 @@ module Netzke
     def build_persistent_config_hash
       return {} if !initial_config[:persistent_config]
       
-      prefs = NetzkePreference.find_all_for_widget(id_name)
+      prefs = NetzkePreference.find_all_for_widget(global_id)
       res = {}
       prefs.each do |p|
         hsh_levels = p.name.split("__").map(&:to_sym)
@@ -313,7 +313,7 @@ module Netzke
     end
     
     def widget_session
-      session[id_name] ||= {}
+      session[global_id] ||= {}
     end
 
     # Rails' logger
@@ -337,11 +337,11 @@ module Netzke
     def persistent_config
       if config[:persistent_config]
         config_class = self.class.persistent_config
-        config_class.widget_name = id_name # pass to the config class our unique name
+        config_class.widget_name = global_id # pass to the config class our unique name
         config_class
       else
         # if we can't use presistent config, all the calls to it will always return nil, and the "="-operation will be ignored
-        logger.debug "==> NETZKE: no persistent config is set up for widget '#{id_name}'"
+        logger.debug "==> NETZKE: no persistent config is set up for widget '#{global_id}'"
         {}
       end
     end
@@ -383,7 +383,7 @@ module Netzke
     
     def remove_aggregatee(aggr)
       if config[:persistent_config]
-        persistent_config_manager_class.delete_all_for_widget("#{id_name}__#{aggr}")
+        persistent_config_manager_class.delete_all_for_widget("#{global_id}__#{aggr}")
       end
       aggregatees[aggr] = nil
     end
@@ -403,9 +403,9 @@ module Netzke
       name.to_s.split('__').each do |aggr|
         aggr = aggr.to_sym
         aggregatee_config = aggregator.aggregatees[aggr]
-        raise ArgumentError, "No aggregatee '#{aggr}' defined for widget '#{aggregator.id_name}'" if aggregatee_config.nil?
+        raise ArgumentError, "No aggregatee '#{aggr}' defined for widget '#{aggregator.global_id}'" if aggregatee_config.nil?
         short_class_name = aggregatee_config[:widget_class_name]
-        raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.id_name}" if short_class_name.nil?
+        raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.global_id}" if short_class_name.nil?
         widget_class = "Netzke::#{short_class_name}".constantize
 
         conf = weak_children_config.
@@ -431,7 +431,7 @@ module Netzke
     end
 
     def widget_action(action_name)
-      "#{@id_name}__#{action_name}"
+      "#{@global_id}__#{action_name}"
     end
 
     # called when the method_missing tries to processes a non-existing aggregatee

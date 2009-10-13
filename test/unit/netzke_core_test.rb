@@ -90,10 +90,10 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_kind_of DeepNestedWidget, deep_nested_widget
     
     # check the internal names of aggregation instances
-    assert_equal 'my_widget', widget.id_name
-    assert_equal 'my_widget__nested_one', nested_widget_one.id_name
-    assert_equal 'my_widget__nested_two', nested_widget_two.id_name
-    assert_equal 'my_widget__nested_two__nested', deep_nested_widget.id_name
+    assert_equal 'my_widget', widget.global_id
+    assert_equal 'my_widget__nested_one', nested_widget_one.global_id
+    assert_equal 'my_widget__nested_two', nested_widget_two.global_id
+    assert_equal 'my_widget__nested_two__nested', deep_nested_widget.global_id
   end
   
   # test "permissions" do

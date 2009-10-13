@@ -30,7 +30,7 @@ module Netzke
       res = {}
       
       # Unique id of the widget
-      res.merge!(:id => id_name)
+      res.merge!(:id => global_id)
   
       # Recursively include configs of all non-late aggregatees, so that the widget can instantiate them
       # in javascript immediately.
