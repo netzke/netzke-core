@@ -104,7 +104,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_equal 'my_widget__nested_two__nested', deep_nested_widget.global_id
   end
   
-  test "child global id" do
+  test "global_id_by_reference" do
     w = Widget.new(:name => "a_widget")
     deep_nested_widget = w.aggregatee_instance(:nested_two__nested)
     assert_equal("a_widget__nested_two", deep_nested_widget.global_id_by_reference(:parent))

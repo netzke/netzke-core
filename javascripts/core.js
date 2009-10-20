@@ -338,9 +338,9 @@ Ext.widgetMixIn = {
     this.actions = {};
 
     // Generate methods for api points
-    if (!config.api) { config.api = []; }
-    config.api.push('load_aggregatee_with_cache'); // all netzke widgets get this API
-    Ext.each(config.api, function(intp){
+    if (!config.netzkeApi) { config.netzkeApi = []; }
+    config.netzkeApi.push('load_aggregatee_with_cache'); // all netzke widgets get this API
+    Ext.each(config.netzkeApi, function(intp){
       this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
     }, this);
 
