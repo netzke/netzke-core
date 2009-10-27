@@ -465,24 +465,28 @@ module Netzke
     def load_aggregatee_with_cache(params)
       cache = ActiveSupport::JSON.decode(params.delete(:cache))
       relative_widget_id = params.delete(:id).underscore
-      widget = aggregatee_instance(relative_widget_id)
+      widget = aggregatee_instance(relative_widget_id) rescue nil # couldn't create aggregatee instance
       
-      # inform the widget that it's being loaded
-      widget.before_load
+      if widget.nil?
+        {:feedback => "Couldn't load aggregatee '#{relative_widget_id}'"}
+      else
+        # inform the widget that it's being loaded
+        widget.before_load
       
-      [{
-        :js => widget.js_missing_code(cache), 
-        :css => widget.css_missing_code(cache)
-      }, {
-        :render_widget_in_container => {
-          :container => params[:container], 
-          :config => widget.js_config
-        }
-      }, {
-        :widget_loaded => {
-          :id => relative_widget_id
-        }
-      }]
+        [{
+          :js => widget.js_missing_code(cache), 
+          :css => widget.css_missing_code(cache)
+        }, {
+          :render_widget_in_container => {
+            :container => params[:container], 
+            :config => widget.js_config
+          }
+        }, {
+          :widget_loaded => {
+            :id => relative_widget_id
+          }
+        }]
+      end
     end
 
     # Method dispatcher - instantiates an aggregatee and calls the method on it
