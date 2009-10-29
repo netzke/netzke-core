@@ -464,12 +464,10 @@ module Netzke
     # * <tt>:container</tt> - Ext id of the container where in which the aggregatee will be rendered
     def load_aggregatee_with_cache(params)
       cache = ActiveSupport::JSON.decode(params.delete(:cache))
-      relative_widget_id = params.delete(:id).underscore
-      widget = aggregatee_instance(relative_widget_id) rescue nil # couldn't create aggregatee instance
+      relative_widget_id = params.delete(:id).underscore.to_sym
+      widget = aggregatees[relative_widget_id] && aggregatee_instance(relative_widget_id)
       
-      if widget.nil?
-        {:feedback => "Couldn't load aggregatee '#{relative_widget_id}'"}
-      else
+      if widget
         # inform the widget that it's being loaded
         widget.before_load
       
@@ -486,6 +484,8 @@ module Netzke
             :id => relative_widget_id
           }
         }]
+      else
+        {:feedback => "Couldn't load aggregatee '#{relative_widget_id}'"}
       end
     end
 

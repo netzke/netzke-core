@@ -1,9 +1,10 @@
 = edge
 * API change: Netzke::Base: <tt>id_name</tt> accessor renamed to <tt>global_id</tt>
-* Several internal code changes
-* Slightly better test coverage
+* Code: several internal code changes
+* Code: lightly better test coverage
 * New: <tt>Netzke::Base#global_id_by_reference</tt> method
 * Compatibility: resolving conflicts with the <tt>api</tt> property in some Ext v3.0 components
+* Fix: <tt>load_aggregatee_with_cache</tt> was throwing exception when the requested aggregatee wasn't defined
 
 = v0.4.4 - 2009-10-12
 * API change: default handlers for actions and tools are now supposed to be prefixed with "on". E.g.: if you declare an action named <tt>clear_table</tt>, the handler must be called (in Ruby) <tt>on_clear_table</tt> (mapped to <tt>onClearTable</tt> in JavaScript).

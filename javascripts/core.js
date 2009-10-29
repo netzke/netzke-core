@@ -88,7 +88,8 @@ Ext.widgetMixIn = {
   height: 400,
   // width: 800,
   border: false,
-  is_netzke: true, // to distinguish Netzke components from regular Ext components
+  isNetzke: true, // to distinguish Netzke components from regular Ext components
+  latestResult: {}, // latest result returned from the server via an API call
   
   /*
   Loads aggregatee into a container.
@@ -301,6 +302,10 @@ Ext.widgetMixIn = {
       },
       scope : this
     });
+  },
+
+  setResult: function(result) {
+    this.latestResult = result;
   },
 
   /* Parse the bbar and tbar (both Arrays), replacing the strings with the corresponding methods. For example:
