@@ -318,7 +318,7 @@ module Netzke
     def persistent_config
       if config[:persistent_config]
         config_class = self.class.persistent_config
-        config_class.widget_name = global_id # pass to the config class our unique name
+        config_class.widget_name = config[:persistent_config_id] || global_id # pass to the config class our unique name
         config_class
       else
         # if we can't use presistent config, all the calls to it will always return nil, and the "="-operation will be ignored
