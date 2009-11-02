@@ -387,7 +387,13 @@ Ext.widgetMixIn = {
     }
     
     // Set title
-    if (!config.title) config.title = config.id.humanize();
+    if (!config.title) {
+      config.title = config.id.humanize();
+    } else {
+      if (config.mode === "config") {
+        config.title = config.title + ' (' + config.id + ')';
+      }
+    }
   },
 
   // At this moment component is fully initializied
