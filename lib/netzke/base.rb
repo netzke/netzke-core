@@ -38,138 +38,129 @@ module Netzke
   #     netzke :form_panel, 
   #       :data_class_name => "User" # FormPanel specific option
   class Base
+    extend ActiveSupport::Memoizable
+    
     include Netzke::BaseJs # javascript (client-side)
 
-    module ClassMethods
-      # Class-level Netzke::Base configuration. The defaults also get specified here.
-      def config
-        set_default_config({
-          # which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
-          :javascripts               => [],
-          :stylesheets               => [],
-          
-          :persistent_config_manager => "NetzkePreference",
-          :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
-          :default_config => {
-            :persistent_config => true
-          }
-        })
-      end
-
-      def configure(*args)
-        if args.first.is_a?(Symbol)
-          # first arg is a Symbol
-          config[args.first] = args.last
-        else
-          config.deep_merge!(args.first)
-        end
-
-        enforce_config_consistency
-      end
-      
-      def enforce_config_consistency; end
-
-      # "Netzke::SomeWidget" => "SomeWidget"
-      def short_widget_class_name
-        self.name.split("::").last
-      end
-
-      # Multi-user support (deprecated in favor of controller sessions)
-      def user
-        @@user ||= nil
-      end
-
-      def user=(user)
-        @@user = user
-      end
-
-      # Access to controller sessions
-      def session
-        @@session ||= {}
-      end
-
-      def session=(s)
-        @@session = s
-      end
-
-      # called by controller at the moment of successfull login
-      def login
-        session[:_netzke_next_request_is_first_after_login] = true
-      end
-      
-      # called by controller at the moment of logout
-      def logout
-        session[:_netzke_next_request_is_first_after_logout] = true
-      end
-
-      # Use this class method to declare connection points between client side of a widget and its server side. 
-      # A method in a widget class with the same name will be (magically) called by the client side of the widget. 
-      # See netzke-basepack's GridPanel for an example.
-      def api(*api_points)
-        apip = read_inheritable_attribute(:api_points) || []
-        api_points.each{|p| apip << p}
-        write_inheritable_attribute(:api_points, apip)
-
-        # It may be needed later for security
-        api_points.each do |apip|
-          module_eval <<-END, __FILE__, __LINE__
-          def api_#{apip}(*args)
-            #{apip}(*args).to_nifty_json
-          end
-          # FIXME: commented out because otherwise ColumnOperations stop working
-          # def #{apip}(*args)
-          #   flash :warning => "API point '#{apip}' is not implemented for widget '#{short_widget_class_name}'"
-          #   {:flash => @flash}
-          # end
-          END
-        end
-      end
-
-      def api_points
-        read_inheritable_attribute(:api_points)
-      end
-      
-      # returns an instance of a widget defined in the config
-      def instance_by_config(config)
-        widget_class = "Netzke::#{config[:widget_class_name]}".constantize
-        widget_class.new(config)
-      end
-      
-      # persistent_config and layout manager classes
-      def persistent_config_manager_class
-        Netzke::Base.config[:persistent_config_manager].try(:constantize)
-      rescue NameError
-        nil
-      end
-
-      # Return persistent config class
-      def persistent_config
-        # if the class is not present, fake it (it will not store anything, and always return nil)
-        if persistent_config_manager_class.nil?
-          {}
-        else
-          persistent_config_manager_class
-        end
-      end
-      
-      private
-      def set_default_config(c)
-        @@config ||= {}
-        @@config[self.name] ||= c
-      end
-      
-    end
-    extend ClassMethods
-    
-    # If the widget has persistent config in its disposal
-    def persistent_config_enabled?
-      !persistent_config_manager_class.nil? && config[:persistent_config]
-    end
-    
     attr_accessor :parent, :name, :global_id, :permissions, :session
+
+    # Class-level Netzke::Base configuration. The defaults also get specified here.
+    def self.config
+      set_default_config({
+        # which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
+        :javascripts               => [],
+        :stylesheets               => [],
+        
+        :persistent_config_manager => "NetzkePreference",
+        :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
+        :default_config => {
+          :persistent_config => true
+        }
+      })
+    end
+    
+    def self.set_default_config(c) #:nodoc:
+      @@config ||= {}
+      @@config[self.name] ||= c
+    end
+    
+    # Override class-level defaults specified in <tt>Netzke::Base.config</tt>. 
+    # E.g. in config/initializers/netzke-config.rb:
+    # 
+    #     Netzke::GridPanel.configure :default_config => {:persistent_config => true}
+    def self.configure(*args)
+      if args.first.is_a?(Symbol)
+        config[args.first] = args.last
+      else
+        # first arg is hash
+        config.deep_merge!(args.first)
+      end
+      
+      # widget may implement some kind of control for configuration consistency
+      enforce_config_consistency if respond_to?(:enforce_config_consistency)
+    end
+    
+    # Short widget class name, e.g.: 
+    #   Netzke::SomeWidget => SomeWidget
+    def self.short_widget_class_name
+      self.name.split("::").last
+    end
+
+    # Access to controller sessions
+    def self.session
+      @@session ||= {}
+    end
+
+    def self.session=(s)
+      @@session = s
+    end
+
+    # Should be called by session controller at the moment of successfull login
+    def self.login
+      session[:_netzke_next_request_is_first_after_login] = true
+    end
+    
+    # Should be called by session controller at the moment of logout
+    def self.logout
+      session[:_netzke_next_request_is_first_after_logout] = true
+    end
+
+    # Declare connection points between client side of a widget and its server side. For example:
+    #
+    #     api :reset_data
+    # 
+    # will provide JavaScript side with a method <tt>resetData</tt> that will result in a call to Ruby 
+    # method <tt>reset_data</tt>, e.g.:
+    # 
+    #     this.resetData({hard:true});
+    # 
+    # See netzke-basepack's GridPanel for an example.
+    def self.api(*api_points)
+      apip = read_inheritable_attribute(:api_points) || []
+      api_points.each{|p| apip << p}
+      write_inheritable_attribute(:api_points, apip)
+
+      # It may be needed later for security
+      api_points.each do |apip|
+        module_eval <<-END, __FILE__, __LINE__
+        def api_#{apip}(*args)
+          #{apip}(*args).to_nifty_json
+        end
+        # FIXME: commented out because otherwise ColumnOperations stop working
+        # def #{apip}(*args)
+        #   flash :warning => "API point '#{apip}' is not implemented for widget '#{short_widget_class_name}'"
+        #   {:flash => @flash}
+        # end
+        END
+      end
+    end
 
     api :load_aggregatee_with_cache # every widget gets this api
 
+    # Array of API-points specified with <tt>Netzke::Base.api</tt> method
+    def self.api_points
+      read_inheritable_attribute(:api_points)
+    end
+    
+    # Instance of widget by config
+    def self.instance_by_config(config)
+      widget_class = "Netzke::#{config[:widget_class_name]}".constantize
+      widget_class.new(config)
+    end
+    
+    # Persistent config manager class
+    def self.persistent_config_manager_class
+      Netzke::Base.config[:persistent_config_manager].try(:constantize)
+    rescue NameError
+      nil
+    end
+
+    # Return persistent config class
+    # def self.persistent_config
+    #   # if the class is not present, fake it (it will not store anything, and always return nil)
+    #   persistent_config_manager_class || {}
+    # end
+    
     # Widget initialization process
     # * the config hash is available to the widget after the "super" call in the initializer
     # * override/add new default configuration options into the "default_config" method 
@@ -183,23 +174,65 @@ module Netzke
       @flash         = []
     end
 
+    #
+    # Configuration
+    # 
+
+    # Default config - before applying any passed configuration
     def default_config
-      self.class.config[:default_config].nil? ? {} : {}.merge!(self.class.config[:default_config])
+      self.class.config[:default_config].nil? ? {} : {}.merge(self.class.config[:default_config])
+    end
+    
+    # Static, hardcoded config. Consists of default values merged with config that was passed during instantiation
+    def initial_config
+      default_config.deep_merge(@passed_config)
+    end
+    memoize :initial_config
+    
+    # Config that is not overwritten by parents and sessions
+    def independent_config
+      initial_config.deep_merge(persistent_config_hash)
+    end
+    memoize :independent_config
+
+    # If the widget has persistent config in its disposal
+    def persistent_config_enabled?
+      !persistent_config_manager_class.nil? && initial_config[:persistent_config]
     end
 
-    # Access to the config that takes into account all possible ways to configure a widget. *Read only*.
-    def config
-      # Translates into something like this:
-      #     @config ||= default_config.
-      #                 deep_merge(@passed_config).
-      #                 deep_merge(persistent_config_hash).
-      #                 deep_merge(strong_parent_config).
-      #                 deep_merge(strong_session_config)
-      @config ||= independent_config.
-                    deep_merge(strong_parent_config).
-                    deep_merge(strong_session_config)
-                    
+    # Store some setting in the database as if it was a hash, e.g.:
+    #     persistent_config["window.size"] = 100
+    #     persistent_config["window.size"] => 100
+    # This method is user-aware
+    def persistent_config(global = false)
+      if persistent_config_enabled? || global
+        config_class = self.class.persistent_config_manager_class
+        config_class.widget_name = global ? nil : persistent_config_id # pass to the config class our unique name
+        config_class
+      else
+        # if we can't use presistent config, all the calls to it will always return nil, 
+        # and the "="-operation will be ignored
+        logger.debug "==> NETZKE: no persistent config is set up for widget '#{global_id}'"
+        {}
+      end
     end
+    
+    # A string which will identify the persistent config records for this widget
+    def persistent_config_id #:nodoc:
+      initial_config[:persistent_config_id] || global_id
+    end
+    
+    # Resulting config that takes into account all possible ways to configure a widget. *Read only*.
+    # Translates into something like this:
+    #     default_config.
+    #     deep_merge(@passed_config).
+    #     deep_merge(persistent_config_hash).
+    #     deep_merge(strong_parent_config).
+    #     deep_merge(strong_session_config)
+    def config
+      independent_config.deep_merge(strong_parent_config).deep_merge(strong_session_config)
+    end
+    memoize :config
     
     def flat_config(key = nil)
       fc = config.flatten_with_type
@@ -208,11 +241,6 @@ module Netzke
 
     def strong_parent_config
       @strong_parent_config ||= parent.nil? ? {} : parent.strong_children_config
-    end
-
-    # Config that is not overwritten by parents and sessions
-    def independent_config
-      @independent_config ||= initial_config.deep_merge(persistent_config_hash)
     end
 
     def flat_independent_config(key = nil)
@@ -225,20 +253,23 @@ module Netzke
       key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
     end
 
-    # Static, hardcoded config. Consists of default values merged with config that was passed during instantiation
-    def initial_config
-      @initial_config ||= default_config.deep_merge(@passed_config)
-    end
-    
     def flat_initial_config(key = nil)
       fc = initial_config.flatten_with_type
       key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
     end
 
-    def build_persistent_config_hash
+    # Returns a hash built from all persistent config values for the current widget, following the double underscore
+    # naming convention. E.g., if we have the following persistent config pairs:
+    #     enabled  => true
+    #     layout__width => 100
+    #     layout__header__height => 20
+    # 
+    # this method will return the following hash:
+    #     {:enabled => true, :layout => {:width => 100, :header => {:height => 20}}}
+    def persistent_config_hash
       return {} if !initial_config[:persistent_config]
       
-      prefs = NetzkePreference.find_all_for_widget(global_id)
+      prefs = NetzkePreference.find_all_for_widget(persistent_config_id)
       res = {}
       prefs.each do |p|
         hsh_levels = p.name.split("__").map(&:to_sym)
@@ -256,11 +287,8 @@ module Netzke
       end
       res
     end
-
-    def persistent_config_hash
-      @persistent_config_hash ||= build_persistent_config_hash
-    end
-
+    memoize :persistent_config_hash
+    
     def ext_config
       config[:ext_config] || {}
     end
@@ -309,22 +337,6 @@ module Netzke
       end
       res << short_widget_class_name
       res.uniq
-    end
-    
-    # Store some setting in the database as if it was a hash, e.g.:
-    #     persistent_config["window.size"] = 100
-    #     persistent_config["window.size"] => 100
-    # This method is user-aware
-    def persistent_config(global = false)
-      if config[:persistent_config]
-        config_class = self.class.persistent_config
-        config_class.widget_name = global ? nil : config[:persistent_config_id] || global_id # pass to the config class our unique name
-        config_class
-      else
-        # if we can't use presistent config, all the calls to it will always return nil, and the "="-operation will be ignored
-        logger.debug "==> NETZKE: no persistent config is set up for widget '#{global_id}'"
-        {}
-      end
     end
     
     # 'Netzke::Grid' => 'Grid'
