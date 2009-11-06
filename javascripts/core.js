@@ -515,12 +515,16 @@ Ext.override(Ext.Container, {
   },
 
   instantiateChild : function(config){
-    this.remove(this.getWidget()); // first delete previous widget 
-
     if (!config) return false; // simply remove current widget if null is passed
-
     var instance = new Ext.netzke.cache[config.widgetClassName](config);
-    this.add(instance);
-    this.doLayout();
+
+    if (instance.widgetClassName === "Window") {
+      instance.show();
+    } else {
+      this.remove(this.getWidget()); // first delete previous widget 
+      this.add(instance);
+      this.doLayout();
+    }
+    
   }
 });

@@ -222,6 +222,12 @@ module Netzke
       initial_config[:persistent_config_id] || global_id
     end
     
+    def update_persistent_ext_config(hsh)
+      current_config = persistent_config[:ext_config] || {}
+      current_config.merge!(hsh.stringify_keys)
+      persistent_config[:ext_config] = current_config
+    end
+    
     # Resulting config that takes into account all possible ways to configure a widget. *Read only*.
     # Translates into something like this:
     #     default_config.

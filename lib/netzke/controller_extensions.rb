@@ -42,10 +42,8 @@ module Netzke
 
           # instantiate the server part of the widget
           widget_instance = widget_class.new(self.class.widget_config_storage[widget])
-          # (OLD VERSION)
-          # widget_instance = widget_class.new(self.class.widget_config_storage[widget].merge(:controller => self)) # OPTIMIZE: top-level widgets have access to the controller - can we avoid that?
-          
-          render :text => widget_instance.send(api_action, params)
+
+          render :text => widget_instance.send(api_action, params), :layout => false
         end
       end
     end
