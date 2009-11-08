@@ -4,8 +4,7 @@ This file gets loaded along with the rest of Ext library at the initial load
 
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.namespace('Ext.netzke'); // namespace for extensions that depend on Ext
-Ext.namespace('Netzke'); // namespace for extensions that do not depend on Ext
-Ext.netzke.cache = {};
+Ext.namespace('Netzke.classes'); // namespace for extensions that do not depend on Ext
 
 Ext.QuickTips.init(); // seems obligatory in Ext v2.2.1, otherwise Ext.Component#destroy() stops working properly
 
@@ -95,12 +94,12 @@ Ext.widgetMixIn = {
   Loads aggregatee into a container.
   */
   loadAggregatee: function(params){
-    // params that will be provided for the server API call (load_aggregatee_with_cache); all what's passed in params.params is merged in
+    // params that will be provided for the server API call (load_aggregatee_with_cache); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
     var apiParams = Ext.apply({id: params.id, container: params.container}, params.params); 
     
     // build the cached widgets list to send it to the server
     var cachedWidgetNames = [];
-    for (name in Ext.netzke.cache) {
+    for (name in Netzke.classes) {
       cachedWidgetNames.push(name);
     }
     apiParams.cache = Ext.encode(cachedWidgetNames);
@@ -113,7 +112,7 @@ Ext.widgetMixIn = {
     // visually disable the container while the widget is being loaded
     // Ext.getCmp(params.container).disable();
 
-    Ext.getCmp(params.container).removeChild(); // remove the old widget
+    if (params.container) Ext.getCmp(params.container).removeChild(); // remove the old widget if the container is specified
     
     // do the remote API call
     this.loadAggregateeWithCache(apiParams);
@@ -178,7 +177,11 @@ Ext.widgetMixIn = {
   */
   renderWidgetInContainer : function(params){
     var cont = Ext.getCmp(params.container);
-    cont.instantiateChild(params.config);
+    if (cont) {
+      cont.instantiateChild(params.config);
+    } else {
+      this.instantiateChild(params.config);
+    }
   },
   
   /*
@@ -298,10 +301,10 @@ Ext.widgetMixIn = {
           // execute commands from server
           this.bulkExecute(Ext.decode(response.responseText));
           
-          // provade callback if needed
+          // provide callback if needed
           if (typeof callback == 'function') { 
             if (!scope) scope = this;
-            callback.apply(scope);
+            callback.apply(scope, [this.latestResult]);
           }
         }
       },
@@ -510,21 +513,30 @@ Ext.override(Ext.Container, {
     return this.items ? this.items.get(0) : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
   },
   
+  // Remove the child
   removeChild : function(){
     this.remove(this.getWidget());
   },
 
-  instantiateChild : function(config){
-    if (!config) return false; // simply remove current widget if null is passed
-    var instance = new Ext.netzke.cache[config.widgetClassName](config);
+  // Given a scoped class name, returns the actual class, e.g.: "Netzke.GridPanel" => Netzke.classes.Netzke.GridPanel
+  classifyScopedName : function(n){
+    var klass = Netzke.classes;
+    Ext.each(n.split("."), function(s){
+      klass = klass[s];
+    });
+    return klass;
+  },
 
-    if (instance.widgetClassName === "Window") {
+  // Instantiates an aggregatee by its config. If it appears to be a window, shows it instead of adding as item.
+  instantiateChild : function(config){
+    var klass = this.classifyScopedName(config.scopedClassName);
+    var instance = new klass(config);
+    if (instance.isXType("netzkewindow")) {
       instance.show();
     } else {
       this.remove(this.getWidget()); // first delete previous widget 
       this.add(instance);
       this.doLayout();
     }
-    
   }
 });

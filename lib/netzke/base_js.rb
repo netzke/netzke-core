@@ -45,7 +45,8 @@ module Netzke
       res.merge!(:netzke_api => api_points) unless api_points.empty?
   
       # Widget class name. Needed for dynamic instantiation in javascript.
-      res.merge!(:widget_class_name => short_widget_class_name)
+      # res.merge!(:widget_class_name => short_widget_class_name)
+      res.merge!(:scoped_class_name => self.class.js_scoped_class_name)
       
       # Actions, toolbars and menus
       # tools   && res.merge!(:tools   => tools)
@@ -56,8 +57,8 @@ module Netzke
       res[:persistent_config] = persistent_config_enabled?
 
       # Merge with all config options passed as hash to config[:ext_config]
+      logger.debug "!!! ext_config: #{ext_config.inspect}\n"
       res.merge!(ext_config)
-  
 
       res
     end
@@ -84,12 +85,18 @@ module Netzke
 
     # instantiating
     def js_widget_instance
-      %Q{var #{name.jsonify} = new Ext.netzke.cache.#{short_widget_class_name}(#{js_config.to_nifty_json});}
+      %Q{var #{name.jsonify} = new #{self.class.js_full_class_name}(#{js_config.to_nifty_json});}
     end
 
     # rendering
     def js_widget_render
-      %Q{#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-div");}
+      %Q{
+        if (#{name.jsonify}.isXType("netzkewindow")) {
+          #{name.jsonify}.show();
+        } else {
+          #{name.jsonify}.render("#{name.to_s.split('_').join('-')}-div");
+        }
+      }
     end
 
     # container for rendering
@@ -121,17 +128,39 @@ module Netzke
         "Ext.Panel"
       end
 
-      # functions and properties that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
+      # Properties (including methods) that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
       def js_extend_properties 
         {}
+      end
+    
+      # Returns the scope of this widget, 
+      # e.g. "Netzke.GridPanelLib"
+      def js_scope
+        js_full_class_name.split(".")[0..-2].join(".")
+      end
+  
+      # Returns the name of the JavaScript class for this widget, including the scopes, 
+      # e.g.: "Netzke.GridPanelLib.RecordFormWindow"
+      def js_scoped_class_name
+        name.gsub("::", ".")
+      end
+
+      # Returns the full name of the JavaScript class, including the scopes *and* the common scope, which is
+      # Netzke.classes.
+      # E.g.: "Netzke.classes.Netzke.GridPanelLib.RecordFormWindow"
+      def js_full_class_name
+        "Netzke.classes." + js_scoped_class_name
+      end
+
+      # Builds this widget's xtype
+      # E.g.: netzkewindow, netzkegridpanel
+      def js_xtype
+        name.gsub("::", "").downcase
       end
   
       # widget's menus
       def js_menus; []; end
   
-      # items
-      # def js_items; null; end
-      
       # are we using JS inheritance? for now, if js_base_class is a Netzke class - yes
       def js_inheritance?
         superclass != Netzke::Base
@@ -143,30 +172,39 @@ module Netzke
         if js_inheritance?
           # In case of using javascript inheritance, little needs to be done
           <<-END_OF_JAVASCRIPT
+          // Define the scope
+          Ext.ns("#{js_scope}");
           // Create the class
-          Ext.netzke.cache.#{short_widget_class_name} = function(config){
-            Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, config);
+          #{js_full_class_name} = function(config){
+            #{js_full_class_name}.superclass.constructor.call(this, config);
           };
           // Extend it with the class that we inherit from, and mix in js_extend_properties
-          Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, Ext.netzke.cache.#{superclass.short_widget_class_name}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
+          Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
+          // Register xtype
+          Ext.reg("#{js_xtype}", #{js_full_class_name});
+          
           END_OF_JAVASCRIPT
+          
         else
           js_add_menus = "this.addMenus(#{js_menus.to_nifty_json});" unless js_menus.empty?
           <<-END_OF_JAVASCRIPT
+          // Define the scope
+          Ext.ns("#{js_scope}");
           // Constructor
-          Ext.netzke.cache.#{short_widget_class_name} = function(config){
+          #{js_full_class_name} = function(config){
             // Do all the initializations that every Netzke widget should do: create methods for API-points,
             // process actions, tools, toolbars
             this.commonBeforeConstructor(config);
-            
             // Call the constructor of the inherited class
-            Ext.netzke.cache.#{short_widget_class_name}.superclass.constructor.call(this, config);
-
+            #{js_full_class_name}.superclass.constructor.call(this, config);
             // What every widget should do after calling the constructor of the inherited class, like
             // setting extra events
             this.commonAfterConstructor(config);
           };
-          Ext.extend(Ext.netzke.cache.#{short_widget_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
+          Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
+          // Register xtype
+          Ext.reg("#{js_xtype}", #{js_full_class_name});
+          
           END_OF_JAVASCRIPT
         end
       end

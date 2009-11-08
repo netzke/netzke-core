@@ -8,6 +8,9 @@
 * New: <tt>persistent_config_id</tt> configuration option allows specifying an id by which persistent configuration is identified for the widget. Handy if different homogeneous widgets need to share the same persistent configuration.
 * New: <tt>Netzke::Base#persistent_config</tt> method now accepts an optional boolean parameter signalizing that the configuration is global (not bound to a widget)
 * Impr: cleaner handling of actions and toolbars; fbar configuration introduced.
+* Impr: calling an API method now provides for the result value (if return by the server) in the callback.
+* Impr: allows name spaced creation of Netzke widgets, e.g. widgets can now be defined under any module under Netzke, not only *directly* under Netzke.
+* New: support for Ext.Window-based widgets (it'll call show() on them when the "*_widget_render" helper is used).
 
 = v0.4.4 - 2009-10-12
 * API change: default handlers for actions and tools are now supposed to be prefixed with "on". E.g.: if you declare an action named <tt>clear_table</tt>, the handler must be called (in Ruby) <tt>on_clear_table</tt> (mapped to <tt>onClearTable</tt> in JavaScript).

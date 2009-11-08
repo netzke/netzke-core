@@ -81,9 +81,9 @@ module Netzke
     end
     
     # Short widget class name, e.g.: 
-    #   Netzke::SomeWidget => SomeWidget
+    #   Netzke::Module::SomeWidget => Module::SomeWidget
     def self.short_widget_class_name
-      self.name.split("::").last
+      self.name.sub("Netzke::", "")
     end
 
     # Access to controller sessions
@@ -224,7 +224,7 @@ module Netzke
     
     def update_persistent_ext_config(hsh)
       current_config = persistent_config[:ext_config] || {}
-      current_config.merge!(hsh.stringify_keys)
+      current_config.deep_merge!(hsh.convert_keys{ |k| k.to_s }) # first, recursively stringify the keys
       persistent_config[:ext_config] = current_config
     end
     
@@ -291,7 +291,7 @@ module Netzke
         # So we need to recursively merge it into the final result
         res.deep_merge!(hsh_levels.first => anchor)
       end
-      res
+      res.convert_keys{ |k| k.to_sym } # recursively symbolize the keys
     end
     memoize :persistent_config_hash
     
@@ -493,7 +493,7 @@ module Netzke
           :js => widget.js_missing_code(cache), 
           :css => widget.css_missing_code(cache)
         }, {
-          :render_widget_in_container => {
+          :render_widget_in_container => { # TODO: rename it
             :container => params[:container], 
             :config => widget.js_config
           }
