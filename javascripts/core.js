@@ -262,13 +262,18 @@ Ext.widgetMixIn = {
     }
   },
   
-  // Common handler for actions
-  actionHandler : function(action){
+  // Common handler for all widget's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
+  actionHandler : function(comp){
+    var actionName = comp.name;
     // If firing corresponding event doesn't return false, call the handler
-    if (this.fireEvent(action.name+'click', action)) {
-      var methodName = action.fn || "on"+action.name.camelize();
-      if (!this[methodName]) {throw "Netzke: handler for action '" + action.name + "' is undefined"}
-      this[methodName](action);
+    if (this.fireEvent(actionName+'click', comp)) {
+      var action = this.actions[actionName];
+      var customHandler = action.initialConfig.customHandler;
+      var methodName = (customHandler && customHandler.camelize(true)) || "on" + actionName.camelize();
+      if (!this[methodName]) {throw "Netzke: action handler '" + methodName + "' is undefined"}
+      
+      // call the handler passing it the triggering component
+      this[methodName](comp);
     }
   },
 
@@ -308,9 +313,11 @@ Ext.widgetMixIn = {
     this.latestResult = result;
   },
 
-  /* Parse the bbar and tbar (both Arrays), replacing the strings with the corresponding methods. For example:
-    replaceStringsWithActions( ['add', {text:'Menu', menu:['edit', 'delete']}] )
-    => [scope.actions['add'], {text:'Menu', menu:[scope.actions['edit'], scope.actions['delete']]}]
+  /* Normalize an array of abstracted button configs into an array of Ext button configs according to the following rules:
+    - if the element is a string and <tt>scope</tt> has an action with this name, replace this element with that action; if <tt>scope</tt> has no corresponding action, don't do anything (Ext will take care of it - display as text, or a separator, etc)
+    - if the element is an object, then:
+    -- if this object has a <tt>menu</tt> property - it's a nested menu; the value is expected to be an array of abstracted button configs, so, proceed recursively.
+    -- if this object has a <tt>handler</tt> property and the value correspond to a function in <tt>scope</tt> - replace this value with the reference to that function
   */
   normalizeMenuItems: function(arry, scope){
     var res = []; // new array
@@ -320,58 +327,64 @@ Ext.widgetMixIn = {
         if (scope.actions[camelized]){
           res.push(scope.actions[camelized]);
         } else {
-          // if there's no action with this name, maybe it's a separator or something
+          // if there's no action with this name, maybe it's a separator or text or whatever
           res.push(o);
         }
       } else if (Netzke.isObject(o)) {
         // look inside the objects...
-        for (var key in o) {
-          if (Ext.isArray(o[key])) {
-            // ... and recursively process inner arrays found
-            o[key] = this.normalizeMenuItems(o[key], scope);
-          }
+        if (o.menu) {
+          // ... and recursively process nested menus
+          o.menu = this.normalizeMenuItems(o.menu, scope);
+        } else if (o.handler && Ext.isFunction(scope[o.handler.camelize(true)])) {
+          // This button config has a handler specified as string - replace it with reference to a real function if it exists
+          o.handler = scope[o.handler.camelize(true)];
         }
         res.push(o);
       }
     }, this);
+    
+    delete arry;
+    
     return res;
   },
   
 
-  // Every Netzke widget 
+  // Code run before calling Ext's constructor - normalizing config to provide Netzke additional functionality
   commonBeforeConstructor : function(config){
-    this.actions = {};
-
-    // Generate methods for api points
-    if (!config.netzkeApi) { config.netzkeApi = []; }
-    config.netzkeApi.push('load_aggregatee_with_cache'); // all netzke widgets get this API
-    Ext.each(config.netzkeApi, function(intp){
+    // Dynamically create methods for api points, so that we could later call them like: this.myApiMethod()
+    var apiPoints = config.netzkeApi || [];
+    apiPoints.push('load_aggregatee_with_cache'); // all netzke widgets get this API point
+    Ext.each(apiPoints, function(intp){
       this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
     }, this);
 
-    // Create Ext.Actions based on config.actions
+    // This will contain Ext.Action instances
+    this.actions = {};
+
+    // Create Ext.Action instances based on config.actions
     if (config.actions) {
-      this.testActions = {};
       for (var name in config.actions) {
         // Create an event for each action (so that higher-level widgets could interfere)
         this.addEvents(name+'click');
 
         // Configure the action
         var actionConfig = config.actions[name];
-        actionConfig.handler = this.actionHandler.createDelegate(this);
+        actionConfig.customHandler = actionConfig.handler || actionConfig.fn; //DEPRECATED: .fn is kept for backward compatibility, preferred way is to specify handler
+        actionConfig.handler = this.actionHandler.createDelegate(this); // ! this is the "wrapper-handler", which is common for all actions!
         actionConfig.name = name;
         this.actions[name] = new Ext.Action(actionConfig);
       }
-
-      config.bbar = config.bbar && this.normalizeMenuItems(config.bbar, this);
-      config.tbar = config.tbar && this.normalizeMenuItems(config.tbar, this);
-      config.menu = config.menu && this.normalizeMenuItems(config.menu, this);
-      config.contextMenu = config.contextMenu && this.normalizeMenuItems(config.contextMenu, this);
       
       // TODO: need to rethink this action related stuff
       config.actions = this.actions;
-      
     }
+    
+    config.bbar = config.bbar && this.normalizeMenuItems(config.bbar, this);
+    config.tbar = config.tbar && this.normalizeMenuItems(config.tbar, this);
+    config.fbar = config.fbar && this.normalizeMenuItems(config.fbar, this);
+    config.contextMenu = config.contextMenu && this.normalizeMenuItems(config.contextMenu, this);
+
+    config.menu = config.menu && this.normalizeMenuItems(config.menu, this);
 
     // Normalize tools
     if (config.tools) {
