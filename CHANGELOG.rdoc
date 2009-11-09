@@ -1,4 +1,4 @@
-= edge
+= v0.4.5 - 2009-11-08
 * API change: Netzke::Base: <tt>id_name</tt> accessor renamed to <tt>global_id</tt>
 * Code: several internal code changes
 * Code: lightly better test coverage
