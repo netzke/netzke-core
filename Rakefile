@@ -1,20 +1,22 @@
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
+    gemspec.version = "0.4.5"
     gemspec.name = "netzke-core"
     gemspec.summary = "Build ExtJS/Rails widgets with minimum effort"
-    gemspec.description = "Build ExtJS/Rails widgets with minimum effort"
+    gemspec.description = "Allows building ExtJS/Rails reusable code in a DRY way"
     gemspec.email = "sergei@playcode.nl"
     gemspec.homepage = "http://github.com/skozlov/netzke-core"
     gemspec.rubyforge_project = "netzke-core"
     gemspec.authors = ["Sergei Kozlov"]
   end
-  Jeweler::RubyforgeTasks.new do |rubyforge|
-    rubyforge.doc_task = "rdoc"
-  end
+  Jeweler::GemcutterTasks.new
+  # Jeweler::RubyforgeTasks.new do |rubyforge|
+  #   rubyforge.doc_task = "rdoc"
+  # end
     
 rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
 require 'rake/rdoctask'
