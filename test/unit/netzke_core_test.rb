@@ -144,8 +144,8 @@ class NetzkeCoreTest < ActiveSupport::TestCase
 
   test "js inheritance" do
     widget = JsInheritanceWidget.new
-    assert(widget.js_missing_code.index("Netzke.classes.Netzke.JsInheritanceWidget"))
-    assert(widget.js_missing_code.index("Netzke.classes.Netzke.Widget"))
+    assert(widget.js_missing_code.index("Netzke.classes.JsInheritanceWidget"))
+    assert(widget.js_missing_code.index("Netzke.classes.Widget"))
   end
 
   test "class-level configuration" do

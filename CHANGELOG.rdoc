@@ -1,3 +1,7 @@
+= v0.4.5.1 - 2009-11-09
+* Regression: fixing inheritance and caching.
+* FeedbackGhost is not a Netzke widget anymore - moved to static JavaScript.
+
 = v0.4.5 - 2009-11-08
 * API change: Netzke::Base: <tt>id_name</tt> accessor renamed to <tt>global_id</tt>
 * Code: several internal code changes

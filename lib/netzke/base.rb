@@ -83,7 +83,7 @@ module Netzke
     # Short widget class name, e.g.: 
     #   Netzke::Module::SomeWidget => Module::SomeWidget
     def self.short_widget_class_name
-      self.name.sub("Netzke::", "")
+      self.name.sub(/^Netzke::/, "")
     end
 
     # Access to controller sessions
@@ -397,6 +397,7 @@ module Netzke
     end
 
     # recursively instantiates an aggregatee based on its "path": e.g. if we have an aggregatee :aggr1 which in its turn has an aggregatee :aggr10, the path to the latter would be "aggr1__aggr10"
+    # TODO: introduce memoization
     def aggregatee_instance(name, strong_config = {})
       aggregator = self
       name.to_s.split('__').each do |aggr|
@@ -481,7 +482,7 @@ module Netzke
     # * <tt>:id</tt> - reference to the aggregatee
     # * <tt>:container</tt> - Ext id of the container where in which the aggregatee will be rendered
     def load_aggregatee_with_cache(params)
-      cache = ActiveSupport::JSON.decode(params.delete(:cache))
+      cache = params[:cache].gsub(".", "::").split(",") # array of cached class names (in Ruby)
       relative_widget_id = params.delete(:id).underscore.to_sym
       widget = aggregatees[relative_widget_id] && aggregatee_instance(relative_widget_id)
       

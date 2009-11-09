@@ -57,7 +57,6 @@ module Netzke
       res[:persistent_config] = persistent_config_enabled?
 
       # Merge with all config options passed as hash to config[:ext_config]
-      logger.debug "!!! ext_config: #{ext_config.inspect}\n"
       res.merge!(ext_config)
 
       res
@@ -132,7 +131,7 @@ module Netzke
       def js_extend_properties 
         {}
       end
-    
+
       # Returns the scope of this widget, 
       # e.g. "Netzke.GridPanelLib"
       def js_scope
@@ -142,7 +141,7 @@ module Netzke
       # Returns the name of the JavaScript class for this widget, including the scopes, 
       # e.g.: "Netzke.GridPanelLib.RecordFormWindow"
       def js_scoped_class_name
-        name.gsub("::", ".")
+        short_widget_class_name.gsub("::", ".")
       end
 
       # Returns the full name of the JavaScript class, including the scopes *and* the common scope, which is
@@ -170,19 +169,26 @@ module Netzke
       # to be reused at the moment of widget instantiation)
       def js_class
         if js_inheritance?
-          # In case of using javascript inheritance, little needs to be done
-          <<-END_OF_JAVASCRIPT
+          # Using javascript inheritance
+          res = <<-END_OF_JAVASCRIPT
           // Define the scope
           Ext.ns("#{js_scope}");
           // Create the class
           #{js_full_class_name} = function(config){
             #{js_full_class_name}.superclass.constructor.call(this, config);
           };
-          // Extend it with the class that we inherit from, and mix in js_extend_properties
-          Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
-          // Register xtype
-          Ext.reg("#{js_xtype}", #{js_full_class_name});
+          END_OF_JAVASCRIPT
           
+          # Do we specify our own extend properties (overrriding js_extend_properties)? If so, include them, if not - don't re-include those from the parent!
+          res << (singleton_methods(false).include?("js_extend_properties") ? %Q{
+          Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name}, #{js_extend_properties.to_nifty_json});
+          } : %Q{
+          Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name});
+          })
+          
+          res << <<-END_OF_JAVASCRIPT
+          // Register our xtype
+          Ext.reg("#{js_xtype}", #{js_full_class_name});
           END_OF_JAVASCRIPT
           
         else
@@ -204,7 +210,6 @@ module Netzke
           Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
           // Register xtype
           Ext.reg("#{js_xtype}", #{js_full_class_name});
-          
           END_OF_JAVASCRIPT
         end
       end
@@ -215,15 +220,16 @@ module Netzke
       
       # Override this method. Must return an array of paths to javascript files that we depend on. 
       # This javascript code will be loaded along with the widget's class, and before it.
-      def include_js
-        []
-      end
+      # def include_js
+      #   []
+      # end
       
       # Returns all extra JavaScript-code (as string) required by this widget's class
       def js_included
         res = ""
-
-        include_js.each do |path|
+        
+        # Prevent re-including code that was already included by the parent
+        singleton_methods(false).include?("include_js") && include_js.each do |path|
           f = File.new(path)
           res << f.read << "\n"
         end
@@ -251,15 +257,15 @@ module Netzke
       # 
 
       # Override this method. Must return an array of paths to css files that we depend on. 
-      def include_css
-        []
-      end
+      # def include_css
+      #   []
+      # end
       
       # Returns all extra CSS code (as string) required by this widget's class
       def css_included
         res = ""
         
-        include_css.each do |path|
+        singleton_methods(false).include?("include_css") && include_css.each do |path|
           f = File.new(path)
           res << f.read << "\n"
         end

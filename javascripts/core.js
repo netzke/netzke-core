@@ -5,8 +5,9 @@ This file gets loaded along with the rest of Ext library at the initial load
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.namespace('Ext.netzke'); // namespace for extensions that depend on Ext
 Ext.namespace('Netzke.classes'); // namespace for extensions that do not depend on Ext
+Netzke.cache = {}; // empty Netzke cache at the moment of loading
 
-Ext.QuickTips.init(); // seems obligatory in Ext v2.2.1, otherwise Ext.Component#destroy() stops working properly
+Ext.QuickTips.init();
 
 // To comply with Rails' forgery protection
 Ext.Ajax.extraParams = {
@@ -98,11 +99,11 @@ Ext.widgetMixIn = {
     var apiParams = Ext.apply({id: params.id, container: params.container}, params.params); 
     
     // build the cached widgets list to send it to the server
-    var cachedWidgetNames = [];
-    for (name in Netzke.classes) {
-      cachedWidgetNames.push(name);
+    var cachedWidgetNames = "";
+    for (name in Netzke.cache) {
+      cachedWidgetNames += name + ",";
     }
-    apiParams.cache = Ext.encode(cachedWidgetNames);
+    apiParams.cache = cachedWidgetNames;
     
     // remember the passed callback for the future
     if (params.callback) {
@@ -415,7 +416,7 @@ Ext.widgetMixIn = {
   // At this moment component is fully initializied
   commonAfterConstructor : function(config){
     // From everywhere accessible FeedbackGhost
-    this.feedbackGhost = Ext.getCmp('feedback_ghost');
+    this.feedbackGhost = new Netzke.FeedbackGhost();
 
     // Add the menus
     if (this.initialConfig.menu) {this.addMenu(this.initialConfig.menu, this);}
@@ -524,6 +525,9 @@ Ext.override(Ext.Container, {
     Ext.each(n.split("."), function(s){
       klass = klass[s];
     });
+    // Caching the class
+    Netzke.cache[n] = true;
+    // console.info(Netzke.cache);
     return klass;
   },
 
