@@ -64,16 +64,16 @@ module Netzke
   
     # All the JS-code required by this instance of the widget to be instantiated in the browser.
     # It includes the JS-class for the widget itself, as well as JS-classes for all widgets' (non-late) aggregatees.
-    def js_missing_code(cached_dependencies = [])
+    def js_missing_code(cached = [])
       code = dependency_classes.inject("") do |r,k| 
-        cached_dependencies.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached_dependencies).strip_js_comments
+        cached.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached).strip_js_comments
       end
       code.blank? ? nil : code
     end
     
-    def css_missing_code(cached_dependencies = [])
+    def css_missing_code(cached = [])
       code = dependency_classes.inject("") do |r,k| 
-        cached_dependencies.include?(k) ? r : r + "Netzke::#{k}".constantize.css_code(cached_dependencies)
+        cached.include?(k) ? r : r + "Netzke::#{k}".constantize.css_code(cached)
       end
       code.blank? ? nil : code
     end
@@ -89,13 +89,7 @@ module Netzke
 
     # rendering
     def js_widget_render
-      %Q{
-        if (#{name.jsonify}.isXType("netzkewindow")) {
-          #{name.jsonify}.show();
-        } else {
-          #{name.jsonify}.render("#{name.to_s.split('_').join('-')}-div");
-        }
-      }
+      self.class.js_xtype == "netzkewindow" ? %Q{#{name.jsonify}.show();} : %Q{#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-div");}
     end
 
     # container for rendering
@@ -132,14 +126,34 @@ module Netzke
         {}
       end
 
-      # Returns the scope of this widget, 
-      # e.g. "Netzke.GridPanelLib"
-      def js_scope
-        js_full_class_name.split(".")[0..-2].join(".")
+      # widget's menus
+      def js_menus; []; end
+  
+      # Given class name, e.g. GridPanelLib::Widgets::RecordFormWindow, 
+      # returns its scope: "Widgets.RecordFormWindow"
+      def js_class_name_to_scope(name)
+        name.split("::")[0..-2].join(".")
+      end
+
+      # Top level scope which will be used to cope out Netzke classes, e.g. "Netzke.classes" (default)
+      def js_default_scope
+        "Netzke.classes"
       end
   
-      # Returns the name of the JavaScript class for this widget, including the scopes, 
-      # e.g.: "Netzke.GridPanelLib.RecordFormWindow"
+      # Scope of this widget without default scope
+      # e.g.: GridPanelLib.Widgets
+      def js_scope
+        js_class_name_to_scope(short_widget_class_name)
+      end
+  
+      # Returns the scope of this widget
+      # e.g. "Netzke.classes.GridPanelLib"
+      def js_full_scope
+        js_scope.empty? ? js_default_scope : [js_default_scope, js_scope].join(".")
+      end
+  
+      # Returns the name of the JavaScript class for this widget, including the scope
+      # e.g.: "GridPanelLib.RecordFormWindow"
       def js_scoped_class_name
         short_widget_class_name.gsub("::", ".")
       end
@@ -148,17 +162,14 @@ module Netzke
       # Netzke.classes.
       # E.g.: "Netzke.classes.Netzke.GridPanelLib.RecordFormWindow"
       def js_full_class_name
-        "Netzke.classes." + js_scoped_class_name
+        [js_full_scope, short_widget_class_name.split("::").last].join(".")
       end
-
+      
       # Builds this widget's xtype
       # E.g.: netzkewindow, netzkegridpanel
       def js_xtype
         name.gsub("::", "").downcase
       end
-  
-      # widget's menus
-      def js_menus; []; end
   
       # are we using JS inheritance? for now, if js_base_class is a Netzke class - yes
       def js_inheritance?
@@ -167,13 +178,18 @@ module Netzke
 
       # Declaration of widget's class (stored in the cache storage (Ext.netzke.cache) at the client side 
       # to be reused at the moment of widget instantiation)
-      def js_class
+      def js_class(cached = [])
+        # Setting the scope.
+        # TODO: invent an easy and error-prove way to check if adding this scope is necessary.
+        # For now setting it each and every time (very save and not really bothering).
+        res = %Q{
+          Ext.ns("#{js_full_scope}");
+        }
+
         if js_inheritance?
           # Using javascript inheritance
-          res = <<-END_OF_JAVASCRIPT
-          // Define the scope
-          Ext.ns("#{js_scope}");
-          // Create the class
+          res << <<-END_OF_JAVASCRIPT
+          // Costructor
           #{js_full_class_name} = function(config){
             #{js_full_class_name}.superclass.constructor.call(this, config);
           };
@@ -192,10 +208,10 @@ module Netzke
           END_OF_JAVASCRIPT
           
         else
+          # Menus
           js_add_menus = "this.addMenus(#{js_menus.to_nifty_json});" unless js_menus.empty?
-          <<-END_OF_JAVASCRIPT
-          // Define the scope
-          Ext.ns("#{js_scope}");
+          
+          res << <<-END_OF_JAVASCRIPT
           // Constructor
           #{js_full_class_name} = function(config){
             // Do all the initializations that every Netzke widget should do: create methods for API-points,
@@ -212,6 +228,8 @@ module Netzke
           Ext.reg("#{js_xtype}", #{js_full_class_name});
           END_OF_JAVASCRIPT
         end
+        
+        res
       end
       
       #
@@ -238,17 +256,19 @@ module Netzke
       end
       
       # All JavaScript code needed for this class, including one from the ancestor widget
-      def js_code(cached_dependencies = [])
+      def js_code(cached = [])
         res = ""
 
         # include the base-class javascript if doing JS inheritance
-        res << superclass.js_code << "\n" if js_inheritance? && !cached_dependencies.include?(superclass.short_widget_class_name)
+        if js_inheritance? && !cached.include?(superclass.short_widget_class_name)
+          res << superclass.js_code(cached) << "\n"
+        end
 
         # include static javascripts
         res << js_included << "\n"
 
         # our own JS class definition
-        res << js_class
+        res << js_class(cached)
         res
       end
 
@@ -274,11 +294,11 @@ module Netzke
       end
       
       # All CSS code needed for this class including the one from the ancestor widget
-      def css_code(cached_dependencies = [])
+      def css_code(cached = [])
         res = ""
 
         # include the base-class javascript if doing JS inheritance
-        res << superclass.css_code << "\n" if js_inheritance? && !cached_dependencies.include?(superclass.short_widget_class_name)
+        res << superclass.css_code << "\n" if js_inheritance? && !cached.include?(superclass.short_widget_class_name)
         
         res << css_included << "\n"
         

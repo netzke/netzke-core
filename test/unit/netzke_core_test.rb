@@ -56,6 +56,11 @@ module Netzke
   class JsInheritanceWidget < Widget
   end
   
+  module ScopedWidgets
+    class SomeScopedWidget < Base
+    end
+  end
+  
   class InheritedWidget < Widget
     def self.config
       super.merge({
@@ -161,6 +166,18 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert(1, Netzke::Widget.config[:pref_for_widget])
     assert(2, Netzke::InheritedWidget.config[:pref_for_widget])
     
+  end
+
+  test "JS class names and scopes" do
+    klass = Netzke::NestedWidgetOne
+    assert_equal("Netzke.classes", klass.js_full_scope)
+    assert_equal("", klass.js_class_name_to_scope(klass.short_widget_class_name))
+    
+    klass = Netzke::ScopedWidgets::SomeScopedWidget
+    assert_equal("Netzke.classes", klass.js_default_scope)
+    assert_equal("ScopedWidgets::SomeScopedWidget", klass.short_widget_class_name)
+    assert_equal("ScopedWidgets", klass.js_class_name_to_scope(klass.short_widget_class_name))
+    assert_equal("Netzke.classes.ScopedWidgets", klass.js_full_scope)
   end
 
 end

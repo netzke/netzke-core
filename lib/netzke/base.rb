@@ -47,12 +47,20 @@ module Netzke
     # Class-level Netzke::Base configuration. The defaults also get specified here.
     def self.config
       set_default_config({
-        # which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
+        # Which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
         :javascripts               => [],
         :stylesheets               => [],
         
+        # AR model that provides us with persistent config functionality
         :persistent_config_manager => "NetzkePreference",
+        
+        # Default location of extjs library
         :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
+        
+        # Default location of icons (TODO: has no effect for now)
+        :icons_location            => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/images/icons",
+        
+        # Default instance config
         :default_config => {
           :persistent_config => true
         }

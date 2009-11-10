@@ -3,8 +3,8 @@ This file gets loaded along with the rest of Ext library at the initial load
 */
 
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
-Ext.namespace('Ext.netzke'); // namespace for extensions that depend on Ext
-Ext.namespace('Netzke.classes'); // namespace for extensions that do not depend on Ext
+Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
+Ext.ns('Netzke'); // Netzke namespace
 Netzke.cache = {}; // empty Netzke cache at the moment of loading
 
 Ext.QuickTips.init();
