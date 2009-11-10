@@ -1,11 +1,11 @@
 class Hash
 
   # Recursively convert the keys. Example:
-  # irb> {:bla_bla => 1, "wow_now" => {:look_ma => true}}.convert_keys{|k| k.camelize} 
-  # irb> => {:BlaBla => 1, "WowNow" => {:LookMa => true}}
-  def convert_keys(&block)
+  # {:bla_bla => 1, "wow_now" => {:look_ma => true}}.deep_convert_keys{|k| k.to_s.camelize.to_sym} 
+  #   => {:BlaBla => 1, "WowNow" => {:LookMa => true}}
+  def deep_convert_keys(&block)
     block_given? ? self.inject({}) do |h,(k,v)|
-      h[k.is_a?(Symbol) ? yield(k.to_s).to_sym : yield(k.to_s)] = v.respond_to?('convert_keys') ? v.convert_keys(&block) : v
+      h[yield(k)] = v.respond_to?('deep_convert_keys') ? v.deep_convert_keys(&block) : v
       h
     end : self
   end
@@ -83,10 +83,10 @@ class Array
     self.recursive_delete_if_nil.jsonify.to_json
   end
   
-  # Applies convert_keys to each element which responds to convert_keys
-  def convert_keys(&block)
+  # Applies deep_convert_keys to each element which responds to deep_convert_keys
+  def deep_convert_keys(&block)
     block_given? ? self.map do |i|
-      i.respond_to?('convert_keys') ? i.convert_keys(&block) : i
+      i.respond_to?('deep_convert_keys') ? i.deep_convert_keys(&block) : i
     end : self
   end
   

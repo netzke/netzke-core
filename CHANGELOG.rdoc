@@ -1,3 +1,6 @@
+= v0.4.5.2 - 2009-11-09
+* Fix: Hash#convert_keys and Array#convert_keys in core extensions are now renamed into deep_convert_keys, and now always plainly do what they're expected to do: recursively convert keys according to given block.
+
 = v0.4.5.1 - 2009-11-09
 * Regression: fixing inheritance and caching.
 * FeedbackGhost is too simple to be a Netzke widget (having no server part), so, moved to static JavaScript.

@@ -19,9 +19,12 @@ class CoreExtTest < ActiveSupport::TestCase
   end
   
   test "convert keys" do
+    assert_equal({:a => 1, :b => {:bb => 2}}, {"a" => 1, "b" => {"bb" => 2}}.deep_convert_keys{ |k| k.to_sym })
+    assert_equal([{"a" => 1}, {"b" => {"bb" => 2}}], [{:a => 1}, {:b => {:bb => 2}}].deep_convert_keys{ |k| k.to_s })
+
     assert_equal([
       {:aB => 1, :cDD => [{:lookMa => true},{:wowNow => true}]}
-    ],[:a_b => 1, :c_d_d => [{:look_ma => true},{:wow_now => true}]].convert_keys{|k| k.camelize(:lower)})
+    ],[:a_b => 1, :c_d_d => [{:look_ma => true},{:wow_now => true}]].deep_convert_keys{|k| k.to_s.camelize(:lower).to_sym})
   end
   
   test "javascript-like access to hash data" do

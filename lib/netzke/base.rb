@@ -232,7 +232,7 @@ module Netzke
     
     def update_persistent_ext_config(hsh)
       current_config = persistent_config[:ext_config] || {}
-      current_config.deep_merge!(hsh.convert_keys{ |k| k.to_s }) # first, recursively stringify the keys
+      current_config.deep_merge!(hsh.deep_convert_keys{ |k| k.to_s }) # first, recursively stringify the keys
       persistent_config[:ext_config] = current_config
     end
     
@@ -299,7 +299,7 @@ module Netzke
         # So we need to recursively merge it into the final result
         res.deep_merge!(hsh_levels.first => anchor)
       end
-      res.convert_keys{ |k| k.to_sym } # recursively symbolize the keys
+      res.deep_convert_keys{ |k| k.to_sym } # recursively symbolize the keys
     end
     memoize :persistent_config_hash
     

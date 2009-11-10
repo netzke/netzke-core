@@ -527,7 +527,6 @@ Ext.override(Ext.Container, {
     });
     // Caching the class
     Netzke.cache[n] = true;
-    // console.info(Netzke.cache);
     return klass;
   },
 
