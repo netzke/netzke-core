@@ -404,11 +404,15 @@ Ext.widgetMixIn = {
     }
     
     // Set title
-    if (!config.title) {
-      config.title = config.id.humanize();
+    if (config.mode === "config"){
+      if (!config.title) {
+        config.title = '[' + config.id + ']';
+      } else {
+        config.title = config.title + ' [' + config.id + ']';
+      }
     } else {
-      if (config.mode === "config") {
-        config.title = config.title + ' (' + config.id + ')';
+      if (!config.title) {
+        config.title = config.id.humanize();
       }
     }
   },

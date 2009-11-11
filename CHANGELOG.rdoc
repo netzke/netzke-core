@@ -1,3 +1,6 @@
+= EDGE
+* Impr: better headers in panels in the "config" mode
+
 = v0.4.5.2 - 2009-11-09
 * Fix: Hash#convert_keys and Array#convert_keys in core extensions are now renamed into deep_convert_keys, and now always plainly do what they're expected to do: recursively convert keys according to given block.
 
