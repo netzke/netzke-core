@@ -294,9 +294,10 @@ Ext.widgetMixIn = {
   // Does the call to the server and processes the response
   callServer : function(intp, params, callback, scope){
     if (!params) params = {};
+    params.location = this.location;
     Ext.Ajax.request({
       params : params,
-      url : this.id + "__" + intp,
+      url : "/netzke/" + this.id + "__" + intp,
       callback : function(options, success, response){
         if (success) {
           // execute commands from server

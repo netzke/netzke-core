@@ -42,7 +42,7 @@ module Netzke
     
     include Netzke::BaseJs # javascript (client-side)
 
-    attr_accessor :parent, :name, :global_id, :permissions, :session
+    attr_accessor :parent, :name, :global_id #, :permissions, :session
 
     # Class-level Netzke::Base configuration. The defaults also get specified here.
     def self.config
@@ -174,12 +174,16 @@ module Netzke
     # * override/add new default configuration options into the "default_config" method 
     # (the config hash is not yet available)
     def initialize(config = {}, parent = nil)
-      @session       = Netzke::Base.session
+      # @session       = Netzke::Base.session
       @passed_config = config # configuration passed at the moment of instantiation
       @parent        = parent
       @name          = config[:name].nil? ? short_widget_class_name.underscore : config[:name].to_s
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
+    end
+    
+    def session
+      Netzke::Base.session
     end
 
     #
@@ -538,6 +542,14 @@ module Netzke
       else
         super
       end
+    end
+    
+    # CRAFT!
+    
+    def self.reg_widget(name)
+      # uniq_widget_id = location + config[:name].to_s
+      session[:netzke_widgets] ||= {}
+      session[:netzke_widgets][name] = config
     end
     
   end

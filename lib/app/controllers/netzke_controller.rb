@@ -27,68 +27,32 @@ class NetzkeController < ActionController::Base
     end
   end
   
-  #
-  # Primitive tests to quickly test the widgets (TODO: move to the basepack)
-  #
+  def method_missing(method_name)
+    widget_location = params[:location]
+    widget_name, *action = method_name.to_s.split('__')
+    widget_name = widget_name.to_sym
+    action = !action.empty? && action.join("__").to_sym
   
-  # FormPanel
-  netzke :form_panel, :persistent_config => false, :label_align => "top", :columns => [
-    {:name => 'field_one', :xtype => 'textarea'},
-    {:name => 'field_two', :xtype => 'textarea'}
-  ]
-  
-  # BorderLayoutPanel
-  netzke :border_layout_panel, :regions => {
-    :west => {
-      :widget_class_name => "Panel",
-      :region_config => {:width => 300, :split => true}
-    },
-    :center => {
-      :widget_class_name => "Panel"
-    }
-  }
-  
-  # TabPanel
-  netzke :tab_panel, :items => [{
-    :widget_class_name => "Panel",
-    :ext_config => {
-      :html => "Panel 1",  
-    },
-    # :active => true
-  },{
-    :widget_class_name => "Panel",
-    :ext_config => {
-      :html => "Panel 2",  
-    }
-  }]
-  
-  # AccordionPanel
-  netzke :accordion_panel, :items => [{
-    :widget_class_name => "Panel",
-    :ext_config => {
-      :html => "Panel 1",
-    },
-    :active => true
-  },{
-    :widget_class_name => "Panel",
-    :ext_config => {
-      :html => "Panel 2",  
-    }
-  }]
-  
-  # BasicApp
-  netzke :basic_app
+    if action
+      w_instance = Netzke::Base.instance_by_config(Netzke::Base.session[:netzke_widgets][widget_name])
+      
+      # Rails.logger.debug "!!! w_instance: #{w_instance.inspect}\n"
+      
+      # only widget's actions starting with "api_" are accessible from outside (security)
+      api_action = action.to_s.index('__') ? action : "api_#{action}"
 
-  netzke :panel, :ext_config => {:html => "Panel", :title => "Test panel", :border => true}
+      
 
-  def test_widgets
-    html = "<h3>Quick primitive widgets tests</h3>"
-    
-    self.class.widget_config_storage.each_key.map(&:to_s).sort.each do |w|
-      html << "<a href='#{w}_test'>#{w.to_s.humanize}</a><br/>\n"
+      # widget module
+      # widget_class = "Netzke::#{self.class.widget_config_storage[widget][:widget_class_name]}".constantize
+
+      # instantiate the server part of the widget
+      # widget_instance = widget_class.new(self.class.widget_config_storage[widge_name])
+
+      render :text => w_instance.send(api_action, params), :layout => false
+    else
+      super
     end
-    
-    render :text => html
   end
-
+  
 end
