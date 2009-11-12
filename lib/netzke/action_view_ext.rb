@@ -35,7 +35,8 @@ module Netzke
     # E.g.:
     #   <%= netzke_init :ext_theme => "grey" %>
     def netzke_init(params = {})
-      [netzke_css_include(params[:ext_theme]), netzke_js_include, netzke_js].join("\n")
+      theme = params[:ext_theme] || :default
+      [netzke_css_include(theme), netzke_js_include, netzke_js].join("\n")
     end
     
     # Use this helper in your views to embed Netzke widgets. E.g.:
