@@ -23,9 +23,9 @@ module Netzke
     def netzke_js
       javascript_tag <<-END_OF_JAVASCRIPT
         Netzke.authenticityToken = '#{form_authenticity_token}'
-        #{instance_variable_get("@content_for_netzke_js_classes")}
+        #{@content_for_netzke_js_classes}
         Ext.onReady(function(){
-          #{instance_variable_get("@content_for_netzke_on_ready")}
+          #{@content_for_netzke_on_ready}
         });
       END_OF_JAVASCRIPT
     end
