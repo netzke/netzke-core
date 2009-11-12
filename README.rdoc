@@ -1,7 +1,7 @@
 = netzke-core
 Create Ext JS + Rails reusable components (widgets) with minimum effort.
 
-This is the bare bones of the Netzke framework. Use it to build your own widgets from scratch. For pre-built widgets (like panels, grids, forms, trees, applications), see the netzke-basepack project.
+This is the bare bones of the Netzke framework. Use it to build your own widgets from scratch. For pre-built widgets (like panels, grids, forms, trees, applications), see the netzke-basepack (http://github.com/skozlov/netzke-basepack) project.
 
 The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a widget, and then embed it (or load it dynamically) into your Ext-based applications or HTML pages. For more info, see the links below.
 
@@ -18,7 +18,26 @@ If you want to experiment with the most recent changes, install this as a plugin
 
     script/plugin install git://github.com/skozlov/netzke-core.git
     
+Generate the migrations for Netzke persistent storage:
+
+    ./script/generate netzke_core
+    
+Run the migrations.
+
 == Usage
+Here's how to embed a Netzke widget into your Rails view.
+
+1. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles. Netzke assumes that your ExtJS library is in public/extjs (which may be a symbolic link).
+
+  <%= netzke_init %>
+	
+2. In your view use the <tt>netzke</tt> helper wherever you want to insert a widget, e.g.:
+
+  <%= netzke :my_grid_panel, :widget_class_name => "GridPanel", :data_class_name => "User", :columns => [:id, :name, :created_at] %>
+  
+(Here I use the GridPanel widget from the netzke-basepack project)
+
+== More info
 Introduction to Netzke framework: http://github.com/skozlov/netzke/tree/master
 
 Tutorials: http://blog.writelesscode.com
