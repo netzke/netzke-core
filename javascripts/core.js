@@ -11,7 +11,7 @@ Ext.QuickTips.init();
 
 // To comply with Rails' forgery protection
 Ext.Ajax.extraParams = {
-  authenticity_token : Ext.authenticityToken
+  authenticity_token : Netzke.authenticityToken
 };
 
 // Type detection functions
@@ -291,14 +291,18 @@ Ext.widgetMixIn = {
     }
   },
 
+  // Returns API url based on provided API point
+  buildApiUrl: function(apip){
+    return "/netzke/" + this.id + "__" + apip;
+  },
+
   // Does the call to the server and processes the response
   callServer : function(intp, params, callback, scope){
     if (!params) params = {};
-    params.location = this.location;
-    Ext.Ajax.request({
-      params : params,
-      url : "/netzke/" + this.id + "__" + intp,
-      callback : function(options, success, response){
+      Ext.Ajax.request({
+      params: params,
+      url: this.buildApiUrl(intp),
+      callback: function(options, success, response){
         if (success) {
           // execute commands from server
           this.bulkExecute(Ext.decode(response.responseText));

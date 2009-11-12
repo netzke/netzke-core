@@ -163,12 +163,6 @@ module Netzke
       nil
     end
 
-    # Return persistent config class
-    # def self.persistent_config
-    #   # if the class is not present, fake it (it will not store anything, and always return nil)
-    #   persistent_config_manager_class || {}
-    # end
-    
     # Widget initialization process
     # * the config hash is available to the widget after the "super" call in the initializer
     # * override/add new default configuration options into the "default_config" method 
@@ -219,7 +213,7 @@ module Netzke
     def persistent_config(global = false)
       if persistent_config_enabled? || global
         config_class = self.class.persistent_config_manager_class
-        config_class.widget_name = global ? nil : persistent_config_id # pass to the config class our unique name
+        config_class.widget_name = global ? nil : persistence_key.to_s # pass to the config class our unique name
         config_class
       else
         # if we can't use presistent config, all the calls to it will always return nil, 
@@ -229,9 +223,9 @@ module Netzke
       end
     end
     
-    # A string which will identify the persistent config records for this widget
-    def persistent_config_id #:nodoc:
-      initial_config[:persistent_config_id] || global_id
+    # A string which will identify NetzkePreference records for this widget
+    def persistence_key #:nodoc:
+      initial_config[:persistence_key] ? parent.try(:global_id) ? "#{parent.global_id}__#{initial_config[:persistence_key]}".to_sym : initial_config[:persistence_key] : global_id.to_sym
     end
     
     def update_persistent_ext_config(hsh)
@@ -287,7 +281,7 @@ module Netzke
     def persistent_config_hash
       return {} if !initial_config[:persistent_config]
       
-      prefs = NetzkePreference.find_all_for_widget(persistent_config_id)
+      prefs = NetzkePreference.find_all_for_widget(persistence_key.to_s)
       res = {}
       prefs.each do |p|
         hsh_levels = p.name.split("__").map(&:to_sym)
@@ -546,10 +540,9 @@ module Netzke
     
     # CRAFT!
     
-    def self.reg_widget(name)
-      # uniq_widget_id = location + config[:name].to_s
+    def self.reg_widget(config)
       session[:netzke_widgets] ||= {}
-      session[:netzke_widgets][name] = config
+      session[:netzke_widgets][config[:name]] = config
     end
     
   end
