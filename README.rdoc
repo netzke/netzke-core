@@ -28,14 +28,11 @@ Run the migrations.
 Here's how to embed a Netzke widget into your Rails view.
 
 1. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles. Netzke assumes that your ExtJS library is in public/extjs (which may be a symbolic link).
-
   <%= netzke_init %>
-	
-2. In your view use the <tt>netzke</tt> helper wherever you want to insert a widget, e.g.:
-
-  <%= netzke :my_grid_panel, :widget_class_name => "GridPanel", :data_class_name => "User", :columns => [:id, :name, :created_at] %>
+2. In your view use the <tt>netzke</tt> helper wherever you want to insert a widget.
+  <%= netzke :grid_panel, :data_class_name => "User", :columns => [:id, :name, :created_at] %>
   
-(Here I use the GridPanel widget from the netzke-basepack project)
+(here we use the GridPanel widget from the netzke-basepack project)
 
 == More info
 Introduction to Netzke framework: http://github.com/skozlov/netzke/tree/master
