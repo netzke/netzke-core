@@ -43,14 +43,18 @@ module Netzke
     #   netzke :my_grid, :widget_class_name => "GridPanel", :columns => [:id, :name, :created_at]
     # On how to configure a widget, see documentation for Netzke::Base or/and specific widget
     def netzke(name, config = {})
-      config[:widget_class_name] ||= name.to_s.classify
+      class_name = config[:widget_class_name] ||= name.to_s.classify
       config[:name] = name
       Netzke::Base.reg_widget(config)
-
       w = Netzke::Base.instance_by_config(config)
-      content_for :netzke_js_classes, w.js_missing_code
+      content_for :netzke_js_classes, w.js_missing_code(@rendered_classes ||= [])
       content_for :netzke_on_ready, w.js_widget_instance
       content_for :netzke_on_ready, w.js_widget_render
+      
+      # Now mark this widget's class as rendered, so that we only generate it once per view
+      @rendered_classes << class_name unless @rendered_classes.include?(class_name)
+
+      # Return the html for this widget
       w.js_widget_html
     end
   end

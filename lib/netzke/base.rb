@@ -537,9 +537,8 @@ module Netzke
         super
       end
     end
-    
-    # CRAFT!
-    
+
+    # Register the configuration for the widget in the session, and also remember that the code for it has been rendered
     def self.reg_widget(config)
       session[:netzke_widgets] ||= {}
       session[:netzke_widgets][config[:name]] = config
