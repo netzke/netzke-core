@@ -223,9 +223,11 @@ module Netzke
       end
     end
     
-    # A string which will identify NetzkePreference records for this widget
+    # A string which will identify NetzkePreference records for this widget. 
+    # If <tt>persistence_key</tt> is passed, use it. Otherwise use global widget's id.
     def persistence_key #:nodoc:
-      initial_config[:persistence_key] ? parent.try(:global_id) ? "#{parent.global_id}__#{initial_config[:persistence_key]}".to_sym : initial_config[:persistence_key] : global_id.to_sym
+      # initial_config[:persistence_key] ? parent.try(:persistence_key) ? "#{parent.persistence_key}__#{initial_config[:persistence_key]}".to_sym : initial_config[:persistence_key] : global_id.to_sym
+      initial_config[:persistence_key] ? initial_config[:persistence_key] : global_id.to_sym
     end
     
     def update_persistent_ext_config(hsh)
