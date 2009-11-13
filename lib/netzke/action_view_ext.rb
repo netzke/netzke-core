@@ -43,7 +43,7 @@ module Netzke
     #   netzke :my_grid, :widget_class_name => "GridPanel", :columns => [:id, :name, :created_at]
     # On how to configure a widget, see documentation for Netzke::Base or/and specific widget
     def netzke(name, config = {})
-      class_name = config[:widget_class_name] ||= name.to_s.classify
+      class_name = config[:widget_class_name] ||= name.to_s.camelcase
       config[:name] = name
       Netzke::Base.reg_widget(config)
       w = Netzke::Base.instance_by_config(config)
