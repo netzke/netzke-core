@@ -9,11 +9,6 @@ Netzke.cache = {}; // empty Netzke cache at the moment of loading
 
 Ext.QuickTips.init();
 
-// To comply with Rails' forgery protection
-Ext.Ajax.extraParams = {
-  authenticity_token : Netzke.authenticityToken
-};
-
 // Type detection functions
 Netzke.isObject = function(o) {
   return (o != null && typeof o == "object" && o.constructor.toString() == Object.toString());

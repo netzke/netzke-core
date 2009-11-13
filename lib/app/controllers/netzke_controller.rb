@@ -1,5 +1,4 @@
-class NetzkeController < ActionController::Base
-
+class NetzkeController < ApplicationController
   def index
     redirect_to :action => :test_widgets
   end

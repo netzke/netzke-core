@@ -22,7 +22,7 @@ module Netzke
     # JavaScript for all Netzke classes in this view, and Ext.onReady which renders all Netzke widgets in this view
     def netzke_js
       javascript_tag <<-END_OF_JAVASCRIPT
-        Netzke.authenticityToken = '#{form_authenticity_token}'
+        Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection... effective?
         #{@content_for_netzke_js_classes}
         Ext.onReady(function(){
           #{@content_for_netzke_on_ready}
