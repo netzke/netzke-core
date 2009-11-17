@@ -281,7 +281,7 @@ module Netzke
     # this method will return the following hash:
     #     {:enabled => true, :layout => {:width => 100, :header => {:height => 20}}}
     def persistent_config_hash
-      return {} if !initial_config[:persistent_config]
+      return {} if !initial_config[:persistent_config] || Netzke::Base.persistent_config_manager_class.nil?
       
       prefs = NetzkePreference.find_all_for_widget(persistence_key.to_s)
       res = {}
