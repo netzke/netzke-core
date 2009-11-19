@@ -6,7 +6,11 @@ This is the bare bones of the Netzke framework. Use it to build your own widgets
 The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a widget, and then embed it (or load it dynamically) into your Ext-based applications or HTML pages. For more info, see the links below.
 
 == Instalation
-The gem is hosted on gemcutter. If you haven't yet enabled gemcutter, run the following:
+For the latest ("edge") stuff, install as plugin:
+
+    ./script/plugin install git://github.com/skozlov/netzke-core.git
+
+Otherwise, install as gem. The gem is hosted on gemcutter. If you haven't yet enabled gemcutter, run the following:
 
     sudo gem install gemcutter && gem tumble
 
@@ -14,33 +18,34 @@ Install the gem
 
     sudo gem install netzke-core
     
-If you want to experiment with the most recent changes, install this as a plugin:
-
-    script/plugin install git://github.com/skozlov/netzke-core.git
-    
 Generate the migrations for Netzke persistent storage:
 
     ./script/generate netzke_core
     
 Run the migrations.
 
+Netzke assumes that your ExtJS library is in public/extjs (which may be a symbolic link).
+
 == Usage
 Here's how to embed a Netzke widget into your Rails view.
 
-1. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles. Netzke assumes that your ExtJS library is in public/extjs (which may be a symbolic link).
+1. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles. 
+
   <%= netzke_init %>
+  
 2. In your view use the <tt>netzke</tt> helper wherever you want to insert a widget.
+
   <%= netzke :grid_panel, :data_class_name => "User", :columns => [:id, :name, :created_at] %>
   
 (here we use the GridPanel widget from the netzke-basepack project)
 
 == More info
-Introduction to Netzke framework: http://github.com/skozlov/netzke/tree/master
+Introduction to Netzke framework and wiki: http://github.com/skozlov/netzke
 
 Tutorials: http://blog.writelesscode.com
 
 Live-demo: http://netzke-demo.writelesscode.com
 
-The netzke-basepack project (pre-built full-featured widgets): http://github.com/skozlov/netzke-basepack/tree/master
+The netzke-basepack project (pre-built full-featured widgets): http://github.com/skozlov/netzke-basepack
 
 Copyright (c) 2009 Sergei Kozlov, released under the MIT license

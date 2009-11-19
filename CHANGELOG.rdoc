@@ -1,6 +1,7 @@
-= EDGE
-* Impr: New helper:
-* Impr: better headers in panels in the "config" mode
+= v0.6.0 - EDGE
+* API change: Netzke widget's now should be declared directly in the views instead of controllers.
+* API change: all ExtJS and Netzke JavaScript and styles are now loaded with the help of "netzke_init" helper.
+* Impr: headers in panels in the "config" mode now show the widget's global ID.
 
 = v0.4.5.2 - 2009-11-09
 * Fix: Hash#convert_keys and Array#convert_keys in core extensions are now renamed into deep_convert_keys, and now always plainly do what they're expected to do: recursively convert keys according to given block.
