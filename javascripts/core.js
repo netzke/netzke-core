@@ -2,6 +2,14 @@
 This file gets loaded along with the rest of Ext library at the initial load
 */
 
+// Check Ext JS version
+var requiredExtVersion = "3.0.3";
+var currentExtVersion = Ext.version;
+if (requiredExtVersion !== currentExtVersion) {
+  alert("Netzke needs Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
+}
+
+// Initial stuff
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 Ext.ns('Netzke'); // Netzke namespace
