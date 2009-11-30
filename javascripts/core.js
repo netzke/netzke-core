@@ -13,7 +13,6 @@ if (requiredExtVersion !== currentExtVersion) {
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 Ext.ns('Netzke'); // Netzke namespace
-Netzke.cache = {}; // empty Netzke cache at the moment of loading
 
 Ext.QuickTips.init();
 
@@ -103,10 +102,33 @@ Ext.widgetMixIn = {
     
     // build the cached widgets list to send it to the server
     var cachedWidgetNames = "";
-    for (name in Netzke.cache) {
-      cachedWidgetNames += name + ",";
-    }
-    apiParams.cache = cachedWidgetNames;
+
+    // recursive function that checks the properties of the caller ("this") and returns the list of those that look like constructor, i.e. have an "xtype" property themselves
+    var classesList = function(pref){
+      var res = [];
+      for (name in this) {
+        if (this[name].xtype) {
+          res.push(pref + name);
+          this[name].classesList = classesList; // define the same function on each property on the fly
+          res = res.concat(this[name].classesList(pref + name + ".")); // ... and call it, providing our name along with the scope
+        }
+      }
+      return res;
+    };
+    
+    // assign this function to Netzke.classes and call it
+    Netzke.classes.classesList = classesList;
+    var cl = Netzke.classes.classesList("");
+
+    // join the classes into a coma-separated list
+    var cache = "";
+    Ext.each(cl, function(c){cache += c + ",";});
+    
+    // for (name in Netzke.classes) {
+    //   cachedWidgetNames += name + ",";
+    // }
+    // apiParams.cache = cachedWidgetNames;
+    apiParams.cache = cache;
     
     // remember the passed callback for the future
     if (params.callback) {
@@ -537,8 +559,6 @@ Ext.override(Ext.Container, {
     Ext.each(n.split("."), function(s){
       klass = klass[s];
     });
-    // Caching the class
-    Netzke.cache[n] = true;
     return klass;
   },
 

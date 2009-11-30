@@ -179,11 +179,11 @@ module Netzke
       # Declaration of widget's class (stored in the cache storage (Ext.netzke.cache) at the client side 
       # to be reused at the moment of widget instantiation)
       def js_class(cached = [])
-        # Setting the scope.
-        # TODO: invent an easy and error-prove way to check if adding this scope is necessary.
-        # For now setting it each and every time (very save and not really bothering).
+        # Defining the scope if it isn't known yet
         res = %Q{
-          Ext.ns("#{js_full_scope}");
+          if (!#{js_full_scope}) {
+            Ext.ns("#{js_full_scope}");
+          }
         }
 
         if js_inheritance?
