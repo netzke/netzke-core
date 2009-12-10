@@ -152,7 +152,8 @@ module Netzke
     
     # Instance of widget by config
     def self.instance_by_config(config)
-      widget_class = "Netzke::#{config[:widget_class_name]}".constantize
+      ::ActiveSupport::Deprecation.warn("widget_class_name option is deprecated. Use class_name instead", caller) if config[:widget_class_name]
+      widget_class = "Netzke::#{config[:class_name] || config[:widget_class_name]}".constantize
       widget_class.new(config)
     end
     
@@ -412,7 +413,8 @@ module Netzke
         aggr = aggr.to_sym
         aggregatee_config = aggregator.aggregatees[aggr]
         raise ArgumentError, "No aggregatee '#{aggr}' defined for widget '#{aggregator.global_id}'" if aggregatee_config.nil?
-        short_class_name = aggregatee_config[:widget_class_name]
+        ::ActiveSupport::Deprecation.warn("widget_class_name option is deprecated. Use class_name instead", caller) if aggregatee_config[:widget_class_name]
+        short_class_name = aggregatee_config[:class_name] || aggregatee_config[:widget_class_name]
         raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.global_id}" if short_class_name.nil?
         widget_class = "Netzke::#{short_class_name}".constantize
 
