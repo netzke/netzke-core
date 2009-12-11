@@ -5,6 +5,7 @@
 * Impr: headers in panels in the "config" mode now show the widget's global ID.
 * New: Ext version check introduced at initial Netzke load.
 * Depr: :widget_class_name option is deprecated, use :class_name
+* DRY: now there's no need to always define "actions" method, use it only to override the defaults.
 
 = v0.4.5.2 - 2009-11-09
 * Fix: Hash#convert_keys and Array#convert_keys in core extensions are now renamed into deep_convert_keys, and now always plainly do what they're expected to do: recursively convert keys according to given block.

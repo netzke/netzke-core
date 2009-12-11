@@ -45,7 +45,6 @@ module Netzke
       res.merge!(:netzke_api => api_points) unless api_points.empty?
   
       # Widget class name. Needed for dynamic instantiation in javascript.
-      # res.merge!(:widget_class_name => short_widget_class_name)
       res.merge!(:scoped_class_name => self.class.js_scoped_class_name)
       
       # Actions, toolbars and menus
@@ -98,13 +97,38 @@ module Netzke
     end
 
     #
-    #
-    #
- 
     # Widget's actions, tools and menus that are loaded at the moment of instantiation
-    def actions; nil; end
+ 
+    private
+      # Extract action names from menus and toolbars.
+      # E.g.: 
+      # collect_actions(["->", {:text => "Menu", :menu => [{:text => "Submenu", :menu => [:another_button]}, "-", :a_button]}])
+      #  => {:a_button => {:text => "A button"}, :another_button => {:text => "Another button"}}
+      def collect_actions(arry)
+        res = {}
+        arry.each do |item|
+          if item.is_a?(Hash) && menu = item[:menu]
+            res.merge!(collect_actions(item[:menu]))
+          elsif item.is_a?(Symbol)
+            # it's an action
+            res.merge!(item => {:text => item.to_s.humanize})
+          elsif item.is_a?(String)
+            # it's a string item (or maybe JS code)
+          else
+          end
+        end
+        res
+      end
+
+    public
+    # Create default actions from bbar, tbar, and fbar, which are passed in the configuration
+    def actions
+      bar_items = (ext_config[:bbar] || []) + (ext_config[:tbar] || []) + (ext_config[:fbar] || [])
+      bar_items.uniq!
+      collect_actions(bar_items)
+    end
+    
     def menu; nil; end
-    # def tools; nil; end
 
     # Little helpers
     def this; "this".l; end
