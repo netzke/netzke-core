@@ -1,4 +1,6 @@
 = v0.6.0 - EDGE
+* Compatibility with Ext 3.1.0
+* Version sync with netzke-basepack
 * API change: Netzke widget's now should be declared directly in the views instead of controllers.
 * API change: all ExtJS and Netzke JavaScript and styles are now loaded with the help of <tt>netzke_init</tt> helper.
 * API change: <tt>persistence_key</tt> option replaces <tt>persistent_config_id</tt> option.
@@ -6,6 +8,7 @@
 * New: Ext version check introduced at initial Netzke load.
 * Depr: :widget_class_name option is deprecated, use :class_name
 * DRY: now there's no need to always define "actions" method, use it to override the defaults, which are automatically calculated based on configuration for toolbars/menu.
+* Fix: FeedbackGhost moved over from netzke-basepack.
 
 = v0.4.5.2 - 2009-11-09
 * Fix: Hash#convert_keys and Array#convert_keys in core extensions are now renamed into deep_convert_keys, and now always plainly do what they're expected to do: recursively convert keys according to given block.
