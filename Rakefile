@@ -1,7 +1,7 @@
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.version = "0.4.5.2"
+    gemspec.version = "0.5.0"
     gemspec.name = "netzke-core"
     gemspec.summary = "Build ExtJS/Rails widgets with minimum effort"
     gemspec.description = "Allows building ExtJS/Rails reusable code in a DRY way"
