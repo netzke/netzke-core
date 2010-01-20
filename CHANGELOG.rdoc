@@ -4,10 +4,10 @@
 * API change: all ExtJS and Netzke JavaScript and styles are now loaded with the help of <tt>netzke_init</tt> helper.
 * API change: <tt>persistence_key</tt> option replaces <tt>persistent_config_id</tt> option.
 * Impr: headers in panels in the "config" mode now show the widget's global ID.
-* New: Ext version check introduced at initial Netzke load.
-* Depr: :widget_class_name option is deprecated, use :class_name
+* New: required ExtJS version check introduced at initial Netzke load.
+* Depr: :widget_class_name option is deprecated, use :class_name.
 * DRY: now there's no need to always define "actions" method, use it to override the defaults, which are automatically calculated based on configuration for toolbars/menu.
-* Impr: each generated JS class now has its unique xtype, e.g. "netzkegridpanel"
+* Impr: each generated JS class now has its unique xtype, e.g. "netzkegridpanel".
 * Fix: FeedbackGhost moved over from netzke-basepack.
 
 = v0.4.5.2 - 2009-11-09
