@@ -3,7 +3,7 @@ This file gets loaded along with the rest of Ext library at the initial load
 */
 
 // Check Ext JS version
-var requiredExtVersion = "3.1.0";
+var requiredExtVersion = "3.1.1";
 var currentExtVersion = Ext.version;
 if (requiredExtVersion !== currentExtVersion) {
   alert("Netzke needs Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
@@ -13,6 +13,7 @@ if (requiredExtVersion !== currentExtVersion) {
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 Ext.ns('Netzke'); // Netzke namespace
+Ext.ns('Netzke.page'); // namespace for all widget instantces on the page
 
 Ext.QuickTips.init();
 

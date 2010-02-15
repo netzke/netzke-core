@@ -1,4 +1,8 @@
-= v0.5.0
+= v0.5.1 (EDGE)
+* Compatibility with Ext 3.1.1
+* Impr: <tt>Netzke.page</tt> object contains all the widgets on the page
+
+= v0.5.0 - 2010-01-10
 * Compatibility with Ext 3.1.0
 * API change: Netzke widget's now should be declared directly in the views instead of controllers.
 * API change: all ExtJS and Netzke JavaScript and styles are now loaded with the help of <tt>netzke_init</tt> helper.

@@ -83,12 +83,12 @@ module Netzke
 
     # instantiating
     def js_widget_instance
-      %Q{var #{name.jsonify} = new #{self.class.js_full_class_name}(#{js_config.to_nifty_json});}
+      %Q{Netzke.page.#{name.jsonify} = new #{self.class.js_full_class_name}(#{js_config.to_nifty_json});}
     end
 
     # rendering
     def js_widget_render
-      self.class.js_xtype == "netzkewindow" ? %Q{#{name.jsonify}.show();} : %Q{#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-div");}
+      %Q{Netzke.page.#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-div");} unless self.class.js_xtype == "netzkewindow"
     end
 
     # container for rendering

@@ -10,19 +10,13 @@ For the latest ("edge") stuff, install as plugin (recommended!):
 
     ./script/plugin install git://github.com/skozlov/netzke-core.git
 
-Otherwise, install as gem. The gem is hosted on gemcutter. If you haven't yet enabled gemcutter, run the following:
+Otherwise, install as gem:
 
-    sudo gem install gemcutter && gem tumble
-
-Install the gem 
-
-    sudo gem install netzke-core
+    gem install netzke-core
     
-Generate the migrations for Netzke persistent storage:
+To generate the migrations for Netzke persistent storage (if you want to use it):
 
     ./script/generate netzke_core
-    
-Run the migrations.
 
 Netzke assumes that your ExtJS library is in public/extjs (which may be a symbolic link).
 
@@ -30,11 +24,17 @@ Netzke assumes that your ExtJS library is in public/extjs (which may be a symbol
 Here's how to embed a Netzke widget into your Rails view.
 
 1. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles. 
+
     <%= netzke_init %>
+    
 2. In config/routes.rb declare the Netzke routes:
+
     map.netzke
+    
 3. In your view use the <tt>netzke</tt> helper wherever you want to insert a widget.
-    <%= netzke :grid_panel, :data_class_name => "User", :columns => [:id, :name, :created_at] %>
+
+    <%= netzke :grid_panel, :model => "User", :columns => [:id, :name, :created_at] %>
+    
 (here we use the GridPanel widget from the netzke-basepack project)
 
 == More info
@@ -44,10 +44,10 @@ Twitter: http://twitter.com/skozlov
 
 Tutorials: http://blog.writelesscode.com
 
-Live-demo: http://netzke-demo.writelesscode.com
+Live-demo with sample code: http://netzke-demo.writelesscode.com
 
 The netzke-basepack project (pre-built full-featured widgets): http://github.com/skozlov/netzke-basepack
 
 ---
 
-Copyright (c) 2009 Sergei Kozlov, released under the MIT license
+Copyright (c) 2008-2010 Sergei Kozlov, released under the MIT license
