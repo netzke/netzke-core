@@ -9,13 +9,13 @@ module Netzke
   #     netzke :widget_name, configuration_hash
   # 
   # == Configuration
-  # * <tt>:widget_class_name</tt> - name of the widget class in the scope of the Netzke module, e.g. "FormPanel".
+  # * <tt>:class_name</tt> - name of the widget class in the scope of the Netzke module, e.g. "FormPanel".
   # When a widget is defined in the controller and this option is omitted, widget class is deferred from the widget's
   # name. E.g.:
   # 
-  #   netzke :grid_panel, :data_class_name => "User"
+  #   netzke :grid_panel, :model => "User"
   # 
-  # In this case <tt>:widget_class_name</tt> is assumed to be "GridPanel"
+  # In this case <tt>:class_name</tt> is assumed to be "GridPanel"
   # 
   # * <tt>:ext_config</tt> - a config hash that is used to create a javascript instance of the widget. Every
   # configuration that comes here will be available inside the javascript instance of the widget.
@@ -27,8 +27,8 @@ module Netzke
   # Examples of configuration:
   #
   #     netzke :books, 
-  #       :widget_class_name => "GridPanel", 
-  #       :data_class_name => "Book", # GridPanel specific option
+  #       :class_name => "GridPanel", 
+  #       :model => "Book", # GridPanel specific option
   #       :persistent_config => false, # don't use persistent config for this instance
   #       :ext_config => {
   #         :icon_cls => 'icon-grid', 
@@ -36,7 +36,7 @@ module Netzke
   #       }
   # 
   #     netzke :form_panel, 
-  #       :data_class_name => "User" # FormPanel specific option
+  #       :model => "User" # FormPanel specific option
   class Base
     extend ActiveSupport::Memoizable
     
@@ -153,7 +153,7 @@ module Netzke
     # Instance of widget by config
     def self.instance_by_config(config)
       ::ActiveSupport::Deprecation.warn("widget_class_name option is deprecated. Use class_name instead", caller) if config[:widget_class_name]
-      widget_class = "Netzke::#{config[:class_name] || config[:widget_class_name]}".constantize
+      widget_class = "Netzke::#{config[:class_name] || config[:class_name]}".constantize
       widget_class.new(config)
     end
     
@@ -362,7 +362,7 @@ module Netzke
     ## Dependencies
     def dependencies
       @dependencies ||= begin
-        non_late_aggregatees_widget_classes = non_late_aggregatees.values.map{|v| v[:widget_class_name]}
+        non_late_aggregatees_widget_classes = non_late_aggregatees.values.map{|v| v[:class_name]}
         (initial_dependencies + non_late_aggregatees_widget_classes << self.class.short_widget_class_name).uniq
       end
     end
@@ -414,9 +414,9 @@ module Netzke
         aggregatee_config = aggregator.aggregatees[aggr]
         raise ArgumentError, "No aggregatee '#{aggr}' defined for widget '#{aggregator.global_id}'" if aggregatee_config.nil?
         ::ActiveSupport::Deprecation.warn("widget_class_name option is deprecated. Use class_name instead", caller) if aggregatee_config[:widget_class_name]
-        short_class_name = aggregatee_config[:class_name] || aggregatee_config[:widget_class_name]
-        raise ArgumentError, "No widget_class_name specified for aggregatee #{aggr} of #{aggregator.global_id}" if short_class_name.nil?
-        widget_class = "Netzke::#{short_class_name}".constantize
+        short_widget_class_name = aggregatee_config[:class_name] || aggregatee_config[:class_name]
+        raise ArgumentError, "No class_name specified for aggregatee #{aggr} of #{aggregator.global_id}" if short_widget_class_name.nil?
+        widget_class = "Netzke::#{short_widget_class_name}".constantize
 
         conf = weak_children_config.
           deep_merge(aggregatee_config).
@@ -430,7 +430,7 @@ module Netzke
       aggregator
     end
     
-    def full_widget_class_name(short_name)
+    def full_class_name(short_name)
       "Netzke::#{short_name}"
     end
 

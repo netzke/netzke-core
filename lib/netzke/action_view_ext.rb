@@ -40,7 +40,7 @@ module Netzke
     end
     
     # Use this helper in your views to embed Netzke widgets. E.g.:
-    #   netzke :my_grid, :widget_class_name => "GridPanel", :columns => [:id, :name, :created_at]
+    #   netzke :my_grid, :class_name => "GridPanel", :columns => [:id, :name, :created_at]
     # On how to configure a widget, see documentation for Netzke::Base or/and specific widget
     def netzke(name, config = {})
       ::ActiveSupport::Deprecation.warn("widget_class_name option is deprecated. Use class_name instead", caller) if config[:widget_class_name]

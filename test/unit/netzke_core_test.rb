@@ -14,8 +14,8 @@ module Netzke
     
     def initial_aggregatees
       {
-        :nested_one => {:widget_class_name => 'NestedWidgetOne'},
-        :nested_two => {:widget_class_name => 'NestedWidgetTwo'}
+        :nested_one => {:class_name => 'NestedWidgetOne'},
+        :nested_two => {:class_name => 'NestedWidgetTwo'}
       }
     end
   
@@ -37,7 +37,7 @@ module Netzke
   class NestedWidgetTwo < Base
     def initial_aggregatees
       {
-        :nested => {:widget_class_name => 'DeepNestedWidget'}
+        :nested => {:class_name => 'DeepNestedWidget'}
       }
     end
   end
@@ -45,7 +45,7 @@ module Netzke
   class DeepNestedWidget < Base
     def initial_aggregatees
       {
-        :nested => {:widget_class_name => "VeryDeepNestedWidget"}
+        :nested => {:class_name => "VeryDeepNestedWidget"}
       }
     end
   end
@@ -142,7 +142,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   end
 
   test "widget instance by config" do
-    widget = Netzke::Base.instance_by_config({:widget_class_name => 'Widget', :name => 'a_widget'})
+    widget = Netzke::Base.instance_by_config({:class_name => 'Widget', :name => 'a_widget'})
     assert(Widget, widget.class)
     assert('a_widget', widget.name)
   end

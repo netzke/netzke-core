@@ -1,6 +1,7 @@
-= v0.5.1 (EDGE)
+= v0.5.1 - 2010-02-26
 * Compatibility with Ext 3.1.1
-* Impr: <tt>Netzke.page</tt> object contains all the widgets on the page
+* New: <tt>Netzke.page</tt> object now contains all the widgets declared on the page
+* Code: replaced (references to) deprecated function names
 
 = v0.5.0 - 2010-01-10
 * Compatibility with Ext 3.1.0
