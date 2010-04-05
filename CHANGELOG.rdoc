@@ -1,3 +1,6 @@
+= v0.5.2 - EDGE
+* New: support for external stylesheets
+
 = v0.5.1 - 2010-02-26
 * Compatibility with Ext 3.1.1
 * New: <tt>Netzke.page</tt> object now contains all the widgets declared on the page

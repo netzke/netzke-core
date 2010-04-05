@@ -3,19 +3,24 @@ module Netzke
     # Include JavaScript
     def netzke_js_include
       # ExtJS
-      res = ENV['RAILS_ENV'] == 'development' ? javascript_include_tag("/extjs/adapter/ext/ext-base.js", "/extjs/ext-all-debug.js") : javascript_include_tag("/extjs/adapter/ext/ext-base.js", "/extjs/ext-all.js")
+      res = ENV['RAILS_ENV'] == 'development' ? javascript_include_tag("/extjs/adapter/ext/ext-base", "/extjs/ext-all-debug") : javascript_include_tag("/extjs/adapter/ext/ext-base", "/extjs/ext-all")
       # Netzke (dynamically generated)
-      res << javascript_include_tag("/netzke/netzke.js")
+      res << javascript_include_tag("/netzke/netzke")
     end
 
     # Include CSS
     def netzke_css_include(theme_name = :default)
       # ExtJS base
-      res = stylesheet_link_tag("/extjs/resources/css/ext-all.css")
+      res = stylesheet_link_tag("/extjs/resources/css/ext-all")
       # ExtJS theming
-      res << stylesheet_link_tag("/extjs/resources/css/xtheme-#{theme_name}.css") unless theme_name == :default
+      res << stylesheet_link_tag("/extjs/resources/css/xtheme-#{theme_name}") unless theme_name == :default
       # Netzke (dynamically generated)
-      res << stylesheet_link_tag("/netzke/netzke.css")
+      res << stylesheet_link_tag("/netzke/netzke")
+      
+      # External stylesheets (which cannot be loaded dynamically along with the rest of the widget, e.g. due to that 
+      # relative paths are used in them)
+      res << stylesheet_link_tag(Netzke::Base.config[:external_css])
+      
       res
     end
     

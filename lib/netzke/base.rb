@@ -51,6 +51,8 @@ module Netzke
         :javascripts               => [],
         :stylesheets               => [],
         
+        :external_css              => [],
+        
         # AR model that provides us with persistent config functionality
         :persistent_config_manager => "NetzkePreference",
         
