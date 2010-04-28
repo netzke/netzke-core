@@ -53,6 +53,7 @@ module Netzke
       config[:name] = name
       Netzke::Base.reg_widget(config)
       w = Netzke::Base.instance_by_config(config)
+      w.before_load # inform the widget about initial load
       content_for :netzke_js_classes, w.js_missing_code(@rendered_classes ||= [])
       content_for :netzke_on_ready, w.js_widget_instance
       content_for :netzke_on_ready, w.js_widget_render
