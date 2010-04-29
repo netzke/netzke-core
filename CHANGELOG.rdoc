@@ -1,6 +1,7 @@
 = v0.5.2 - EDGE
 * Fix: Netzke::Base.before_load is now also called for the widgets embedded directly into a view.
 * New: support for external stylesheets.
+* Fix: the "value" column type has been changed to text to prevent migration problems is some cases
 
 = v0.5.1 - 2010-02-26
 * Compatibility with Ext 3.1.1
