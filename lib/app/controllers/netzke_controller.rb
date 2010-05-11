@@ -1,9 +1,9 @@
 class NetzkeController < ApplicationController
-  def index
-    redirect_to :action => :test_widgets
-  end
-
-  # collect javascripts from all plugins that registered it in Netzke::Base.config[:javascripts]
+  # Collect javascripts from all plugins that registered it in Netzke::Base.config[:javascripts]
+  # TODO: caching
+  
+  # caches_action :netzke
+  
   def netzke
     respond_to do |format|
       format.js {
@@ -26,6 +26,9 @@ class NetzkeController < ApplicationController
     end
   end
   
+  # Main dispatcher of the HTTP requests. The URL contains the name of the widget, 
+  # as well as the method of this widget to be called, according to the double underscore notation. 
+  # E.g.: some_grid__post_grid_data.
   def method_missing(method_name)
     widget_name, *action = method_name.to_s.split('__')
     widget_name = widget_name.to_sym
