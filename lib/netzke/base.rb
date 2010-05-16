@@ -209,14 +209,14 @@ module Netzke
       !persistent_config_manager_class.nil? && initial_config[:persistent_config]
     end
 
-    # Store some setting in the database as if it was a hash, e.g.:
+    # Access to own persistent config, e.g.:
     #     persistent_config["window.size"] = 100
     #     persistent_config["window.size"] => 100
-    # This method is user-aware
-    def persistent_config(global = false)
-      if persistent_config_enabled? || global
+    # This method is user/role-aware
+    def persistent_config
+      if persistent_config_enabled?
         config_class = self.class.persistent_config_manager_class
-        config_class.widget_name = global ? nil : persistence_key.to_s # pass to the config class our unique name
+        config_class.widget_name = persistence_key.to_s # pass to the config class our unique name
         config_class
       else
         # if we can't use presistent config, all the calls to it will always return nil, 
@@ -224,6 +224,13 @@ module Netzke
         logger.debug "==> NETZKE: no persistent config is set up for widget '#{global_id}'"
         {}
       end
+    end
+    
+    # Access to the global persistent config (e.g. of another widget)
+    def global_persistent_config(owner = nil)
+      config_class = self.class.persistent_config_manager_class
+      config_class.widget_name = owner
+      config_class
     end
     
     # A string which will identify NetzkePreference records for this widget. 
