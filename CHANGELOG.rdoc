@@ -4,6 +4,8 @@
 * New: support for external stylesheets.
 * Fix: the "value" column type has been changed to text to prevent migration problems is some cases
 * New: global_persistent_config method allows accessing persistent storage with no owner (widget) assigned
+* New: any widget can now implement <tt>before_api_call</tt> interceptor. If it returns anything but empty hash, it'll be used as the result of *any* API call to this widget. The interceptor receives as parameter the name of the API call issued and the arguments. Use it to implement authorization.
+* Fix: got the Ext's state provider out of the way (thank you for all the confusion)
 
 = v0.5.1 - 2010-02-26
 * Compatibility with Ext 3.1.1

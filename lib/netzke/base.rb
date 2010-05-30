@@ -134,7 +134,8 @@ module Netzke
       api_points.each do |apip|
         module_eval <<-END, __FILE__, __LINE__
         def api_#{apip}(*args)
-          #{apip}(*args).to_nifty_json
+          before_api_call_result = defined?(before_api_call) && before_api_call('#{apip}', *args) || {}
+          (before_api_call_result.empty? ? #{apip}(*args) : before_api_call_result).to_nifty_json
         end
         # FIXME: commented out because otherwise ColumnOperations stop working
         # def #{apip}(*args)

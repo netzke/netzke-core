@@ -17,6 +17,9 @@ Ext.ns('Netzke.page'); // namespace for all widget instantces on the page
 
 Ext.QuickTips.init();
 
+// We don't want no state saving, thank you!
+Ext.state.Provider.prototype.set = function(){};
+
 // Type detection functions
 Netzke.isObject = function(o) {
   return (o != null && typeof o == "object" && o.constructor.toString() == Object.toString());
