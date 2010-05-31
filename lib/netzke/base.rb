@@ -166,6 +166,21 @@ module Netzke
     rescue NameError
       nil
     end
+    
+    # Who are we acting as?
+    def self.authority_level
+      if session[:masq_world]
+        :world
+      elsif session[:masq_role]
+        [:role, session[:masq_role]]
+      elsif session[:masq_user]
+        [:user, session[:masq_user]]
+      elsif session[:netzke_user_id]
+        [:self, session[:netzke_user_id]]
+      else
+        :none # or nil ?
+      end
+    end
 
     # Widget initialization process
     # * the config hash is available to the widget after the "super" call in the initializer

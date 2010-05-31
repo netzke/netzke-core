@@ -37,7 +37,7 @@ module Netzke
       non_late_aggregatees.each_pair do |aggr_name, aggr_config|
         aggr_instance = aggregatee_instance(aggr_name.to_sym)
         aggr_instance.before_load
-        res["#{aggr_name}_config".to_sym] = aggr_instance.js_config
+        res[:"#{aggr_name}_config"] = aggr_instance.js_config
       end
   
       # Api (besides the default "load_aggregatee_with_cache" - JavaScript side already knows about it)
