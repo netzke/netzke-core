@@ -167,6 +167,19 @@ module Netzke
       nil
     end
     
+    # Example:
+    #   masquarade_as(:role, 2)
+    #   masquarade_as(:user, 4)
+    #   masquarade_as(:world)
+    def self.masquerade_as(authority_level, authority_id = true)
+      reset_masquerading
+      session.merge!(:"masq_#{authority_level}" => authority_id)
+    end
+    
+    def self.reset_masquerading
+      session[:masq_world] = session[:masq_role] = session[:masq_user] = nil
+    end
+    
     # Who are we acting as?
     def self.authority_level
       if session[:masq_world]
