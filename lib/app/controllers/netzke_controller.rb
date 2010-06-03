@@ -1,9 +1,8 @@
 class NetzkeController < ApplicationController
+  
   # Collect javascripts from all plugins that registered it in Netzke::Base.config[:javascripts]
   # TODO: caching
-  
   # caches_action :netzke
-  
   def netzke
     respond_to do |format|
       format.js {

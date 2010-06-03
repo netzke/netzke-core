@@ -59,8 +59,8 @@ module Netzke
         # Default location of extjs library
         :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
         
-        # Default location of icons (TODO: has no effect for now)
-        :icons_location            => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/images/icons",
+        # Default location of icons, relative to the root of the domain
+        :icons_uri                 => "/images/icons/",
         
         # Default instance config
         :default_config => {
