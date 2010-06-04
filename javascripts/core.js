@@ -3,11 +3,13 @@ This file gets loaded along with the rest of Ext library at the initial load
 */
 
 // Check Ext JS version
-var requiredExtVersion = "3.2.1";
-var currentExtVersion = Ext.version;
-if (requiredExtVersion !== currentExtVersion) {
-  alert("Netzke needs Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
-}
+(function(){
+  var requiredExtVersion = "3.2.1";
+  var currentExtVersion = Ext.version;
+  if (requiredExtVersion !== currentExtVersion) {
+    alert("Netzke needs Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
+  }
+})();
 
 // Initial stuff
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
