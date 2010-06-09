@@ -88,12 +88,12 @@ module Netzke
 
     # rendering
     def js_widget_render
-      %Q{Netzke.page.#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-div");} unless self.class.js_xtype == "netzkewindow"
+      %Q{Netzke.page.#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-netzke");} unless self.class.js_xtype == "netzkewindow"
     end
 
     # container for rendering
     def js_widget_html
-      %Q{<div id="#{name.to_s.split('_').join('-')}-div"></div>}
+      %Q{<div id="#{name.to_s.split('_').join('-')}-netzke" class="netzke-widget"></div>}
     end
 
     #
