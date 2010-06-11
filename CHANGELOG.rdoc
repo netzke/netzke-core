@@ -1,4 +1,4 @@
-= v0.5.2 - EDGE
+= v0.5.2 - 2010-06-11
 * Ext 3.2.1
 * Fix: Netzke::Base.before_load is now also called for the widgets embedded directly into a view.
 * New: support for external stylesheets.
