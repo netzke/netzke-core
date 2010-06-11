@@ -26,6 +26,6 @@ mysql:
   host: localhost
   username: root
   password:
-  database: plugin_test
+  database: netzke_core_test
   pool: 5
   timeout: 5000

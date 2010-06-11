@@ -29,14 +29,14 @@ class CoreExtTest < ActiveSupport::TestCase
   
   test "javascript-like access to hash data" do
     a = {}
-    a["key"] = 100
-    assert_equal(100, a.key)
+    a["b"] = 100
+    assert_equal(100, a.b)
     
-    a.key = 200
-    assert_equal(200, a["key"])
+    a.b = 200
+    assert_equal(200, a["b"])
     
-    a.another_key = 300
-    assert_equal(300, a[:another_key])
+    a.c = 300
+    assert_equal(300, a[:c])
   end
   
   test "jsonify" do

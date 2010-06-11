@@ -9,6 +9,22 @@ begin
     gemspec.homepage = "http://github.com/skozlov/netzke-core"
     gemspec.rubyforge_project = "netzke-core"
     gemspec.authors = ["Sergei Kozlov"]
+    gemspec.post_install_message = <<-MESSAGE
+
+    ========================================================================
+
+               Thanks for installing Netzke Core!
+               
+      Run "./script/generate netzke_core" to finish the installation.
+
+      Netzke home page:     http://netzke.org
+      Netzke Google Groups: http://groups.google.com/group/netzke
+      Netzke tutorials:     http://blog.writelesscode.com
+
+    ========================================================================
+
+    MESSAGE
+    
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
