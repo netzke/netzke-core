@@ -2,7 +2,7 @@ Description:
     Generates a netzke preferences migration
 
 Example:
-    ./script/generate netzke-core Thing
+    ./script/generate netzke-core
 
     This will create:
         A netzke preferences migration

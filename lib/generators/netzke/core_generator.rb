@@ -1,10 +1,14 @@
+require 'rails/generators'
+require 'rails/generators/migration'
+require 'generators/migration_helper'
+
 module Netzke
   module Generators  
     class CoreGenerator < Rails::Generators::Base
-      include Rails::Generators::Migration
+      include ::MigrationHelper
       
       def execute
-        migration_template 'create_netzke_preferences', 'db/migrate/create_netzke_preferences.rb'
+        migration_template 'create_netzke_preferences.rb', 'db/migrate/create_netzke_preferences.rb'
       end
       
       def self.source_root
@@ -12,8 +16,9 @@ module Netzke
       end        
       
       def self.gem_root
-        File.expand_path("../../../../../", __FILE__)
-      end      
+        File.expand_path("../../../../", __FILE__)
+      end 
+                 
     end
   end
 end
