@@ -3,7 +3,7 @@ module ActionDispatch::Routing
     # Ensure Devise modules are included only after loading routes, because we
     # need devise_for mappings already declared to create filters and helpers.
     def finalize_with_netzke!
-      finalize_without_devise!
+      finalize_without_netzke!
 
       if defined? ActionController
         ActionController::Base.class_eval do
