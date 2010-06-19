@@ -81,27 +81,29 @@ class NetzkePreference < ActiveRecord::Base
     
     if session[:masq_user]
       # first, get the prefs for this user it they exist
-      res = self.find(:first, :conditions => cond.merge({:user_id => session[:masq_user]}))
+      res = self.where(cond.merge({:user_id => session[:masq_user]})).first
+
       # if it doesn't exist, get them for the user's role
-      user = User.find(session[:masq_user])
-      res ||= self.find(:first, :conditions => cond.merge({:role_id => user.role.id}))
+      user = User.where(session[:masq_user])
+      res ||= self.where(cond.merge({:role_id => user.role.id})).first
+      
       # if it doesn't exist either, get them for the World (role_id = 0)
-      res ||= self.find(:first, :conditions => cond.merge({:role_id => 0}))
+      res ||= self.where(cond.merge({:role_id => 0})).first 
     elsif session[:masq_role]
       # first, get the prefs for this role
-      res = self.find(:first, :conditions => cond.merge({:role_id => session[:masq_role]}))
+      res = self.where(cond.merge({:role_id => session[:masq_role]})).first
       # if it doesn't exist, get them for the World (role_id = 0)
-      res ||= self.find(:first, :conditions => cond.merge({:role_id => 0}))
+      res ||= self.where(cond.merge({:role_id => 0})).first
     elsif session[:netzke_user_id]
-      user = User.find(session[:netzke_user_id])
+      user = User.where(session[:netzke_user_id])
       # first, get the prefs for this user
-      res = self.find(:first, :conditions => cond.merge({:user_id => user.id}))
+      res = self.where(cond.merge({:user_id => user.id})).first
       # if it doesn't exist, get them for the user's role
-      res ||= self.find(:first, :conditions => cond.merge({:role_id => user.role.id}))
+      res ||= self.where(cond.merge({:role_id => user.role.id})).first
       # if it doesn't exist either, get them for the World (role_id = 0)
-      res ||= self.find(:first, :conditions => cond.merge({:role_id => 0}))
+      res ||= self.where(cond.merge({:role_id => 0})).first
     else
-      res = self.find(:first, :conditions => cond)
+      res = self.where(cond).first
     end
     
     res      
@@ -115,16 +117,16 @@ class NetzkePreference < ActiveRecord::Base
     if session[:masq_user]
       cond.merge!({:user_id => session[:masq_user]})
       # first, try to find the preference for masq_user
-      res = self.find(:first, :conditions => cond)
+      res = self.where(cond).first
       # if it doesn't exist, create it
       res ||= self.new(cond)
     elsif session[:masq_role]
       # first, delete all the corresponding preferences for the users that have this role
-      Role.find(session[:masq_role]).users.each do |u|
+      Role.where(session[:masq_role]).users.each do |u|
         self.delete_all(cond.merge({:user_id => u.id}))
       end
       cond.merge!({:role_id => session[:masq_role]})
-      res = self.find(:first, :conditions => cond)
+      res = self.where(cond).first
       res ||= self.new(cond)
     elsif session[:masq_world]
       # first, delete all the corresponding preferences for all users and roles
@@ -132,10 +134,10 @@ class NetzkePreference < ActiveRecord::Base
       # then, create the new preference for the World (role_id = 0)
       res = self.new(cond.merge(:role_id => 0))
     elsif session[:netzke_user_id]
-      res = self.find(:first, :conditions => cond.merge({:user_id => session[:netzke_user_id]}))
+      res = self.where(cond.merge({:user_id => session[:netzke_user_id]})).first
       res ||= self.new(cond.merge({:user_id => session[:netzke_user_id]}))
     else
-      res = self.find(:first, :conditions => cond)
+      res = self.where(cond).first
       res ||= self.new(cond)
     end
     res
@@ -147,13 +149,13 @@ class NetzkePreference < ActiveRecord::Base
     
     if session[:masq_user] || session[:masq_role]
       cond.merge!({:user_id => session[:masq_user], :role_id => session[:masq_role]})
-      res = self.find(:all, :conditions => cond)
+      res = self.where(cond).all
     elsif session[:netzke_user_id]
-      user = User.find(session[:netzke_user_id])
-      res = self.find(:all, :conditions => cond.merge({:user_id => session[:netzke_user_id]}))
-      res += self.find(:all, :conditions => cond.merge({:role_id => user.role.try(:id)}))
+      user = User.where(session[:netzke_user_id])
+      res = self.where(cond.merge({:user_id => session[:netzke_user_id]})).all
+      res += self.where(cond.merge({:role_id => user.role.try(:id)})).all
     else
-      res = self.find(:all, :conditions => cond)
+      res = self.where(cond).all
     end
     
     res      
