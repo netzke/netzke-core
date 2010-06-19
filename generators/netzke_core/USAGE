@@ -1,8 +1,8 @@
 Description:
-    Explain the generator
+    Generates a netzke preferences migration
 
 Example:
     ./script/generate netzke-core Thing
 
     This will create:
-        what/will/it/create
+        A netzke preferences migration
