@@ -28,9 +28,9 @@ module Netzke
     def netzke_js
       javascript_tag <<-END_OF_JAVASCRIPT
         Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection
-        #{@content_for_netzke_js_classes}
+        #{content_for(:netzke_js_classes)}
         Ext.onReady(function(){
-          #{@content_for_netzke_on_ready}
+          #{content_for(:netzke_on_ready)}
         });
       END_OF_JAVASCRIPT
     end
