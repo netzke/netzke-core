@@ -22,6 +22,8 @@ module ActionDispatch::Routing
     #
     def netzke
       puts "Routing netzke"
+      match "/netzke/:action.:format" => "netzke"      
+      
       
       # options = resources.extract_options!
       # resources.map!(&:to_sym)
