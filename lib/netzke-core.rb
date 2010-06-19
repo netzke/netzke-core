@@ -6,7 +6,6 @@ require 'netzke/base'
 require 'netzke/action_view_ext'
 require 'netzke/controller_extensions'
 require 'netzke/core_ext'
-# require 'netzke/routing'
 require 'netzke/rails/routes'
 
 # Load models and controllers from lib/app
@@ -21,9 +20,6 @@ if defined? ActionController
   ActionController::Base.class_eval do
     include Netzke::ControllerExtensions
   end
-
-  # Include the route to the Netzke controller
-  # ActionController::Routing::RouteSet::Mapper.send :include, Netzke::Routing::MapperExtensions
 end
 
 if defined? ActionView
