@@ -1,14 +1,20 @@
 module ActionDispatch::Routing
-  # class RouteSet #:nodoc:
-  #   # Ensure Devise modules are included only after loading routes, because we
-  #   # need devise_for mappings already declared to create filters and helpers.
-  #   def finalize_with_devise!
-  #     finalize_without_devise!
-  #     Devise.configure_warden!
-  #     ActionController::Base.send :include, Devise::Controllers::Helpers
-  #   end
-  #   alias_method_chain :finalize!, :devise
-  # end
+  class RouteSet #:nodoc:
+    # Ensure Devise modules are included only after loading routes, because we
+    # need devise_for mappings already declared to create filters and helpers.
+    def finalize_with_netzke!
+      finalize_without_devise!
+
+      if defined? ActionController
+        ActionController::Base.class_eval do
+          include Netzke::ControllerExtensions
+        end
+      end
+      # Devise.configure_warden!
+      # ActionController::Base.send :include, Devise::Controllers::Helpers
+    end
+    alias_method_chain :finalize!, :netzke
+  end
 
   class Mapper
     # Includes netzke_for method for routes. This method is responsible to
