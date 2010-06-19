@@ -54,8 +54,8 @@ module Netzke
       Netzke::Base.reg_widget(config)
       w = Netzke::Base.instance_by_config(config)
       w.before_load # inform the widget about initial load
-      content_for :netzke_js_classes, w.js_missing_code(@rendered_classes ||= [])
-      content_for :netzke_on_ready, "#{w.js_widget_instance}\n\n#{w.js_widget_render}"
+      content_for :netzke_js_classes, raw(w.js_missing_code(@rendered_classes ||= []))
+      content_for :netzke_on_ready, raw("#{w.js_widget_instance}\n\n#{w.js_widget_render}")
       
       # Now mark this widget's class as rendered, so that we only generate it once per view
       @rendered_classes << class_name unless @rendered_classes.include?(class_name)
