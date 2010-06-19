@@ -20,8 +20,8 @@ module ActionDispatch::Routing
     # This method is going to look inside your User model and create the
     # needed routes:
     #
-    def netzke_for(*resources)
-      puts "Routing netzke for: #{resources}"
+    def netzke
+      puts "Routing netzke"
       
       # options = resources.extract_options!
       # resources.map!(&:to_sym)
