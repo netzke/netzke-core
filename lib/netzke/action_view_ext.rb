@@ -41,7 +41,7 @@ module Netzke
     #   <%= netzke_init :ext_theme => "grey" %>
     def netzke_init(params = {})
       theme = params[:ext_theme] || :default
-      [netzke_css_include(theme), netzke_js_include, netzke_js].join("\n")
+      raw([netzke_css_include(theme), netzke_js_include, netzke_js].join("\n"))
     end
     
     # Use this helper in your views to embed Netzke widgets. E.g.:
@@ -61,7 +61,7 @@ module Netzke
       @rendered_classes << class_name unless @rendered_classes.include?(class_name)
 
       # Return the html for this widget
-      w.js_widget_html
+      raw(w.js_widget_html)
     end
   end
 end
