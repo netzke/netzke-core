@@ -1,5 +1,4 @@
 require 'active_support'
-
 # NetzkeCore
 require 'netzke/base'
 
@@ -16,15 +15,14 @@ require 'netzke/rails/routes'
   ActiveSupport::Dependencies.load_once_paths.delete(path)
 end
 
-if defined? ActionController
-  ActionController::Base.class_eval do
-    include Netzke::ControllerExtensions
-  end
+ActiveSupport.on_load(:action_controller) do
+  include Netzke::ControllerExtensions
 end
 
-if defined? ActionView
-  ActionView::Base.send :include, Netzke::ActionViewExt
-end  
+ActiveSupport.on_load(:action_view) do
+  include Netzke::ActionViewExt
+end
+
 
 # Make this plugin auto-reloadable for easier development
 ActiveSupport::Dependencies.load_once_paths.delete(File.join(File.dirname(__FILE__)))
