@@ -1,4 +1,5 @@
 require 'active_support'
+
 # NetzkeCore
 require 'netzke/base'
 
@@ -31,3 +32,4 @@ ActiveSupport::Dependencies.load_once_paths.delete(File.join(File.dirname(__FILE
 # These files will get loaded at the initial load of the framework (along with Ext).
 Netzke::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"
 Netzke::Base.config[:stylesheets] << "#{File.dirname(__FILE__)}/../stylesheets/core.css"
+
