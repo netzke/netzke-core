@@ -3,7 +3,7 @@
 module JSONFix
   def self.included(base)
     base.class_eval do
-      undef to_json
+      undef to_json if defined? to_json
       def to_json(options = nil)
         ActiveSupport::JSON.encode(self, options)
       end
