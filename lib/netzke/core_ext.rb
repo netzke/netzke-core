@@ -1,3 +1,25 @@
+# A fix for Ruby 1.9.2 JSON problems:
+# https://rails.lighthouseapp.com/projects/8994/tickets/4494-ruby-192-heads-json-support-breaks-to_json-for-arrays-of-records
+module JSONFix
+  def self.included(base)
+    base.class_eval do
+      undef to_json
+      def to_json(options = nil)
+        ActiveSupport::JSON.encode(self, options)
+      end
+    end
+  end
+end
+[
+  Hash, 
+  Array, 
+  String, 
+  Numeric, 
+  TrueClass, 
+  FalseClass, 
+  BigDecimal
+].each {|c| c.send(:include, JSONFix) }
+
 class Hash
 
   # Recursively convert the keys. Example:
@@ -95,12 +117,6 @@ class Array
   end
 end
 
-class LiteralString < String
-  def to_json(*args)
-    self
-  end
-end
-
 class String
   def jsonify
     self.camelize(:lower)
@@ -108,7 +124,7 @@ class String
   
   # Converts self to "literal JSON"-string - one that doesn't get quotes appended when being sent "to_json" method
   def l
-    LiteralString.new(self)
+    ActiveSupport::JSON::Variable.new(self)
   end
   
   # removes JS-comments (both single- and multi-line) from the string
@@ -133,7 +149,7 @@ class Symbol
   end
   
   def l
-    LiteralString.new(self.to_s)
+    ActiveSupport::JSON::Variable.new(self.to_s)
   end
 end
 
@@ -145,24 +161,3 @@ module ActiveSupport
   end
 end
 
-# A fix for Ruby 1.9.2 JSON problems:
-# https://rails.lighthouseapp.com/projects/8994/tickets/4494-ruby-192-heads-json-support-breaks-to_json-for-arrays-of-records
-module JSONFix
-  def self.included(base)
-    base.class_eval do
-      undef to_json
-      def to_json(options = nil)
-        ActiveSupport::JSON.encode(self, options)
-      end
-    end
-  end
-end
-[
-  Hash, 
-  Array, 
-  String, 
-  Numeric, 
-  TrueClass, 
-  FalseClass, 
-  BigDecimal
-].each {|c| c.send(:include, JSONFix) }
