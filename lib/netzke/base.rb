@@ -80,6 +80,7 @@ module Netzke
     # E.g. in config/initializers/netzke-config.rb:
     # 
     #     Netzke::GridPanel.configure :default_config => {:persistent_config => true}
+    #     Netzke::GridPanel.configure :column_filters_available, true
     def self.configure(*args)
       if args.first.is_a?(Symbol)
         config[args.first] = args.last
@@ -270,6 +271,7 @@ module Netzke
       initial_config[:persistence_key] ? initial_config[:persistence_key] : global_id.to_sym
     end
     
+    # Update persistent_config[:ext_config] hash
     def update_persistent_ext_config(hsh)
       current_config = persistent_config[:ext_config] || {}
       current_config.deep_merge!(hsh.deep_convert_keys{ |k| k.to_s }) # first, recursively stringify the keys
@@ -343,6 +345,7 @@ module Netzke
     end
     memoize :persistent_config_hash
     
+    # Helper to access config[:ext_config]
     def ext_config
       config[:ext_config] || {}
     end
