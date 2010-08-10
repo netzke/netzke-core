@@ -1,5 +1,3 @@
-require 'JSMin'
-
 class Hash
 
   # Recursively convert the keys. Example:
