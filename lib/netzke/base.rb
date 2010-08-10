@@ -85,9 +85,17 @@ module Netzke
         # first arg is hash
         config.deep_merge!(args.first)
       end
-      
+      if !config[:relative_url_root].blank? and config[:icons_uri]=="/images/icons/"
+        # The app is running from a relative URL-root, and now icons_uri has been specified
+        # We need to prepend the default icons_uri with relative_url_root
+        config[:icons_uri]=config[:relative_url_root]+config[:icons_uri]
+      end
       # widget may implement some kind of control for configuration consistency
       enforce_config_consistency if respond_to?(:enforce_config_consistency)
+    end
+
+    def self.configuration
+      @@config ||= {}
     end
     
     # Short widget class name, e.g.: 
