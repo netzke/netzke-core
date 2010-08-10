@@ -93,10 +93,6 @@ module Netzke
       # widget may implement some kind of control for configuration consistency
       enforce_config_consistency if respond_to?(:enforce_config_consistency)
     end
-
-    def self.configuration
-      @@config ||= {}
-    end
     
     # Short widget class name, e.g.: 
     #   Netzke::Module::SomeWidget => Module::SomeWidget

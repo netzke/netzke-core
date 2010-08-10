@@ -29,12 +29,12 @@ module Netzke
       js="Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection\n"
 
 
-      js << <<-END_OF_JAVASCRIPT if(!Netzke::Base.configuration[:relative_url_root].blank?)
+      js << <<-END_OF_JAVASCRIPT if(!Netzke::Base.config[:relative_url_root].blank?)
         // apply relative URL root, if set
         Ext.widgetMixIn.buildApiUrl= function(apip){
-          return "#{Netzke::Base.configuration[:relative_url_root]}/netzke/" + this.id + "__" + apip;
+          return "#{Netzke::Base.config[:relative_url_root]}/netzke/" + this.id + "__" + apip;
         };
-        Ext.BLANK_IMAGE_URL = "#{Netzke::Base.configuration[:relative_url_root]}/extjs/resources/images/default/s.gif";
+        Ext.BLANK_IMAGE_URL = "#{Netzke::Base.config[:relative_url_root]}/extjs/resources/images/default/s.gif";
       END_OF_JAVASCRIPT
 
       js << <<-END_OF_JAVASCRIPT
