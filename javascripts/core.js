@@ -16,6 +16,8 @@ Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 Ext.ns('Netzke'); // Netzke namespace
 Ext.ns('Netzke.page'); // namespace for all widget instantces on the page
+Ext.ns('Netzke.pre'); // namespace for pre-built, static JS classes
+Ext.ns('Netzke.classes'); // namespace for finished netzke widgets
 
 Ext.QuickTips.init();
 
