@@ -1,3 +1,6 @@
+= v0.5.4 - 2010-08-11
+* New: added Netzke.pre name space for pre-built static JS code
+
 = v0.5.3 - 2010-06-14
 * Fix: Getting rid of deprecation warnings about tasks not sitting in lib.
 
