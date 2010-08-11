@@ -60,7 +60,7 @@ module Netzke
         :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
         
         # Default location of icons, relative to the root of the domain
-        :icons_uri                 => (Netzke::Base.config[:relative_url_root]+"/images/icons/" rescue "/images/icons/") , 
+        :icons_uri                 => "/images/icons/" ,
         
         # Default instance config
         :default_config => {
@@ -84,6 +84,11 @@ module Netzke
       else
         # first arg is hash
         config.deep_merge!(args.first)
+      end
+      if !config[:relative_url_root].blank?
+        # The app is running from a relative URL-root
+        # We need to prepend the icons_uri with relative_url_root
+        config[:icons_uri]=config[:relative_url_root]+config[:icons_uri]
       end
       # widget may implement some kind of control for configuration consistency
       enforce_config_consistency if respond_to?(:enforce_config_consistency)
