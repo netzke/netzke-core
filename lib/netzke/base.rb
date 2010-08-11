@@ -60,7 +60,7 @@ module Netzke
         :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
         
         # Default location of icons, relative to the root of the domain
-        :icons_uri                 => (config[:relative_url_root]+"/images/icons/" rescue "/images/icons/") , 
+        :icons_uri                 => (Netzke::Base.config[:relative_url_root]+"/images/icons/" rescue "/images/icons/") , 
         
         # Default instance config
         :default_config => {
