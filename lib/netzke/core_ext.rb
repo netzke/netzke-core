@@ -113,7 +113,7 @@ class String
   
   # removes JS-comments from the string and minfy it
   def strip_js_comments
-    JSMin.minify self
+    Netzke::Base.config[:minify_js] ? JSMin.minify self : self
   end
   
   # "false" => false, "whatever_else" => true

@@ -39,9 +39,16 @@ Here's how to embed a Netzke widget into your Rails view.
 
 4. When your app is running from a relative web root, i.e. /app, you need to specify it in an initializer:
 
-(config/initializers/netzke.rb)
+(ex. config/initializers/netzke.rb)
 Netzke::Base.configure :relative_url_root=>'/app'
 Netzke::Base.configure :icons_uri=>'/app/images/icons'
+
+== Running in production
+
+1. You might want to turn on some basic JS minification when running in production. This uses JSMin to strip comments, whitespace etc.
+
+(ex. config/initializers/netzke.rb)
+Netzke::Base.configure :minify_js=>true
 
 == More info
 Introduction to Netzke framework and wiki: http://github.com/skozlov/netzke

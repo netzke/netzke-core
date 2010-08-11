@@ -47,6 +47,8 @@ module Netzke
     # Class-level Netzke::Base configuration. The defaults also get specified here.
     def self.config
       set_default_config({
+        # Set to true, if you want generated JS
+        :minify_js                 => false,
         # Which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
         :javascripts               => [],
         :stylesheets               => [],
