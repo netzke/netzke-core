@@ -166,6 +166,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     # this is broken in 1.9
     # assert_equal(1, Netzke::Widget.config[:pref_for_widget])
     # assert_equal(2, Netzke::InheritedWidget.config[:pref_for_widget])
+    # 
   end
 
   test "JS class names and scopes" do

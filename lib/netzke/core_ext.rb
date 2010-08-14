@@ -21,7 +21,7 @@ end
   Numeric, 
   TrueClass, 
   FalseClass, 
-  BigDecimal
+  # BigDecimal
 ].each {|c| c.send(:include, JSONFix) }
 #
 # End fix #

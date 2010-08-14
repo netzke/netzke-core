@@ -11,7 +11,8 @@ module Netzke
     def self.js_extend_properties
       {
         :title => "Aggregatee Loader",
-        :buttons => [{:text => "Load aggregatee", :ref => "../button"}],
+        # :buttons => [{:text => "Load aggregatee", :ref => "../button"}],
+        :bbar => [{:text => "Load aggregatee", :ref => "../button"}],
         :init_component => <<-END_OF_JAVASCRIPT.l,
           function(){
             #{js_full_class_name}.superclass.initComponent.call(this);
