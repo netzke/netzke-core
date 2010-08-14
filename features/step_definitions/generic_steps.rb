@@ -1,0 +1,7 @@
+Then /^Netzke should be initialized$/ do
+  Netzke::Widget::Base.should be
+end
+
+When /^I execute "([^\"]*)"$/ do |script|
+  page.driver.browser.execute_script(script)
+end

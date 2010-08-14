@@ -16,6 +16,7 @@ Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 Ext.ns('Netzke'); // Netzke namespace
 Ext.ns('Netzke.page'); // namespace for all widget instantces on the page
+Ext.ns('Netzke.classes'); // namespace for all widget classes
 
 Ext.QuickTips.init();
 
@@ -397,60 +398,60 @@ Ext.widgetMixIn = {
     Ext.each(apiPoints, function(intp){
       this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
     }, this);
-
+    
     // This will contain Ext.Action instances
-    this.actions = {};
+    // this.actions = {};
 
     // Create Ext.Action instances based on config.actions
-    if (config.actions) {
-      for (var name in config.actions) {
-        // Create an event for each action (so that higher-level widgets could interfere)
-        this.addEvents(name+'click');
+    // if (config.actions) {
+    //   for (var name in config.actions) {
+    //     // Create an event for each action (so that higher-level widgets could interfere)
+    //     this.addEvents(name+'click');
+    // 
+    //     // Configure the action
+    //     var actionConfig = config.actions[name];
+    //     actionConfig.customHandler = actionConfig.handler || actionConfig.fn; //DEPRECATED: .fn is kept for backward compatibility, preferred way is to specify handler
+    //     actionConfig.handler = this.actionHandler.createDelegate(this); // ! this is the "wrapper-handler", which is common for all actions!
+    //     actionConfig.name = name;
+    //     this.actions[name] = new Ext.Action(actionConfig);
+    //   }
+    //   
+    //   // TODO: need to rethink this action related stuff
+    //   config.actions = this.actions;
+    // }
+    // 
+    // config.bbar = config.bbar && this.normalizeMenuItems(config.bbar, this);
+    // config.tbar = config.tbar && this.normalizeMenuItems(config.tbar, this);
+    // config.fbar = config.fbar && this.normalizeMenuItems(config.fbar, this);
+    // config.contextMenu = config.contextMenu && this.normalizeMenuItems(config.contextMenu, this);
 
-        // Configure the action
-        var actionConfig = config.actions[name];
-        actionConfig.customHandler = actionConfig.handler || actionConfig.fn; //DEPRECATED: .fn is kept for backward compatibility, preferred way is to specify handler
-        actionConfig.handler = this.actionHandler.createDelegate(this); // ! this is the "wrapper-handler", which is common for all actions!
-        actionConfig.name = name;
-        this.actions[name] = new Ext.Action(actionConfig);
-      }
-      
-      // TODO: need to rethink this action related stuff
-      config.actions = this.actions;
-    }
-    
-    config.bbar = config.bbar && this.normalizeMenuItems(config.bbar, this);
-    config.tbar = config.tbar && this.normalizeMenuItems(config.tbar, this);
-    config.fbar = config.fbar && this.normalizeMenuItems(config.fbar, this);
-    config.contextMenu = config.contextMenu && this.normalizeMenuItems(config.contextMenu, this);
-
-    config.menu = config.menu && this.normalizeMenuItems(config.menu, this);
+    // config.menu = config.menu && this.normalizeMenuItems(config.menu, this);
 
     // Normalize tools
-    if (config.tools) {
-      var normTools = [];
-      Ext.each(config.tools, function(tool){
-        // Create an event for each action (so that higher-level widgets could interfere)
-        this.addEvents(tool.id+'click');
-
-        var handler = this.toolActionHandler.createDelegate(this, [tool]);
-        normTools.push({id : tool, handler : handler, scope : this});
-      }, this);
-      config.tools = normTools;
-    }
+    // if (config.tools) {
+    //   var normTools = [];
+    //   Ext.each(config.tools, function(tool){
+    //     // Create an event for each action (so that higher-level widgets could interfere)
+    //     this.addEvents(tool.id+'click');
+    // 
+    //     var handler = this.toolActionHandler.createDelegate(this, [tool]);
+    //     normTools.push({id : tool, handler : handler, scope : this});
+    //   }, this);
+    //   config.tools = normTools;
+    // }
     
     // Set title
-    if (config.mode === "config"){
-      if (!config.title) {
-        config.title = '[' + config.id + ']';
-      } else {
-        config.title = config.title + ' [' + config.id + ']';
-      }
-    } else {
-      if (!config.title) {
-        config.title = config.id.humanize();
-      }
-    }
+    // if (config.mode === "config"){
+    //   if (!config.title) {
+    //     config.title = '[' + config.id + ']';
+    //   } else {
+    //     config.title = config.title + ' [' + config.id + ']';
+    //   }
+    // } else {
+    //   if (!config.title) {
+    //     config.title = config.id.humanize();
+    //   }
+    // }
   },
 
   // At this moment component is fully initializied

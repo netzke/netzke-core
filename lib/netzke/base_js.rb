@@ -197,33 +197,35 @@ module Netzke
   
       # are we using JS inheritance? for now, if js_base_class is a Netzke class - yes
       def js_inheritance?
-        superclass != Netzke::Base
+        superclass != Netzke::Widget::Base
       end
 
       # Declaration of widget's class (stored in the cache storage (Ext.netzke.cache) at the client side 
       # to be reused at the moment of widget instantiation)
       def js_class(cached = [])
         # Defining the scope if it isn't known yet
-        res = %Q{
-          if (!#{js_full_scope}) {
-            Ext.ns("#{js_full_scope}");
-          }
-        }
+        # res = %Q{
+        #   if (!#{js_full_scope}) {
+        #     Ext.ns("#{js_full_scope}");
+        #   }
+        # }
 
+        res = ""
+        
         if js_inheritance?
           # Using javascript inheritance
           res << <<-END_OF_JAVASCRIPT
           // Costructor
-          #{js_full_class_name} = function(config){
-            #{js_full_class_name}.superclass.constructor.call(this, config);
-          };
+#{js_full_class_name} = function(config){
+  #{js_full_class_name}.superclass.constructor.call(this, config);
+};
           END_OF_JAVASCRIPT
           
           # Do we specify our own extend properties (overrriding js_extend_properties)? If so, include them, if not - don't re-include those from the parent!
           res << (singleton_methods(false).include?("js_extend_properties") ? %Q{
-          Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name}, #{js_extend_properties.to_nifty_json});
+Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name}, #{js_extend_properties.to_nifty_json});
           } : %Q{
-          Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name});
+Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name});
           })
           
           res << <<-END_OF_JAVASCRIPT

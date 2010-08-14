@@ -7,7 +7,7 @@ class NetzkeController < ApplicationController
     respond_to do |format|
       format.js {
         res = ""
-        Netzke::Base.config[:javascripts].each do |path|
+        Netzke::Widget::Base.config[:javascripts].each do |path|
           f = File.new(path)
           res << f.read
         end
@@ -16,7 +16,7 @@ class NetzkeController < ApplicationController
       
       format.css {
         res = ""
-        Netzke::Base.config[:stylesheets].each do |path|
+        Netzke::Widget::Base.config[:stylesheets].each do |path|
           f = File.new(path)
           res << f.read
         end
@@ -34,7 +34,7 @@ class NetzkeController < ApplicationController
     action = !action.empty? && action.join("__").to_sym
   
     if action
-      w_instance = Netzke::Base.instance_by_config(Netzke::Base.session[:netzke_widgets][widget_name])
+      w_instance = Netzke::Widget::Base.instance_by_config(Netzke::Main.session[:netzke_widgets][widget_name])
       # only widget's actions starting with "api_" are accessible from outside (security)
       api_action = action.to_s.index('__') ? action : "api_#{action}"
       render :text => w_instance.send(api_action, params), :layout => false

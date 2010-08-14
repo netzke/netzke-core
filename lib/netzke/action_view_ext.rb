@@ -19,7 +19,7 @@ module Netzke
       
       # External stylesheets (which cannot be loaded dynamically along with the rest of the widget, e.g. due to that 
       # relative paths are used in them)
-      res << stylesheet_link_tag(Netzke::Base.config[:external_css])
+      res << stylesheet_link_tag(Netzke::Widget::Base.config[:external_css])
       
       res
     end
@@ -51,8 +51,8 @@ module Netzke
       ::ActiveSupport::Deprecation.warn("widget_class_name option is deprecated. Use class_name instead", caller) if config[:widget_class_name]
       class_name = config[:class_name] ||= config[:widget_class_name] || name.to_s.camelcase
       config[:name] = name
-      Netzke::Base.reg_widget(config)
-      w = Netzke::Base.instance_by_config(config)
+      Netzke::Main.reg_widget(config)
+      w = Netzke::Widget::Base.instance_by_config(config)
       w.before_load # inform the widget about initial load
       content_for :netzke_js_classes, raw(w.js_missing_code(@rendered_classes ||= []))
       content_for :netzke_on_ready, raw("#{w.js_widget_instance}\n\n#{w.js_widget_render}")
