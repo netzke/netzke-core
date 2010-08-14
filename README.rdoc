@@ -1,4 +1,7 @@
 = netzke-core
+
+**THIS IS WORK IN PROGRESS: big refactoring is taking place, along with Rails3 compatibility and cucumber/rspec tests**
+
 Create Ext JS + Rails reusable components (widgets) with minimum effort.
 
 This is the bare bones of the Netzke framework. Use it to build your own widgets from scratch. For pre-built widgets (like panels, grids, forms, trees, applications), see the netzke-basepack (http://github.com/skozlov/netzke-basepack) project.
