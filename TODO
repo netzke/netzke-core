@@ -1,2 +1,3 @@
 * Re-factor JS-level inheritance mechanisms (2009-07-5 why?)
 * Get rid of the default_config method, because the same functionality maybe achieved by overwriting the initialize method
+* late aggregatees should probably be named lazy aggregatees
