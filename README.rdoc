@@ -37,17 +37,12 @@ Here's how to embed a Netzke widget into your Rails view.
     
 (here we use the GridPanel widget from the netzke-basepack project)
 
-4. When your app is running from a relative web root, i.e. /app, you need to specify it in an initializer:
-
-(ex. config/initializers/netzke.rb)
-Netzke::Base.configure :relative_url_root=>'/app'
-Netzke::Base.configure :icons_uri=>'/app/images/icons'
-
 == Running in production
 
-1. You might want to turn on some basic JS minification when running in production. This uses JSMin to strip comments, whitespace etc.
+1. There is some basic JS minification when running in production. This uses JSMin to strip comments, whitespace etc.
 
-(ex. config/initializers/netzke.rb)
+It can also manually configured by setting :minify_js
+
 Netzke::Base.configure :minify_js=>true
 
 == More info

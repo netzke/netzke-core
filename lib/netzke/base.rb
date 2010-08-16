@@ -47,8 +47,8 @@ module Netzke
     # Class-level Netzke::Base configuration. The defaults also get specified here.
     def self.config
       set_default_config({
-        # Set to true, if you want generated JS
-        :minify_js                 => false,
+        # Set to true, if you want generated JS to be minified
+        :minify_js                 => Rails.env.production?,
         # Which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
         :javascripts               => [],
         :stylesheets               => [],
@@ -62,7 +62,7 @@ module Netzke
         :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
         
         # Default location of icons, relative to the root of the domain
-        :icons_uri                 => "/images/icons/" ,
+        :icons_uri                 => ActionController::Base.relative_url_root+"/images/icons/" ,
         
         # Default instance config
         :default_config => {
