@@ -1,3 +1,6 @@
+= v0.5.5 - EDGE
+* Merge with pschyska/netzke-core - relative_root_url, jsmin.
+
 = v0.5.4 - 2010-08-11
 * New: added Netzke.pre name space for pre-built static JS code
 
