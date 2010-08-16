@@ -62,7 +62,7 @@ module Netzke
         :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
         
         # Default location of icons, relative to the root of the domain
-        :icons_uri                 => ActionController::Base.relative_url_root+"/images/icons/" ,
+        :icons_uri                 => ActionController::Base.relative_url_root.to_s+"/images/icons/" ,
         
         # Default instance config
         :default_config => {
