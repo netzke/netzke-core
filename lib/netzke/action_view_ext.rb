@@ -26,13 +26,26 @@ module Netzke
     
     # JavaScript for all Netzke classes in this view, and Ext.onReady which renders all Netzke widgets in this view
     def netzke_js
-      javascript_tag <<-END_OF_JAVASCRIPT
-        Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection
+      js="Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection\n"
+
+
+      js << <<-END_OF_JAVASCRIPT if(!ActionController::Base.relative_url_root.blank?)
+        // apply relative URL root, if set
+        Ext.widgetMixIn.buildApiUrl= function(apip){
+          return "#{ActionController::Base.relative_url_root}/netzke/" + this.id + "__" + apip;
+        };
+        Ext.BLANK_IMAGE_URL = "#{ActionController::Base.relative_url_root}/extjs/resources/images/default/s.gif";
+      END_OF_JAVASCRIPT
+
+      js << <<-END_OF_JAVASCRIPT
         #{@content_for_netzke_js_classes}
         Ext.onReady(function(){
           #{@content_for_netzke_on_ready}
         });
       END_OF_JAVASCRIPT
+
+      javascript_tag js
+      
     end
     
     # Wrapper for all the above. Use it in your layout.

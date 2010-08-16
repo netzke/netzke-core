@@ -111,14 +111,9 @@ class String
     LiteralString.new(self)
   end
   
-  # removes JS-comments (both single- and multi-line) from the string
+  # removes JS-comments from the string and minfy it
   def strip_js_comments
-    regexp = /\/\/.*$|(?m:\/\*.*?\*\/)/
-    self.gsub!(regexp, '')
-
-    # also remove empty lines
-    regexp = /^\s*\n/
-    self.gsub!(regexp, '')
+    Netzke::Base.config[:minify_js] ? JSMin.minify(self) : self
   end
   
   # "false" => false, "whatever_else" => true

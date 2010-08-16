@@ -37,6 +37,14 @@ Here's how to embed a Netzke widget into your Rails view.
     
 (here we use the GridPanel widget from the netzke-basepack project)
 
+== Running in production
+
+1. There is some basic JS minification when running in production. This uses JSMin to strip comments, whitespace etc.
+
+It can also manually configured by setting :minify_js
+
+Netzke::Base.configure :minify_js=>true
+
 == More info
 Introduction to Netzke framework and wiki: http://github.com/skozlov/netzke
 
