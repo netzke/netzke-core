@@ -390,6 +390,27 @@ Ext.widgetMixIn = {
     return res;
   },
   
+  locateMenus : function(o) {
+    var keyWords = ["bbar", "tbar", "fbar"];
+    if (Ext.isObject(o)) {
+      Ext.each(keyWords, function(key){
+        if (o[key]) { 
+          o[key] = this.normalizeMenuItems(o[key], this); 
+        };
+      }, this);
+      
+      for (var key in o) {
+        if (keyWords.indexOf(key) == -1) {
+          this.locateMenus(o[key]);
+        }
+      }
+    } else if (Ext.isArray(o)) {
+      Ext.each(o, function(el){
+        this.locateMenus(el);
+      }, this);
+    }
+    
+  },
 
   // Code run before calling Ext's constructor - normalizing config to provide Netzke additional functionality
   commonBeforeConstructor : function(config){
@@ -421,9 +442,11 @@ Ext.widgetMixIn = {
       config.actions = this.actions;
     }
     
-    config.bbar = config.bbar && this.normalizeMenuItems(config.bbar, this);
-    config.tbar = config.tbar && this.normalizeMenuItems(config.tbar, this);
-    config.fbar = config.fbar && this.normalizeMenuItems(config.fbar, this);
+    this.locateMenus(config);
+    
+    // config.bbar = config.bbar && this.normalizeMenuItems(config.bbar, this);
+    // config.tbar = config.tbar && this.normalizeMenuItems(config.tbar, this);
+    // config.fbar = config.fbar && this.normalizeMenuItems(config.fbar, this);
     config.contextMenu = config.contextMenu && this.normalizeMenuItems(config.contextMenu, this);
 
     config.menu = config.menu && this.normalizeMenuItems(config.menu, this);

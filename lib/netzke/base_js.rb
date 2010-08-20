@@ -204,7 +204,7 @@ module Netzke
       # to be reused at the moment of widget instantiation)
       def js_class(cached = [])
         # Defining the scope if it isn't known yet
-        res = %Q{
+        res = js_full_scope == "Netzke.classes" ? "" : %Q{
           if (!#{js_full_scope}) {
             Ext.ns("#{js_full_scope}");
           }
@@ -227,7 +227,6 @@ module Netzke
           })
           
           res << <<-END_OF_JAVASCRIPT
-          // Register our xtype
           Ext.reg("#{js_xtype}", #{js_full_class_name});
           END_OF_JAVASCRIPT
           
@@ -248,7 +247,6 @@ module Netzke
             this.commonAfterConstructor(config);
           };
           Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
-          // Register xtype
           Ext.reg("#{js_xtype}", #{js_full_class_name});
           END_OF_JAVASCRIPT
         end
