@@ -500,33 +500,33 @@ Ext.widgetMixIn = {
     }
   },
 
-  addMenu : function(menu, owner){
-    if (!owner) {
-      owner = this;
-    }
-    
-    if (!!this.hostMenu) { 
-      this.hostMenu(menu, owner); 
-    } else {
-      if (this.ownerWidget) {
-        this.ownerWidget.addMenu(menu, owner);
-      }
-    }
-  },
-  
-  cleanUpMenu : function(owner){
-    if (!owner) {
-      owner = this;
-    }
-    
-    if (!!this.unhostMenu) { 
-      this.unhostMenu(owner); 
-    } else {
-      if (this.ownerWidget) {
-        this.ownerWidget.cleanUpMenu(owner);
-      }
-    }
-  },
+  // addMenu : function(menu, owner){
+  //   if (!owner) {
+  //     owner = this;
+  //   }
+  //   
+  //   if (!!this.hostMenu) { 
+  //     this.hostMenu(menu, owner); 
+  //   } else {
+  //     if (this.ownerWidget) {
+  //       this.ownerWidget.addMenu(menu, owner);
+  //     }
+  //   }
+  // },
+  // 
+  // cleanUpMenu : function(owner){
+  //   if (!owner) {
+  //     owner = this;
+  //   }
+  //   
+  //   if (!!this.unhostMenu) { 
+  //     this.unhostMenu(owner); 
+  //   } else {
+  //     if (this.ownerWidget) {
+  //       this.ownerWidget.cleanUpMenu(owner);
+  //     }
+  //   }
+  // },
   
   onWidgetLoad:Ext.emptyFn // gets overridden
 };

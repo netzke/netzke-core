@@ -21,7 +21,7 @@ module Netzke
           name.split("::")[0..-2].join(".")
         end
 
-        # Top level scope which will be used to cope out Netzke classes, e.g. "Netzke.classes" (default)
+        # Top level scope which will be used to scope out Netzke classes
         def js_default_scope
           "Netzke.classes"
         end
@@ -83,8 +83,9 @@ module Netzke
   };
             END_OF_JAVASCRIPT
 
-            # Do we specify our own extend properties (overrriding js_extend_properties)? If so, include them, if not - don't re-include those from the parent!
-            res << (singleton_methods(false).include?("js_extend_properties") ? %Q{
+            # Do we specify our own extend properties (overriding js_extend_properties)? 
+            # If so, include them, if not - don't re-include those from the parent.
+            res << (singleton_methods(false).include?(:js_extend_properties) ? %Q{
   Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name}, #{js_extend_properties.to_nifty_json});
             } : %Q{
   Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name});
@@ -96,9 +97,6 @@ module Netzke
             END_OF_JAVASCRIPT
 
           else
-            # Menus
-            js_add_menus = "this.addMenus(#{js_menus.to_nifty_json});" unless js_menus.empty?
-
             res << <<-END_OF_JAVASCRIPT
             // Constructor
             #{js_full_class_name} = function(config){
@@ -184,8 +182,8 @@ module Netzke
 
           # Actions, toolbars and menus
           # tools   && res.merge!(:tools   => tools)
-          actions && res.merge!(:actions => actions)
-          menu    && res.merge!(:menu    => menu)
+          # actions && res.merge!(:actions => actions)
+          # menu    && res.merge!(:menu    => menu)
 
           # Inform the JavaScript side if persistent_config is enabled
           res[:persistent_config] = persistent_config_enabled?

@@ -1,10 +1,21 @@
 require 'active_support/core_ext'
+require 'active_support/dependencies'
 
 $LOAD_PATH << File.dirname(__FILE__)
 
-require 'netzke/main'
-require 'netzke/widget/base'
 require 'netzke/core_ext'
+
+module Netzke
+  autoload :Main, 'netzke/main'
+  
+  module Widget
+    autoload :Base, 'netzke/widget/base'
+    autoload :Actions, 'netzke/widget/actions'
+    
+    # What's below will go to a separate gem
+    autoload :Panel, 'netzke/widget/panel'
+  end
+end
 
 # Rails specific
 if defined? Rails

@@ -2,8 +2,11 @@ module Netzke
   class AggregateeLoader < Widget::Base
     def initial_late_aggregatees
       {
-        :simple_panel => {
-          :class_name => "SimplePanel"
+        :simple_widget => {
+          :class_name => "SimpleWidget",
+          :ext_config => {
+            :title => "SimpleWidget"
+          }
         }
       }
     end
@@ -11,20 +14,13 @@ module Netzke
     def self.js_extend_properties
       {
         :title => "Aggregatee Loader",
-        # :buttons => [{:text => "Load aggregatee", :ref => "../button"}],
+        :layout => 'fit',
         :bbar => [{:text => "Load aggregatee", :ref => "../button"}],
         :init_component => <<-END_OF_JAVASCRIPT.l,
           function(){
             #{js_full_class_name}.superclass.initComponent.call(this);
             this.button.on('click', function(){
-              var win = new Ext.Window({
-                layout: 'fit',
-                width: 300,
-                height: 200
-              });
-              win.show(null, function(){
-                this.loadAggregatee({id: 'simplePanel', container: win.getId()});
-              }, this);
+              this.loadAggregatee({id: 'simple_widget', container: this.getId()});
             }, this);
           }
         END_OF_JAVASCRIPT

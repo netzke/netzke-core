@@ -3,57 +3,55 @@ require 'netzke-core'
 
 module Netzke
   describe Netzke::Widget::Aggregation do
-    before :all do
-      class SomeWidget < Widget::Base
-        api :method_one, :method_two
+    class SomeWidget < Widget::Base
+      api :method_one, :method_two
 
-        def self.config
-          super.merge({
-            :pref_one => 1,
-            :pref_two => 2
-          })
-        end
-
-        def initial_aggregatees
-          {
-            :nested_one => {:class_name => 'NestedWidgetOne'},
-            :nested_two => {:class_name => 'NestedWidgetTwo'}
-          }
-        end
-
-        def available_permissions
-          %w(read update)
-        end
-
-        def default_config
-          {
-            :config_uno => true,
-            :config_dos => false
-          }
-        end
-      end
-  
-      class NestedWidgetOne < Widget::Base
+      def self.config
+        super.merge({
+          :pref_one => 1,
+          :pref_two => 2
+        })
       end
 
-      class NestedWidgetTwo < Widget::Base
-        def initial_aggregatees
-          {
-            :nested => {:class_name => 'DeepNestedWidget'}
-          }
-        end
+      def initial_aggregatees
+        {
+          :nested_one => {:class_name => 'NestedWidgetOne'},
+          :nested_two => {:class_name => 'NestedWidgetTwo'}
+        }
       end
 
-      class DeepNestedWidget < Widget::Base
-        def initial_aggregatees
-          {
-            :nested => {:class_name => "VeryDeepNestedWidget"}
-          }
-        end
+      def available_permissions
+        %w(read update)
       end
 
-      class VeryDeepNestedWidget < Widget::Base
+      def default_config
+        {
+          :config_uno => true,
+          :config_dos => false
+        }
       end
+    end
+
+    class NestedWidgetOne < Widget::Base
+    end
+
+    class NestedWidgetTwo < Widget::Base
+      def initial_aggregatees
+        {
+          :nested => {:class_name => 'DeepNestedWidget'}
+        }
+      end
+    end
+
+    class DeepNestedWidget < Widget::Base
+      def initial_aggregatees
+        {
+          :nested => {:class_name => "VeryDeepNestedWidget"}
+        }
+      end
+    end
+
+    class VeryDeepNestedWidget < Widget::Base
     end
 
     describe "aggregatee_instance" do

@@ -5,9 +5,10 @@ Feature: Aggregatee loader
 
   @selenium
   Scenario: Aggregatee loader should be able to load an aggregatee
-    Given I am on the aggregatee loader page
+    Given I am on the AggregateeLoader widget page
     When I press "Load aggregatee"
     Then I should see "Inner text"
+    And I should see "SimpleWidget"
   
   
   

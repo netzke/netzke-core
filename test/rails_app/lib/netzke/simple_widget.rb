@@ -1,10 +1,10 @@
 module Netzke
-  class SimplePanel < Widget::Panel
+  class SimpleWidget < Widget::Base
     def default_config
       super.merge({
         :ext_config => {
-          :title => "SimplePanel",
-          :html => "Testik"
+          :title => "SimpleWidget",
+          :html => "Inner text"
         }
       })
     end

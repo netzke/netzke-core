@@ -1,2 +1,1 @@
-* Re-factor JS-level inheritance mechanisms (2009-07-5 why?)
-* Get rid of the default_config method, because the same functionality maybe achieved by overwriting the initialize method
+* Why are we not a Rails::Engine? - Because for now we want to behave as a plugin, thus being inserted into vendor/plugins for easier development. Do these things exclude each other in Rails3?
