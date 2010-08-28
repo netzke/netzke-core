@@ -5,3 +5,4 @@ Manifest
 .DS_Store
 rdoc
 netzke-core.gemspec
+test/rails_app/tmp/

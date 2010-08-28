@@ -5,3 +5,7 @@ end
 When /^I execute "([^\"]*)"$/ do |script|
   page.driver.browser.execute_script(script)
 end
+
+Then /^button "([^"]*)" should be disabled$/ do |arg1|
+  Netzke.should be # PENDING!
+end

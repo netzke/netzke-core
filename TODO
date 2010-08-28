@@ -1,1 +1,5 @@
-* Why are we not a Rails::Engine? - Because for now we want to behave as a plugin, thus being inserted into vendor/plugins for easier development. Do these things exclude each other in Rails3?
+Rails 3
+* jsmin
+
+Some day
+* make gzipping generated JS code possible

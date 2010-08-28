@@ -12,8 +12,15 @@ module Netzke
           {}
         end
 
+        # Chaining alias methods at JavaScript level (used when mixing in JavaScript "modules")
+        def js_alias_method_chain(target, feature)
+          write_inheritable_attribute(:js_before_constructor, (read_inheritable_attribute(:js_before_constructor) || "") << <<-END_OF_JAVASCRIPT)
+this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.camelize(:lower)}");
+          END_OF_JAVASCRIPT
+        end
+
         # widget's menus
-        def js_menus; []; end
+        # def js_menus; []; end
 
         # Given class name, e.g. GridPanelLib::Widgets::RecordFormWindow, 
         # returns its scope: "Widgets.RecordFormWindow"
@@ -66,56 +73,54 @@ module Netzke
         # to be reused at the moment of widget instantiation)
         def js_class(cached = [])
           # Defining the scope if it isn't known yet
-          # res = %Q{
-          #   if (!#{js_full_scope}) {
-          #     Ext.ns("#{js_full_scope}");
-          #   }
-          # }
-
-          res = ""
+          res = js_full_scope == "Netzke.classes" ? "" : %Q{
+          Ext.ns("#{js_full_scope}");
+          }
 
           if js_inheritance?
             # Using javascript inheritance
-            res << <<-END_OF_JAVASCRIPT
-            // Costructor
-  #{js_full_class_name} = function(config){
-    #{js_full_class_name}.superclass.constructor.call(this, config);
-  };
-            END_OF_JAVASCRIPT
+  #           res << <<-END_OF_JAVASCRIPT
+  #           // Costructor
+  # #{js_full_class_name} = function(config){
+  #   #{js_full_class_name}.superclass.constructor.call(this, config);
+  # };
+  #           END_OF_JAVASCRIPT
 
             # Do we specify our own extend properties (overriding js_extend_properties)? 
             # If so, include them, if not - don't re-include those from the parent.
             res << (singleton_methods(false).include?(:js_extend_properties) ? %Q{
-  Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name}, #{js_extend_properties.to_nifty_json});
+  #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name}, #{js_extend_properties.to_nifty_json});
             } : %Q{
-  Ext.extend(#{js_full_class_name}, #{superclass.js_full_class_name});
+  #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name});
             })
 
             res << <<-END_OF_JAVASCRIPT
+            
             // Register our xtype
             Ext.reg("#{js_xtype}", #{js_full_class_name});
             END_OF_JAVASCRIPT
 
           else
             res << <<-END_OF_JAVASCRIPT
-            // Constructor
-            #{js_full_class_name} = function(config){
-              // Do all the initializations that every Netzke widget should do: create methods for API-points,
-              // process actions, tools, toolbars
-              this.commonBeforeConstructor(config);
-              // Call the constructor of the inherited class
-              #{js_full_class_name}.superclass.constructor.call(this, config);
-              // What every widget should do after calling the constructor of the inherited class, like
-              // setting extra events
-              this.commonAfterConstructor(config);
-            };
-            Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn));
-            // Register xtype
-            Ext.reg("#{js_xtype}", #{js_full_class_name});
+// Constructor
+        #{js_full_class_name} = function(config){
+          #{read_inheritable_attribute(:js_before_constructor)}
+          #{js_full_class_name}.superclass.constructor.call(this, config);
+        };
+        
+        Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn(#{js_base_class})));
+        
+        // Register xtype
+        Ext.reg("#{js_xtype}", #{js_full_class_name});
             END_OF_JAVASCRIPT
           end
 
           res
+        end
+        
+        
+        def js_extra_code
+          ""
         end
         
         # Returns all extra JavaScript-code (as string) required by this widget's class
@@ -123,12 +128,17 @@ module Netzke
           res = ""
 
           # Prevent re-including code that was already included by the parent
-          singleton_methods(false).include?("include_js") && include_js.each do |path|
+          # (thus, only include those JS files when include_js was defined in the current class, not in its ancestors)
+          singleton_methods(false).include?(:include_js) && include_js.each do |path|
             f = File.new(path)
             res << f.read << "\n"
           end
 
           res
+        end
+
+        def include_js
+          []
         end
 
         # All JavaScript code needed for this class, including one from the ancestor widget
@@ -198,7 +208,7 @@ module Netzke
         # It includes the JS-class for the widget itself, as well as JS-classes for all widgets' (non-late) aggregatees.
         def js_missing_code(cached = [])
           code = dependency_classes.inject("") do |r,k| 
-            cached.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached).strip_js_comments
+            cached.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached)#.strip_js_comments
           end
           code.blank? ? nil : code
         end
@@ -208,6 +218,9 @@ module Netzke
       def self.included(receiver)
         receiver.extend         ClassMethods
         receiver.send :include, InstanceMethods
+        
+        # Overriding Ext.Component#initComponent in core.js
+        receiver.js_alias_method_chain :init_component, :netzke
       end
     end
   end

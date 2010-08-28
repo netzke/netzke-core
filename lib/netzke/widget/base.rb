@@ -2,6 +2,7 @@ require 'active_support'
 require 'netzke/base_js'
 require 'netzke/widget/javascript'
 require 'netzke/widget/stylesheets'
+require 'netzke/widget/api'
 require 'netzke/widget/aggregation'
 require 'netzke/widget/configuration'
 require 'netzke/widget/persistence'
@@ -45,13 +46,13 @@ module Netzke
     #     netzke :form_panel, 
     #       :model => "User" # FormPanel specific option
     class Base
-      extend ActiveSupport::Memoizable
-    
+      
       include Configuration
       include Persistence
-      include Aggregation
       include Netzke::BaseJs # javascript (client-side)
       include Javascript
+      include Api
+      include Aggregation
       include Stylesheets
 
       attr_accessor :parent, :name, :global_id #, :permissions, :session

@@ -6,7 +6,7 @@ module Netzke
         def css_included
           res = ""
 
-          singleton_methods(false).include?("include_css") && include_css.each do |path|
+          singleton_methods(false).include?(:include_css) && include_css.each do |path|
             f = File.new(path)
             res << f.read << "\n"
           end

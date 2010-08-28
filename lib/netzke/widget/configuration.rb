@@ -32,7 +32,7 @@ module Netzke
             :persistent_config_manager => "NetzkePreference",
 
             # Default location of extjs library
-            :ext_location              => defined?(RAILS_ROOT) && "#{RAILS_ROOT}/public/extjs",
+            :ext_location              => defined?(Rails) && Rails.root.join("public", "extjs"),
 
             # Default location of icons, relative to the root of the domain
             :icons_uri                 => "/images/icons/",

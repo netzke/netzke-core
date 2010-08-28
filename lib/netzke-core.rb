@@ -9,8 +9,9 @@ module Netzke
   autoload :Main, 'netzke/main'
   
   module Widget
-    autoload :Base, 'netzke/widget/base'
-    autoload :Actions, 'netzke/widget/actions'
+    autoload :Base,     'netzke/widget/base'
+    autoload :Actions,  'netzke/widget/actions'
+    autoload :Api,      'netzke/widget/api'
     
     # What's below will go to a separate gem
     autoload :Panel, 'netzke/widget/panel'

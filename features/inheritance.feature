@@ -3,7 +3,6 @@ Feature: Inheritance
   As a role
   I want feature
 
-  @focus
   @javascript
   Scenario: Inherited widget should successfully call parent methods in Ruby and JavaScript
     Given I am on the ExtendedServerCaller widget page

@@ -5,13 +5,14 @@ module Netzke
       {
         :title => "Server Caller",
         :html => "Wow",
-        :buttons => [{:text => "Call server", :ref => "../button"}],
+        :bbar => [{:text => "Call server", :ref => "../button"}],
         :bug_server => <<-END_OF_JAVASCRIPT.l,
           function(){
             this.whatsUp();
+            this.update('You should see the response from the server in the title bar the very next moment');
           }
         END_OF_JAVASCRIPT
-        
+
         :init_component => <<-END_OF_JAVASCRIPT.l,
           function(){
             #{js_full_class_name}.superclass.initComponent.call(this);
