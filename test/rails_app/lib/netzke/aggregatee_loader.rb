@@ -4,9 +4,7 @@ module Netzke
       {
         :simple_widget => {
           :class_name => "SimpleWidget",
-          :ext_config => {
-            :title => "SimpleWidget"
-          }
+          :title => "Simple Widget"
         }
       }
     end

@@ -43,11 +43,11 @@ module Netzke
           initial_config[:persistence_key] ? initial_config[:persistence_key] : global_id.to_sym
         end
 
-        def update_persistent_ext_config(hsh)
-          current_config = persistent_config[:ext_config] || {}
-          current_config.deep_merge!(hsh.deep_convert_keys{ |k| k.to_s }) # first, recursively stringify the keys
-          persistent_config[:ext_config] = current_config
-        end
+        # def update_persistent_ext_config(hsh)
+        #   current_config = persistent_config[:ext_config] || {}
+        #   current_config.deep_merge!(hsh.deep_convert_keys{ |k| k.to_s }) # first, recursively stringify the keys
+        #   persistent_config[:ext_config] = current_config
+        # end
         
         # Returns a hash built from all persistent config values for the current widget, following the double underscore
         # naming convention. E.g., if we have the following persistent config pairs:

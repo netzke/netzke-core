@@ -3,10 +3,8 @@ module Netzke
     
     def default_config
       super.merge(
-        :ext_config => {
-          :bbar => [:some_action],
-          :tbar => [:another_action]
-        }
+        :bbar => [:some_action],
+        :tbar => [:another_action]
       )
     end
     

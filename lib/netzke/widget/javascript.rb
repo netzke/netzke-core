@@ -198,16 +198,11 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           # Widget class name. Needed for dynamic instantiation in javascript.
           res.merge!(:scoped_class_name => self.class.js_scoped_class_name)
 
-          # Actions, toolbars and menus
-          # tools   && res.merge!(:tools   => tools)
-          # actions && res.merge!(:actions => actions)
-          # menu    && res.merge!(:menu    => menu)
-
           # Inform the JavaScript side if persistent_config is enabled
-          res[:persistent_config] = persistent_config_enabled?
+          # res[:persistent_config] = persistent_config_enabled?
 
-          # Merge with all config options passed as hash to config[:ext_config]
-          res.merge!(ext_config)
+          # Merge with the rest of config options, besides those that are only meant for the server side
+          res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
 
           res
         end

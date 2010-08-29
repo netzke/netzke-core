@@ -9,7 +9,7 @@ module Netzke
       
       module InstanceMethods
         def actions
-          bar_items = (ext_config[:bbar] || []) + (ext_config[:tbar] || []) + (ext_config[:fbar] || [])
+          bar_items = (config[:bbar] || []) + (config[:tbar] || []) + (config[:fbar] || [])
           bar_items.uniq!
           collect_actions(bar_items)
         end

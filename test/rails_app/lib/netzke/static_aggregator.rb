@@ -2,18 +2,15 @@ module Netzke
   class StaticAggregator < Widget::Base
     def default_config
       super.merge(
-        :ext_config => {
-          :items => [{
-            :region => 'center',
-            :xtype => "netzkeservercaller",
-          }.merge(aggregatee_instance(:center_panel).js_config),{
-            :region => 'west',
-            :xtype => "netzkeextendedservercaller",
-            :width => 300,
-            :split => true
-          }.merge(aggregatee_instance(:west_panel).js_config)]
-          
-        }
+        :items => [{
+          :region => 'center',
+          :xtype => "netzkeservercaller",
+        }.merge(aggregatee_instance(:center_panel).js_config),{
+          :region => 'west',
+          :xtype => "netzkeextendedservercaller",
+          :width => 300,
+          :split => true
+        }.merge(aggregatee_instance(:west_panel).js_config)]
       )
     end
     

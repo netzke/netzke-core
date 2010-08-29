@@ -39,7 +39,7 @@ module Netzke
 
             # Default instance config
             :default_config => {
-              :persistent_config => true
+              # :persistent_config => true
             }
           })
         end
@@ -49,6 +49,10 @@ module Netzke
           @@config[self.name] ||= c
         end
 
+        # Config options that should not go to the client side
+        def server_side_config_options
+          []
+        end
     
       end
     
@@ -109,10 +113,6 @@ module Netzke
           key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
         end
       
-        def ext_config
-          config[:ext_config] || {}
-        end
-
         # Like normal config, but stored in session
         def weak_session_config
           widget_session[:weak_session_config] ||= {}
