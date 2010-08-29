@@ -1,5 +1,13 @@
 module Netzke
   module Widget
+    # == Widget javascript code
+    # Here's a brief explanation on how a javascript class for a widget gets built.
+    # Widget gets defined as a constructor (a function) by +js_class+ class method (see "Inside widget's contstructor").
+    # +Ext.extend+ provides inheritance from an Ext class specified in +js_base_class+ class method.
+    # 
+    # == Inside widget's constructor
+    # * Widget's constructor gets called with a parameter that is a configuration object provided by +js_config+ instance method. This configuration is specific for the instance of the widget, and, for example, contains this widget's unique id. As another example, by means of this configuration object, a grid receives the configuration array for its columns, a form - for its fields, etc. With other words, everything that may change from instance to instance of the same widget's class, goes in here.
+    #
     module Javascript
       module ClassMethods
         # the JS (Ext) class that we inherit from on JS-level

@@ -1,11 +1,11 @@
 require 'active_support'
-require 'netzke/base_js'
 require 'netzke/widget/javascript'
 require 'netzke/widget/stylesheets'
 require 'netzke/widget/api'
 require 'netzke/widget/aggregation'
 require 'netzke/widget/configuration'
 require 'netzke/widget/persistence'
+require 'netzke/widget/embedding'
 
 module Netzke
   module Widget
@@ -49,11 +49,11 @@ module Netzke
       
       include Configuration
       include Persistence
-      include Netzke::BaseJs # javascript (client-side)
       include Javascript
       include Api
       include Aggregation
       include Stylesheets
+      include Embedding
 
       attr_accessor :parent, :name, :global_id #, :permissions, :session
 
