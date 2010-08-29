@@ -81,7 +81,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
         # to be reused at the moment of widget instantiation)
         def js_class(cached = [])
           # Defining the scope if it isn't known yet
-          res = js_full_scope == "Netzke.classes" ? "" : %Q{
+          res = js_full_scope == js_default_scope ? "" : %Q{
           Ext.ns("#{js_full_scope}");
           }
 

@@ -47,8 +47,8 @@ module Netzke
     #       :model => "User" # FormPanel specific option
     class Base
       
-      include Configuration
       include Persistence
+      include Configuration
       include Javascript
       include Api
       include Aggregation
