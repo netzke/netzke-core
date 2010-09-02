@@ -1,7 +1,7 @@
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.version = "0.5.3"
+    gemspec.version = "0.6.0"
     gemspec.name = "netzke-core"
     gemspec.summary = "Build ExtJS/Rails widgets with minimum effort"
     gemspec.description = "Allows building ExtJS/Rails reusable code in a DRY way"
@@ -9,15 +9,13 @@ begin
     gemspec.homepage = "http://github.com/skozlov/netzke-core"
     gemspec.rubyforge_project = "netzke-core"
     gemspec.authors = ["Sergei Kozlov"]
+    gemspec.add_dependency("activesupport", ">=3.0.0")
     gemspec.post_install_message = <<-MESSAGE
 
 ========================================================================
 
            Thanks for installing Netzke Core!
            
-  Don't forget to run "./script/generate netzke_core" for each Rails 
-  app that will be using this gem.
-
   Netzke home page:     http://netzke.org
   Netzke Google Groups: http://groups.google.com/group/netzke
   Netzke tutorials:     http://blog.writelesscode.com
