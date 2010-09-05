@@ -1,5 +1,7 @@
 module Netzke
   module Widget
+    # TODO: 
+    # rename persistent_config_ to persistence_
     module Persistence
       class AbstractPersistenceManager < ActiveRecord::Base
         abstract_class = true
@@ -16,6 +18,7 @@ module Netzke
       end
     
       module InstanceMethods
+        
         # If the widget has persistent config in its disposal
         def persistent_config_enabled?
           !persistent_config_manager_class.nil? && initial_config[:persistent_config]
@@ -25,18 +28,18 @@ module Netzke
         #     persistent_config["window.size"] = 100
         #     persistent_config["window.size"] => 100
         # This method is user/role-aware
-        def persistent_config
-          if persistent_config_enabled?
-            config_class = self.class.persistent_config_manager_class
-            config_class.widget_name = persistence_key.to_s # pass to the config class our unique name
-            config_class
-          else
-            # if we can't use presistent config, all the calls to it will always return nil, 
-            # and the "="-operation will be ignored
-            logger.debug "==> NETZKE: no persistent config is set up for widget '#{global_id}'"
-            {}
-          end
-        end
+        # def persistent_config
+        #   if persistent_config_enabled?
+        #     config_class = self.class.persistent_config_manager_class
+        #     config_class.widget_name = persistence_key.to_s # pass to the config class our unique name
+        #     config_class
+        #   else
+        #     # if we can't use presistent config, all the calls to it will always return nil, 
+        #     # and the "="-operation will be ignored
+        #     logger.debug "==> NETZKE: no persistent config is set up for widget '#{global_id}'"
+        #     {}
+        #   end
+        # end
 
         # Access to the global persistent config (e.g. of another widget)
         def global_persistent_config(owner = nil)
@@ -66,31 +69,45 @@ module Netzke
         # 
         # this method will return the following hash:
         #     {:enabled => true, :layout => {:width => 100, :header => {:height => 20}}}
-        def persistent_config_hash
-          return {} if !persistent_config_enabled?
-          
-          @persistent_config_hash ||= begin
-            prefs = NetzkePreference.find_all_for_widget(persistence_key.to_s)
-            res = {}
-            prefs.each do |p|
-              hsh_levels = p.name.split("__").map(&:to_sym)
-              tmp_res = {} # it decends into itself, building itself
-              anchor = {} # it will keep the tail of tmp_res
-              hsh_levels.each do |level_prefix|
-                tmp_res[level_prefix] ||= level_prefix == hsh_levels.last ? p.normalized_value : {}
-                anchor = tmp_res[level_prefix] if level_prefix == hsh_levels.first
-                tmp_res = tmp_res[level_prefix]
-              end
-              # Now 'anchor' is a hash that represents the path to the single value, 
-              # for example: {:ext_config => {:title => 100}} (which corresponds to ext_config__title)
-              # So we need to recursively merge it into the final result
-              res.deep_merge!(hsh_levels.first => anchor)
-            end
-            res.deep_convert_keys{ |k| k.to_sym } # recursively symbolize the keys
+        # def persistent_config_hash_OLD
+        #   return {} if !persistent_config_enabled?
+        #   
+        #   @persistent_config_hash ||= begin
+        #     prefs = NetzkePreference.find_all_for_widget(persistence_key.to_s)
+        #     res = {}
+        #     prefs.each do |p|
+        #       hsh_levels = p.name.split("__").map(&:to_sym)
+        #       tmp_res = {} # it decends into itself, building itself
+        #       anchor = {} # it will keep the tail of tmp_res
+        #       hsh_levels.each do |level_prefix|
+        #         tmp_res[level_prefix] ||= level_prefix == hsh_levels.last ? p.normalized_value : {}
+        #         anchor = tmp_res[level_prefix] if level_prefix == hsh_levels.first
+        #         tmp_res = tmp_res[level_prefix]
+        #       end
+        #       # Now 'anchor' is a hash that represents the path to the single value, 
+        #       # for example: {:ext_config => {:title => 100}} (which corresponds to ext_config__title)
+        #       # So we need to recursively merge it into the final result
+        #       res.deep_merge!(hsh_levels.first => anchor)
+        #     end
+        #     res.deep_convert_keys{ |k| k.to_sym } # recursively symbolize the keys
+        #   end
+        # end
+        
+        def update_persistent_options(hash)
+          if persistent_config_enabled?
+            options = persistent_options
+            persistent_config_manager_class.pref_to_write(global_id).update_attribute(:value, options.deep_merge(hash))
+          else
+            logger.debug "==> NETZKE warning: no persistence enabled for widget '#{global_id}'"
           end
         end
         
-        # some convenience for instances
+        def persistent_options
+          return {} if !persistent_config_enabled?
+          persistent_config_manager_class.pref_to_read(global_id).try(:value) || {}
+        end
+        
+        # A convenience method for instances
         def persistent_config_manager_class
           self.class.persistent_config_manager_class
         end

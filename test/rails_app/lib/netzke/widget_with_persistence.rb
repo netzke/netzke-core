@@ -1,8 +1,9 @@
 module Netzke
   class WidgetWithPersistence < Widget::Base
-    def config
+    def default_config
       {
-        :title => persistent_config[:the_title] || "No Title (yet!)"
+        :title => "No Title (yet!)",
+        :persistent_config => true
       }.deep_merge super
     end
     
@@ -27,7 +28,7 @@ module Netzke
     
     api :whats_up
     def whats_up(params)
-      persistent_config[:the_title] = "New Title!"
+      update_persistent_options(:title => "New Title!")
       {}
     end
     

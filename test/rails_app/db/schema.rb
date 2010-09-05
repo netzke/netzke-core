@@ -10,15 +10,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100830211453) do
+ActiveRecord::Schema.define(:version => 20100905214933) do
 
   create_table "netzke_preferences", :force => true do |t|
-    t.string   "name"
-    t.string   "pref_type"
+    t.string   "key"
     t.text     "value"
     t.integer  "user_id"
     t.integer  "role_id"
-    t.string   "widget_name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

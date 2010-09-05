@@ -69,14 +69,14 @@ module Netzke
 
         # Config that is not overwritten by parents and sessions
         def independent_config
-          @independent_config ||= initial_config.deep_merge(persistent_config_hash)
+          @independent_config ||= initial_config.deep_merge(persistent_options)
         end
 
         # Resulting config that takes into account all possible ways to configure a widget. *Read only*.
         # Translates into something like this:
         #     default_config.
         #     deep_merge(@passed_config).
-        #     deep_merge(persistent_config_hash).
+        #     deep_merge(persistent_options).
         #     deep_merge(strong_parent_config).
         #     deep_merge(strong_session_config)
         def config
