@@ -72,12 +72,6 @@ module Netzke
           @independent_config ||= initial_config.deep_merge(persistent_config_hash)
         end
 
-        # If the widget has persistent config in its disposal
-        def persistent_config_enabled?
-          # !persistent_config_manager_class.nil? && initial_config[:persistent_config]
-          false
-        end
-      
         # Resulting config that takes into account all possible ways to configure a widget. *Read only*.
         # Translates into something like this:
         #     default_config.

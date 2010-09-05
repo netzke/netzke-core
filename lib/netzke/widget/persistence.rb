@@ -1,10 +1,14 @@
 module Netzke
   module Widget
     module Persistence
+      class AbstractPersistenceManager < ActiveRecord::Base
+        abstract_class = true
+      end
+      
       module ClassMethods
         # Persistent config manager class
         def persistent_config_manager_class
-          Netzke::Main.config[:persistent_config_manager].try(:constantize)
+          Netzke::Widget::Base.config[:persistent_config_manager].try(:constantize)
         rescue NameError
           nil
         end
@@ -12,6 +16,11 @@ module Netzke
       end
     
       module InstanceMethods
+        # If the widget has persistent config in its disposal
+        def persistent_config_enabled?
+          !persistent_config_manager_class.nil? && initial_config[:persistent_config]
+        end
+        
         # Access to own persistent config, e.g.:
         #     persistent_config["window.size"] = 100
         #     persistent_config["window.size"] => 100

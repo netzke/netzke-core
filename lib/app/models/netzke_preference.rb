@@ -76,7 +76,7 @@ class NetzkePreference < ActiveRecord::Base
   #   
   def self.pref_to_read(name)
     name = name.to_s
-    session = Netzke::Base.session
+    session = Netzke::Main.session
     cond = {:name => name, :widget_name => self.widget_name}
     
     if session[:masq_user]
@@ -111,7 +111,7 @@ class NetzkePreference < ActiveRecord::Base
   
   def self.pref_to_write(name)
     name = name.to_s
-    session = Netzke::Base.session
+    session = Netzke::Main.session
     cond = {:name => name, :widget_name => self.widget_name}
     
     if session[:masq_user]
@@ -144,7 +144,7 @@ class NetzkePreference < ActiveRecord::Base
   end
   
   def self.find_all_for_widget(name)
-    session = Netzke::Base.session
+    session = Netzke::Main.session
     cond = {:widget_name => name}
     
     if session[:masq_user] || session[:masq_role]
