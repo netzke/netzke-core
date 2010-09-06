@@ -7,7 +7,7 @@ module Netzke
       }.deep_merge super
     end
     
-    def self.js_extend_properties
+    def self.js_properties
       {
         :bbar => [{:text => "Tell server to store new title", :ref => "../button"}],
         :bug_server => <<-END_OF_JAVASCRIPT.l,

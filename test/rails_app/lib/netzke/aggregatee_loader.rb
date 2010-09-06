@@ -9,7 +9,7 @@ module Netzke
       }
     end
     
-    def self.js_extend_properties
+    def self.js_properties
       {
         :title => "Aggregatee Loader",
         :layout => 'fit',

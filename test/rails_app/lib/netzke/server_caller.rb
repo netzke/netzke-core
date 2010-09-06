@@ -1,7 +1,7 @@
 module Netzke
   class ServerCaller < Widget::Base
     
-    def self.js_extend_properties
+    def self.js_properties
       {
         :title => "Server Caller",
         :html => "Wow",

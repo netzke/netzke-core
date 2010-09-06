@@ -1,6 +1,9 @@
 = v0.6.0 - EDGE
 * Rails3 compatibility
 
+* Broken backward compatibility
+  * js_extend_properties renamed to js_properties
+
 = v0.5.3 - 2010-06-14
 * Fix: Getting rid of deprecation warnings about tasks not sitting in lib.
 

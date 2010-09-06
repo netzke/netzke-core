@@ -16,7 +16,7 @@ module Netzke
         end
 
         # Properties (including methods) that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
-        def js_extend_properties 
+        def js_properties 
           {}
         end
 
@@ -94,10 +94,10 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
   # };
   #           END_OF_JAVASCRIPT
 
-            # Do we specify our own extend properties (overriding js_extend_properties)? 
+            # Do we specify our own extend properties (overriding js_properties)? 
             # If so, include them, if not - don't re-include those from the parent.
-            res << (singleton_methods(false).include?(:js_extend_properties) ? %Q{
-  #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name}, #{js_extend_properties.to_nifty_json});
+            res << (singleton_methods(false).include?(:js_properties) ? %Q{
+  #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name}, #{js_properties.to_nifty_json});
             } : %Q{
   #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name});
             })
@@ -116,7 +116,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           #{js_full_class_name}.superclass.constructor.call(this, config);
         };
         
-        Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.widgetMixIn(#{js_base_class})));
+        Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_properties.to_nifty_json}, Ext.widgetMixIn(#{js_base_class})));
         
         // Register xtype
         Ext.reg("#{js_xtype}", #{js_full_class_name});
