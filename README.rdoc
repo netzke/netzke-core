@@ -31,7 +31,18 @@ Here's how to embed a Netzke widget into your Rails view.
 2. In your view use the <tt>netzke</tt> helper to embed a widget. Here's an example showing how to embed a <tt>Netzke::GridPanel</tt>:
 
     <%= netzke :users, :class_name => "GridPanel", :model => "User" %>
+
+== Tests
+netzke-core is bundled with a well documented testing Rails app which can be run independently. Check its source code to get an idea about the basic functionality of the framework.
+
+For cucumber tests:
+
+    cucumber features
     
+RSpec tests:
+
+    rspec spec
+
 == More info
 Netzke website: http://netzke.org
 

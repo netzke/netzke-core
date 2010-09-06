@@ -3,9 +3,6 @@ module Netzke
     # TODO: 
     # rename persistent_config_ to persistence_
     module Persistence
-      class AbstractPersistenceManager < ActiveRecord::Base
-        abstract_class = true
-      end
       
       module ClassMethods
         # Persistent config manager class
