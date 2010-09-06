@@ -1,31 +1,3 @@
-# A fix for Ruby 1.9.2 JSON problems:
-# https://rails.lighthouseapp.com/projects/8994/tickets/4494-ruby-192-heads-json-support-breaks-to_json-for-arrays-of-records
-begin
-  require 'json'
-rescue LoadError
-end
-module JSONFix
-  def self.included(base)
-    base.class_eval do
-      undef to_json if defined? to_json
-      def to_json(options = nil)
-        ActiveSupport::JSON.encode(self, options)
-      end
-    end
-  end
-end
-[
-  Hash, 
-  Array, 
-  String, 
-  Numeric, 
-  TrueClass, 
-  FalseClass, 
-  # BigDecimal
-].each {|c| c.send(:include, JSONFix) }
-#
-# End fix #
-
 class Hash
 
   # Recursively convert the keys. Example:
