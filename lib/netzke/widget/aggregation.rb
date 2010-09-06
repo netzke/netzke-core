@@ -124,6 +124,12 @@ module Netzke
           []
         end
 
+        # Aggregatee's js config used when embedding aggregatees as Container's items 
+        # (see static_aggregator.rb for an example)
+        def aggregatee_js_config(id, config = {})
+          aggregatee = aggregatee_instance(id, config)
+          aggregatee.js_config.merge(:xtype => aggregatee.class.js_xtype)
+        end
 
         # Returns global id of a widget in the hierarchy, based on passed reference that follows
         # the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will 

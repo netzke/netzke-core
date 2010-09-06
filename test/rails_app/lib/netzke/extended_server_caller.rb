@@ -2,6 +2,7 @@ module Netzke
   class ExtendedServerCaller < ServerCaller
     def self.js_extend_properties
       {
+        :title => "Extended Server Caller",
         :bug_server => <<-END_OF_JAVASCRIPT.l,
           function(){
             this.body.update("I'm extended server caller");
