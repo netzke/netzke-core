@@ -1,10 +1,11 @@
 module Netzke
   class AggregateeLoader < Widget::Base
-    def initial_late_aggregatees
+    def aggregatees
       {
         :simple_widget => {
           :class_name => "SimpleWidget",
-          :title => "Simple Widget"
+          :title => "Simple Widget",
+          :late_aggregation => true
         }
       }
     end
