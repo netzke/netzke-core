@@ -7,5 +7,5 @@ When /^I execute "([^\"]*)"$/ do |script|
 end
 
 Then /^button "([^"]*)" should be disabled$/ do |arg1|
-  Netzke.should be # PENDING!
+  pending
 end
