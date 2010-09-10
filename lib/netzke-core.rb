@@ -14,7 +14,7 @@ module Netzke
     autoload :Api,      'netzke/widget/api'
     
     # What's below will go to a separate gem
-    autoload :Panel, 'netzke/widget/panel'
+    # autoload :Panel, 'netzke/widget/panel'
   end
 end
 

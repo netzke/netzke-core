@@ -1,6 +1,6 @@
 module Netzke
-  class WidgetThatHasActions < Widget::Panel
-    
+  class WidgetThatHasActions < Widget::Base
+    include Widget::Actions
     def default_config
       super.merge(
         :bbar => [:some_action],
