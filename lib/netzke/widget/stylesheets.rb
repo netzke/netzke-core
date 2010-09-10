@@ -4,14 +4,9 @@ module Netzke
       module ClassMethods
         # Returns all extra CSS code (as string) required by this widget's class
         def css_included
-          res = ""
-
-          singleton_methods(false).include?(:include_css) && include_css.each do |path|
-            f = File.new(path)
-            res << f.read << "\n"
-          end
-
-          res
+          # Prevent re-including code that was already included by the parent
+          # (thus, only include those JS files when include_js was defined in the current class, not in its ancestors)
+          singleton_methods(false).include?(:include_css) ? include_css.inject(""){ |r, path| r + File.new(path).read + "\n"} : ""
         end
 
         # All CSS code needed for this class including the one from the ancestor widget
