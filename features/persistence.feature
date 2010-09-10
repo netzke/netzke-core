@@ -5,11 +5,11 @@ Feature: Persistence
 
   @javascript
   Scenario: The widget with persistence should be able to store and retrieve a persistence setting
-    When I go to the WidgetWithPersistence widget page
+    When I go to the WidgetWithPersistence test page
     Then I should see "No Title (yet!)"
 
     When I press "Tell server to store new title"
-    And I go to the WidgetWithPersistence widget page
+    And I go to the WidgetWithPersistence test page
     Then I should see "New Title!"
   
   

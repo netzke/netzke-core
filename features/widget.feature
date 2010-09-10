@@ -4,7 +4,7 @@ Feature: Testing Netzke::Widget::Base
   I want feature
 
 Scenario: A panel should render nicely
-  When I go to the simple_widget widget page
+  When I go to the SimpleWidget test page
   Then I should see "SimpleWidget"
   And I should see "Inner text"
 

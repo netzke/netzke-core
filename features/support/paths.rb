@@ -26,8 +26,8 @@ module NavigationHelpers
     when /the aggregatee loader page/
       '/panel/aggregatee_loader'
 
-    when /the (.*) widget page/
-      widgets_path(:widget => $1.underscore)
+    when /the (.*) test page/
+      widgets_path(:widget => $1)
 
     else
       begin

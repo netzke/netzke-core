@@ -5,13 +5,13 @@ Feature: Inheritance
 
   @javascript
   Scenario: Inherited widget should successfully call parent methods in Ruby and JavaScript
-    Given I am on the ExtendedServerCaller widget page
+    Given I am on the ExtendedServerCaller test page
     When I press "Call server"
     Then I should see "All quiet here on the server, shiny weather"
     Then I should see "I'm extended server caller"
   
   Scenario: Extended scoped widgets should render
-    Given I am on the ExtendedScopedWidget widget page
+    Given I am on the ScopedWidgets::ExtendedScopedWidget test page
     Then I should see "Extended Scoped Widget Title"
     And I should see "Extended Scoped Widget HTML"
   
