@@ -3,7 +3,7 @@ module Netzke
     # Include JavaScript
     def netzke_js_include
       # ExtJS
-      res = ENV['RAILS_ENV'] == 'development' ? javascript_include_tag("/extjs/adapter/ext/ext-base", "/extjs/ext-all-debug") : javascript_include_tag("/extjs/adapter/ext/ext-base", "/extjs/ext-all")
+      res = ENV['RAILS_ENV'] == 'development' ? javascript_include_tag("/extjs/adapter/ext/ext-base-debug", "/extjs/ext-all-debug") : javascript_include_tag("/extjs/adapter/ext/ext-base", "/extjs/ext-all")
       # Netzke (dynamically generated)
       res << "\n" << javascript_include_tag("/netzke/netzke")
     end
