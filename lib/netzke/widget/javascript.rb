@@ -99,7 +99,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
             res << (singleton_methods(false).include?(:js_properties) ? %Q{
   #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name}, #{js_properties.to_nifty_json});
             } : %Q{
-  #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name});
+  #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name}, {});
             })
 
             res << <<-END_OF_JAVASCRIPT
