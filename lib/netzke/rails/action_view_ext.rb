@@ -5,21 +5,21 @@ module Netzke
       # ExtJS
       res = ENV['RAILS_ENV'] == 'development' ? javascript_include_tag("/extjs/adapter/ext/ext-base", "/extjs/ext-all-debug") : javascript_include_tag("/extjs/adapter/ext/ext-base", "/extjs/ext-all")
       # Netzke (dynamically generated)
-      res << javascript_include_tag("/netzke/netzke")
+      res << "\n" << javascript_include_tag("/netzke/netzke")
     end
 
     # Include CSS
-    def netzke_css_include(theme_name = :default)
+    def netzke_css_include(theme_name = "default")
       # ExtJS base
       res = stylesheet_link_tag("/extjs/resources/css/ext-all")
       # ExtJS theming
-      res << stylesheet_link_tag("/extjs/resources/css/xtheme-#{theme_name}") unless theme_name == :default
+      res << "\n" << stylesheet_link_tag("/extjs/resources/css/xtheme-#{theme_name}") unless theme_name.to_s == "default"
       # Netzke (dynamically generated)
-      res << stylesheet_link_tag("/netzke/netzke")
+      res << "\n" << stylesheet_link_tag("/netzke/netzke")
       
       # External stylesheets (which cannot be loaded dynamically along with the rest of the widget, e.g. due to that 
       # relative paths are used in them)
-      res << stylesheet_link_tag(Netzke::Widget::Base.config[:external_css])
+      res << "\n" << stylesheet_link_tag(Netzke::Widget::Base.config[:external_css])
       
       res
     end
@@ -48,8 +48,7 @@ module Netzke
     #   netzke :my_grid, :class_name => "GridPanel", :columns => [:id, :name, :created_at]
     # On how to configure a widget, see documentation for Netzke::Base or/and specific widget
     def netzke(name, config = {})
-      ::ActiveSupport::Deprecation.warn("widget_class_name option is deprecated. Use class_name instead", caller) if config[:widget_class_name]
-      class_name = config[:class_name] ||= config[:widget_class_name] || name.to_s.camelcase
+      class_name = config[:class_name] ||= name.to_s.camelcase
       config[:name] = name
       Netzke::Main.reg_widget(config)
       w = Netzke::Widget::Base.instance_by_config(config)
