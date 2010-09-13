@@ -3,8 +3,15 @@ Feature: Custom css
   As a role
   I want feature
 
-  Scenario: A widget with hidden header should not display its header
+  @javascript
+  Scenario: A widget with a hidden body should not show show its body
     When I go to the WidgetWithCustomCss test page
-    Then I should see "A widget with the header hidden by means of custom CSS"
-    But  the header of WidgetWithCustomCss widget should be invisible
+    Then I should see "WidgetWithCustomCss"
+    But  the body of WidgetWithCustomCss widget should not be invisible
   
+  @javascript
+  Scenario: A dynamically loaded widget with a hidden body should not display its body
+    When I go to the LoaderOfWidgetWithCustomCss test page
+    And I press "Load WidgetWithCustomCss"
+    Then I should see "WidgetWithCustomCss"
+    But  the body of LoaderOfWidgetWithCustomCss/WidgetWithCustomCss widget should not be invisible

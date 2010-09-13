@@ -5,7 +5,6 @@ module Netzke
     def config
       {
         :title => "WidgetWithCustomCss",
-        :unstyled => true,
         :html => "A widget with the header hidden by means of custom CSS"
       }.deep_merge(super)
     end

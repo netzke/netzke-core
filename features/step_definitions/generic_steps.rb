@@ -9,3 +9,4 @@ end
 Then /^button "([^"]*)" should be disabled$/ do |arg1|
   pending
 end
+

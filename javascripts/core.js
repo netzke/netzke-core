@@ -339,6 +339,9 @@ Ext.widgetMixIn = function(receiver){
       Ext.each(apiPoints, function(intp){
         this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
       }, this);
+
+      // that's where the references to different callback functions will be stored
+      this.callbackHash = {};
       
       // call the original method
       this.initComponentWithoutNetzke();
