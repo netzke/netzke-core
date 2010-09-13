@@ -305,9 +305,7 @@ module Netzke
       
       # Returns all extra CSS code (as string) required by this widget's class
       def css_included
-
-				singleton_methods(false).include?(:include_css) ? include_css.inject("") { |r, path| r + File.new(path).read + "\n"} : ""
-
+        singleton_methods(false).include?("include_css") ? include_css.inject("") { |r, path| r + File.new(path).read + "\n"} : ""
       end
       
       # All CSS code needed for this class including the one from the ancestor widget
