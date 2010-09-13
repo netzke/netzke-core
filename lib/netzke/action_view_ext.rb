@@ -47,6 +47,14 @@ module Netzke
       javascript_tag js
       
     end
+
+		def netzke_css
+			%{
+				<style type="text/css" media="screen">
+					#{content_for(:netzke_css)}
+				</style>
+			}
+		end
     
     # Wrapper for all the above. Use it in your layout.
     # Params: <tt>:ext_theme</tt> - the name of ExtJS theme to apply (optional)
@@ -54,7 +62,7 @@ module Netzke
     #   <%= netzke_init :ext_theme => "grey" %>
     def netzke_init(params = {})
       theme = params[:ext_theme] || :default
-      [netzke_css_include(theme), netzke_js_include, netzke_js].join("\n")
+      [netzke_css_include(theme), netzke_js_include, netzke_css , netzke_js].join("\n")
     end
     
     # Use this helper in your views to embed Netzke widgets. E.g.:
@@ -69,6 +77,7 @@ module Netzke
       w.before_load # inform the widget about initial load
       content_for :netzke_js_classes, w.js_missing_code(@rendered_classes ||= [])
       content_for :netzke_on_ready, "#{w.js_widget_instance}\n\n#{w.js_widget_render}"
+			content_for :netzke_css, w.css_missing_code(@rendered_classes ||= [])
       
       # Now mark this widget's class as rendered, so that we only generate it once per view
       @rendered_classes << class_name unless @rendered_classes.include?(class_name)
