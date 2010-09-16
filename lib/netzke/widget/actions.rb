@@ -51,7 +51,6 @@ module Netzke
         
         # Actions to be used in the config
         def actions
-          Rails.logger.debug "!!! @auto_actions: #{@auto_actions.inspect}\n"
           @auto_actions || {}
         end
 
@@ -73,26 +72,6 @@ module Netzke
           def auto_action_config(action_name)
             {action_name => {:text => action_name.to_s.humanize}}
           end
-        
-          # Extract action names from menus and toolbars.
-          # E.g.: 
-          # collect_actions(["->", {:text => "Menu", :menu => [{:text => "Submenu", :menu => [:another_button]}, "-", :a_button]}])
-          #  => {:a_button => {:text => "A button"}, :another_button => {:text => "Another button"}}
-          # def collect_actions(arry)
-          #   res = {}
-          #   arry.each do |item|
-          #     if item.is_a?(Hash) && menu = item[:menu]
-          #       res.merge!(collect_actions(item[:menu]))
-          #     elsif item.is_a?(Symbol)
-          #       # it's an action
-          #       res.merge!(item => {:text => item.to_s.humanize})
-          #     elsif item.is_a?(String)
-          #       # it's a string item (or maybe JS code)
-          #     else
-          #     end
-          #   end
-          #   res
-          # end
         
       end
       
