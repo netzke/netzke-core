@@ -185,11 +185,23 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
 
           # Recursively include configs of all non-late aggregatees, so that the widget can instantiate them
           # in javascript immediately.
+          # non_late_aggregatees.each_pair do |aggr_name, aggr_config|
+          #   aggr_instance = aggregatee_instance(aggr_name.to_sym)
+          #   aggr_instance.before_load
+          #   res[:"#{aggr_name}_config"] = aggr_instance.js_config
+          # end
+          
+          # Non-late aggregatees
+          aggr_hash = {}
+          
           non_late_aggregatees.each_pair do |aggr_name, aggr_config|
             aggr_instance = aggregatee_instance(aggr_name.to_sym)
             aggr_instance.before_load
-            res[:"#{aggr_name}_config"] = aggr_instance.js_config
+            aggr_hash[aggr_name] = aggr_instance.js_config
           end
+          
+          res[:aggregatees] = aggr_hash unless aggr_hash.empty?
+
 
           # Api (besides the default "load_aggregatee_with_cache" - JavaScript side already knows about it)
           api_points = self.class.api_points.reject{ |p| p == :load_aggregatee_with_cache }
@@ -200,6 +212,9 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
 
           # Inform the JavaScript side if persistent_config is enabled
           # res[:persistent_config] = persistent_config_enabled?
+
+          # Include our xtype
+          res[:xtype] = self.class.js_xtype
 
           # Merge with the rest of config options, besides those that are only meant for the server side
           res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })

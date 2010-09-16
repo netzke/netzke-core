@@ -332,6 +332,15 @@ Ext.widgetMixIn = function(receiver){
     },
 
     initComponentWithNetzke : function() {
+      this.normalizeActions();
+      
+      // Detect menus recursively among our properties, and normalize them
+      // this.detectMenus(this);
+      this.detectActions(this);
+      
+      // Recursively detect aggregatees
+      this.detectAggregatees(this.items);
+      
       // Dynamically create methods for api points, so that we could later call them like: this.myApiMethod()
       var config = this;
       var apiPoints = config.netzkeApi || [];
@@ -532,6 +541,96 @@ Ext.override(Ext.Container, {
       this.remove(this.getWidget()); // first delete previous widget 
       this.add(instance);
       this.doLayout();
+    }
+  },
+  
+  /*
+  Actions, menus, toolbars
+  */
+  normalizeActions : function(){
+    // Normalize actions
+    var normActions = {};
+    for (var name in this.actions) {
+      // Create an event for each action (so that higher-level widgets could interfere)
+      this.addEvents(name+'click');
+
+      // Configure the action
+      var actionConfig = this.actions[name];
+      actionConfig.customHandler = actionConfig.handler || actionConfig.fn; //DEPRECATED: .fn is kept for backward compatibility, preferred way is to specify handler
+      actionConfig.handler = this.actionHandler.createDelegate(this); // ! this is the "wrapper-handler", which is common for all actions!
+      actionConfig.name = name;
+      normActions[name] = new Ext.Action(actionConfig);
+    }
+    delete(this.actions);
+    this.actions = normActions;
+  },
+
+  /*
+  Detects action configs in the object, and replaces them with instances of Ext.Action.
+  
+  Example of 'this':
+  this: {
+    actions: {action1: new Ext.Action(1), action2: new Ext.Action(2), ...}, // actions are instantiated in the scope of this.actions
+    bbar: [{action:'action1'}, {action:'action2'}, ...] // these are the action configs, and they correspond to the "actions" property in "this"
+  }
+  */
+  detectActions: function(o){
+    if (Ext.isObject(o)) {
+      Ext.each(["bbar", "tbar", "fbar", "menu", "items"], function(key){
+        if (o[key]) this.detectActions(o[key]);
+      }, this);
+    } else if (Ext.isArray(o)) {
+      var a = o;
+      Ext.each(a, function(el, i){
+        if (Ext.isObject(el)) {
+          if (el.action) {
+            a[i] = this.actions[el.action.camelize(true)];
+          } else {
+            this.detectActions(el);
+          }
+        } else if (Ext.isArray(el)) {
+          this.detectActions(el);
+        }
+      }, this);
+    }
+  },
+
+  detectAggregatees: function(o){
+    if (Ext.isObject(o)) {
+      if (o.items) this.detectAggregatees(o.items);
+    } else if (Ext.isArray(o)) {
+      var a = o;
+      Ext.each(a, function(el, i){
+        if (el.aggregatee) {
+          a[i] = Ext.apply(this.aggregatees[el.aggregatee.camelize(true)], el);
+          delete a[i].aggregatee;
+        } else if (el.items) this.detectAggregatees(el.items);
+      }, this);
+    }
+  },
+
+  // Common handler for all widget's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
+  actionHandler : function(comp){
+    var actionName = comp.name;
+    // If firing corresponding event doesn't return false, call the handler
+    if (this.fireEvent(actionName+'click', comp)) {
+      var action = this.actions[actionName];
+      var customHandler = action.initialConfig.customHandler;
+      var methodName = (customHandler && customHandler.camelize(true)) || "on" + actionName.camelize();
+      if (!this[methodName]) {throw "Netzke: action handler '" + methodName + "' is undefined"}
+      
+      // call the handler passing it the triggering component
+      this[methodName](comp);
+    }
+  },
+
+  // Common handler for tools
+  toolActionHandler : function(tool){
+    // If firing corresponding event doesn't return false, call the handler
+    if (this.fireEvent(tool.id+'click')) {
+      var methodName = "on"+tool.camelize();
+      if (!this[methodName]) {throw "Netzke: handler for tool '"+tool+"' is undefined"}
+      this[methodName]();
     }
   }
 });

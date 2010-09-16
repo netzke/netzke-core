@@ -1,5 +1,5 @@
 module Netzke
-  class SimplePanel < Widget::Panel
+  class SimplePanel < Widget::Base
     def default_config
       super.merge(
         :title => "SimplePanel",
