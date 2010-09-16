@@ -55,8 +55,7 @@ module Netzke
         end
 
         def js_config_with_actions #:nodoc
-          orig = js_config_without_actions
-          orig.merge(:actions => actions)
+          js_config_without_actions.merge(:actions => actions)
         end
         
         private

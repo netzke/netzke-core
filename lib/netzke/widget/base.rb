@@ -50,6 +50,7 @@ module Netzke
       include Aggregation
       include Stylesheets
       include Embedding
+      include Actions
 
       attr_accessor :parent, :name, :global_id #, :permissions, :session
 
