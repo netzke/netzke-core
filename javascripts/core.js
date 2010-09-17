@@ -15,6 +15,15 @@ This file gets loaded along with the rest of Ext library at the initial load
 Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 Ext.ns('Netzke'); // Netzke namespace
+
+Netzke.deprecationWarning = function(msg){
+  if (typeof console == 'undefined') {
+    alert('no console');
+  } else {
+    console.info("Netzke deprecation warning: " + msg);
+  }
+}
+
 Ext.ns('Netzke.page'); // namespace for all widget instantces on the page
 Ext.ns('Netzke.classes'); // namespace for all widget classes. TODO: this should be called Netzke.Widget
 
