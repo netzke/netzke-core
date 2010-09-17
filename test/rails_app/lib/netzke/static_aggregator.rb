@@ -1,12 +1,12 @@
 module Netzke
   class StaticAggregator < Widget::Base
-    def default_config
-      super.merge(
+    def config
+      {
         :items => [
           js_aggregatee(:center_panel, :region => 'center'), 
           js_aggregatee(:west_panel, :region => 'west', :width => 300, :split => true)
         ]
-      )
+      }.deep_merge super
     end
     
     def aggregatees

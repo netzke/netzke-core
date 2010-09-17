@@ -1,8 +1,8 @@
 module Netzke
   class WidgetThatHasActions < Widget::Base
     
-    def default_config
-      super.merge(
+    def config
+      {
         :bbar => [:some_action.ext_action, :another_action.ext_action],
         :tbar => [{
           :xtype =>  'buttongroup',
@@ -30,7 +30,7 @@ module Netzke
               :menu => [:some_action.ext_action], :text => 'Format'
           }]
         }]
-      )
+      }.deep_merge super
     end
     
     def actions

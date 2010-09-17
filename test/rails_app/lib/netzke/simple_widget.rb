@@ -1,10 +1,10 @@
 module Netzke
   class SimpleWidget < Widget::Base
-    def default_config
-      super.deep_merge(
+    def config
+      {
         :title => "SimpleWidget",
         :html => "Inner text"
-      )
+      }.deep_merge super
     end
   end
 end
