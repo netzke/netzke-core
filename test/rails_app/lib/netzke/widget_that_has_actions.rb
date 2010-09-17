@@ -3,7 +3,7 @@ module Netzke
     
     def default_config
       super.merge(
-        :bbar => [js_action(:some_action), js_action(:another_action)],
+        :bbar => [:some_action.ext_action, :another_action.ext_action],
         :tbar => [{
           :xtype =>  'buttongroup',
           :columns => 3,
@@ -22,12 +22,12 @@ module Netzke
               :iconCls => 'add',
               :iconAlign => 'top',
               :arrowAlign => 'bottom',
-              :menu => [js_action(:some_action)]
+              :menu => [:some_action.ext_action]
           },{
-              :xtype => 'splitbutton', :text => 'Cut', :menu => [js_action(:another_action)]
-          }, js_action(:another_action), 
+              :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action.ext_action]
+          }, :another_action.ext_action, 
           {
-              :menu => [js_action(:some_action)], :text => 'Format'
+              :menu => [:some_action.ext_action], :text => 'Format'
           }]
         }]
       )

@@ -130,6 +130,10 @@ class Symbol
   def l
     ActiveSupport::JSON::Variable.new(self.to_s)
   end
+  
+  def ext_action
+    {:action => self.to_s}
+  end
 end
 
 module ActiveSupport
