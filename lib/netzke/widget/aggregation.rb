@@ -126,7 +126,6 @@ module Netzke
         # Aggregatee's js config used when embedding aggregatees as Container's items 
         # (see static_aggregator.rb for an example)
         def js_aggregatee(name, config = {})
-          aggregatee = aggregatee_instance(name, config)
           config.merge(:aggregatee => name)
         end
 

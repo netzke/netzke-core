@@ -94,12 +94,15 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
   # };
   #           END_OF_JAVASCRIPT
 
+            # Do we have js_base_class defined? If so, use it instead of the js_full_class_name of the superclass
+            js_class = singleton_methods(false).include?(:js_base_class) ? js_base_class : superclass.js_full_class_name
+            
             # Do we specify our own extend properties (overriding js_properties)? 
             # If so, include them, if not - don't re-include those from the parent.
             res << (singleton_methods(false).include?(:js_properties) ? %Q{
-  #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name}, #{js_properties.to_nifty_json});
+  #{js_full_class_name} = Ext.extend(#{js_class}, #{js_properties.to_nifty_json});
             } : %Q{
-  #{js_full_class_name} = Ext.extend(#{superclass.js_full_class_name}, {});
+  #{js_full_class_name} = Ext.extend(#{js_class}, {});
             })
 
             res << <<-END_OF_JAVASCRIPT
