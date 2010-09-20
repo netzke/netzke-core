@@ -6,6 +6,9 @@
   * ext_config config level is removed; put all that configuration in the top level
   * all actions should now be wrapped up in the js_action method
 
+* New
+  * Use the +ext+ helper in the views to embed any (pure) Ext component into a view.
+  
 = v0.5.3 - 2010-06-14
 * Fix: Getting rid of deprecation warnings about tasks not sitting in lib.
 
