@@ -99,7 +99,8 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
             
             # Do we specify our own extend properties (overriding js_properties)? 
             # If so, include them, if not - don't re-include those from the parent.
-            res << (singleton_methods(false).include?(:js_properties) ? %Q{
+            # (converting to sym is for 1.8.7-compatibility)
+            res << (singleton_methods(false).map(&:to_sym).include?(:js_properties) ? %Q{
   #{js_full_class_name} = Ext.extend(#{js_class}, #{js_properties.to_nifty_json});
             } : %Q{
   #{js_full_class_name} = Ext.extend(#{js_class}, {});
