@@ -58,13 +58,17 @@ module Netzke
       # * the config hash is available to the widget after the "super" call in the initializer
       # * override/add new default configuration options into the "default_config" method 
       # (the config hash is not yet available)
-      def initialize(config = {}, parent = nil)
+      def initialize(conf = {}, parent = nil)
         # @session       = Netzke::Base.session
-        @passed_config = config # configuration passed at the moment of instantiation
+        @passed_config = conf # configuration passed at the moment of instantiation
         @parent        = parent
-        @name          = config[:name].nil? ? short_widget_class_name.underscore : config[:name].to_s
+        @name          = conf[:name].nil? ? short_widget_class_name.underscore : conf[:name].to_s
         @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
         @flash         = []
+        @aggregatees   = {}
+        
+        # Detect aggregatees and build normalized @js_items
+        process_items_config
       end
     
       # Short widget class name, e.g.: 

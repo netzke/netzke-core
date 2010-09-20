@@ -12,7 +12,9 @@ module Netzke
         end
 
         def aggregatees
-          @aggregatees ||= initial_aggregatees.merge(initial_late_aggregatees.each_pair{|k,v| v.merge!(:late_aggregation => true)})
+          # detect_aggregatees_in_config if @aggregatees.nil?
+          @aggregatees
+          # @aggregatees ||= initial_aggregatees.merge(initial_late_aggregatees.each_pair{|k,v| v.merge!(:late_aggregation => true)})
         end
 
         def non_late_aggregatees
@@ -48,25 +50,28 @@ module Netzke
         # recursively instantiates an aggregatee based on its "path": e.g. if we have an aggregatee :aggr1 which in its turn has an aggregatee :aggr10, the path to the latter would be "aggr1__aggr10"
         # TODO: introduce memoization
         def aggregatee_instance(name, strong_config = {})
-          aggregator = self
-          name.to_s.split('__').each do |aggr|
-            aggr = aggr.to_sym
-            aggregatee_config = aggregator.aggregatees[aggr]
-            raise ArgumentError, "No aggregatee '#{aggr}' defined for widget '#{aggregator.global_id}'" if aggregatee_config.nil?
-            short_widget_class_name = aggregatee_config[:class_name]
-            raise ArgumentError, "No class_name specified for aggregatee #{aggr} of #{aggregator.global_id}" if short_widget_class_name.nil?
-            widget_class = "Netzke::#{short_widget_class_name}".constantize
+          @cached_aggregatee_instances ||= {}
+          @cached_aggregatee_instances[name] ||= begin
+            aggregator = self
+            name.to_s.split('__').each do |aggr|
+              aggr = aggr.to_sym
+              aggregatee_config = aggregator.aggregatees[aggr]
+              raise ArgumentError, "No aggregatee '#{aggr}' defined for widget '#{aggregator.global_id}'" if aggregatee_config.nil?
+              short_widget_class_name = aggregatee_config[:class_name]
+              raise ArgumentError, "No class_name specified for aggregatee #{aggr} of #{aggregator.global_id}" if short_widget_class_name.nil?
+              widget_class = "Netzke::#{short_widget_class_name}".constantize
 
-            conf = weak_children_config.
-              deep_merge(aggregatee_config).
-              deep_merge(strong_config). # we may want to reconfigure the aggregatee at the moment of instantiation
-              merge(:name => aggr)
+              conf = weak_children_config.
+                deep_merge(aggregatee_config).
+                deep_merge(strong_config). # we may want to reconfigure the aggregatee at the moment of instantiation
+                merge(:name => aggr)
 
-            aggregator = widget_class.new(conf, aggregator) # params: config, parent
-            # aggregator.weak_children_config = weak_children_config
-            # aggregator.strong_children_config = strong_children_config
+              aggregator = widget_class.new(conf, aggregator) # params: config, parent
+              # aggregator.weak_children_config = weak_children_config
+              # aggregator.strong_children_config = strong_children_config
+            end
+            aggregator
           end
-          aggregator
         end
         
         # API: provides what is necessary for the browser to render a widget.
@@ -170,6 +175,32 @@ module Netzke
             super
           end
         end
+        
+        private
+          
+          # If :items are specified, recursively detect aggregatees in them, and build @js_items - normalized items config that will have aggregatee configs
+          # replaced by references to corresponding aggregatees.
+          def process_items_config
+            @js_items = config[:items]
+            @aggregatee_index = 0 # for automatic naming those aggregatees that have no name specified
+            @js_items && detect_aggregatees_in_items(@js_items)
+          end
+
+          def detect_aggregatees_in_hash(hsh)
+            hsh[:items] && detect_aggregatees_in_items(hsh[:items])
+          end
+
+          def detect_aggregatees_in_items(items)
+            items.each_with_index do |item, i|
+              if item[:class_name]
+                aggr_name = item[:name] || :"aggregatee#{@aggregatee_index}"; @aggregatee_index += 1
+                @aggregatees[aggr_name] = item
+                items[i] = js_aggregatee(aggr_name)
+              else
+                detect_aggregatees_in_hash(item)
+              end
+            end
+          end
 
       end
       

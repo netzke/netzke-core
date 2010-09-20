@@ -187,14 +187,6 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           # Unique id of the widget
           res.merge!(:id => global_id)
 
-          # Recursively include configs of all non-late aggregatees, so that the widget can instantiate them
-          # in javascript immediately.
-          # non_late_aggregatees.each_pair do |aggr_name, aggr_config|
-          #   aggr_instance = aggregatee_instance(aggr_name.to_sym)
-          #   aggr_instance.before_load
-          #   res[:"#{aggr_name}_config"] = aggr_instance.js_config
-          # end
-          
           # Non-late aggregatees
           aggr_hash = {}
           
@@ -206,9 +198,8 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           
           res[:aggregatees] = aggr_hash unless aggr_hash.empty?
 
-
           # Api (besides the default "load_aggregatee_with_cache" - JavaScript side already knows about it)
-          api_points = self.class.api_points.reject{ |p| p == :load_aggregatee_with_cache }
+          api_points = self.class.api_points - [:load_aggregatee_with_cache]
           res.merge!(:netzke_api => api_points) unless api_points.empty?
 
           # Widget class name. Needed for dynamic instantiation in javascript.
@@ -222,7 +213,9 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
 
           # Merge with the rest of config options, besides those that are only meant for the server side
           res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
-
+          
+          res[:items] = @js_items
+          
           res
         end
 

@@ -29,6 +29,9 @@ Ext.ns('Netzke.classes'); // namespace for all widget classes. TODO: this should
 
 Ext.QuickTips.init();
 
+// Because of Netzke's double-underscore notation, Ext.TabPanel should have a different id-delimiter
+Ext.TabPanel.prototype.idDelimiter = "___";
+
 // We don't want no state managment by default, thank you!
 Ext.state.Provider.prototype.set = function(){};
 
@@ -135,6 +138,11 @@ Ext.widgetMixIn = function(receiver){
 
       // do the remote API call
       this.loadAggregateeWithCache(apiParams);
+    },
+
+    // Returns an aggregatee instance if it was instantiated, and fires an exception otherwise
+    aggregateeInstance: function(aggrName) {
+      
     },
 
     /*
