@@ -584,17 +584,24 @@ Ext.override(Ext.Container, {
 
   /*
   Detects action configs in the object, and replaces them with instances of Ext.Action.
+  This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
   
   Example of 'this':
   this: {
     actions: {action1: new Ext.Action(1), action2: new Ext.Action(2), ...}, // actions are instantiated in the scope of this.actions
-    bbar: [{action:'action1'}, {action:'action2'}, ...] // these are the action configs, and they correspond to the "actions" property in "this"
+    bbar: [{action:'action1'}, {xtype:'buttongroup', items:[{action: 'action2'}, ...], ...] // these are the action configs, and they correspond to the "actions" property in "this"
   }
   */
   detectActions: function(o){
     if (Ext.isObject(o)) {
+      if (o.handler && Ext.isFunction(this[o.handler.camelize(true)])) {
+         // This button config has a handler specified as string - replace it with reference to a real function if it exists
+        o.handler = this[o.handler.camelize(true)];
+      }
       Ext.each(["bbar", "tbar", "fbar", "menu", "items"], function(key){
-        if (o[key]) this.detectActions(o[key]);
+        if (o[key]) {
+          this.detectActions(o[key]);
+        }
       }, this);
     } else if (Ext.isArray(o)) {
       var a = o;
