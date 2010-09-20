@@ -7,6 +7,7 @@ require 'netzke/core_ext'
 
 module Netzke
   autoload :Main, 'netzke/main'
+  autoload :ExtComponent, 'netzke/ext_component'
   
   module Widget
     autoload :Base,     'netzke/widget/base'

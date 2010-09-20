@@ -70,6 +70,12 @@ module Netzke
       # Return the html for this widget
       raw(w.js_widget_html)
     end
+    
+    def ext(name, config = {})
+      comp = Netzke::ExtComponent.new(name, config)
+      content_for :netzke_on_ready, raw("#{comp.js_widget_render}")
+      raw(comp.js_widget_html)
+    end
   end
 end
 

@@ -57,6 +57,7 @@ RailsApp::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
 
   match 'widgets/:widget' => 'widgets#show', :as => "widgets"
+  match 'ext/:widget' => 'widgets#ext', :as => "ext"
   
   match ':controller(/:action(/:id(.:format)))'
   
