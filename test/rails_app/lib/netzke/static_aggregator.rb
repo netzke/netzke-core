@@ -9,8 +9,8 @@ module Netzke
           
           # 2 - inline (will be conerted into an aggregatee accessible with the +aggregatee+ method)
           {:name => :west_panel, :class_name => "ExtendedServerCaller", :region => 'west', :width => 300, :split => true}
-          # js_aggregatee(:west_panel, :region => 'west', :width => 300, :split => true)
-        ]
+        ],
+        :bbar => [:update_west_panel.ext_action, :update_center_panel.ext_action]
       }.deep_merge super
     end
     
@@ -19,16 +19,27 @@ module Netzke
         :center_panel => {
           :class_name => "ServerCaller"
         }
-        # :west_panel => {
-        #   :class_name => "ExtendedServerCaller"
-        # }
       )
     end
     
     def self.js_properties
       {
         :title => "Static Aggregator",
-        :layout => 'border'
+        
+        :layout => 'border',
+        
+        :on_update_west_panel => <<-END_OF_JAVASCRIPT.l,
+          function(){
+            this.items.filter('name', 'west_panel').first().body.update('West Panel Body Updated');
+          }
+        END_OF_JAVASCRIPT
+        
+        :on_update_center_panel => <<-END_OF_JAVASCRIPT.l,
+          function(){
+            this.items.filter('name', 'center_panel').first().body.update('Center Panel Body Updated');
+          }
+        END_OF_JAVASCRIPT
+        
       }
     end
   end
