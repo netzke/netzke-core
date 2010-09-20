@@ -51,7 +51,7 @@ module Netzke
         
         # Actions to be used in the config
         def actions
-          @auto_actions || {}
+          extract_actions(config)
         end
 
         def js_config_with_actions #:nodoc
@@ -60,16 +60,24 @@ module Netzke
         
         private
         
-          # Returns a config hash that is detected at JS side as an action.
-          # Also creates a default action config (for the case when this action is not defined in the +actions+ method).
-          def js_action(action_name)
-            @auto_actions ||= {}
-            @auto_actions.merge!(auto_action_config(action_name))
-            {:action => action_name}
+          def extract_actions(hsh)
+            hsh.each_pair.inject({}) do |r,(k,v)| 
+              v.is_a?(Array) ? r.merge(extract_actions_from_array(v)) : r
+            end
           end
-        
+          
+          def extract_actions_from_array(arry)
+            arry.inject({}) do |r, el|
+              if el.is_a?(Hash)
+                el[:action] ? r.merge(el[:action] => auto_action_config(el[:action])) : r.merge(extract_actions(el))
+              else
+                r
+              end
+            end
+          end
+          
           def auto_action_config(action_name)
-            {action_name => {:text => action_name.to_s.humanize}}
+            {:text => action_name.to_s.humanize}
           end
         
       end
