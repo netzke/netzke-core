@@ -18,7 +18,7 @@ Ext.ns('Netzke'); // Netzke namespace
 
 Netzke.deprecationWarning = function(msg){
   if (typeof console == 'undefined') {
-    alert('no console');
+    // no console defined
   } else {
     console.info("Netzke deprecation warning: " + msg);
   }
@@ -531,7 +531,7 @@ Ext.override(Ext.Container, {
   
   // Get the widget that we are hosting
   getWidget: function(){
-    return this.items ? this.items.get(0) : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
+    return this.items ? this.items.first() : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
   },
   
   // Remove the child
