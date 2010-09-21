@@ -598,7 +598,8 @@ Ext.override(Ext.Container, {
          // This button config has a handler specified as string - replace it with reference to a real function if it exists
         o.handler = this[o.handler.camelize(true)];
       }
-      Ext.each(["bbar", "tbar", "fbar", "menu", "items"], function(key){
+      // TODO: this should become configurable
+      Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu"], function(key){
         if (o[key]) {
           this.detectActions(o[key]);
         }
