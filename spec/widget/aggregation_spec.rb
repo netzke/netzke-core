@@ -13,7 +13,7 @@ module Netzke
         })
       end
 
-      def initial_aggregatees
+      def aggregatees
         {
           :nested_one => {:class_name => 'NestedWidgetOne'},
           :nested_two => {:class_name => 'NestedWidgetTwo'}
@@ -36,7 +36,7 @@ module Netzke
     end
 
     class NestedWidgetTwo < Widget::Base
-      def initial_aggregatees
+      def aggregatees
         {
           :nested => {:class_name => 'DeepNestedWidget'}
         }
@@ -44,7 +44,7 @@ module Netzke
     end
 
     class DeepNestedWidget < Widget::Base
-      def initial_aggregatees
+      def aggregatees
         {
           :nested => {:class_name => "VeryDeepNestedWidget"}
         }
