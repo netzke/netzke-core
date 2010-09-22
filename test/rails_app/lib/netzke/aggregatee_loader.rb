@@ -1,10 +1,10 @@
 module Netzke
-  class AggregateeLoader < Widget::Base
+  class AggregateeLoader < Component::Base
     def aggregatees
       {
-        :simple_widget => {
-          :class_name => "SimpleWidget",
-          :title => "Simple Widget",
+        :simple_component => {
+          :class_name => "SimpleComponent",
+          :title => "Simple Component",
           :late_aggregation => true
         }
       }
@@ -19,7 +19,7 @@ module Netzke
           function(){
             #{js_full_class_name}.superclass.initComponent.call(this);
             this.button.on('click', function(){
-              this.loadAggregatee({id: 'simple_widget', container: this.getId()});
+              this.loadAggregatee({id: 'simple_component', container: this.getId()});
             }, this);
           }
         END_OF_JAVASCRIPT

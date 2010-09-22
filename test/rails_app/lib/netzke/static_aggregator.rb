@@ -1,5 +1,5 @@
 module Netzke
-  class StaticAggregator < Widget::Base
+  class StaticAggregator < Component::Base
     def config
       {
         # 2 different ways to embed an aggregatee

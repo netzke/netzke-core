@@ -1,12 +1,12 @@
 module Netzke
-  module Widget
-    # == Widget javascript code
-    # Here's a brief explanation on how a javascript class for a widget gets built.
-    # Widget gets defined as a constructor (a function) by +js_class+ class method (see "Inside widget's contstructor").
+  module Component
+    # == Component javascript code
+    # Here's a brief explanation on how a javascript class for a component gets built.
+    # Component gets defined as a constructor (a function) by +js_class+ class method (see "Inside component's contstructor").
     # +Ext.extend+ provides inheritance from an Ext class specified in +js_base_class+ class method.
     # 
-    # == Inside widget's constructor
-    # * Widget's constructor gets called with a parameter that is a configuration object provided by +js_config+ instance method. This configuration is specific for the instance of the widget, and, for example, contains this widget's unique id. As another example, by means of this configuration object, a grid receives the configuration array for its columns, a form - for its fields, etc. With other words, everything that may change from instance to instance of the same widget's class, goes in here.
+    # == Inside component's constructor
+    # * Component's constructor gets called with a parameter that is a configuration object provided by +js_config+ instance method. This configuration is specific for the instance of the component, and, for example, contains this component's unique id. As another example, by means of this configuration object, a grid receives the configuration array for its columns, a form - for its fields, etc. With other words, everything that may change from instance to instance of the same component's class, goes in here.
     #
     module Javascript
       module ClassMethods
@@ -27,11 +27,11 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           END_OF_JAVASCRIPT
         end
 
-        # widget's menus
+        # component's menus
         # def js_menus; []; end
 
-        # Given class name, e.g. GridPanelLib::Widgets::RecordFormWindow, 
-        # returns its scope: "Widgets.RecordFormWindow"
+        # Given class name, e.g. GridPanelLib::Components::RecordFormWindow, 
+        # returns its scope: "Components.RecordFormWindow"
         def js_class_name_to_scope(name)
           name.split("::")[0..-2].join(".")
         end
@@ -41,32 +41,32 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           "Netzke.classes"
         end
 
-        # Scope of this widget without default scope
-        # e.g.: GridPanelLib.Widgets
+        # Scope of this component without default scope
+        # e.g.: GridPanelLib.Components
         def js_scope
-          js_class_name_to_scope(short_widget_class_name)
+          js_class_name_to_scope(short_component_class_name)
         end
 
-        # Returns the scope of this widget
+        # Returns the scope of this component
         # e.g. "Netzke.classes.GridPanelLib"
         def js_full_scope
           js_scope.empty? ? js_default_scope : [js_default_scope, js_scope].join(".")
         end
 
-        # Returns the name of the JavaScript class for this widget, including the scope
+        # Returns the name of the JavaScript class for this component, including the scope
         # e.g.: "GridPanelLib.RecordFormWindow"
         def js_scoped_class_name
-          short_widget_class_name.gsub("::", ".")
+          short_component_class_name.gsub("::", ".")
         end
 
         # Returns the full name of the JavaScript class, including the scopes *and* the common scope, which is
         # Netzke.classes.
         # E.g.: "Netzke.classes.Netzke.GridPanelLib.RecordFormWindow"
         def js_full_class_name
-          [js_full_scope, short_widget_class_name.split("::").last].join(".")
+          [js_full_scope, short_component_class_name.split("::").last].join(".")
         end
 
-        # Builds this widget's xtype
+        # Builds this component's xtype
         # E.g.: netzkewindow, netzkegridpanel
         def js_xtype
           name.gsub("::", "").downcase
@@ -74,11 +74,11 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
 
         # are we using JS inheritance? for now, if js_base_class is a Netzke class - yes
         def js_inheritance?
-          superclass != Netzke::Widget::Base
+          superclass != Netzke::Component::Base
         end
 
-        # Declaration of widget's class (stored in the cache storage (Ext.netzke.cache) at the client side 
-        # to be reused at the moment of widget instantiation)
+        # Declaration of component's class (stored in the cache storage (Ext.netzke.cache) at the client side 
+        # to be reused at the moment of component instantiation)
         def js_class(cached = [])
           # Defining the scope if it isn't known yet
           res = js_full_scope == js_default_scope ? "" : %Q{
@@ -120,7 +120,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           #{js_full_class_name}.superclass.constructor.call(this, config);
         };
         
-        Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_properties.to_nifty_json}, Ext.widgetMixIn(#{js_base_class})));
+        Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_properties.to_nifty_json}, Ext.componentMixIn(#{js_base_class})));
         
         // Register xtype
         Ext.reg("#{js_xtype}", #{js_full_class_name});
@@ -135,7 +135,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           ""
         end
         
-        # Returns all extra JavaScript-code (as string) required by this widget's class
+        # Returns all extra JavaScript-code (as string) required by this component's class
         def js_included
           res = ""
 
@@ -153,12 +153,12 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           []
         end
 
-        # All JavaScript code needed for this class, including one from the ancestor widget
+        # All JavaScript code needed for this class, including one from the ancestor component
         def js_code(cached = [])
           res = ""
 
           # include the base-class javascript if doing JS inheritance
-          if js_inheritance? && !cached.include?(superclass.short_widget_class_name)
+          if js_inheritance? && !cached.include?(superclass.short_component_class_name)
             res << superclass.js_code(cached) << "\n"
           end
 
@@ -180,11 +180,11 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
       end
       
       module InstanceMethods
-        # Config that is used for instantiating the widget in javascript
+        # Config that is used for instantiating the component in javascript
         def js_config
           res = {}
 
-          # Unique id of the widget
+          # Unique id of the component
           res.merge!(:id => global_id)
 
           # Non-late aggregatees
@@ -202,7 +202,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           api_points = self.class.api_points - [:load_aggregatee_with_cache]
           res.merge!(:netzke_api => api_points) unless api_points.empty?
 
-          # Widget class name. Needed for dynamic instantiation in javascript.
+          # Component class name. Needed for dynamic instantiation in javascript.
           res.merge!(:scoped_class_name => self.class.js_scoped_class_name)
 
           # Inform the JavaScript side if persistent_config is enabled
@@ -219,8 +219,8 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           res
         end
 
-        # All the JS-code required by this instance of the widget to be instantiated in the browser.
-        # It includes the JS-class for the widget itself, as well as JS-classes for all widgets' (non-late) aggregatees.
+        # All the JS-code required by this instance of the component to be instantiated in the browser.
+        # It includes the JS-class for the component itself, as well as JS-classes for all components' (non-late) aggregatees.
         def js_missing_code(cached = [])
           code = dependency_classes.inject("") do |r,k| 
             cached.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached)#.strip_js_comments

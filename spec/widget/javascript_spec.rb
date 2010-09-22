@@ -2,14 +2,14 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require 'netzke-core'
 
 module Netzke
-  describe Netzke::Widget::Aggregation do
-    class SomeWidget < Widget::Base
+  describe Netzke::Component::Aggregation do
+    class SomeComponent < Component::Base
     end
-    class InheritedWidget < SomeWidget
+    class InheritedComponent < SomeComponent
     end
   
     describe "js_inheritance?" do
-      InheritedWidget.js_inheritance?.should == true
+      InheritedComponent.js_inheritance?.should == true
     end
   end  
 end

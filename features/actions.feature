@@ -5,7 +5,7 @@ Feature: Actions
 
 @focus @javascript
 Scenario: Pressing button should result in corresponding actions
-  When I go to the WidgetThatHasActions test page
+  When I go to the ComponentThatHasActions test page
   Then I should see "Disabled action"
   And button "Disabled action" should be disabled
   

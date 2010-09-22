@@ -24,8 +24,8 @@ Netzke.deprecationWarning = function(msg){
   }
 }
 
-Ext.ns('Netzke.page'); // namespace for all widget instantces on the page
-Ext.ns('Netzke.classes'); // namespace for all widget classes. TODO: this should be called Netzke.Widget
+Ext.ns('Netzke.page'); // namespace for all component instantces on the page
+Ext.ns('Netzke.classes'); // namespace for all component classes. TODO: this should be called Netzke.Component
 
 Ext.QuickTips.init();
 
@@ -74,8 +74,8 @@ String.prototype.humanize=function(lowFirstLetter)
   return str;
 };
 
-// Properties/methods common to all widget classes
-Ext.widgetMixIn = function(receiver){
+// Properties/methods common to all component classes
+Ext.componentMixIn = function(receiver){
   
   return {
     height: 400,
@@ -96,8 +96,8 @@ Ext.widgetMixIn = function(receiver){
       // params that will be provided for the server API call (load_aggregatee_with_cache); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
       var apiParams = Ext.apply({id: params.id, container: params.container}, params.params); 
 
-      // build the cached widgets list to send it to the server
-      var cachedWidgetNames = "";
+      // build the cached components list to send it to the server
+      var cachedComponentNames = "";
 
       // recursive function that checks the properties of the caller ("this") and returns the list of those that look like constructor, i.e. have an "xtype" property themselves
       var classesList = function(pref){
@@ -121,20 +121,20 @@ Ext.widgetMixIn = function(receiver){
       Ext.each(cl, function(c){cache += c + ",";});
 
       // for (name in Netzke.classes) {
-      //   cachedWidgetNames += name + ",";
+      //   cachedComponentNames += name + ",";
       // }
-      // apiParams.cache = cachedWidgetNames;
+      // apiParams.cache = cachedComponentNames;
       apiParams.cache = cache;
 
       // remember the passed callback for the future
       if (params.callback) {
-        this.callbackHash[params.id] = params.callback; // per loaded widget, as there may be simultaneous calls
+        this.callbackHash[params.id] = params.callback; // per loaded component, as there may be simultaneous calls
       }
 
-      // visually disable the container while the widget is being loaded
+      // visually disable the container while the component is being loaded
       // Ext.getCmp(params.container).disable();
 
-      if (params.container) Ext.getCmp(params.container).removeChild(); // remove the old widget if the container is specified
+      if (params.container) Ext.getCmp(params.container).removeChild(); // remove the old component if the container is specified
 
       // do the remote API call
       this.loadAggregateeWithCache(apiParams);
@@ -146,24 +146,24 @@ Ext.widgetMixIn = function(receiver){
     },
 
     /*
-    Called by the server as callback about loaded widget
+    Called by the server as callback about loaded component
     */
-    widgetLoaded : function(params){
-      if (this.fireEvent('widgetload')) {
-        // Enable the container after the widget is succesfully loaded
-        // this.getChildWidget(params.id).ownerCt.enable();
+    componentLoaded : function(params){
+      if (this.fireEvent('componentload')) {
+        // Enable the container after the component is succesfully loaded
+        // this.getChildComponent(params.id).ownerCt.enable();
 
-        // provide the callback to that widget that was loading the child, passing the child itself
+        // provide the callback to that component that was loading the child, passing the child itself
         var callbackFn = this.callbackHash[params.id.camelize(true)];
         if (callbackFn) {
-          callbackFn.call(params.scope || this, this.getChildWidget(params.id));
+          callbackFn.call(params.scope || this, this.getChildComponent(params.id));
           delete this.callbackHash[params.id.camelize(true)];
         }
       }
     },
 
     /*
-    Returns the parent widget
+    Returns the parent component
     */
     getParent: function(){
       // simply cutting the last part of the id: some_parent__a_kid__a_great_kid => some_parent__a_kid
@@ -175,7 +175,7 @@ Ext.widgetMixIn = function(receiver){
     },
 
     /*
-    Reloads current widget (calls the parent to reload it as its aggregatee)
+    Reloads current component (calls the parent to reload it as its aggregatee)
     */
     reload : function(){
       var parent = this.getParent();
@@ -188,7 +188,7 @@ Ext.widgetMixIn = function(receiver){
 
     /*
     Gets id in the context of provided parent. 
-    For example, the widgets "properties", being a child of "books" has global id "books__properties", 
+    For example, the components "properties", being a child of "books" has global id "books__properties", 
     which *is* its widegt's real id. This methods, with the instance of "books" passed as parameter, 
     returns "properties".
     */
@@ -197,12 +197,12 @@ Ext.widgetMixIn = function(receiver){
     },
 
     /*
-    Instantiates and inserts a widget into a container with layout 'fit'.
+    Instantiates and inserts a component into a container with layout 'fit'.
     Arg: an JS object with the following keys:
       - id: id of the receiving container
-      - config: configuration of the widget to be instantiated and inserted into the container
+      - config: configuration of the component to be instantiated and inserted into the container
     */
-    renderWidgetInContainer : function(params){
+    renderComponentInContainer : function(params){
       var cont = Ext.getCmp(params.container);
       if (cont) {
         cont.instantiateChild(params.config);
@@ -212,7 +212,7 @@ Ext.widgetMixIn = function(receiver){
     },
 
     /*
-    Reconfigures the widget
+    Reconfigures the component
     */
     reconfigure: function(config){
       this.ownerCt.instantiateChild(config)
@@ -237,20 +237,20 @@ Ext.widgetMixIn = function(receiver){
 
     /*
     Executes a bunch of methods. This method is called almost every time a communication to the server takes place. 
-    Thus the server side of a widget can provide any set of commands to its client side.
+    Thus the server side of a component can provide any set of commands to its client side.
     Args:
       - instructions: array of methods, in the order of execution. 
         Each item is an object in one of the following 2 formats:
-          1) {method1:args1, method2:args2}, where methodN is a name of a public method of this widget; these methods are called in no particular order
-          2) {widget:widget_id, methods:arrayOfMethods}, used for recursive call to bulkExecute on some child widget
+          1) {method1:args1, method2:args2}, where methodN is a name of a public method of this component; these methods are called in no particular order
+          2) {component:component_id, methods:arrayOfMethods}, used for recursive call to bulkExecute on some child component
 
     Example: 
       - [
           // the same as this.feedback("Your order is accepted")
           {feedback: "You order is accepted"}, 
 
-          // the same as this.getChildWidget('users').bulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}])
-          {widget:'users', methods:[{setTitle:'Suprise!'}, {setDisabled:true}] },
+          // the same as this.getChildComponent('users').bulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}])
+          {component:'users', methods:[{setTitle:'Suprise!'}, {setDisabled:true}] },
 
           // ... etc:
           {updateStore:{records:[[1, 'Name1'],[2, 'Name2']], total:10}},
@@ -267,32 +267,32 @@ Ext.widgetMixIn = function(receiver){
           if (this[instr]) {
             this[instr].apply(this, [instructions[instr]]);
           } else {
-            var childWidget = this.getChildWidget(instr);
-            if (childWidget) {
-              childWidget.bulkExecute(instructions[instr]);
+            var childComponent = this.getChildComponent(instr);
+            if (childComponent) {
+              childComponent.bulkExecute(instructions[instr]);
             } else {
-              throw "Netzke: Unknown method or child widget '" + instr +"' in widget '" + this.id + "'"
+              throw "Netzke: Unknown method or child component '" + instr +"' in component '" + this.id + "'"
             }
           }
         }
       }
     },
 
-    // Get the child widget
-    getChildWidget : function(id){
+    // Get the child component
+    getChildComponent : function(id){
       if (id === "") {return this};
 
       var split = id.split("__");
       if (split[0] === 'parent') {
         split.shift();
         var childInParentScope = split.join("__");
-        return this.getParent().getChildWidget(childInParentScope);
+        return this.getParent().getChildComponent(childInParentScope);
       } else {
         return Ext.getCmp(this.id+"__"+id);
       }
     },
 
-    // Common handler for all widget's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
+    // Common handler for all component's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
     // actionHandler : function(comp){
     //   var actionName = comp.name;
     //   // If firing corresponding event doesn't return false, call the handler
@@ -361,7 +361,7 @@ Ext.widgetMixIn = function(receiver){
       // Dynamically create methods for api points, so that we could later call them like: this.myApiMethod()
       var config = this;
       var apiPoints = config.netzkeApi || [];
-      apiPoints.push('load_aggregatee_with_cache'); // all netzke widgets get this API point
+      apiPoints.push('load_aggregatee_with_cache'); // all netzke components get this API point
       Ext.each(apiPoints, function(intp){
         this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
       }, this);
@@ -382,7 +382,7 @@ Ext.widgetMixIn = function(receiver){
       // Create Ext.Action instances based on config.actions
       // if (config.actions) {
       //   for (var name in config.actions) {
-      //     // Create an event for each action (so that higher-level widgets could interfere)
+      //     // Create an event for each action (so that higher-level components could interfere)
       //     this.addEvents(name+'click');
       // 
       //     // Configure the action
@@ -408,7 +408,7 @@ Ext.widgetMixIn = function(receiver){
       // if (config.tools) {
       //   var normTools = [];
       //   Ext.each(config.tools, function(tool){
-      //     // Create an event for each action (so that higher-level widgets could interfere)
+      //     // Create an event for each action (so that higher-level components could interfere)
       //     this.addEvents(tool.id+'click');
       // 
       //     var handler = this.toolActionHandler.createDelegate(this, [tool]);
@@ -441,7 +441,7 @@ Ext.widgetMixIn = function(receiver){
 
       // generic events
       this.addEvents(
-        'widgetload' // fired when a child is dynamically loaded
+        'componentload' // fired when a child is dynamically loaded
       );
 
       // Cleaning up on destroy
@@ -485,8 +485,8 @@ Ext.widgetMixIn = function(receiver){
     //   if (!!this.hostMenu) { 
     //     this.hostMenu(menu, owner); 
     //   } else {
-    //     if (this.ownerWidget) {
-    //       this.ownerWidget.addMenu(menu, owner);
+    //     if (this.ownerComponent) {
+    //       this.ownerComponent.addMenu(menu, owner);
     //     }
     //   }
     // },
@@ -499,13 +499,13 @@ Ext.widgetMixIn = function(receiver){
     //   if (!!this.unhostMenu) { 
     //     this.unhostMenu(owner); 
     //   } else {
-    //     if (this.ownerWidget) {
-    //       this.ownerWidget.cleanUpMenu(owner);
+    //     if (this.ownerComponent) {
+    //       this.ownerComponent.cleanUpMenu(owner);
     //     }
     //   }
     // },
 
-    onWidgetLoad:Ext.emptyFn // gets overridden
+    onComponentLoad:Ext.emptyFn // gets overridden
   }
 }
 
@@ -513,30 +513,30 @@ Ext.widgetMixIn = function(receiver){
 // Netzke extensions for Ext.Container
 Ext.override(Ext.Container, {
   /** 
-    Get Netzke widget that this Ext.Container is part of (*not* the parent widget, for which call getParent)
+    Get Netzke component that this Ext.Container is part of (*not* the parent component, for which call getParent)
     It searches up the Ext.Container hierarchy until it finds a Container that has isNetzke property set to true
     (or until it reaches the top).
   */
-  getOwnerWidget : function(){
+  getOwnerComponent : function(){
     if (this.initialConfig.isNetzke) {
       return this;
     } else {
       if (this.ownerCt){
-        return this.ownerCt.getOwnerWidget()
+        return this.ownerCt.getOwnerComponent()
       } else {
         return null
       }
     }
   },
   
-  // Get the widget that we are hosting
-  getWidget: function(){
+  // Get the component that we are hosting
+  getComponent: function(){
     return this.items ? this.items.first() : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
   },
   
   // Remove the child
   removeChild : function(){
-    this.remove(this.getWidget());
+    this.remove(this.getComponent());
   },
 
   // Given a scoped class name, returns the actual class, e.g.: "Netzke.GridPanel" => Netzke.classes.Netzke.GridPanel
@@ -555,7 +555,7 @@ Ext.override(Ext.Container, {
     if (instance.isXType("netzkewindow")) {
       instance.show();
     } else {
-      this.remove(this.getWidget()); // first delete previous widget 
+      this.remove(this.getComponent()); // first delete previous component 
       this.add(instance);
       this.doLayout();
     }
@@ -568,7 +568,7 @@ Ext.override(Ext.Container, {
     // Normalize actions
     var normActions = {};
     for (var name in this.actions) {
-      // Create an event for each action (so that higher-level widgets could interfere)
+      // Create an event for each action (so that higher-level components could interfere)
       this.addEvents(name+'click');
 
       // Configure the action
@@ -634,7 +634,7 @@ Ext.override(Ext.Container, {
     }
   },
 
-  // Common handler for all widget's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
+  // Common handler for all component's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
   actionHandler : function(comp){
     var actionName = comp.name;
     // If firing corresponding event doesn't return false, call the handler

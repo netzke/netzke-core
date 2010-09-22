@@ -1,5 +1,5 @@
 Then /^Netzke should be initialized$/ do
-  Netzke::Widget::Base.should be
+  Netzke::Component::Base.should be
 end
 
 When /^I execute "([^\"]*)"$/ do |script|

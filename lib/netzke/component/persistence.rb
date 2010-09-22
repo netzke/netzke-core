@@ -1,5 +1,5 @@
 module Netzke
-  module Widget
+  module Component
     # TODO: 
     # rename persistent_config_ to persistence_
     module Persistence
@@ -7,7 +7,7 @@ module Netzke
       module ClassMethods
         # Persistent config manager class
         def persistent_config_manager_class
-          Netzke::Widget::Base.config[:persistent_config_manager].try(:constantize)
+          Netzke::Component::Base.config[:persistent_config_manager].try(:constantize)
         rescue NameError
           nil
         end
@@ -16,7 +16,7 @@ module Netzke
     
       module InstanceMethods
         
-        # If the widget has persistent config in its disposal
+        # If the component has persistent config in its disposal
         def persistent_config_enabled?
           !persistent_config_manager_class.nil? && initial_config[:persistent_config]
         end
@@ -28,25 +28,25 @@ module Netzke
         # def persistent_config
         #   if persistent_config_enabled?
         #     config_class = self.class.persistent_config_manager_class
-        #     config_class.widget_name = persistence_key.to_s # pass to the config class our unique name
+        #     config_class.component_name = persistence_key.to_s # pass to the config class our unique name
         #     config_class
         #   else
         #     # if we can't use presistent config, all the calls to it will always return nil, 
         #     # and the "="-operation will be ignored
-        #     logger.debug "==> NETZKE: no persistent config is set up for widget '#{global_id}'"
+        #     logger.debug "==> NETZKE: no persistent config is set up for component '#{global_id}'"
         #     {}
         #   end
         # end
 
-        # Access to the global persistent config (e.g. of another widget)
+        # Access to the global persistent config (e.g. of another component)
         def global_persistent_config(owner = nil)
           config_class = self.class.persistent_config_manager_class
-          config_class.widget_name = owner
+          config_class.component_name = owner
           config_class
         end
 
-        # A string which will identify NetzkePreference records for this widget. 
-        # If <tt>persistence_key</tt> is passed, use it. Otherwise use global widget's id.
+        # A string which will identify NetzkePreference records for this component. 
+        # If <tt>persistence_key</tt> is passed, use it. Otherwise use global component's id.
         def persistence_key #:nodoc:
           # initial_config[:persistence_key] ? parent.try(:persistence_key) ? "#{parent.persistence_key}__#{initial_config[:persistence_key]}".to_sym : initial_config[:persistence_key] : global_id.to_sym
           initial_config[:persistence_key] ? initial_config[:persistence_key] : global_id.to_sym
@@ -58,7 +58,7 @@ module Netzke
         #   persistent_config[:ext_config] = current_config
         # end
         
-        # Returns a hash built from all persistent config values for the current widget, following the double underscore
+        # Returns a hash built from all persistent config values for the current component, following the double underscore
         # naming convention. E.g., if we have the following persistent config pairs:
         #     enabled  => true
         #     layout__width => 100
@@ -70,7 +70,7 @@ module Netzke
         #   return {} if !persistent_config_enabled?
         #   
         #   @persistent_config_hash ||= begin
-        #     prefs = NetzkePreference.find_all_for_widget(persistence_key.to_s)
+        #     prefs = NetzkePreference.find_all_for_component(persistence_key.to_s)
         #     res = {}
         #     prefs.each do |p|
         #       hsh_levels = p.name.split("__").map(&:to_sym)
@@ -95,7 +95,7 @@ module Netzke
             options = persistent_options
             persistent_config_manager_class.pref_to_write(global_id).update_attribute(:value, options.deep_merge(hash))
           else
-            logger.debug "==> NETZKE warning: no persistence enabled for widget '#{global_id}'"
+            logger.debug "==> NETZKE warning: no persistence enabled for component '#{global_id}'"
           end
         end
         

@@ -1,8 +1,8 @@
 module Netzke
-  module Widget
+  module Component
     module Api
       module ClassMethods
-        # Declare connection points between client side of a widget and its server side. For example:
+        # Declare connection points between client side of a component and its server side. For example:
         #
         #     api :reset_data
         # 

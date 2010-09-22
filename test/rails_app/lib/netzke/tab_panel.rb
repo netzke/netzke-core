@@ -1,5 +1,5 @@
 module Netzke
-  class TabPanel < Widget::Base
+  class TabPanel < Component::Base
     def self.js_base_class
       "Ext.TabPanel"
     end
@@ -12,7 +12,7 @@ module Netzke
           :class_name => "BorderLayoutPanel",
           :title => "A border layout panel",
           :items => [{
-            :title => "I'm NOT a Netzke widget",
+            :title => "I'm NOT a Netzke component",
             :region => :north,
             :html => "I'm a simple panel",
             :height => 100

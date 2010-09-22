@@ -27,7 +27,7 @@ module NavigationHelpers
       '/panel/aggregatee_loader'
 
     when /the (.*) test page/
-      widgets_path(:widget => $1)
+      components_path(:component => $1)
 
     else
       begin

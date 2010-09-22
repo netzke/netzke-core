@@ -1,5 +1,5 @@
 module Netzke
-  class WidgetWithPersistence < Widget::Base
+  class ComponentWithPersistence < Component::Base
     def default_config
       {
         :title => "No Title (yet!)",

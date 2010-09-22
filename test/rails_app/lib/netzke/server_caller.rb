@@ -1,5 +1,5 @@
 module Netzke
-  class ServerCaller < Widget::Base
+  class ServerCaller < Component::Base
     
     def self.js_properties
       {

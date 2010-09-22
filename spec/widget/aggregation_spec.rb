@@ -2,8 +2,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require 'netzke-core'
 
 module Netzke
-  describe Netzke::Widget::Aggregation do
-    class SomeWidget < Widget::Base
+  describe Netzke::Component::Aggregation do
+    class SomeComponent < Component::Base
       api :method_one, :method_two
 
       def self.config
@@ -15,8 +15,8 @@ module Netzke
 
       def aggregatees
         {
-          :nested_one => {:class_name => 'NestedWidgetOne'},
-          :nested_two => {:class_name => 'NestedWidgetTwo'}
+          :nested_one => {:class_name => 'NestedComponentOne'},
+          :nested_two => {:class_name => 'NestedComponentTwo'}
         }
       end
 
@@ -32,47 +32,47 @@ module Netzke
       end
     end
 
-    class NestedWidgetOne < Widget::Base
+    class NestedComponentOne < Component::Base
     end
 
-    class NestedWidgetTwo < Widget::Base
+    class NestedComponentTwo < Component::Base
       def aggregatees
         {
-          :nested => {:class_name => 'DeepNestedWidget'}
+          :nested => {:class_name => 'DeepNestedComponent'}
         }
       end
     end
 
-    class DeepNestedWidget < Widget::Base
+    class DeepNestedComponent < Component::Base
       def aggregatees
         {
-          :nested => {:class_name => "VeryDeepNestedWidget"}
+          :nested => {:class_name => "VeryDeepNestedComponent"}
         }
       end
     end
 
-    class VeryDeepNestedWidget < Widget::Base
+    class VeryDeepNestedComponent < Component::Base
     end
 
     describe "aggregatee_instance" do
       it "should be possible to create (nested) aggregatee instances" do
-        widget = SomeWidget.new(:name => 'some_widget')
+        component = SomeComponent.new(:name => 'some_component')
 
         # instantiate aggregatees
-        nested_widget_one = widget.aggregatee_instance(:nested_one)
-        nested_widget_two = widget.aggregatee_instance(:nested_two)
-        deep_nested_widget = widget.aggregatee_instance(:nested_two__nested)
+        nested_component_one = component.aggregatee_instance(:nested_one)
+        nested_component_two = component.aggregatee_instance(:nested_two)
+        deep_nested_component = component.aggregatee_instance(:nested_two__nested)
 
         # check the classes of aggregation instances
-        nested_widget_one.class.should == NestedWidgetOne
-        nested_widget_two.class.should == NestedWidgetTwo
-        deep_nested_widget.class.should == DeepNestedWidget
+        nested_component_one.class.should == NestedComponentOne
+        nested_component_two.class.should == NestedComponentTwo
+        deep_nested_component.class.should == DeepNestedComponent
 
         # check the internal names of aggregation instances
-        widget.global_id.should == 'some_widget'
-        nested_widget_one.global_id.should == 'some_widget__nested_one'
-        nested_widget_two.global_id.should == 'some_widget__nested_two'
-        deep_nested_widget.global_id.should == 'some_widget__nested_two__nested'
+        component.global_id.should == 'some_component'
+        nested_component_one.global_id.should == 'some_component__nested_one'
+        nested_component_two.global_id.should == 'some_component__nested_two'
+        deep_nested_component.global_id.should == 'some_component__nested_two__nested'
       end
     end
   end  

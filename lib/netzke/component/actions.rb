@@ -1,6 +1,6 @@
 module Netzke
-  module Widget
-    # Netzke widget allows specifying "actions" in Ext-style.
+  module Component
+    # Netzke component allows specifying "actions" in Ext-style.
     # Override the +actions+ method in your sub-class to define the actions like this:
     # 
     #    def actions

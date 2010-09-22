@@ -2,11 +2,11 @@
 
 **THIS IS WORK IN PROGRESS: big refactoring is taking place, along with Rails3 compatibility and cucumber/rspec tests**
 
-Create Ext JS + Rails reusable components (widgets) with minimum effort.
+Create Ext JS + Rails reusable components (components) with minimum effort.
 
-This is the bare bones of the Netzke framework. Use it to build your own widgets from scratch. For pre-built widgets (like panels, grids, forms, trees, applications), see the netzke-basepack (http://github.com/skozlov/netzke-basepack) project.
+This is the bare bones of the Netzke framework. Use it to build your own components from scratch. For pre-built components (like panels, grids, forms, trees, applications), see the netzke-basepack (http://github.com/skozlov/netzke-basepack) project.
 
-The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a widget, and then embed it straight to your Rails' view, load it dynamically into your Ext-based applications, or use them as building blocks for new widgets. For more info, see the links below.
+The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a component, and then embed it straight to your Rails' view, load it dynamically into your Ext-based applications, or use them as building blocks for new components. For more info, see the links below.
 
 == Instalation
 For the latest ("edge") stuff, install as plugin (recommended!):
@@ -22,7 +22,7 @@ Netzke assumes that your ExtJS library is in public/extjs (which may be a symbol
     ln -s ~/code/sencha/ext-3.2.1 public/extjs
 
 == Usage
-Here's how to embed a Netzke widget into your Rails view.
+Here's how to embed a Netzke component into your Rails view.
 
 1. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles. 
 
@@ -32,7 +32,7 @@ You can optionally specify an Ext theme to be used:
 
     <%= netzke_init :ext_theme => 'grey' %>
       
-2. In your view use the <tt>netzke</tt> helper to embed a widget. Here's an example showing how to embed a <tt>Netzke::GridPanel</tt>:
+2. In your view use the <tt>netzke</tt> helper to embed a component. Here's an example showing how to embed a <tt>Netzke::GridPanel</tt>:
 
     <%= netzke :users, :class_name => "GridPanel", :model => "User" %>
 
@@ -56,7 +56,7 @@ Tutorials: http://blog.writelesscode.com
 
 Twitter: http://twitter.com/skozlov
 
-The netzke-basepack project (pre-built full-featured widgets): http://github.com/skozlov/netzke-basepack
+The netzke-basepack project (pre-built full-featured components): http://github.com/skozlov/netzke-basepack
 
 ---
 

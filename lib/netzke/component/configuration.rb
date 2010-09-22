@@ -1,11 +1,11 @@
 module Netzke
-  module Widget
+  module Component
     module Configuration
       module ClassMethods
         # Override class-level defaults specified in <tt>Netzke::Base.config</tt>. 
         # E.g. in config/initializers/netzke-config.rb:
         # 
-        #     Netzke::Widget::GridPanel.configure :default_config => {:persistent_config => true}
+        #     Netzke::Component::GridPanel.configure :default_config => {:persistent_config => true}
         def configure(*args)
           if args.first.is_a?(Symbol)
             config[args.first] = args.last
@@ -14,7 +14,7 @@ module Netzke
             config.deep_merge!(args.first)
           end
       
-          # widget may implement some kind of control for configuration consistency
+          # component may implement some kind of control for configuration consistency
           enforce_config_consistency if respond_to?(:enforce_config_consistency)
         end
     
@@ -72,7 +72,7 @@ module Netzke
           @independent_config ||= initial_config.deep_merge(persistent_options)
         end
 
-        # Resulting config that takes into account all possible ways to configure a widget. *Read only*.
+        # Resulting config that takes into account all possible ways to configure a component. *Read only*.
         # Translates into something like this:
         #     default_config.
         #     deep_merge(@passed_config).
@@ -109,11 +109,11 @@ module Netzke
       
         # Like normal config, but stored in session
         def weak_session_config
-          widget_session[:weak_session_config] ||= {}
+          component_session[:weak_session_config] ||= {}
         end
 
         def strong_session_config
-          widget_session[:strong_session_config] ||= {}
+          component_session[:strong_session_config] ||= {}
         end
 
         # configuration of all children will get deep_merge'd with strong_children_config

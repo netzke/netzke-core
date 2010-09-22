@@ -3,7 +3,7 @@ Feature: Aggregation
   As a role
   I want feature
 
-  Scenario: The StaticAggregator widget should have 2 aggregatees rendered properly
+  Scenario: The StaticAggregator component should have 2 aggregatees rendered properly
     When I go to the StaticAggregator test page
     Then I should see "Server Caller"
     And I should see "Extended Server Caller"

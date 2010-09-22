@@ -3,7 +3,7 @@ begin
   Jeweler::Tasks.new do |gemspec|
     gemspec.version = "0.6.0"
     gemspec.name = "netzke-core"
-    gemspec.summary = "Build ExtJS/Rails widgets with minimum effort"
+    gemspec.summary = "Build ExtJS/Rails components with minimum effort"
     gemspec.description = "Allows building ExtJS/Rails reusable code in a DRY way"
     gemspec.email = "sergei@playcode.nl"
     gemspec.homepage = "http://github.com/skozlov/netzke-core"

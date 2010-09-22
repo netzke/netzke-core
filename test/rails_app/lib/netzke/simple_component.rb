@@ -1,8 +1,8 @@
 module Netzke
-  class SimpleWidget < Widget::Base
+  class SimpleComponent < Component::Base
     def config
       {
-        :title => "SimpleWidget",
+        :title => "SimpleComponent",
         :html => "Inner text"
       }.deep_merge super
     end

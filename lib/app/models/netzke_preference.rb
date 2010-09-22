@@ -6,12 +6,12 @@ class NetzkePreference < ActiveRecord::Base
   
   # ELEMENTARY_CONVERTION_METHODS= {'Fixnum' => 'to_i', 'String' => 'to_s', 'Float' => 'to_f', 'Symbol' => 'to_sym'}
   
-  # def self.widget_name=(value)
-  #   @@widget_name = value
+  # def self.component_name=(value)
+  #   @@component_name = value
   # end
   # 
-  # def self.widget_name
-  #   @@widget_name ||= nil
+  # def self.component_name
+  #   @@component_name ||= nil
   # end
   
   # def normalized_value
@@ -60,7 +60,7 @@ class NetzkePreference < ActiveRecord::Base
 
   
 
-  # Overwrite pref_to_read, pref_to_write methods, and find_all_for_widget if you want a different way of 
+  # Overwrite pref_to_read, pref_to_write methods, and find_all_for_component if you want a different way of 
   # identifying the proper preference based on your own authorization strategy.
   #
   # The default strategy is:
@@ -140,9 +140,9 @@ class NetzkePreference < ActiveRecord::Base
     res
   end
   
-  # def self.find_all_for_widget(name)
+  # def self.find_all_for_component(name)
   #   session = Netzke::Main.session
-  #   cond = {:widget_name => name}
+  #   cond = {:component_name => name}
   #   
   #   if session[:masq_user] || session[:masq_role]
   #     cond.merge!({:user_id => session[:masq_user], :role_id => session[:masq_role]})
@@ -158,8 +158,8 @@ class NetzkePreference < ActiveRecord::Base
   #   res      
   # end
   
-  # def self.delete_all_for_widget(name)
-  #   self.destroy(find_all_for_widget(name))
+  # def self.delete_all_for_component(name)
+  #   self.destroy(find_all_for_component(name))
   # end
   # 
   # private

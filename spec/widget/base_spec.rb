@@ -1,10 +1,10 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require 'netzke-core'
 
-describe Netzke::Widget::Base do
+describe Netzke::Component::Base do
   describe "Base.config" do
     it "should keep config independent inside class hierarchy" do
-      class Parent < Netzke::Widget::Base; end
+      class Parent < Netzke::Component::Base; end
       class Child < Parent; end
       
       Parent.configure :a_setting => 100

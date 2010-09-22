@@ -4,14 +4,14 @@ Feature: Custom css
   I want feature
 
   @javascript
-  Scenario: A widget with a hidden body should not show show its body
-    When I go to the WidgetWithCustomCss test page
-    Then I should see "WidgetWithCustomCss"
-    But  the body of WidgetWithCustomCss widget should not be invisible
+  Scenario: A component with a hidden body should not show show its body
+    When I go to the ComponentWithCustomCss test page
+    Then I should see "ComponentWithCustomCss"
+    But  the body of ComponentWithCustomCss component should not be invisible
   
   @javascript
-  Scenario: A dynamically loaded widget with a hidden body should not display its body
-    When I go to the LoaderOfWidgetWithCustomCss test page
-    And I press "Load WidgetWithCustomCss"
-    Then I should see "WidgetWithCustomCss"
-    But  the body of LoaderOfWidgetWithCustomCss/WidgetWithCustomCss widget should not be invisible
+  Scenario: A dynamically loaded component with a hidden body should not display its body
+    When I go to the LoaderOfComponentWithCustomCss test page
+    And I press "Load ComponentWithCustomCss"
+    Then I should see "ComponentWithCustomCss"
+    But  the body of LoaderOfComponentWithCustomCss/ComponentWithCustomCss component should not be invisible

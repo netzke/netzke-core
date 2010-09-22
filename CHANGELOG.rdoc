@@ -64,7 +64,7 @@
 * Internal: the JavaScript instance now knows if persistent config is enabled (by checking this.persistentConfig).
 * Fix: solving the "Node cannot be inserted at the specified point in the hierarchy" problem by being more strict with duplicated IDs for elements on the same page.
 * Fix: Ext 3.0 compatibility.
-* Impr: <tt>getChildWidget</tt> now allows referring to a widget like this: "parent__parent__some_widget__some_nested_widget"
+* Impr: <tt>getChildComponent</tt> now allows referring to a widget like this: "parent__parent__some_widget__some_nested_widget"
 
 = v0.4.3
 * Fix: reworking loadAggregatee()-related code, closing a security flaw when a malicious browser could send any configuration options to instantiate the widget being loaded.
@@ -99,7 +99,7 @@
 * New: widgets now can check session[:netzke_just_logged_in] and session[:netzke_just_logged_out] automatically set by Netzke after login/logout
 
 = v0.2.11
-* Introduction of getOwnerWidget()-method to Ext.Component. It provides the Netzke widget this Component belongs to.
+* Introduction of getOwnerComponent()-method to Ext.Component. It provides the Netzke widget this Component belongs to.
 
 = v0.2.10
 * Removed dependency on 'json' gem.
@@ -123,7 +123,7 @@
 * Dependencies slightly refactored.
 * An informative exception added to Base#aggregatee_instance.
 * JS-level inheritance enabled.
-* Work-around for the problem with Ext 2.2.1 in loadWidget.
+* Work-around for the problem with Ext 2.2.1 in loadComponent.
 * Events "<action_id>click" added to the widgets along with the actions.
 * aggregatee_missing method added to Netzke::Base - called when a non-existing aggregate of a widget is tried to be invoked
 * Code readability improvements.
@@ -136,7 +136,7 @@
 
 = v0.2.3
 * FeedbackGhost will show the feedback on the top of the screen independent of the page scrolling.
-* Ext.Panel#loadWidget will accept null as url to delete the currently loaded widget
+* Ext.Panel#loadComponent will accept null as url to delete the currently loaded widget
 * Bug fix: persistent_config works again
 
 = v0.2.2

@@ -9,13 +9,13 @@ module Netzke
   autoload :Main, 'netzke/main'
   autoload :ExtComponent, 'netzke/ext_component'
   
-  module Widget
-    autoload :Base,     'netzke/widget/base'
-    autoload :Actions,  'netzke/widget/actions'
-    autoload :Api,      'netzke/widget/api'
+  module Component
+    autoload :Base,     'netzke/component/base'
+    autoload :Actions,  'netzke/component/actions'
+    autoload :Api,      'netzke/component/api'
     
     # What's below will go to a separate gem
-    # autoload :Panel, 'netzke/widget/panel'
+    # autoload :Panel, 'netzke/component/panel'
   end
 end
 
@@ -46,8 +46,8 @@ if defined? Rails
   ActiveSupport::Dependencies.autoload_once_paths.delete(File.join(File.dirname(__FILE__)))
 end
 
-# Include javascript & styles required by all Netzke widgets. 
+# Include javascript & styles required by all Netzke components. 
 # These files will get loaded at the initial load of the framework (along with Ext).
-Netzke::Widget::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"
-Netzke::Widget::Base.config[:stylesheets] << "#{File.dirname(__FILE__)}/../stylesheets/core.css"
+Netzke::Component::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"
+Netzke::Component::Base.config[:stylesheets] << "#{File.dirname(__FILE__)}/../stylesheets/core.css"
 

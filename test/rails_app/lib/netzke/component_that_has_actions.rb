@@ -1,5 +1,5 @@
 module Netzke
-  class WidgetThatHasActions < Widget::Base
+  class ComponentThatHasActions < Component::Base
     
     def config
       {

@@ -8,7 +8,7 @@ Feature: Aggregatee loader
     Given I am on the AggregateeLoader test page
     When I press "Load aggregatee"
     Then I should see "Inner text"
-    And I should see "Simple Widget"
+    And I should see "Simple Component"
   
   
   

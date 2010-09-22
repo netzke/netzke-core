@@ -20,10 +20,10 @@ module Netzke
         session[:_netzke_next_request_is_first_after_logout] = true
       end
 
-      # Register the configuration for the widget in the session, and also remember that the code for it has been rendered
-      def reg_widget(config)
-        session[:netzke_widgets] ||= {}
-        session[:netzke_widgets][config[:name]] = config
+      # Register the configuration for the component in the session, and also remember that the code for it has been rendered
+      def reg_component(config)
+        session[:netzke_components] ||= {}
+        session[:netzke_components][config[:name]] = config
       end
       
     end

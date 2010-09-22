@@ -4,12 +4,12 @@ Feature: Persistence
   I want feature
 
   @javascript
-  Scenario: The widget with persistence should be able to store and retrieve a persistence setting
-    When I go to the WidgetWithPersistence test page
+  Scenario: The component with persistence should be able to store and retrieve a persistence setting
+    When I go to the ComponentWithPersistence test page
     Then I should see "No Title (yet!)"
 
     When I press "Tell server to store new title"
-    And I go to the WidgetWithPersistence test page
+    And I go to the ComponentWithPersistence test page
     Then I should see "New Title!"
   
   
