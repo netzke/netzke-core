@@ -6,7 +6,7 @@ module Netzke
       {
         :component_with_custom_css => {
           :class_name => "ComponentWithCustomCss",
-          :late_aggregation => true
+          :lazy_loading => true
         }
       }
     end

@@ -13,7 +13,7 @@ module Netzke
         })
       end
 
-      def aggregatees
+      def components
         {
           :nested_one => {:class_name => 'NestedComponentOne'},
           :nested_two => {:class_name => 'NestedComponentTwo'}
@@ -36,7 +36,7 @@ module Netzke
     end
 
     class NestedComponentTwo < Component::Base
-      def aggregatees
+      def components
         {
           :nested => {:class_name => 'DeepNestedComponent'}
         }
@@ -44,7 +44,7 @@ module Netzke
     end
 
     class DeepNestedComponent < Component::Base
-      def aggregatees
+      def components
         {
           :nested => {:class_name => "VeryDeepNestedComponent"}
         }
@@ -54,21 +54,19 @@ module Netzke
     class VeryDeepNestedComponent < Component::Base
     end
 
-    describe "aggregatee_instance" do
-      it "should be possible to create (nested) aggregatee instances" do
+    describe "component_instance" do
+      it "should be possible to create (nested) component instances" do
         component = SomeComponent.new(:name => 'some_component')
 
-        # instantiate aggregatees
-        nested_component_one = component.aggregatee_instance(:nested_one)
-        nested_component_two = component.aggregatee_instance(:nested_two)
-        deep_nested_component = component.aggregatee_instance(:nested_two__nested)
+        # instantiate components
+        nested_component_one = component.component_instance(:nested_one)
+        nested_component_two = component.component_instance(:nested_two)
+        deep_nested_component = component.component_instance(:nested_two__nested)
 
-        # check the classes of aggregation instances
         nested_component_one.class.should == NestedComponentOne
         nested_component_two.class.should == NestedComponentTwo
         deep_nested_component.class.should == DeepNestedComponent
 
-        # check the internal names of aggregation instances
         component.global_id.should == 'some_component'
         nested_component_one.global_id.should == 'some_component__nested_one'
         nested_component_two.global_id.should == 'some_component__nested_two'

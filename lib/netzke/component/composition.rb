@@ -14,11 +14,11 @@ module Netzke
         def components
           # detect_components_in_config if @components.nil?
           @components
-          # @components ||= initial_components.merge(initial_late_components.each_pair{|k,v| v.merge!(:late_aggregation => true)})
+          # @components ||= initial_components.merge(initial_late_components.each_pair{|k,v| v.merge!(:lazy_loading => true)})
         end
 
         def non_late_components
-          components.reject{|k,v| v[:late_aggregation]}
+          components.reject{|k,v| v[:lazy_loading]}
         end
 
         def add_component(aggr)
@@ -32,13 +32,13 @@ module Netzke
           components[aggr] = nil
         end
 
-        # The difference between components and late components is the following: the former gets instantiated together with its aggregator and is normally *instantly* visible as a part of it (for example, the component in the initially expanded panel in an Accordion). A late component doesn't get instantiated along with its aggregator. Until it gets requested from the server, it doesn't take any part in its aggregator's life. An example of late component could be a component that is loaded dynamically into a previously collapsed panel of an Accordion, or a preferences window (late component) for a component (aggregator) that only gets shown when user wants to edit component's preferences.
+        # The difference between components and late components is the following: the former gets instantiated together with its composite and is normally *instantly* visible as a part of it (for example, the component in the initially expanded panel in an Accordion). A late component doesn't get instantiated along with its composite. Until it gets requested from the server, it doesn't take any part in its composite's life. An example of late component could be a component that is loaded dynamically into a previously collapsed panel of an Accordion, or a preferences window (late component) for a component (composite) that only gets shown when user wants to edit component's preferences.
         def initial_late_components
           {}
         end
 
         def add_late_component(aggr)
-          components.merge!(aggr.merge(:late_aggregation => true))
+          components.merge!(aggr.merge(:lazy_loading => true))
         end
 
         # called when the method_missing tries to processes a non-existing component
@@ -52,13 +52,13 @@ module Netzke
         def component_instance(name, strong_config = {})
           @cached_component_instances ||= {}
           @cached_component_instances[name] ||= begin
-            aggregator = self
+            composite = self
             name.to_s.split('__').each do |aggr|
               aggr = aggr.to_sym
-              component_config = aggregator.components[aggr]
-              raise ArgumentError, "No component '#{aggr}' defined for component '#{aggregator.global_id}'" if component_config.nil?
+              component_config = composite.components[aggr]
+              raise ArgumentError, "No component '#{aggr}' defined for component '#{composite.global_id}'" if component_config.nil?
               short_component_class_name = component_config[:class_name]
-              raise ArgumentError, "No class_name specified for component #{aggr} of #{aggregator.global_id}" if short_component_class_name.nil?
+              raise ArgumentError, "No class_name specified for component #{aggr} of #{composite.global_id}" if short_component_class_name.nil?
               component_class = "Netzke::#{short_component_class_name}".constantize
 
               conf = weak_children_config.
@@ -66,11 +66,11 @@ module Netzke
                 deep_merge(strong_config). # we may want to reconfigure the component at the moment of instantiation
                 merge(:name => aggr)
 
-              aggregator = component_class.new(conf, aggregator) # params: config, parent
-              # aggregator.weak_children_config = weak_children_config
-              # aggregator.strong_children_config = strong_children_config
+              composite = component_class.new(conf, composite) # params: config, parent
+              # composite.weak_children_config = weak_children_config
+              # composite.strong_children_config = strong_children_config
             end
-            aggregator
+            composite
           end
         end
         
@@ -129,7 +129,7 @@ module Netzke
         end
 
         # Component's js config used when embedding components as Container's items 
-        # (see static_aggregator.rb for an example)
+        # (see static_composite.rb for an example)
         def js_component(name, config = {})
           config.merge(:component => name)
         end

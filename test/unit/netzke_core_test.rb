@@ -97,12 +97,10 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     nested_component_two = component.component_instance(:nested_two)
     deep_nested_component = component.component_instance(:nested_two__nested)
     
-    # check the classes of aggregation instances
     assert_kind_of NestedComponentOne, nested_component_one
     assert_kind_of NestedComponentTwo, nested_component_two
     assert_kind_of DeepNestedComponent, deep_nested_component
     
-    # check the internal names of aggregation instances
     assert_equal 'my_component', component.global_id
     assert_equal 'my_component__nested_one', nested_component_one.global_id
     assert_equal 'my_component__nested_two', nested_component_two.global_id
@@ -128,7 +126,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_equal({:name => 'component', :config_uno => false, :config_dos => false}, component.config)
   end
 
-  test "dependencies calculated based on aggregations" do
+  test "dependencies calculated" do
     component = Component.new
     assert(component.dependencies.include?('NestedComponentOne'))
     assert(component.dependencies.include?('NestedComponentTwo'))

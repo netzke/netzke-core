@@ -5,7 +5,7 @@ module Netzke
         :simple_component => {
           :class_name => "SimpleComponent",
           :title => "Simple Component",
-          :late_aggregation => true
+          :lazy_loading => true
         }
       }
     end
