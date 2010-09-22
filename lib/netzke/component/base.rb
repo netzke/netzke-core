@@ -47,7 +47,7 @@ module Netzke
       include Configuration
       include Javascript
       include Api
-      include Aggregation
+      include Composition
       include Stylesheets
       include Embedding
       include Actions
@@ -65,9 +65,9 @@ module Netzke
         @name          = conf[:name].nil? ? short_component_class_name.underscore : conf[:name].to_s
         @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
         @flash         = []
-        @aggregatees   = {}
+        @components   = {}
         
-        # Detect aggregatees and build normalized @js_items
+        # Detect components and build normalized @js_items
         process_items_config
       end
     

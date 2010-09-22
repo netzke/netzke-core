@@ -2,7 +2,7 @@ module Netzke
   
   # Loads a component with custom CSS, to make sure that also dynamically loaded components get the correct CSS applied
   class LoaderOfComponentWithCustomCss < Component::Base
-    def aggregatees
+    def components
       {
         :component_with_custom_css => {
           :class_name => "ComponentWithCustomCss",
@@ -20,7 +20,7 @@ module Netzke
           function(){
             #{js_full_class_name}.superclass.initComponent.call(this);
             this.button.on('click', function(){
-              this.loadAggregatee({id: 'component_with_custom_css', container: this.getId()});
+              this.loadComponent({id: 'component_with_custom_css', container: this.getId()});
             }, this);
           }
         END_OF_JAVASCRIPT

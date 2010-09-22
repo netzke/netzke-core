@@ -90,10 +90,10 @@ Ext.componentMixIn = function(receiver){
     },
 
     /*
-    Loads aggregatee into a container.
+    Loads component into a container.
     */
-    loadAggregatee: function(params){
-      // params that will be provided for the server API call (load_aggregatee_with_cache); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
+    loadComponent: function(params){
+      // params that will be provided for the server API call (load_component_with_cache); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
       var apiParams = Ext.apply({id: params.id, container: params.container}, params.params); 
 
       // build the cached components list to send it to the server
@@ -137,11 +137,11 @@ Ext.componentMixIn = function(receiver){
       if (params.container) Ext.getCmp(params.container).removeChild(); // remove the old component if the container is specified
 
       // do the remote API call
-      this.loadAggregateeWithCache(apiParams);
+      this.loadComponentWithCache(apiParams);
     },
 
-    // Returns an aggregatee instance if it was instantiated, and fires an exception otherwise
-    aggregateeInstance: function(aggrName) {
+    // Returns an component instance if it was instantiated, and fires an exception otherwise
+    componentInstance: function(aggrName) {
       
     },
 
@@ -175,12 +175,12 @@ Ext.componentMixIn = function(receiver){
     },
 
     /*
-    Reloads current component (calls the parent to reload it as its aggregatee)
+    Reloads current component (calls the parent to reload it as its component)
     */
     reload : function(){
       var parent = this.getParent();
       if (parent) {
-        parent.loadAggregatee({id:this.localId(parent), container:this.ownerCt.id});
+        parent.loadComponent({id:this.localId(parent), container:this.ownerCt.id});
       } else {
         window.location.reload();
       }
@@ -355,13 +355,13 @@ Ext.componentMixIn = function(receiver){
       // this.detectMenus(this);
       this.detectActions(this);
       
-      // Recursively detect aggregatees
-      this.detectAggregatees(this.items);
+      // Recursively detect components
+      this.detectComponents(this.items);
       
       // Dynamically create methods for api points, so that we could later call them like: this.myApiMethod()
       var config = this;
       var apiPoints = config.netzkeApi || [];
-      apiPoints.push('load_aggregatee_with_cache'); // all netzke components get this API point
+      apiPoints.push('load_component_with_cache'); // all netzke components get this API point
       Ext.each(apiPoints, function(intp){
         this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
       }, this);
@@ -548,7 +548,7 @@ Ext.override(Ext.Container, {
     return klass;
   },
 
-  // Instantiates an aggregatee by its config. If it appears to be a window, shows it instead of adding as item.
+  // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
   instantiateChild : function(config){
     var klass = this.classifyScopedName(config.scopedClassName);
     var instance = new klass(config);
@@ -620,16 +620,16 @@ Ext.override(Ext.Container, {
     }
   },
 
-  detectAggregatees: function(o){
+  detectComponents: function(o){
     if (Ext.isObject(o)) {
-      if (o.items) this.detectAggregatees(o.items);
+      if (o.items) this.detectComponents(o.items);
     } else if (Ext.isArray(o)) {
       var a = o;
       Ext.each(a, function(el, i){
-        if (el.aggregatee) {
-          a[i] = Ext.apply(this.aggregatees[el.aggregatee.camelize(true)], el);
-          delete a[i].aggregatee;
-        } else if (el.items) this.detectAggregatees(el.items);
+        if (el.component) {
+          a[i] = Ext.apply(this.components[el.component.camelize(true)], el);
+          delete a[i].component;
+        } else if (el.items) this.detectComponents(el.items);
       }, this);
     }
   },

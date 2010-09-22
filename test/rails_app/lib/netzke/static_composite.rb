@@ -1,20 +1,20 @@
 module Netzke
-  class StaticAggregator < Component::Base
+  class StaticComposite < Component::Base
     def config
       {
-        # 2 different ways to embed an aggregatee
+        # 2 different ways to embed an component
         :items => [
-          # 1 - from the +aggregatees+ method
-          js_aggregatee(:center_panel, :region => 'center'),
+          # 1 - from the +components+ method
+          js_component(:center_panel, :region => 'center'),
           
-          # 2 - inline (will be conerted into an aggregatee accessible with the +aggregatee+ method)
+          # 2 - inline (will be conerted into an component accessible with the +component+ method)
           {:name => :west_panel, :class_name => "ExtendedServerCaller", :region => 'west', :width => 300, :split => true}
         ],
         :bbar => [:update_west_panel.ext_action, :update_center_panel.ext_action]
       }.deep_merge super
     end
     
-    def aggregatees
+    def components
       super.merge(
         :center_panel => {
           :class_name => "ServerCaller"
@@ -24,7 +24,7 @@ module Netzke
     
     def self.js_properties
       {
-        :title => "Static Aggregator",
+        :title => "Static Composite",
         
         :layout => 'border',
         

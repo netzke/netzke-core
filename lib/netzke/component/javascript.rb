@@ -187,19 +187,19 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           # Unique id of the component
           res.merge!(:id => global_id)
 
-          # Non-late aggregatees
+          # Non-late components
           aggr_hash = {}
           
-          non_late_aggregatees.each_pair do |aggr_name, aggr_config|
-            aggr_instance = aggregatee_instance(aggr_name.to_sym)
+          non_late_components.each_pair do |aggr_name, aggr_config|
+            aggr_instance = component_instance(aggr_name.to_sym)
             aggr_instance.before_load
             aggr_hash[aggr_name] = aggr_instance.js_config
           end
           
-          res[:aggregatees] = aggr_hash unless aggr_hash.empty?
+          res[:components] = aggr_hash unless aggr_hash.empty?
 
-          # Api (besides the default "load_aggregatee_with_cache" - JavaScript side already knows about it)
-          api_points = self.class.api_points - [:load_aggregatee_with_cache]
+          # Api (besides the default "load_component_with_cache" - JavaScript side already knows about it)
+          api_points = self.class.api_points - [:load_component_with_cache]
           res.merge!(:netzke_api => api_points) unless api_points.empty?
 
           # Component class name. Needed for dynamic instantiation in javascript.
@@ -220,7 +220,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
         end
 
         # All the JS-code required by this instance of the component to be instantiated in the browser.
-        # It includes the JS-class for the component itself, as well as JS-classes for all components' (non-late) aggregatees.
+        # It includes the JS-class for the component itself, as well as JS-classes for all components' (non-late) components.
         def js_missing_code(cached = [])
           code = dependency_classes.inject("") do |r,k| 
             cached.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached)#.strip_js_comments

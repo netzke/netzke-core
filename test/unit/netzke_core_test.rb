@@ -12,7 +12,7 @@ module Netzke
       })
     end
     
-    def initial_aggregatees
+    def initial_components
       {
         :nested_one => {:class_name => 'NestedComponentOne'},
         :nested_two => {:class_name => 'NestedComponentTwo'}
@@ -35,7 +35,7 @@ module Netzke
   end
 
   class NestedComponentTwo < Base
-    def initial_aggregatees
+    def initial_components
       {
         :nested => {:class_name => 'DeepNestedComponent'}
       }
@@ -43,7 +43,7 @@ module Netzke
   end
 
   class DeepNestedComponent < Base
-    def initial_aggregatees
+    def initial_components
       {
         :nested => {:class_name => "VeryDeepNestedComponent"}
       }
@@ -86,16 +86,16 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   
   test "api" do
     component_class = Component
-    assert_equal [:load_aggregatee_with_cache, :method_one, :method_two], component_class.api_points
+    assert_equal [:load_component_with_cache, :method_one, :method_two], component_class.api_points
   end
 
-  test "aggregatees" do
+  test "components" do
     component = Component.new(:name => 'my_component')
     
-    # instantiate aggregatees
-    nested_component_one = component.aggregatee_instance(:nested_one)
-    nested_component_two = component.aggregatee_instance(:nested_two)
-    deep_nested_component = component.aggregatee_instance(:nested_two__nested)
+    # instantiate components
+    nested_component_one = component.component_instance(:nested_one)
+    nested_component_two = component.component_instance(:nested_two)
+    deep_nested_component = component.component_instance(:nested_two__nested)
     
     # check the classes of aggregation instances
     assert_kind_of NestedComponentOne, nested_component_one
@@ -111,7 +111,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   
   test "global_id_by_reference" do
     w = Component.new(:name => "a_component")
-    deep_nested_component = w.aggregatee_instance(:nested_two__nested)
+    deep_nested_component = w.component_instance(:nested_two__nested)
     assert_equal("a_component__nested_two", deep_nested_component.global_id_by_reference(:parent))
     assert_equal("a_component", deep_nested_component.global_id_by_reference(:parent__parent))
     assert_equal("a_component__nested_one", deep_nested_component.global_id_by_reference(:parent__parent__nested_one))
