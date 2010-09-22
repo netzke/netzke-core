@@ -530,13 +530,13 @@ Ext.override(Ext.Container, {
   },
   
   // Get the component that we are hosting
-  getComponent: function(){
+  getNetzkeComponent: function(){
     return this.items ? this.items.first() : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
   },
   
   // Remove the child
   removeChild : function(){
-    this.remove(this.getComponent());
+    this.remove(this.getNetzkeComponent());
   },
 
   // Given a scoped class name, returns the actual class, e.g.: "Netzke.GridPanel" => Netzke.classes.Netzke.GridPanel
@@ -555,7 +555,7 @@ Ext.override(Ext.Container, {
     if (instance.isXType("netzkewindow")) {
       instance.show();
     } else {
-      this.remove(this.getComponent()); // first delete previous component 
+      this.remove(this.getNetzkeComponent()); // first delete previous component 
       this.add(instance);
       this.doLayout();
     }
