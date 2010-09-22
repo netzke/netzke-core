@@ -10,11 +10,16 @@ module Netzke
     #
     module Javascript
       module ClassMethods
+
         # the JS (Ext) class that we inherit from on JS-level
         def js_base_class
-          "Ext.Panel"
+          read_inheritable_attribute(:js_base_class) || "Ext.Panel"
         end
 
+        def javascript_base_class(name)
+          write_inheritable_attribute(:js_base_class, name)
+        end
+        
         # Properties (including methods) that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
         def js_properties 
           {}
@@ -233,6 +238,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
       def self.included(receiver)
         receiver.extend         ClassMethods
         receiver.send :include, InstanceMethods
+        # receiver.ext_class "Ext.Panel"
         
         # Overriding Ext.Component#initComponent in core.js
         receiver.js_alias_method_chain :init_component, :netzke

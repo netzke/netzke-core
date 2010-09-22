@@ -1,8 +1,6 @@
 module Netzke
   class TabPanel < Component::Base
-    def self.js_base_class
-      "Ext.TabPanel"
-    end
+    javascript_base_class "Ext.TabPanel"
     
     def config
       {
@@ -12,7 +10,7 @@ module Netzke
           :class_name => "BorderLayoutPanel",
           :title => "A border layout panel",
           :items => [{
-            :title => "I'm NOT a Netzke component",
+            :title => "I'm NOT a Netzke widget",
             :region => :north,
             :html => "I'm a simple panel",
             :height => 100
@@ -30,5 +28,6 @@ module Netzke
         }]
       }.deep_merge super
     end
+    
   end
 end
