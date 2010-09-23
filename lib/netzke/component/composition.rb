@@ -193,7 +193,7 @@ module Netzke
           def detect_components_in_items(items)
             items.each_with_index do |item, i|
               if item[:class_name]
-                aggr_name = item[:name] || :"#{item[:class_name].underscore}#{@component_index}"; @component_index += 1
+                aggr_name = item[:name] || :"#{item[:class_name].underscore.split("/").last}#{@component_index}"; @component_index += 1
                 @components[aggr_name] = item
                 items[i] = js_component(aggr_name)
               else
