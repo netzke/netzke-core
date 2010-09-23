@@ -264,8 +264,8 @@ Ext.componentMixIn = function(receiver){
         Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
       } else {
         for (var instr in instructions) {
-          if (this[instr]) {
-            this[instr].apply(this, [instructions[instr]]);
+          if (Ext.isFunction(this[instr.camelize(true)])) {
+            this[instr.camelize(true)].apply(this, [instructions[instr]]); // execute the method
           } else {
             var childComponent = this.getChildComponent(instr);
             if (childComponent) {
@@ -280,8 +280,9 @@ Ext.componentMixIn = function(receiver){
 
     // Get the child component
     getChildComponent : function(id){
+      console.info("id: ", id);
       if (id === "") {return this};
-
+      
       var split = id.split("__");
       if (split[0] === 'parent') {
         split.shift();
