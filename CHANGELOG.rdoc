@@ -12,7 +12,11 @@
   * "widgets" are now "components"
   * 'api' is now 'endpoint'
   * persistent_config_enabled? is now persistence_enabled?
-  
+  * all actions should now be wrapped up in the js_action method
+  * +late_component+ option becomes +lazy_loading+
+  * component are now called components
+  * Widget is now called Component
+
 * New
   * Use the +ext+ helper in the views to embed any (pure) Ext component into a view.
   
@@ -60,7 +64,7 @@
 * Code: lightly better test coverage
 * New: <tt>Netzke::Base#global_id_by_reference</tt> method
 * Compatibility: resolving conflicts with the <tt>api</tt> property in some Ext v3.0 components
-* Fix: <tt>load_aggregatee_with_cache</tt> was throwing exception when the requested aggregatee wasn't defined
+* Fix: <tt>load_component_with_cache</tt> was throwing exception when the requested component wasn't defined
 * New: <tt>persistent_config_id</tt> configuration option allows specifying an id by which persistent configuration is identified for the widget. Handy if different homogeneous widgets need to share the same persistent configuration.
 * New: <tt>Netzke::Base#persistent_config</tt> method now accepts an optional boolean parameter signalizing that the configuration is global (not bound to a widget)
 * Impr: cleaner handling of actions and toolbars; fbar configuration introduced.
@@ -76,7 +80,7 @@
 * Impr: <tt>getChildComponent</tt> now allows referring to a widget like this: "parent__parent__some_widget__some_nested_widget"
 
 = v0.4.3
-* Fix: reworking loadAggregatee()-related code, closing a security flaw when a malicious browser could send any configuration options to instantiate the widget being loaded.
+* Fix: reworking loadComponent()-related code, closing a security flaw when a malicious browser could send any configuration options to instantiate the widget being loaded.
 
 = v0.4.2 - 2009-09-11
 * Fix: the API call (at the JavaScript side) was ignoring the callback parameter.
@@ -130,11 +134,11 @@
 = v0.2.6
 * FeedackGhost is now capable of displaying multiple flash messages.
 * Dependencies slightly refactored.
-* An informative exception added to Base#aggregatee_instance.
+* An informative exception added to Base#component_instance.
 * JS-level inheritance enabled.
 * Work-around for the problem with Ext 2.2.1 in loadComponent.
 * Events "<action_id>click" added to the widgets along with the actions.
-* aggregatee_missing method added to Netzke::Base - called when a non-existing aggregate of a widget is tried to be invoked
+* component_missing method added to Netzke::Base - called when a non-existing aggregate of a widget is tried to be invoked
 * Code readability improvements.
 
 = v0.2.5
