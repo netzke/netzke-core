@@ -129,7 +129,7 @@ module Netzke
         end
 
         # Component's js config used when embedding components as Container's items 
-        # (see static_composite.rb for an example)
+        # (see some_composite.rb for an example)
         def js_component(name, config = {})
           config.merge(:component => name)
         end

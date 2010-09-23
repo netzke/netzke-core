@@ -74,6 +74,15 @@ String.prototype.humanize=function(lowFirstLetter)
   return str;
 };
 
+// This one is borrowed from prototype.js
+String.prototype.underscore = function() {
+  return this.replace(/::/g, '/')
+             .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+             .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+             .replace(/-/g, '_')
+             .toLowerCase();
+}
+
 // Properties/methods common to all component classes
 Ext.componentMixIn = function(receiver){
   
@@ -264,8 +273,8 @@ Ext.componentMixIn = function(receiver){
         Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
       } else {
         for (var instr in instructions) {
-          if (Ext.isFunction(this[instr.camelize(true)])) {
-            this[instr.camelize(true)].apply(this, [instructions[instr]]); // execute the method
+          if (Ext.isFunction(this[instr])) {
+            this[instr].apply(this, [instructions[instr]]); // execute the method
           } else {
             var childComponent = this.getChildComponent(instr);
             if (childComponent) {
@@ -280,9 +289,8 @@ Ext.componentMixIn = function(receiver){
 
     // Get the child component
     getChildComponent : function(id){
-      console.info("id: ", id);
       if (id === "") {return this};
-      
+      id = id.underscore();
       var split = id.split("__");
       if (split[0] === 'parent') {
         split.shift();

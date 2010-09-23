@@ -11,4 +11,3 @@ Feature: Component loader
     And I should see "Simple Component"
   
   
-  

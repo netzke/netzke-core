@@ -12,7 +12,7 @@ module Netzke
           
           js_component(:east_panel, :region => :east, :width => 500, :split => true)
         ],
-        :bbar => [:update_west_panel.ext_action, :update_center_panel.ext_action, :update_west_from_server.ext_action, :update_center_from_server.ext_action]
+        :bbar => [:update_west_panel.ext_action, :update_center_panel.ext_action, :update_west_from_server.ext_action, :update_east_south_from_server.ext_action]
       }.deep_merge super
     end
     
@@ -38,9 +38,14 @@ module Netzke
       )
     end
     
-    api :update_center
-    def update_center(params)
-      {:east_panel__simple_panel1 => {:set_title => "Here's an update for south panel in east panel"}}
+    api :update_east_south
+    def update_east_south(params)
+      {:east_panel => {:simple_panel1 => {:set_title => "Here's an update for south panel in east panel"}}}
+    end
+    
+    api :update_west
+    def update_west(params)
+      {:west_panel => {:set_title => "Here's an update for west panel"}}
     end
     
     def self.js_properties
@@ -61,9 +66,15 @@ module Netzke
           }
         END_OF_JAVASCRIPT
         
-        :on_update_center_from_server => <<-JS.l
+        :on_update_east_south_from_server => <<-JS.l,
           function(){
-            this.updateCenter();
+            this.updateEastSouth();
+          }
+        JS
+        
+        :on_update_west_from_server => <<-JS.l
+          function(){
+            this.updateWest();
           }
         JS
       }
