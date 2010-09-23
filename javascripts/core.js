@@ -505,6 +505,126 @@ Ext.componentMixIn = function(receiver){
     //   }
     // },
 
+    // Given a scoped class name, returns the actual class, e.g.: "Netzke.GridPanel" => Netzke.classes.Netzke.GridPanel
+    classifyScopedName : function(n){
+      var klass = Netzke.classes;
+      Ext.each(n.split("."), function(s){
+        klass = klass[s];
+      });
+      return klass;
+    },
+
+    // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
+    instantiateChild : function(config){
+      var klass = this.classifyScopedName(config.scopedClassName);
+      var instance = new klass(config);
+      if (instance.isXType("netzkewindow")) {
+        instance.show();
+      } else {
+        this.remove(this.getNetzkeComponent()); // first delete previous component 
+        this.add(instance);
+        this.doLayout();
+      }
+    },
+
+    /*
+    Actions, menus, toolbars
+    */
+    normalizeActions : function(){
+      // Normalize actions
+      var normActions = {};
+      for (var name in this.actions) {
+        // Create an event for each action (so that higher-level components could interfere)
+        this.addEvents(name+'click');
+
+        // Configure the action
+        var actionConfig = this.actions[name];
+        actionConfig.customHandler = actionConfig.handler || actionConfig.fn; //DEPRECATED: .fn is kept for backward compatibility, preferred way is to specify handler
+        actionConfig.handler = this.actionHandler.createDelegate(this); // ! this is the "wrapper-handler", which is common for all actions!
+        actionConfig.name = name;
+        normActions[name] = new Ext.Action(actionConfig);
+      }
+      delete(this.actions);
+      this.actions = normActions;
+    },
+
+    /*
+    Detects action configs in the object, and replaces them with instances of Ext.Action.
+    This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
+
+    Example of 'this':
+    this: {
+      actions: {action1: new Ext.Action(1), action2: new Ext.Action(2), ...}, // actions are instantiated in the scope of this.actions
+      bbar: [{action:'action1'}, {xtype:'buttongroup', items:[{action: 'action2'}, ...], ...] // these are the action configs, and they correspond to the "actions" property in "this"
+    }
+    */
+    detectActions: function(o){
+      if (Ext.isObject(o)) {
+        if (o.handler && Ext.isFunction(this[o.handler.camelize(true)])) {
+           // This button config has a handler specified as string - replace it with reference to a real function if it exists
+          o.handler = this[o.handler.camelize(true)];
+        }
+        // TODO: this should become configurable
+        Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu"], function(key){
+          if (o[key]) {
+            this.detectActions(o[key]);
+          }
+        }, this);
+      } else if (Ext.isArray(o)) {
+        var a = o;
+        Ext.each(a, function(el, i){
+          if (Ext.isObject(el)) {
+            if (el.action) {
+              a[i] = this.actions[el.action.camelize(true)];
+            } else {
+              this.detectActions(el);
+            }
+          } else if (Ext.isArray(el)) {
+            this.detectActions(el);
+          }
+        }, this);
+      }
+    },
+
+    detectComponents: function(o){
+      if (Ext.isObject(o)) {
+        if (o.items) this.detectComponents(o.items);
+      } else if (Ext.isArray(o)) {
+        var a = o;
+        Ext.each(a, function(el, i){
+          if (el.component) {
+            a[i] = Ext.apply(this.components[el.component.camelize(true)], el);
+            delete a[i].component;
+          } else if (el.items) this.detectComponents(el.items);
+        }, this);
+      }
+    },
+
+    // Common handler for all component's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
+    actionHandler : function(comp){
+      var actionName = comp.name;
+      // If firing corresponding event doesn't return false, call the handler
+      if (this.fireEvent(actionName+'click', comp)) {
+        var action = this.actions[actionName];
+        var customHandler = action.initialConfig.customHandler;
+        var methodName = (customHandler && customHandler.camelize(true)) || "on" + actionName.camelize();
+        if (!this[methodName]) {throw "Netzke: action handler '" + methodName + "' is undefined"}
+
+        // call the handler passing it the triggering component
+        this[methodName](comp);
+      }
+    },
+
+    // Common handler for tools
+    toolActionHandler : function(tool){
+      // If firing corresponding event doesn't return false, call the handler
+      if (this.fireEvent(tool.id+'click')) {
+        var methodName = "on"+tool.camelize();
+        if (!this[methodName]) {throw "Netzke: handler for tool '"+tool+"' is undefined"}
+        this[methodName]();
+      }
+    },
+    
     onComponentLoad:Ext.emptyFn // gets overridden
   }
 }
@@ -537,127 +657,8 @@ Ext.override(Ext.Container, {
   // Remove the child
   removeChild : function(){
     this.remove(this.getNetzkeComponent());
-  },
-
-  // Given a scoped class name, returns the actual class, e.g.: "Netzke.GridPanel" => Netzke.classes.Netzke.GridPanel
-  classifyScopedName : function(n){
-    var klass = Netzke.classes;
-    Ext.each(n.split("."), function(s){
-      klass = klass[s];
-    });
-    return klass;
-  },
-
-  // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
-  instantiateChild : function(config){
-    var klass = this.classifyScopedName(config.scopedClassName);
-    var instance = new klass(config);
-    if (instance.isXType("netzkewindow")) {
-      instance.show();
-    } else {
-      this.remove(this.getNetzkeComponent()); // first delete previous component 
-      this.add(instance);
-      this.doLayout();
-    }
-  },
-  
-  /*
-  Actions, menus, toolbars
-  */
-  normalizeActions : function(){
-    // Normalize actions
-    var normActions = {};
-    for (var name in this.actions) {
-      // Create an event for each action (so that higher-level components could interfere)
-      this.addEvents(name+'click');
-
-      // Configure the action
-      var actionConfig = this.actions[name];
-      actionConfig.customHandler = actionConfig.handler || actionConfig.fn; //DEPRECATED: .fn is kept for backward compatibility, preferred way is to specify handler
-      actionConfig.handler = this.actionHandler.createDelegate(this); // ! this is the "wrapper-handler", which is common for all actions!
-      actionConfig.name = name;
-      normActions[name] = new Ext.Action(actionConfig);
-    }
-    delete(this.actions);
-    this.actions = normActions;
-  },
-
-  /*
-  Detects action configs in the object, and replaces them with instances of Ext.Action.
-  This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
-  
-  Example of 'this':
-  this: {
-    actions: {action1: new Ext.Action(1), action2: new Ext.Action(2), ...}, // actions are instantiated in the scope of this.actions
-    bbar: [{action:'action1'}, {xtype:'buttongroup', items:[{action: 'action2'}, ...], ...] // these are the action configs, and they correspond to the "actions" property in "this"
   }
-  */
-  detectActions: function(o){
-    if (Ext.isObject(o)) {
-      if (o.handler && Ext.isFunction(this[o.handler.camelize(true)])) {
-         // This button config has a handler specified as string - replace it with reference to a real function if it exists
-        o.handler = this[o.handler.camelize(true)];
-      }
-      // TODO: this should become configurable
-      Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu"], function(key){
-        if (o[key]) {
-          this.detectActions(o[key]);
-        }
-      }, this);
-    } else if (Ext.isArray(o)) {
-      var a = o;
-      Ext.each(a, function(el, i){
-        if (Ext.isObject(el)) {
-          if (el.action) {
-            a[i] = this.actions[el.action.camelize(true)];
-          } else {
-            this.detectActions(el);
-          }
-        } else if (Ext.isArray(el)) {
-          this.detectActions(el);
-        }
-      }, this);
-    }
-  },
 
-  detectComponents: function(o){
-    if (Ext.isObject(o)) {
-      if (o.items) this.detectComponents(o.items);
-    } else if (Ext.isArray(o)) {
-      var a = o;
-      Ext.each(a, function(el, i){
-        if (el.component) {
-          a[i] = Ext.apply(this.components[el.component.camelize(true)], el);
-          delete a[i].component;
-        } else if (el.items) this.detectComponents(el.items);
-      }, this);
-    }
-  },
-
-  // Common handler for all component's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
-  actionHandler : function(comp){
-    var actionName = comp.name;
-    // If firing corresponding event doesn't return false, call the handler
-    if (this.fireEvent(actionName+'click', comp)) {
-      var action = this.actions[actionName];
-      var customHandler = action.initialConfig.customHandler;
-      var methodName = (customHandler && customHandler.camelize(true)) || "on" + actionName.camelize();
-      if (!this[methodName]) {throw "Netzke: action handler '" + methodName + "' is undefined"}
-      
-      // call the handler passing it the triggering component
-      this[methodName](comp);
-    }
-  },
-
-  // Common handler for tools
-  toolActionHandler : function(tool){
-    // If firing corresponding event doesn't return false, call the handler
-    if (this.fireEvent(tool.id+'click')) {
-      var methodName = "on"+tool.camelize();
-      if (!this[methodName]) {throw "Netzke: handler for tool '"+tool+"' is undefined"}
-      this[methodName]();
-    }
-  }
 });
 
 
