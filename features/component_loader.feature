@@ -10,4 +10,5 @@ Feature: Component loader
     Then I should see "Inner text"
     And I should see "Simple Component"
   
-  
+    When I press "Load in window"
+    Then I should see "Component loaded in window"
