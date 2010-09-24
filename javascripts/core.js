@@ -523,19 +523,6 @@ Ext.componentMixIn = function(receiver){
       return klass;
     },
 
-    // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
-    instantiateChild : function(config){
-      var klass = this.classifyScopedName(config.scopedClassName);
-      var instance = new klass(config);
-      if (instance.isXType("netzkewindow")) {
-        instance.show();
-      } else {
-        this.remove(this.getNetzkeComponent()); // first delete previous component 
-        this.add(instance);
-        this.doLayout();
-      }
-    },
-
     /*
     Actions, menus, toolbars
     */
@@ -641,6 +628,19 @@ Ext.componentMixIn = function(receiver){
 
 // Netzke extensions for Ext.Container
 Ext.override(Ext.Container, {
+  // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
+  instantiateChild : function(config){
+    var klass = this.classifyScopedName(config.scopedClassName);
+    var instance = new klass(config);
+    if (instance.isXType("netzkewindow")) {
+      instance.show();
+    } else {
+      this.remove(this.getNetzkeComponent()); // first delete previous component 
+      this.add(instance);
+      this.doLayout();
+    }
+  },
+
   /** 
     Get Netzke component that this Ext.Container is part of (*not* the parent component, for which call getParent)
     It searches up the Ext.Container hierarchy until it finds a Container that has isNetzke property set to true
