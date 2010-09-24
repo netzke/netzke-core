@@ -514,15 +514,6 @@ Ext.componentMixIn = function(receiver){
     //   }
     // },
 
-    // Given a scoped class name, returns the actual class, e.g.: "Netzke.GridPanel" => Netzke.classes.Netzke.GridPanel
-    classifyScopedName : function(n){
-      var klass = Netzke.classes;
-      Ext.each(n.split("."), function(s){
-        klass = klass[s];
-      });
-      return klass;
-    },
-
     /*
     Actions, menus, toolbars
     */
@@ -628,6 +619,15 @@ Ext.componentMixIn = function(receiver){
 
 // Netzke extensions for Ext.Container
 Ext.override(Ext.Container, {
+  // Given a scoped class name, returns the actual class, e.g.: "Netzke.GridPanel" => Netzke.classes.Netzke.GridPanel
+  classifyScopedName : function(n){
+    var klass = Netzke.classes;
+    Ext.each(n.split("."), function(s){
+      klass = klass[s];
+    });
+    return klass;
+  },
+
   // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
   instantiateChild : function(config){
     var klass = this.classifyScopedName(config.scopedClassName);
