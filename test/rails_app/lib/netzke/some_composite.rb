@@ -8,7 +8,7 @@ module Netzke
           js_component(:center_panel, :region => 'center'),
           
           # 2 - inline (will be conerted into an component accessible with the +component+ method)
-          {:name => :west_panel, :class_name => "ExtendedServerCaller", :region => 'west', :width => 300, :split => true},
+          {:name => "west_panel", :class_name => "ExtendedServerCaller", :region => 'west', :width => 300, :split => true},
           
           js_component(:east_panel, :region => :east, :width => 500, :split => true)
         ],
@@ -32,7 +32,7 @@ module Netzke
           # :name => :south_panel,
           :region => :south,
           :title => "Another panel",
-          :height => 100,
+          :height => 200,
           :split => true
         }]}
       )

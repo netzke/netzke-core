@@ -194,7 +194,7 @@ module Netzke
             items.each_with_index do |item, i|
               if item[:class_name]
                 aggr_name = item[:name] || :"#{item[:class_name].underscore.split("/").last}#{@component_index}"; @component_index += 1
-                @components[aggr_name] = item
+                @components[aggr_name.to_sym] = item
                 items[i] = js_component(aggr_name)
               else
                 detect_components_in_hash(item)
