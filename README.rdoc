@@ -8,7 +8,7 @@ This is the bare bones of the Netzke framework. Use it to build your own compone
 
 The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a component, and then embed it straight to your Rails' view, load it dynamically into your Ext-based applications, or use them as building blocks for new components. For more info, see the links below.
 
-== Instalation
+== Installation
 For the latest ("edge") stuff, install as plugin (recommended!):
 
     rails plugin install git://github.com/skozlov/netzke-core.git
