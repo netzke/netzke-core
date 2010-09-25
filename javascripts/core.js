@@ -361,7 +361,6 @@ Ext.componentMixIn = function(receiver){
       this.normalizeActions();
       
       // Detect menus recursively among our properties, and normalize them
-      // this.detectMenus(this);
       this.detectActions(this);
       
       // Recursively detect components

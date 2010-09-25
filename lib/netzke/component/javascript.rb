@@ -12,17 +12,27 @@ module Netzke
       module ClassMethods
 
         # the JS (Ext) class that we inherit from on JS-level
-        def js_base_class
-          read_inheritable_attribute(:js_base_class) || "Ext.Panel"
-        end
-
-        def javascript_base_class(name)
-          write_inheritable_attribute(:js_base_class, name)
+        def js_base_class(class_name = nil)
+          class_name.nil? ? (read_inheritable_attribute(:js_base_class) || "Ext.Panel") : write_inheritable_attribute(:js_base_class, class_name)
         end
         
-        # Properties (including methods) that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
-        def js_properties 
-          {}
+        def js_method(name, definition)
+          current_js_methods = read_inheritable_attribute(:js_methods) || {}
+          current_js_methods.merge!(name => definition.l)
+          write_inheritable_attribute(:js_methods, current_js_methods)
+        end
+        
+        def js_methods
+          read_inheritable_attribute(:js_methods) || {}
+        end
+
+        # Properties that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
+        def js_properties(hsh = nil)
+          hsh.nil? ? (read_inheritable_attribute(:js_properties) || {}) : begin
+            current_js_properties = read_inheritable_attribute(:js_properties) || {}
+            current_js_properties.merge!(hsh)
+            write_inheritable_attribute(:js_properties, current_js_properties)
+          end
         end
 
         # Chaining alias methods at JavaScript level (used when mixing in JavaScript "modules")
@@ -106,7 +116,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
             # If so, include them, if not - don't re-include those from the parent.
             # (converting to sym is for 1.8.7-compatibility)
             res << (singleton_methods(false).map(&:to_sym).include?(:js_properties) ? %Q{
-  #{js_full_class_name} = Ext.extend(#{js_class}, #{js_properties.to_nifty_json});
+  #{js_full_class_name} = Ext.extend(#{js_class}, #{js_extend_properties.to_nifty_json});
             } : %Q{
   #{js_full_class_name} = Ext.extend(#{js_class}, {});
             })
@@ -125,7 +135,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           #{js_full_class_name}.superclass.constructor.call(this, config);
         };
         
-        Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_properties.to_nifty_json}, Ext.componentMixIn(#{js_base_class})));
+        Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.componentMixIn(#{js_base_class})));
         
         // Register xtype
         Ext.reg("#{js_xtype}", #{js_full_class_name});
@@ -135,6 +145,11 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           res
         end
         
+        
+        def js_extend_properties
+          res = js_properties.merge(js_methods)
+          res.merge(:actions => extract_actions(res))
+        end
         
         def js_extra_code
           ""

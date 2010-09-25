@@ -45,40 +45,37 @@ module Netzke
     #    end
     module Actions
       module ClassMethods
+        def extract_actions(hsh)
+          hsh.each_pair.inject({}) do |r,(k,v)| 
+            v.is_a?(Array) ? r.merge(extract_actions_from_array(v)) : r
+          end
+        end
+        
+        def extract_actions_from_array(arry)
+          arry.inject({}) do |r, el|
+            if el.is_a?(Hash)
+              el[:action] ? r.merge(el[:action] => auto_action_config(el[:action])) : r.merge(extract_actions(el))
+            else
+              r
+            end
+          end
+        end
+        
+        def auto_action_config(action_name)
+          {:text => action_name.to_s.humanize}
+        end
       end
       
       module InstanceMethods
         
         # Actions to be used in the config
         def actions
-          extract_actions(config)
+          self.class.extract_actions(config)
         end
 
         def js_config_with_actions #:nodoc
-          js_config_without_actions.merge(:actions => actions)
+          actions.empty? ? js_config_without_actions : js_config_without_actions.merge(:actions => actions)
         end
-        
-        private
-        
-          def extract_actions(hsh)
-            hsh.each_pair.inject({}) do |r,(k,v)| 
-              v.is_a?(Array) ? r.merge(extract_actions_from_array(v)) : r
-            end
-          end
-          
-          def extract_actions_from_array(arry)
-            arry.inject({}) do |r, el|
-              if el.is_a?(Hash)
-                el[:action] ? r.merge(el[:action] => auto_action_config(el[:action])) : r.merge(extract_actions(el))
-              else
-                r
-              end
-            end
-          end
-          
-          def auto_action_config(action_name)
-            {:text => action_name.to_s.humanize}
-          end
         
       end
       
