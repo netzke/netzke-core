@@ -51,7 +51,7 @@ module Netzke
 
         # Config options that should not go to the client side
         def server_side_config_options
-          []
+          [:lazy_loading]
         end
     
       end
