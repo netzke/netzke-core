@@ -9,9 +9,16 @@ module Netzke
         js_method :on_some_action, <<-JS
           function(){ this.items.last().setTitle("Action triggered"); }
         JS
+        
+        # Another way of defining a JS method
+        js_method :on_another_action do
+          <<-JS
+            function(){ this.items.first().setTitle("Another action triggered"); }
+          JS
+        end
     
         js_properties(
-          :active_tab => 0, :bbar => [:some_action.ext_action]
+          :active_tab => 0, :bbar => [:some_action.ext_action, :another_action.ext_action]
         )
       end
 

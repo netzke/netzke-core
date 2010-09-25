@@ -16,9 +16,10 @@ module Netzke
           class_name.nil? ? (read_inheritable_attribute(:js_base_class) || "Ext.Panel") : write_inheritable_attribute(:js_base_class, class_name)
         end
         
-        def js_method(name, definition)
+        def js_method(name, definition = nil)
+          definition = yield.l if block_given?
           current_js_methods = read_inheritable_attribute(:js_methods) || {}
-          current_js_methods.merge!(name => definition.l)
+          current_js_methods.merge!(name => definition.l) if definition
           write_inheritable_attribute(:js_methods, current_js_methods)
         end
         
@@ -28,6 +29,7 @@ module Netzke
 
         # Properties that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
         def js_properties(hsh = nil)
+          
           hsh.nil? ? (read_inheritable_attribute(:js_properties) || {}) : begin
             current_js_properties = read_inheritable_attribute(:js_properties) || {}
             current_js_properties.merge!(hsh)
@@ -120,7 +122,6 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
             } : %Q{
   #{js_full_class_name} = Ext.extend(#{js_class}, {});
             })
-
             res << <<-END_OF_JAVASCRIPT
             
             // Register our xtype
