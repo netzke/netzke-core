@@ -83,19 +83,45 @@ String.prototype.underscore = function() {
              .toLowerCase();
 }
 
+Netzke.aliasMethodChain = function(klass, method, feature) {
+  klass[method + "Without" + feature.capitalize()] = klass[method];
+  klass[method] = klass[method + "With" + feature.capitalize()];
+}
+
 // Properties/methods common to all component classes
 Ext.componentMixIn = function(receiver){
-  
   return {
     height: 400,
     // width: 800,
     border: false,
     isNetzke: true, // to distinguish Netzke components from regular Ext components
     latestResult: {}, // latest result returned from the server via an API call
+    
+    constructor : function(config){
+      Netzke.aliasMethodChain(this, "initComponent", "netzke");
+      receiver.superclass.constructor.call(this, config);
+    },
 
-    aliasMethodChain : function(target, feature) {
-      this[target + "Without" + feature.capitalize()] = this[target];
-      this[target] = this[target + "With" + feature.capitalize()];
+    initComponentWithNetzke : function(){
+      this.normalizeActions();
+      
+      // Detect menus recursively among our properties, and normalize them
+      this.detectActions(this);
+      
+      // Recursively detect components
+      this.detectComponents(this.items);
+      
+      // Dynamically create methods for api points, so that we could later call them like: this.myApiMethod()
+      var apiPoints = this.netzkeApi || [];
+      apiPoints.push('load_component_with_cache'); // all netzke components get this API point
+      Ext.each(apiPoints, function(intp){
+        this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
+      }, this);
+
+      // that's where the references to different callback functions will be stored
+      this.callbackHash = {};
+      
+      this.initComponentWithoutNetzke();
     },
 
     /*
@@ -357,30 +383,6 @@ Ext.componentMixIn = function(receiver){
       this.latestResult = result;
     },
 
-    initComponentWithNetzke : function() {
-      this.normalizeActions();
-      
-      // Detect menus recursively among our properties, and normalize them
-      this.detectActions(this);
-      
-      // Recursively detect components
-      this.detectComponents(this.items);
-      
-      // Dynamically create methods for api points, so that we could later call them like: this.myApiMethod()
-      var config = this;
-      var apiPoints = config.netzkeApi || [];
-      apiPoints.push('load_component_with_cache'); // all netzke components get this API point
-      Ext.each(apiPoints, function(intp){
-        this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
-      }, this);
-
-      // that's where the references to different callback functions will be stored
-      this.callbackHash = {};
-      
-      // call the original method
-      this.initComponentWithoutNetzke();
-    },
-
     // Code run before calling Ext's constructor - normalizing config to provide Netzke additional functionality
     // commonBeforeConstructor : function(config){
 
@@ -546,7 +548,7 @@ Ext.componentMixIn = function(receiver){
     */
     detectActions: function(o){
       if (Ext.isObject(o)) {
-        if (o.handler && Ext.isFunction(this[o.handler.camelize(true)])) {
+        if ((typeof o.handler === 'string') && Ext.isFunction(this[o.handler.camelize(true)])) {
            // This button config has a handler specified as string - replace it with reference to a real function if it exists
           o.handler = this[o.handler.camelize(true)];
         }
@@ -565,8 +567,6 @@ Ext.componentMixIn = function(receiver){
             } else {
               this.detectActions(el);
             }
-          } else if (Ext.isArray(el)) {
-            this.detectActions(el);
           }
         }, this);
       }

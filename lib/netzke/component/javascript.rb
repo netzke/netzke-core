@@ -37,13 +37,6 @@ module Netzke
           end
         end
 
-        # Chaining alias methods at JavaScript level (used when mixing in JavaScript "modules")
-        def js_alias_method_chain(target, feature)
-          write_inheritable_attribute(:js_before_constructor, (read_inheritable_attribute(:js_before_constructor) || "") << <<-END_OF_JAVASCRIPT)
-this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.camelize(:lower)}");
-          END_OF_JAVASCRIPT
-        end
-
         # component's menus
         # def js_menus; []; end
 
@@ -90,62 +83,23 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
         end
 
         # are we using JS inheritance? for now, if js_base_class is a Netzke class - yes
-        def js_inheritance?
+        def extends_netzke_component?
           superclass != Netzke::Component::Base
         end
 
         # Declaration of component's class (stored in the cache storage (Ext.netzke.cache) at the client side 
         # to be reused at the moment of component instantiation)
         def js_class(cached = [])
+          res = []
           # Defining the scope if it isn't known yet
-          res = js_full_scope == js_default_scope ? "" : %Q{
-          Ext.ns("#{js_full_scope}");
-          }
+          res << %{Ext.ns("#{js_full_scope}");} unless js_full_scope == js_default_scope
 
-          if js_inheritance?
-            # Using javascript inheritance
-  #           res << <<-END_OF_JAVASCRIPT
-  #           // Costructor
-  # #{js_full_class_name} = function(config){
-  #   #{js_full_class_name}.superclass.constructor.call(this, config);
-  # };
-  #           END_OF_JAVASCRIPT
+          res << (extends_netzke_component? ? js_class_declaration_extending_component : js_class_declaration_new_component)
 
-            # Do we have js_base_class defined? If so, use it instead of the js_full_class_name of the superclass
-            js_class = singleton_methods(false).include?(:js_base_class) ? js_base_class : superclass.js_full_class_name
-            
-            # Do we specify our own extend properties (overriding js_properties)? 
-            # If so, include them, if not - don't re-include those from the parent.
-            # (converting to sym is for 1.8.7-compatibility)
-            res << (singleton_methods(false).map(&:to_sym).include?(:js_properties) ? %Q{
-  #{js_full_class_name} = Ext.extend(#{js_class}, #{js_extend_properties.to_nifty_json});
-            } : %Q{
-  #{js_full_class_name} = Ext.extend(#{js_class}, {});
-            })
-            res << <<-END_OF_JAVASCRIPT
-            
-            // Register our xtype
-            Ext.reg("#{js_xtype}", #{js_full_class_name});
-            END_OF_JAVASCRIPT
+          res << %(Ext.reg("#{js_xtype}", #{js_full_class_name});)
 
-          else
-            res << <<-END_OF_JAVASCRIPT
-// Constructor
-        #{js_full_class_name} = function(config){
-          #{read_inheritable_attribute(:js_before_constructor)}
-          #{js_full_class_name}.superclass.constructor.call(this, config);
-        };
-        
-        Ext.extend(#{js_full_class_name}, #{js_base_class}, Ext.applyIf(#{js_extend_properties.to_nifty_json}, Ext.componentMixIn(#{js_base_class})));
-        
-        // Register xtype
-        Ext.reg("#{js_xtype}", #{js_full_class_name});
-            END_OF_JAVASCRIPT
-          end
-
-          res
+          res.join("\n")
         end
-        
         
         def js_extend_properties
           res = js_properties.merge(js_methods)
@@ -154,6 +108,26 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
         
         def js_extra_code
           ""
+        end
+        
+        # Generates declaration of the JS class as direct extension of a Ext component
+        def js_class_declaration_new_component
+          %(#{js_full_class_name} = Ext.extend(#{js_base_class}, Ext.apply(Ext.componentMixIn(#{js_base_class}),
+#{js_extend_properties.to_nifty_json}));)
+        end
+        
+        # Generates declaration of the JS class as extension of another Netzke component
+        def js_class_declaration_extending_component
+          # Do we have js_base_class defined? If so, use it instead of the js_full_class_name of the superclass
+          # js_class = singleton_methods(false).include?(:js_base_class) ? js_base_class : superclass.js_full_class_name
+          base_class = superclass.js_full_class_name
+
+          # Do we specify our own extend properties (overriding js_properties)? 
+          # If so, include them, if not - don't re-include those from the parent.
+          # (converting to sym is for 1.8.7-compatibility)
+          singleton_methods(false).map(&:to_sym).include?(:js_properties) ? \
+          %{#{js_full_class_name} = Ext.extend(#{base_class}, #{js_extend_properties.to_nifty_json});} :
+          %{#{js_full_class_name} = #{base_class};}
         end
         
         # Returns all extra JavaScript-code (as string) required by this component's class
@@ -179,7 +153,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
           res = ""
 
           # include the base-class javascript if doing JS inheritance
-          if js_inheritance? && !cached.include?(superclass.short_component_class_name)
+          if extends_netzke_component? && !cached.include?(superclass.short_component_class_name)
             res << superclass.js_code(cached) << "\n"
           end
 
@@ -257,7 +231,7 @@ this.aliasMethodChain("#{target.to_s.camelize(:lower)}", "#{feature.to_s.cameliz
         # receiver.ext_class "Ext.Panel"
         
         # Overriding Ext.Component#initComponent in core.js
-        receiver.js_alias_method_chain :init_component, :netzke
+        # receiver.js_alias_method_chain :init_component, :netzke
       end
     end
   end

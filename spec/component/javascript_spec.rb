@@ -8,8 +8,8 @@ module Netzke
     class InheritedComponent < SomeComponent
     end
   
-    describe "js_inheritance?" do
-      InheritedComponent.js_inheritance?.should == true
+    describe "extends_netzke_component?" do
+      InheritedComponent.extends_netzke_component?.should == true
     end
   end  
 end
