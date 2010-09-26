@@ -19,19 +19,28 @@ module Netzke
         def js_method(name, definition = nil)
           definition = yield.l if block_given?
           current_js_methods = read_inheritable_attribute(:js_methods) || {}
+          # we don't want here any js_methods from the superclass
+          current_js_methods = {} if current_js_methods == superclass.read_inheritable_attribute(:js_methods)
           current_js_methods.merge!(name => definition.l) if definition
           write_inheritable_attribute(:js_methods, current_js_methods)
         end
         
         def js_methods
-          read_inheritable_attribute(:js_methods) || {}
+          res = read_inheritable_attribute(:js_methods) || {}
+          res = {} if res == superclass.read_inheritable_attribute(:js_methods)
+          res
         end
 
         # Properties that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
         def js_properties(hsh = nil)
-          
-          hsh.nil? ? (read_inheritable_attribute(:js_properties) || {}) : begin
+          if hsh.nil? 
+            res = read_inheritable_attribute(:js_properties) || {}
+            res = {} if res == superclass.read_inheritable_attribute(:js_properties)
+            res
+          else
             current_js_properties = read_inheritable_attribute(:js_properties) || {}
+            # we don't want here any js_properties from the superclass
+            current_js_properties = {} if current_js_properties == self.superclass.read_inheritable_attribute(:js_properties)
             current_js_properties.merge!(hsh)
             write_inheritable_attribute(:js_properties, current_js_properties)
           end
@@ -101,9 +110,14 @@ module Netzke
           res.join("\n")
         end
         
+        # Combined properties and methods
         def js_extend_properties
-          res = js_properties.merge(js_methods)
-          res.merge(:actions => extract_actions(res))
+          @_js_extend_properties ||= begin
+            res = js_properties.merge(js_methods)
+            extracted_actions = extract_actions(res)
+            res.merge!(:actions => extracted_actions) if !extracted_actions.empty?
+            res
+          end
         end
         
         def js_extra_code
@@ -125,9 +139,9 @@ module Netzke
           # Do we specify our own extend properties (overriding js_properties)? 
           # If so, include them, if not - don't re-include those from the parent.
           # (converting to sym is for 1.8.7-compatibility)
-          singleton_methods(false).map(&:to_sym).include?(:js_properties) ? \
-          %{#{js_full_class_name} = Ext.extend(#{base_class}, #{js_extend_properties.to_nifty_json});} :
-          %{#{js_full_class_name} = #{base_class};}
+          js_extend_properties.empty? ? \
+          %{#{js_full_class_name} = #{base_class};} :
+          %{#{js_full_class_name} = Ext.extend(#{base_class}, #{js_extend_properties.to_nifty_json});}
         end
         
         # Returns all extra JavaScript-code (as string) required by this component's class

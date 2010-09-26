@@ -1,15 +1,14 @@
 module Netzke
   class ExtendedServerCaller < ServerCaller
-    def self.js_properties
-      {
-        :title => "Extended Server Caller",
-        :bug_server => <<-END_OF_JAVASCRIPT.l,
-          function(){
-            #{js_full_class_name}.superclass.bugServer.call(this);
-          }
-        END_OF_JAVASCRIPT
+    js_properties :title => "Extended Server Caller"
+    
+    js_method :bug_server, <<-JS
+      function(){
+        #{js_full_class_name}.superclass.bugServer.call(this);
+        this.getBottomToolbar().addButton({text: "Added" + " by extended Server Caller"});
+        this.getBottomToolbar().doLayout();
       }
-    end
+    JS
     
     def whats_up(params)
       {:set_title => super[:set_title] + ", shiny weather"}
