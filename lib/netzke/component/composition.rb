@@ -186,18 +186,14 @@ module Netzke
             @js_items && detect_components_in_items(@js_items)
           end
 
-          def detect_components_in_hash(hsh)
-            hsh[:items] && detect_components_in_items(hsh[:items])
-          end
-
           def detect_components_in_items(items)
             items.each_with_index do |item, i|
-              if item[:class_name]
+              if item.is_a?(Hash) && item[:class_name]
                 aggr_name = item[:name] || :"#{item[:class_name].underscore.split("/").last}#{@component_index}"; @component_index += 1
                 @components[aggr_name.to_sym] = item
                 items[i] = js_component(aggr_name)
-              else
-                detect_components_in_hash(item)
+              elsif item.is_a?(Hash)
+                item[:items].is_a?(Array) && detect_components_in_items(item[:items])
               end
             end
           end

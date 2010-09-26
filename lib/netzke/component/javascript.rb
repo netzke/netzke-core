@@ -20,7 +20,7 @@ module Netzke
           definition = yield.l if block_given?
           current_js_methods = read_inheritable_attribute(:js_methods) || {}
           # we don't want here any js_methods from the superclass
-          current_js_methods = {} if current_js_methods == superclass.read_inheritable_attribute(:js_methods)
+          current_js_methods = {} if self.superclass.singleton_methods.map(&:to_sym).include?(:js_methods) && current_js_methods == superclass.js_methods
           current_js_methods.merge!(name => definition.l) if definition
           write_inheritable_attribute(:js_methods, current_js_methods)
         end
@@ -40,7 +40,7 @@ module Netzke
           else
             current_js_properties = read_inheritable_attribute(:js_properties) || {}
             # we don't want here any js_properties from the superclass
-            current_js_properties = {} if current_js_properties == self.superclass.read_inheritable_attribute(:js_properties)
+            current_js_properties = {} if self.superclass.singleton_methods.map(&:to_sym).include?(:js_properties) && current_js_properties == self.superclass.js_properties
             current_js_properties.merge!(hsh)
             write_inheritable_attribute(:js_properties, current_js_properties)
           end
@@ -136,9 +136,8 @@ module Netzke
           # js_class = singleton_methods(false).include?(:js_base_class) ? js_base_class : superclass.js_full_class_name
           base_class = superclass.js_full_class_name
 
-          # Do we specify our own extend properties (overriding js_properties)? 
+          # Do we specify our own extend properties? 
           # If so, include them, if not - don't re-include those from the parent.
-          # (converting to sym is for 1.8.7-compatibility)
           js_extend_properties.empty? ? \
           %{#{js_full_class_name} = #{base_class};} :
           %{#{js_full_class_name} = Ext.extend(#{base_class}, #{js_extend_properties.to_nifty_json});}
