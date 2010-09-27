@@ -20,9 +20,8 @@ module Netzke
         this.button.on('click', this.bugServer, this);
       }
     JS
-    
-    api :whats_up
-    def whats_up(params)
+
+    endpoint :whats_up do |params|
       {:set_title => "All quiet here on the server"}
     end
     

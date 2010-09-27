@@ -9,9 +9,11 @@ module Netzke
         this.getBottomToolbar().doLayout();
       }
     JS
-    
+
+    api :whats_up
     def whats_up(params)
-      {:set_title => super[:set_title] + ", shiny weather"}
+      {:set_title => super(params)[:set_title] + ", shiny weather"}
     end
+
   end
 end

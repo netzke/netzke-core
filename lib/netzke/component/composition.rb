@@ -157,7 +157,7 @@ module Netzke
         #   users__center__get_data
         #     instantiates component "users", and calls "center__get_data" on it
         #   books__move_column
-        #     instantiates component "books", and calls "api_move_column" on it
+        #     instantiates component "books", and calls "endpoint_move_column" on it
         def method_missing(method_name, params = {})
           component, *action = method_name.to_s.split('__')
           component = component.to_sym
@@ -165,9 +165,9 @@ module Netzke
 
           if action
             if components[component]
-              # only actions starting with "api_" are accessible
-              api_action = action.to_s.index('__') ? action : "api_#{action}"
-              component_instance(component).send(api_action, params)
+              # only actions starting with "endpoint_" are accessible
+              endpoint_action = action.to_s.index('__') ? action : "endpoint_#{action}"
+              component_instance(component).send(endpoint_action, params)
             else
               component_missing(component)
             end

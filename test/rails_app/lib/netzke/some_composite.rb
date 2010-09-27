@@ -23,17 +23,17 @@ module Netzke
         },
         
         :east_panel => {:class_name => "BorderLayoutPanel", :items => [{
-          :name => :center_panel,
-          :class_name => "SimplePanel",
-          :title => "A panel",
-          :region => :center
-        },{
-          :class_name => "SimplePanel",
-          # :name => :south_panel,
-          :region => :south,
-          :title => "Another panel",
-          :height => 200,
-          :split => true
+            :name => :center_panel,
+            :class_name => "SimplePanel",
+            :title => "A panel",
+            :region => :center
+          },{
+            :class_name => "SimplePanel",
+            # :name => :south_panel,
+            :region => :south,
+            :title => "Another panel",
+            :height => 200,
+            :split => true
         }]}
       )
     end

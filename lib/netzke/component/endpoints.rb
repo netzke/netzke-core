@@ -1,6 +1,6 @@
 module Netzke
   module Component
-    module Api
+    module Endpoints
       module ClassMethods
         # Declare connection points between client side of a component and its server side. For example:
         #
@@ -14,14 +14,16 @@ module Netzke
         # See netzke-basepack's GridPanel for an example.
         # 
         def api(*api_points)
-          apip = read_inheritable_attribute(:api_points) || []
-          api_points.each{|p| apip << p}
-          write_inheritable_attribute(:api_points, apip)
-
+          ::ActiveSupport::Deprecation.warn("Using the 'api' call is deprecated. Use the 'endpoint' approach instead", caller)
+          
+          api_points.each do |apip|
+            add_endpoint(apip)
+          end
+          
           # It may be needed later for security
           api_points.each do |apip|
             module_eval <<-END, __FILE__, __LINE__
-            def api_#{apip}(*args)
+            def endpoint_#{apip}(*args)
               before_api_call_result = defined?(before_api_call) && before_api_call('#{apip}', *args) || {}
               (before_api_call_result.empty? ? #{apip}(*args) : before_api_call_result).to_nifty_json
             end
@@ -29,9 +31,25 @@ module Netzke
           end
         end
 
-        # Array of API-points specified with <tt>Netzke::Base.api</tt> method
-        def api_points
-          read_inheritable_attribute(:api_points)
+        # The new, preferred way to specify a endpoint
+        def endpoint(name, options = {}, &block)
+          add_endpoint(name)
+          define_method name, &block
+          define_method :"endpoint_#{name}" do |*args|
+            send(name, *args).to_nifty_json
+          end
+        end
+        
+        # Register an endpoint
+        def add_endpoint(ep)
+          current_endpoints = read_inheritable_attribute(:endpoints) || []
+          current_endpoints << ep
+          write_inheritable_attribute(:endpoints, current_endpoints.uniq)
+        end
+
+        # Returns registered endpoints
+        def endpoints
+          read_inheritable_attribute(:endpoints)
         end
       end
       
