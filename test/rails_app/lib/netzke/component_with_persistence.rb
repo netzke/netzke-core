@@ -1,5 +1,11 @@
 module Netzke
   class ComponentWithPersistence < Component::Base
+    def self.config
+      super.deep_merge(
+        :persistent_config_manager => "NetzkePreference"
+      )
+    end
+    
     def default_config
       {
         :title => "No Title (yet!)",
@@ -26,10 +32,8 @@ module Netzke
       }
     end
     
-    api :whats_up
-    def whats_up(params)
+    endpoint :whats_up do |params|
       update_persistent_options(:title => "New Title!")
-      {}
     end
     
   end

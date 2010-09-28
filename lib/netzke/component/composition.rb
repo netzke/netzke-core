@@ -81,8 +81,8 @@ module Netzke
         # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
         def load_component_with_cache(params)
           cache = params[:cache].gsub(".", "::").split(",") # array of cached class names (in Ruby)
-          relative_component_id = params.delete(:id).underscore.to_sym
-          component = components[relative_component_id] && component_instance(relative_component_id)
+          component_name = params.delete(:name).underscore.to_sym
+          component = components[component_name] && component_instance(component_name)
 
           if component
             # inform the component that it's being loaded
@@ -98,11 +98,11 @@ module Netzke
               }
             }, {
               :component_loaded => {
-                :id => relative_component_id
+                :name => component_name
               }
             }]
           else
-            {:feedback => "Couldn't load component '#{relative_component_id}'"}
+            {:feedback => "Couldn't load component '#{component_name}'"}
           end
         end
         
@@ -203,7 +203,7 @@ module Netzke
       def self.included(receiver)
         receiver.extend         ClassMethods
         receiver.send :include, InstanceMethods
-        receiver.api :load_component_with_cache # every component gets this api
+        receiver.endpoint :load_component_with_cache # every component gets this api
       end
     end
   end

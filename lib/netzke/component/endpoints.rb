@@ -34,9 +34,11 @@ module Netzke
         # The new, preferred way to specify a endpoint
         def endpoint(name, options = {}, &block)
           add_endpoint(name)
-          define_method name, &block
+          define_method name, &block if block # if no block is given, the method is supposed to be defined elsewhere
           define_method :"endpoint_#{name}" do |*args|
-            send(name, *args).to_nifty_json
+            res = send(name, *args)
+            # don't insist on endpoint method always returning hash or array
+            res.is_a?(Hash) || res.is_a?(Array) ? res.to_nifty_json : res
           end
         end
         

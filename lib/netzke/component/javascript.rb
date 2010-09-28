@@ -126,7 +126,7 @@ module Netzke
         
         # Generates declaration of the JS class as direct extension of a Ext component
         def js_class_declaration_new_component
-          %(#{js_full_class_name} = Ext.extend(#{js_base_class}, Ext.apply(Ext.componentMixIn(#{js_base_class}),
+          %(#{js_full_class_name} = Ext.extend(#{js_base_class}, Ext.apply(Netzke.componentMixin(#{js_base_class}),
 #{js_extend_properties.to_nifty_json}));)
         end
         

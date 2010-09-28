@@ -38,13 +38,11 @@ module Netzke
       )
     end
     
-    api :update_east_south
-    def update_east_south(params)
+    endpoint :update_east_south do |params|
       {:east_panel => {:simple_panel1 => {:set_title => "Here's an update for south panel in east panel"}}}
     end
     
-    api :update_west
-    def update_west(params)
+    endpoint :update_west do |params|
       {:west_panel => {:set_title => "Here's an update for west panel"}}
     end
     

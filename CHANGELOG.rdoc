@@ -2,12 +2,15 @@
 * Rails3 compatibility
 
 * Broken backward compatibility
-  * js_extend_properties renamed to js_properties
   * ext_config config level is removed; put all that configuration in the top level
-  * all actions should now be wrapped up in the js_action method
+  * mentioning actions in the bbar, tbar, etc, should be explicit, e.g.:
+  
+      :bbar => [:apply.ext_action, :delete.ext_action]
+      
   * +late_aggregatee+ option becomes +lazy_loading+
   * aggregatee are now called components
-  * Widget is now called Component
+  * widgets is now called components
+  * 'api' is now called 'endpoint'
 
 * New
   * Use the +ext+ helper in the views to embed any (pure) Ext component into a view.

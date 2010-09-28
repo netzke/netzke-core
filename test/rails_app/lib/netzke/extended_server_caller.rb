@@ -1,5 +1,6 @@
 module Netzke
   class ExtendedServerCaller < ServerCaller
+    
     js_properties :title => "Extended Server Caller"
     
     js_method :bug_server, <<-JS
@@ -10,8 +11,7 @@ module Netzke
       }
     JS
 
-    api :whats_up
-    def whats_up(params)
+    endpoint :whats_up do |params|
       {:set_title => super(params)[:set_title] + ", shiny weather"}
     end
 

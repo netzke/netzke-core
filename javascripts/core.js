@@ -28,7 +28,7 @@ Netzke.deprecationWarning = function(msg){
 }
 
 Ext.ns('Netzke.page'); // namespace for all component instantces on the page
-Ext.ns('Netzke.classes'); // namespace for all component classes. TODO: this should be called Netzke.Component
+Ext.ns('Netzke.classes'); // namespace for all component classes
 
 Ext.QuickTips.init();
 
@@ -37,11 +37,6 @@ Ext.TabPanel.prototype.idDelimiter = "___";
 
 // We don't want no state managment by default, thank you!
 Ext.state.Provider.prototype.set = function(){};
-
-// Type detection functions
-Netzke.isObject = function(o) {
-  return (o != null && typeof o == "object" && o.constructor.toString() == Object.toString());
-}
 
 // Some Ruby-ish String extensions
 // from http://code.google.com/p/inflection-js/
@@ -86,32 +81,34 @@ String.prototype.underscore = function() {
              .toLowerCase();
 }
 
+// Usefull when using mixins
 Netzke.aliasMethodChain = function(klass, method, feature) {
   klass[method + "Without" + feature.capitalize()] = klass[method];
   klass[method] = klass[method + "With" + feature.capitalize()];
 }
 
 // Properties/methods common to all component classes
-Ext.componentMixIn = function(receiver){
+Netzke.componentMixin = function(receiver){
   return {
     height: 400,
-    // width: 800,
     border: false,
     isNetzke: true, // to distinguish Netzke components from regular Ext components
     latestResult: {}, // latest result returned from the server via an API call
     
+    /*
+    Overriding the constructor to only apply an "alias method chain" to initComponent
+    */
     constructor : function(config){
       Netzke.aliasMethodChain(this, "initComponent", "netzke");
       receiver.superclass.constructor.call(this, config);
     },
-
+    
+    /* initComponent common for all Netzke components */
     initComponentWithNetzke : function(){
       this.normalizeActions();
       
-      // Detect menus recursively among our properties, and normalize them
       this.detectActions(this);
       
-      // Recursively detect components
       this.detectComponents(this.items);
       
       // Dynamically create methods for api points, so that we could later call them like: this.myApiMethod()
@@ -121,18 +118,119 @@ Ext.componentMixIn = function(receiver){
         this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
       }, this);
 
-      // that's where the references to different callback functions will be stored
+      // This is where the references to different callback functions will be stored
       this.callbackHash = {};
-      
+
+      // Normalize tools
+      // if (config.tools) {
+      //   var normTools = [];
+      //   Ext.each(config.tools, function(tool){
+      //     // Create an event for each action (so that higher-level components could interfere)
+      //     this.addEvents(tool.id+'click');
+      // 
+      //     var handler = this.toolActionHandler.createDelegate(this, [tool]);
+      //     normTools.push({id : tool, handler : handler, scope : this});
+      //   }, this);
+      //   config.tools = normTools;
+      // }
+
+      // Set title
+      // if (config.mode === "config"){
+      //   if (!config.title) {
+      //     config.title = '[' + config.id + ']';
+      //   } else {
+      //     config.title = config.title + ' [' + config.id + ']';
+      //   }
+      // } else {
+      //   if (!config.title) {
+      //     config.title = config.id.humanize();
+      //   }
+      // }
+
+      // From everywhere accessible FeedbackGhost
+      this.feedbackGhost = new Netzke.FeedbackGhost();
+
+      // Call the original initComponent
       this.initComponentWithoutNetzke();
+    },
+
+    /* 
+    Replaces actions configs with Ext.Action instances, assigning default handler to them 
+    */
+    normalizeActions : function(){
+      var normActions = {};
+      for (var name in this.actions) {
+        // Create an event for each action (so that higher-level components could interfere)
+        this.addEvents(name+'click');
+
+        // Configure the action
+        var actionConfig = this.actions[name];
+        actionConfig.customHandler = actionConfig.handler;
+        actionConfig.handler = this.actionHandler.createDelegate(this); // handler common for all actions
+        actionConfig.name = name;
+        normActions[name] = new Ext.Action(actionConfig);
+      }
+      delete(this.actions);
+      this.actions = normActions;
+    },
+
+    /*
+    Detects action configs in the passed object, and replaces them with instances of Ext.Action created by normalizeActions().
+    This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
+    */
+    detectActions: function(o){
+      if (Ext.isObject(o)) {
+        if ((typeof o.handler === 'string') && Ext.isFunction(this[o.handler.camelize(true)])) {
+           // This button config has a handler specified as string - replace it with reference to a real function if it exists
+          o.handler = this[o.handler.camelize(true)];
+        }
+        // TODO: this should be configurable!
+        Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu"], function(key){
+          if (o[key]) {
+            this.detectActions(o[key]);
+          }
+        }, this);
+      } else if (Ext.isArray(o)) {
+        var a = o;
+        Ext.each(a, function(el, i){
+          if (Ext.isObject(el)) {
+            if (el.action) {
+              a[i] = this.actions[el.action.camelize(true)];
+            } else {
+              this.detectActions(el);
+            }
+          }
+        }, this);
+      }
+    },
+
+    /*
+    Detects component placeholders in the passed object (typically, "items"), 
+    and merges them with the corresponding config from this.components.
+    This way it becomes ready to be instantiated properly by Ext.
+    */
+    detectComponents: function(o){
+      if (Ext.isObject(o)) {
+        if (o.items) this.detectComponents(o.items);
+      } else if (Ext.isArray(o)) {
+        var a = o;
+        Ext.each(a, function(el, i){
+          if (el.component) {
+            a[i] = Ext.apply(this.components[el.component.camelize(true)], el);
+            delete a[i].component;
+          } else if (el.items) this.detectComponents(el.items);
+        }, this);
+      }
     },
 
     /*
     Loads component into a container.
     */
     loadComponent: function(params){
+      if (params.id) Netzke.deprecationWarning("Using 'id' in loadComponent is deprecated. Use 'name' instead.");
+      
       // params that will be provided for the server API call (load_component_with_cache); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
-      var apiParams = Ext.apply({id: params.id, container: params.container}, params.params); 
+      var endpointParams = Ext.apply({name: (params.name || params.id), container: params.container}, params.params); 
 
       // build the cached components list to send it to the server
       var cachedComponentNames = "";
@@ -158,11 +256,7 @@ Ext.componentMixIn = function(receiver){
       var cache = "";
       Ext.each(cl, function(c){cache += c + ",";});
 
-      // for (name in Netzke.classes) {
-      //   cachedComponentNames += name + ",";
-      // }
-      // apiParams.cache = cachedComponentNames;
-      apiParams.cache = cache;
+      endpointParams.cache = cache;
 
       // remember the passed callback for the future
       if (params.callback) {
@@ -175,7 +269,7 @@ Ext.componentMixIn = function(receiver){
       if (params.container) Ext.getCmp(params.container).removeChild(); // remove the old component if the container is specified
 
       // do the remote API call
-      this.loadComponentWithCache(apiParams);
+      this.loadComponentWithCache(endpointParams);
     },
 
     // Returns an component instance if it was instantiated, and fires an exception otherwise
@@ -192,10 +286,10 @@ Ext.componentMixIn = function(receiver){
         // this.getChildComponent(params.id).ownerCt.enable();
 
         // provide the callback to that component that was loading the child, passing the child itself
-        var callbackFn = this.callbackHash[params.id.camelize(true)];
+        var callbackFn = this.callbackHash[params.name.camelize(true)];
         if (callbackFn) {
-          callbackFn.call(params.scope || this, this.getChildComponent(params.id));
-          delete this.callbackHash[params.id.camelize(true)];
+          callbackFn.call(params.scope || this, this.getChildComponent(params.name));
+          delete this.callbackHash[params.name.camelize(true)];
         }
       }
     },
@@ -370,7 +464,7 @@ Ext.componentMixIn = function(receiver){
       if (!params) params = {};
         Ext.Ajax.request({
         params: params,
-        url: this.buildApiUrl(intp),
+        url: this.endpointUrl(intp),
         callback: function(options, success, response){
           if (success) {
             // execute commands from server
@@ -391,68 +485,8 @@ Ext.componentMixIn = function(receiver){
       this.latestResult = result;
     },
 
-    // Code run before calling Ext's constructor - normalizing config to provide Netzke additional functionality
-    // commonBeforeConstructor : function(config){
-
-      // This will contain Ext.Action instances
-      // this.actions = {};
-
-      // Create Ext.Action instances based on config.actions
-      // if (config.actions) {
-      //   for (var name in config.actions) {
-      //     // Create an event for each action (so that higher-level components could interfere)
-      //     this.addEvents(name+'click');
-      // 
-      //     // Configure the action
-      //     var actionConfig = config.actions[name];
-      //     actionConfig.customHandler = actionConfig.handler || actionConfig.fn; //DEPRECATED: .fn is kept for backward compatibility, preferred way is to specify handler
-      //     actionConfig.handler = this.actionHandler.createDelegate(this); // ! this is the "wrapper-handler", which is common for all actions!
-      //     actionConfig.name = name;
-      //     this.actions[name] = new Ext.Action(actionConfig);
-      //   }
-      //   
-      //   // TODO: need to rethink this action related stuff
-      //   config.actions = this.actions;
-      // }
-      // 
-      // config.bbar = config.bbar && this.normalizeMenuItems(config.bbar, this);
-      // config.tbar = config.tbar && this.normalizeMenuItems(config.tbar, this);
-      // config.fbar = config.fbar && this.normalizeMenuItems(config.fbar, this);
-      // config.contextMenu = config.contextMenu && this.normalizeMenuItems(config.contextMenu, this);
-
-      // config.menu = config.menu && this.normalizeMenuItems(config.menu, this);
-
-      // Normalize tools
-      // if (config.tools) {
-      //   var normTools = [];
-      //   Ext.each(config.tools, function(tool){
-      //     // Create an event for each action (so that higher-level components could interfere)
-      //     this.addEvents(tool.id+'click');
-      // 
-      //     var handler = this.toolActionHandler.createDelegate(this, [tool]);
-      //     normTools.push({id : tool, handler : handler, scope : this});
-      //   }, this);
-      //   config.tools = normTools;
-      // }
-
-      // Set title
-      // if (config.mode === "config"){
-      //   if (!config.title) {
-      //     config.title = '[' + config.id + ']';
-      //   } else {
-      //     config.title = config.title + ' [' + config.id + ']';
-      //   }
-      // } else {
-      //   if (!config.title) {
-      //     config.title = config.id.humanize();
-      //   }
-      // }
-    // },
-
     // At this moment component is fully initializied
     commonAfterConstructor : function(config){
-      // From everywhere accessible FeedbackGhost
-      this.feedbackGhost = new Netzke.FeedbackGhost();
 
       // Add the menus
       if (this.initialConfig.menu) {this.addMenu(this.initialConfig.menu, this);}
@@ -523,77 +557,6 @@ Ext.componentMixIn = function(receiver){
     //   }
     // },
 
-    /*
-    Actions, menus, toolbars
-    */
-    normalizeActions : function(){
-      // Normalize actions
-      var normActions = {};
-      for (var name in this.actions) {
-        // Create an event for each action (so that higher-level components could interfere)
-        this.addEvents(name+'click');
-
-        // Configure the action
-        var actionConfig = this.actions[name];
-        actionConfig.customHandler = actionConfig.handler || actionConfig.fn; //DEPRECATED: .fn is kept for backward compatibility, preferred way is to specify handler
-        actionConfig.handler = this.actionHandler.createDelegate(this); // ! this is the "wrapper-handler", which is common for all actions!
-        actionConfig.name = name;
-        normActions[name] = new Ext.Action(actionConfig);
-      }
-      delete(this.actions);
-      this.actions = normActions;
-    },
-
-    /*
-    Detects action configs in the object, and replaces them with instances of Ext.Action.
-    This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
-
-    Example of 'this':
-    this: {
-      actions: {action1: new Ext.Action(1), action2: new Ext.Action(2), ...}, // actions are instantiated in the scope of this.actions
-      bbar: [{action:'action1'}, {xtype:'buttongroup', items:[{action: 'action2'}, ...], ...] // these are the action configs, and they correspond to the "actions" property in "this"
-    }
-    */
-    detectActions: function(o){
-      if (Ext.isObject(o)) {
-        if ((typeof o.handler === 'string') && Ext.isFunction(this[o.handler.camelize(true)])) {
-           // This button config has a handler specified as string - replace it with reference to a real function if it exists
-          o.handler = this[o.handler.camelize(true)];
-        }
-        // TODO: this should become configurable
-        Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu"], function(key){
-          if (o[key]) {
-            this.detectActions(o[key]);
-          }
-        }, this);
-      } else if (Ext.isArray(o)) {
-        var a = o;
-        Ext.each(a, function(el, i){
-          if (Ext.isObject(el)) {
-            if (el.action) {
-              a[i] = this.actions[el.action.camelize(true)];
-            } else {
-              this.detectActions(el);
-            }
-          }
-        }, this);
-      }
-    },
-
-    detectComponents: function(o){
-      if (Ext.isObject(o)) {
-        if (o.items) this.detectComponents(o.items);
-      } else if (Ext.isArray(o)) {
-        var a = o;
-        Ext.each(a, function(el, i){
-          if (el.component) {
-            a[i] = Ext.apply(this.components[el.component.camelize(true)], el);
-            delete a[i].component;
-          } else if (el.items) this.detectComponents(el.items);
-        }, this);
-      }
-    },
-
     // Common handler for all component's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
     actionHandler : function(comp){
       var actionName = comp.name;
@@ -636,6 +599,7 @@ Ext.override(Ext.Container, {
   },
 
   // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
+  // TODO: there must be a method to just instantiate a component, but not to add/show it instantly.
   instantiateChild : function(config){
     var klass = this.classifyScopedName(config.scopedClassName);
     var instance = new klass(config);
