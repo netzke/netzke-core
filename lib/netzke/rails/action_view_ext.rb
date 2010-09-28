@@ -2,10 +2,14 @@ module Netzke
   module ActionViewExt
     # Include JavaScript
     def netzke_js_include
+      res = []
+      
       # ExtJS
-      res = ENV['RAILS_ENV'] == 'development' ? javascript_include_tag("/extjs/adapter/ext/ext-base-debug", "/extjs/ext-all-debug") : javascript_include_tag("/extjs/adapter/ext/ext-base", "/extjs/ext-all")
+      res << (ENV['RAILS_ENV'] == 'development' ? javascript_include_tag("/extjs/adapter/ext/ext-base-debug", "/extjs/ext-all-debug") : javascript_include_tag("/extjs/adapter/ext/ext-base", "/extjs/ext-all"))
+      
       # Netzke (dynamically generated)
-      res << "\n" << javascript_include_tag("/netzke/netzke")
+      res << javascript_include_tag("/netzke/netzke")
+      res.join("\n")
     end
 
     # Include CSS
@@ -27,7 +31,6 @@ module Netzke
     # JavaScript for all Netzke classes in this view, and Ext.onReady which renders all Netzke components in this view
     def netzke_js
       res = []
-      res << %(Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection)
       res << content_for(:netzke_js_classes)
       res << "\n"
       res << "Ext.onReady(function(){"

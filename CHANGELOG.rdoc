@@ -12,6 +12,9 @@
 * New
   * Use the +ext+ helper in the views to embed any (pure) Ext component into a view.
   
+* Deprecations
+  * buildApiUrl deprecated in favor of endpointUrl
+  
 = v0.5.3 - 2010-06-14
 * Fix: Getting rid of deprecation warnings about tasks not sitting in lib.
 

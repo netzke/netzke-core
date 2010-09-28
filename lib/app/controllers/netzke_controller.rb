@@ -6,7 +6,7 @@ class NetzkeController < ApplicationController
   def netzke
     respond_to do |format|
       format.js {
-        res = ""
+        res = initial_dynamic_javascript
         Netzke::Component::Base.config[:javascripts].each do |path|
           f = File.new(path)
           res << f.read
@@ -42,5 +42,16 @@ class NetzkeController < ApplicationController
       super
     end
   end
+  
+  private
+    # Generates initial javascript code that is dependent on Rails environement
+    def initial_dynamic_javascript
+      res = []
+      res << %(Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection)
+      res << %{Ext.ns('Netzke');}
+      res << %{Netzke.RelativeUrlRoot = '#{ActionController::Base.config.relative_url_root}';}
+      res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}/extjs';}
+      res.join("\n")
+    end
   
 end

@@ -1,5 +1,9 @@
 /*
 This file gets loaded along with the rest of Ext library at the initial load
+At this time the following constants have been set by Rails:
+
+  Netzke.RelativeUrlRoot - set to ActionController::Base.config.relative_url_root
+  Netzke.RelativeExtUrl - URL to ext files
 */
 
 // Check Ext JS version
@@ -12,9 +16,8 @@ This file gets loaded along with the rest of Ext library at the initial load
 })();
 
 // Initial stuff
-Ext.BLANK_IMAGE_URL = "/extjs/resources/images/default/s.gif";
+Ext.BLANK_IMAGE_URL = Netzke.RelativeExtUrl + "/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
-Ext.ns('Netzke'); // Netzke namespace
 
 Netzke.deprecationWarning = function(msg){
   if (typeof console == 'undefined') {
@@ -353,8 +356,13 @@ Ext.componentMixIn = function(receiver){
     // },
 
     // Returns API url based on provided API point
-    buildApiUrl: function(apip){
-      return "/netzke/" + this.id + "__" + apip;
+    buildApiUrl: function(endpoint){
+      Netzke.deprecationWarning("buildApiUrl() is deprecated. Use endpointUrl() first");
+      return this.endpointUrl(endpoint);
+    },
+    
+    endpointUrl: function(endpoint){
+      return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
     },
 
     // Does the call to the server and processes the response
