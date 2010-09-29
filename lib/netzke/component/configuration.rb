@@ -29,7 +29,7 @@ module Netzke
             :external_css              => [],
 
             # AR model that provides us with persistent config functionality
-            :persistent_config_manager => "NetzkePreference",
+            # :persistent_config_manager => "NetzkePreference",
 
             # Default location of extjs library
             :ext_location              => defined?(Rails) && Rails.root.join("public", "extjs"),
