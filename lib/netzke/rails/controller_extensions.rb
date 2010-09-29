@@ -2,6 +2,7 @@ module Netzke
   module ControllerExtensions
     def self.included(base)
       base.send(:before_filter, :set_session_data)
+			base.send(:before_filter, :set_controller)
     end
     
     def set_session_data
@@ -22,5 +23,9 @@ module Netzke
         session[:netzke_just_logged_out] = false
       end
     end
+
+		def set_controller
+			 ::Netzke::Main.controller = self
+		end
   end
 end
