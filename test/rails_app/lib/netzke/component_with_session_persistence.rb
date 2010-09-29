@@ -1,10 +1,5 @@
 module Netzke
   class ComponentWithSessionPersistence < Component::Base
-    # def self.config
-    #   super.deep_merge(
-    #     :persistence_manager => "NetzkePreference"
-    #   )
-    # end
     
     def default_config
       {

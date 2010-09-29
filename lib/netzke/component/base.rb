@@ -1,7 +1,7 @@
 require 'active_support'
 require 'netzke/component/javascript'
 require 'netzke/component/stylesheets'
-require 'netzke/component/endpoints'
+require 'netzke/component/services'
 require 'netzke/component/composition'
 require 'netzke/component/configuration'
 require 'netzke/component/persistence'
@@ -48,7 +48,7 @@ module Netzke
       include Session
       include Configuration
       include Javascript
-      include Endpoints
+      include Services
       include Composition
       include Stylesheets
       include Embedding

@@ -1,6 +1,6 @@
 module Netzke
   module Component
-    module Endpoints
+    module Services
       module ClassMethods
         # Declare connection points between client side of a component and its server side. For example:
         #

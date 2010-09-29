@@ -6,46 +6,76 @@ module Netzke
     # +Ext.extend+ provides inheritance from an Ext class specified in +js_base_class+ class method.
     # 
     # == Inside component's constructor
-    # * Component's constructor gets called with a parameter that is a configuration object provided by +js_config+ instance method. This configuration is specific for the instance of the component, and, for example, contains this component's unique id. As another example, by means of this configuration object, a grid receives the configuration array for its columns, a form - for its fields, etc. With other words, everything that may change from instance to instance of the same component's class, goes in here.
-    #
+    # * Component's constructor gets called with a parameter that is a configuration object provided by +config+ instance method. This configuration is specific for the instance of the component, and, for example, contains this component's unique id. As another example, by means of this configuration object, a grid receives the configuration array for its columns, a form - for its fields, etc.
     module Javascript
+      extend ActiveSupport::Concern
+      
       module ClassMethods
 
-        # the JS (Ext) class that we inherit from on JS-level
+        # The JS (Ext) class that we inherit from on the JS level
         def js_base_class(class_name = nil)
           class_name.nil? ? (read_inheritable_attribute(:js_base_class) || "Ext.Panel") : write_inheritable_attribute(:js_base_class, class_name)
         end
         
+        # Definition of a public JS method, e.g.:
+        # 
+        #     js_method :on_call_server, <<-JS
+        #       function(){
+        #         this.whatsUp();
+        #       }
+        #     JS
         def js_method(name, definition = nil)
           definition = yield.l if block_given?
-          current_js_methods = read_inheritable_attribute(:js_methods) || {}
-          # we don't want here any js_methods from the superclass
-          current_js_methods = {} if self.superclass.singleton_methods.map(&:to_sym).include?(:js_methods) && current_js_methods == superclass.js_methods
-          current_js_methods.merge!(name => definition.l) if definition
+          current_js_methods = read_clean_inheritable_hash(:js_methods)
+          current_js_methods.merge!(name => definition.l)
           write_inheritable_attribute(:js_methods, current_js_methods)
         end
         
+        # Returns all JS method definitions in a hash
         def js_methods
-          res = read_inheritable_attribute(:js_methods) || {}
-          res = {} if res == superclass.read_inheritable_attribute(:js_methods)
-          res
+          read_clean_inheritable_hash(:js_methods)
         end
-
-        # Properties that will be used to extend the functionality of (Ext) JS-class specified in js_base_class
-        def js_properties(hsh = nil)
-          if hsh.nil? 
-            res = read_inheritable_attribute(:js_properties) || {}
-            res = {} if res == superclass.read_inheritable_attribute(:js_properties)
-            res
+        
+        # Definition of a public JS property, e.g.:
+        # 
+        #     js_property :title, "My Netzke Component"
+        def js_property(name, value = nil)
+          name = name.to_sym
+          if value.nil?
+            (read_inheritable_attribute(:js_properties) || {})[name]
           else
-            current_js_properties = read_inheritable_attribute(:js_properties) || {}
-            # we don't want here any js_properties from the superclass
-            current_js_properties = {} if self.superclass.singleton_methods.map(&:to_sym).include?(:js_properties) && current_js_properties == self.superclass.js_properties
+            current_js_properties = read_clean_inheritable_hash(:js_properties)
+            current_js_properties[name] = value
+            write_inheritable_attribute(:js_properties, current_js_properties)
+          end
+        end
+        
+        # Assignment of multiple public JS properties in a bunch, e.g.:
+        # 
+        #     js_properties :title => "My Component", :border => true, :html => "Inner HTML"
+        def js_properties(hsh = nil)
+          if hsh.nil?
+            read_clean_inheritable_hash(:js_properties)
+          else
+            current_js_properties = read_clean_inheritable_hash(:js_properties)
             current_js_properties.merge!(hsh)
             write_inheritable_attribute(:js_properties, current_js_properties)
           end
         end
-
+        
+        # JS properties and methods merged together
+        def js_extend_properties
+          @_js_extend_properties ||= begin
+            res = js_properties.merge(js_methods)
+            extracted_actions = extract_actions(res)
+            # and also eventually include actions defined in the js_properties
+            res.merge!(:actions => extracted_actions) if !extracted_actions.empty?
+            res
+          end
+        end
+        
+        # TODO: the code below needs refactoring and cleaning-up
+        
         # component's menus
         # def js_menus; []; end
 
@@ -110,15 +140,6 @@ module Netzke
           res.join("\n")
         end
         
-        # Combined properties and methods
-        def js_extend_properties
-          @_js_extend_properties ||= begin
-            res = js_properties.merge(js_methods)
-            extracted_actions = extract_actions(res)
-            res.merge!(:actions => extracted_actions) if !extracted_actions.empty?
-            res
-          end
-        end
         
         def js_extra_code
           ""
@@ -184,6 +205,12 @@ module Netzke
         # Little helper
         def null; "null".l; end
 
+        private
+          def read_clean_inheritable_hash(attr_name)
+            res = read_inheritable_attribute(attr_name) || {}
+            # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
+            res == self.superclass.read_inheritable_attribute(attr_name) ? {} : res
+          end
         
       end
       
@@ -236,15 +263,6 @@ module Netzke
           code.blank? ? nil : code
         end
         
-      end
-      
-      def self.included(receiver)
-        receiver.extend         ClassMethods
-        receiver.send :include, InstanceMethods
-        # receiver.ext_class "Ext.Panel"
-        
-        # Overriding Ext.Component#initComponent in core.js
-        # receiver.js_alias_method_chain :init_component, :netzke
       end
     end
   end
