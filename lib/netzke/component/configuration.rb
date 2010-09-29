@@ -29,7 +29,7 @@ module Netzke
             :external_css              => [],
 
             # AR model that provides us with persistent config functionality
-            # :persistent_config_manager => "NetzkePreference",
+            # :persistence_manager => "NetzkePreference",
 
             # Default location of extjs library
             :ext_location              => defined?(Rails) && Rails.root.join("public", "extjs"),
@@ -72,7 +72,7 @@ module Netzke
         #     deep_merge(strong_parent_config).
         #     deep_merge(strong_session_config)
         def config
-          @config ||= independent_config.deep_merge(strong_parent_config).deep_merge(strong_session_config)
+          @config ||= independent_config.deep_merge(strong_parent_config).deep_merge(session_options)
         end
 
         def flat_config(key = nil)
@@ -100,13 +100,15 @@ module Netzke
         end
       
         # Like normal config, but stored in session
-        def weak_session_config
-          component_session[:weak_session_config] ||= {}
-        end
-
-        def strong_session_config
-          component_session[:strong_session_config] ||= {}
-        end
+        # def weak_session_config
+        #   component_session[:weak_session_config] ||= {}
+        # end
+        # 
+        # def strong_session_config
+        #   component_session[:strong_session_config] ||= {}
+        # end
+        
+        
 
         # configuration of all children will get deep_merge'd with strong_children_config
         # def strong_children_config= (c)

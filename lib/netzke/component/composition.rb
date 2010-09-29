@@ -27,7 +27,7 @@ module Netzke
 
         def remove_component(aggr)
           if config[:persistent_config]
-            persistent_config_manager_class.delete_all_for_component("#{global_id}__#{aggr}")
+            persistence_manager_class.delete_all_for_component("#{global_id}__#{aggr}")
           end
           components[aggr] = nil
         end

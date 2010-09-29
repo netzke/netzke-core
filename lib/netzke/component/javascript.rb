@@ -214,7 +214,7 @@ module Netzke
           res.merge!(:scoped_class_name => self.class.js_scoped_class_name)
 
           # Inform the JavaScript side if persistent_config is enabled
-          # res[:persistent_config] = persistent_config_enabled?
+          # res[:persistent_config] = persistence_enabled?
 
           # Include our xtype
           res[:xtype] = self.class.js_xtype

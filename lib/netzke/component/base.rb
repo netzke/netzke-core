@@ -5,6 +5,7 @@ require 'netzke/component/endpoints'
 require 'netzke/component/composition'
 require 'netzke/component/configuration'
 require 'netzke/component/persistence'
+require 'netzke/component/session'
 require 'netzke/component/embedding'
 
 module Netzke
@@ -44,6 +45,7 @@ module Netzke
     class Base
       
       include Persistence
+      include Session
       include Configuration
       include Javascript
       include Endpoints
@@ -83,14 +85,6 @@ module Netzke
         component_class.new(config)
       end
     
-      def session
-        Netzke::Main.session
-      end
-    
-      def component_session
-        session[global_id] ||= {}
-      end
-
       # Rails' logger
       def logger
         Rails.logger
