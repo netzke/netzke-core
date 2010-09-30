@@ -260,7 +260,7 @@ Netzke.componentMixin = function(receiver){
 
       // remember the passed callback for the future
       if (params.callback) {
-        this.callbackHash[params.id] = params.callback; // per loaded component, as there may be simultaneous calls
+        this.callbackHash[params.name] = params.callback; // per loaded component, as there may be simultaneous calls
       }
 
       // visually disable the container while the component is being loaded
@@ -286,10 +286,10 @@ Netzke.componentMixin = function(receiver){
         // this.getChildComponent(params.id).ownerCt.enable();
 
         // provide the callback to that component that was loading the child, passing the child itself
-        var callbackFn = this.callbackHash[params.name.camelize(true)];
+        var callbackFn = this.callbackHash[params.name];
         if (callbackFn) {
           callbackFn.call(params.scope || this, this.getChildComponent(params.name));
-          delete this.callbackHash[params.name.camelize(true)];
+          delete this.callbackHash[params.name];
         }
       }
     },

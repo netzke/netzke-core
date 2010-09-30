@@ -12,3 +12,12 @@ Feature: Component loader
   
     When I press "Load in window"
     Then I should see "Component loaded in window"
+    
+  @selenium
+  Scenario: Component loader should invoke a callback
+    Given I am on the ComponentLoader test page
+    When I press "Load with feedback"
+    Then I should see "Callback invoked!"
+  
+  
+  
