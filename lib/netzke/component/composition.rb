@@ -3,7 +3,18 @@ require 'active_support/core_ext/class/inheritable_attributes'
 module Netzke
   module Component
     module Composition
+      extend ActiveSupport::Concern
+      
+      included do
+        endpoint :load_component_with_cache # every component gets this api
+      end
+      
       module ClassMethods
+        def component(name, config)
+          current_components = read_clean_inheritable_hash(:components)
+          current_components.merge!(name => config)
+          write_inheritable_attribute(:components, current_components)
+        end
       end
       
       module InstanceMethods
@@ -13,7 +24,7 @@ module Netzke
 
         def components
           # detect_components_in_config if @components.nil?
-          @components
+          @components.merge(self.class.read_clean_inheritable_hash(:components) || {})
           # @components ||= initial_components.merge(initial_late_components.each_pair{|k,v| v.merge!(:lazy_loading => true)})
         end
 
@@ -200,11 +211,6 @@ module Netzke
 
       end
       
-      def self.included(receiver)
-        receiver.extend         ClassMethods
-        receiver.send :include, InstanceMethods
-        receiver.endpoint :load_component_with_cache # every component gets this api
-      end
     end
   end
 end
