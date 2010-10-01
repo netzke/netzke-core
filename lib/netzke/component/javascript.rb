@@ -205,12 +205,6 @@ module Netzke
         # Little helper
         def null; "null".l; end
 
-        def read_clean_inheritable_hash(attr_name)
-          res = read_inheritable_attribute(attr_name) || {}
-          # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
-          res == self.superclass.read_inheritable_attribute(attr_name) ? {} : res
-        end
-        
       end
       
       module InstanceMethods

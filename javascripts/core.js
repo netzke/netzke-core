@@ -260,7 +260,7 @@ Netzke.componentMixin = function(receiver){
 
       // remember the passed callback for the future
       if (params.callback) {
-        this.callbackHash[params.name] = params.callback; // per loaded component, as there may be simultaneous calls
+        this.callbackHash[params.name.underscore()] = params.callback; // per loaded component, as there may be simultaneous calls
       }
 
       // visually disable the container while the component is being loaded

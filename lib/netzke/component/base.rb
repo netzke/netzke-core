@@ -85,9 +85,8 @@ module Netzke
         component_class.new(config)
       end
     
-      # Rails' logger
       def logger
-        Rails.logger
+        Rails.logger if defined?(Rails)
       end
     
       # 'Netzke::Grid' => 'Grid'
@@ -105,18 +104,12 @@ module Netzke
         @flash << {:level => level, :msg => flash_hash[level]}
       end
 
-      def component_action(action_name)
-        "#{@global_id}__#{action_name}"
+      def self.read_clean_inheritable_hash(attr_name)
+        res = read_inheritable_attribute(attr_name) || {}
+        # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
+        res == self.superclass.read_inheritable_attribute(attr_name) ? {} : res
       end
-
-      # def tools
-      #   persistent_config[:tools] ||= config[:tools] || []
-      # end
-      # 
-      # def menu
-      #   persistent_config[:menu] ||= config[:menu] == false ? nil : config[:menu]
-      # end
-    
+      
       # override this method to do stuff at the moment of loading by some parent
       def before_load
         component_session.clear

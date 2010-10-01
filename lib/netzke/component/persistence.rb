@@ -95,7 +95,7 @@ module Netzke
             options = persistent_options
             persistence_manager_class.pref_to_write(global_id).update_attribute(:value, options.deep_merge(hash))
           else
-            logger.debug "Netzke warning: No persistence enabled for component '#{global_id}'"
+            logger && logger.debug("Netzke warning: No persistence enabled for component '#{global_id}'")
           end
         end
         

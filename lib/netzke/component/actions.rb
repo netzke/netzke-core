@@ -45,6 +45,12 @@ module Netzke
     #    end
     module Actions
       module ClassMethods
+        def action(name, config)
+          current_actions = read_clean_inheritable_hash(:actions)
+          current_actions.merge!(name => config)
+          write_inheritable_attribute(:actions, current_actions)
+        end
+        
         def extract_actions(hsh)
           hsh.each_pair.inject({}) do |r,(k,v)| 
             v.is_a?(Array) ? r.merge(extract_actions_from_array(v)) : r
@@ -70,7 +76,7 @@ module Netzke
         
         # Actions to be used in the config
         def actions
-          self.class.extract_actions(config)
+          self.class.extract_actions(config).merge(self.class.read_clean_inheritable_hash(:actions) || {})
         end
 
         def js_config_with_actions #:nodoc
