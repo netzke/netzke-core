@@ -6,3 +6,4 @@ Manifest
 rdoc
 netzke-core.gemspec
 test/rails_app/tmp/
+test/rails_app/public/extjs
