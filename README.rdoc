@@ -64,6 +64,10 @@ or, for scoped components:
 
     http://localhost:3000/components/ScopedComponents::SomeScopedComponent
 
+== Migrating from 0.5.x
+
+There have been a significant amount of changes that made 0.6 version backward-incompatible. Please, refer to CHANGELOG.rdoc for the (hopefully) full list of changes that most certainly made your current application break. Additionally, this wiki page may be of some help, too: http://github.com/skozlov/netzke-core/wiki/Upgrading-from-0.5.x-to-0.6.0
+
 == More info
 Netzke website: http://netzke.org
 
