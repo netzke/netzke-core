@@ -1,17 +1,15 @@
 = netzke-core
 
-**THIS IS WORK IN PROGRESS: big refactoring is taking place, along with Rails3 compatibility and cucumber/rspec tests**
-
 Create Ext JS + Rails reusable components (components) with minimum effort.
 
 This is the bare bones of the Netzke framework. Use it to build your own components from scratch. For pre-built components (like panels, grids, forms, trees, applications), see the netzke-basepack (http://github.com/skozlov/netzke-basepack) project.
 
-The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a component, and then embed it straight to your Rails' view, load it dynamically into your Ext-based applications, or use them as building blocks for new components. For more info, see the links below.
+The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a component, and then embed it straight to your Rails' view, load it dynamically into your Ext-based applications, or use it as a building block for other components. For more info, see the links below.
 
 == Installation
 For the latest ("edge") stuff, install as plugin (recommended!):
 
-    rails plugin install git://github.com/skozlov/netzke-core.git
+    rails plugin install git://github.com/skozlov/netzke-core.git -r rails3
     
 To generate the migrations for Netzke persistent storage:
 
