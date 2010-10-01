@@ -32,7 +32,7 @@ You can optionally specify an Ext theme to be used:
       
 2. In your view use the <tt>netzke</tt> helper to embed a component. Here's an example showing how to embed a <tt>Netzke::GridPanel</tt>:
 
-    <%= netzke :users, :class_name => "GridPanel", :model => "User" %>
+    <%= netzke :users, :class_name => "Component::GridPanel", :model => "User" %>
 
 == Running tests
 
