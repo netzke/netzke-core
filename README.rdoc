@@ -34,8 +34,9 @@ You can optionally specify an Ext theme to be used:
 
     <%= netzke :users, :class_name => "GridPanel", :model => "User" %>
 
-== Running the tests
-netzke-core is bundled with a test Rails app which can be run independently. Check its source code to get an idea about the key functionality of the framework.
+== Running tests
+
+netzke-core is bundled with cucumber and RSpec tests. Check its source code to get an idea about the basic functionality of the framework.
 
 Before you can run the tests, you must link your Ext JS library to test/rails_app/public, e.g. (from plugin's root):
 
@@ -48,6 +49,20 @@ For cucumber tests:
 RSpec tests:
 
     rspec spec
+    
+== Testing playground
+
+The test/rails_app application is also a convenient playground, as it may be run as independent Rails 3 app. After starting it, access any of the lib/netzke test components by using the following url:
+
+    http://localhost:3000/components/<name of the component class>
+
+e.g.:
+  
+    http://localhost:3000/components/ServerCaller
+
+or, for scoped components:
+
+    http://localhost:3000/components/ScopedComponents::SomeScopedComponent
 
 == More info
 Netzke website: http://netzke.org
