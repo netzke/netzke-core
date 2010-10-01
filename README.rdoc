@@ -34,8 +34,12 @@ You can optionally specify an Ext theme to be used:
 
     <%= netzke :users, :class_name => "GridPanel", :model => "User" %>
 
-== Tests
-netzke-core is bundled with a testing Rails app which can be run independently. Check its source code to get an idea about the basic functionality of the framework.
+== Running the tests
+netzke-core is bundled with a test Rails app which can be run independently. Check its source code to get an idea about the key functionality of the framework.
+
+Before you can run the tests, you must link your Ext JS library to test/rails_app/public, e.g. (from plugin's root):
+
+    ln -s ~/code/sencha/ext-3.2.1 test/rails_app/public/extjs
 
 For cucumber tests:
 
