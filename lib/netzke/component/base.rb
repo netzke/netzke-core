@@ -76,7 +76,7 @@ module Netzke
       # Short component class name, e.g.: 
       #   Netzke::Module::SomeComponent => Module::SomeComponent
       def self.short_component_class_name
-        self.name.sub(/^Netzke::/, "")
+        self.name.sub(/^Netzke::/, "") #.sub(/^Component::/, "")
       end
 
       # Instance of component by config

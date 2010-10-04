@@ -119,17 +119,17 @@ Netzke.componentMixin = function(receiver){
       this.callbackHash = {};
 
       // Set title
-      // if (config.mode === "config"){
-      //   if (!config.title) {
-      //     config.title = '[' + config.id + ']';
-      //   } else {
-      //     config.title = config.title + ' [' + config.id + ']';
-      //   }
-      // } else {
-      //   if (!config.title) {
-      //     config.title = config.id.humanize();
-      //   }
-      // }
+      if (this.mode === "config"){
+        if (!this.title) {
+          this.title = '[' + this.id + ']';
+        } else {
+          this.title = this.title + ' [' + this.id + ']';
+        }
+      } else {
+        if (!this.title) {
+          this.title = this.id.humanize();
+        }
+      }
 
       // From everywhere accessible FeedbackGhost
       this.feedbackGhost = new Netzke.FeedbackGhost();
