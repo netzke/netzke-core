@@ -6,7 +6,7 @@ class NetzkeController < ApplicationController
   def netzke
     respond_to do |format|
       format.js {
-        res = initial_dynamic_javascript
+        res = initial_dynamic_javascript << "\n"
         Netzke::Component::Base.config[:javascripts].each do |path|
           f = File.new(path)
           res << f.read

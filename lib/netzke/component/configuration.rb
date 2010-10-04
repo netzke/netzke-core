@@ -32,7 +32,7 @@ module Netzke
             # :persistence_manager => "NetzkePreference",
 
             # Default location of extjs library
-            :ext_location              => defined?(Rails) && Rails.root.join("public", "extjs"),
+            :ext_location              => defined?(::Rails) && ::Rails.root.join("public", "extjs"),
           })
         end
 

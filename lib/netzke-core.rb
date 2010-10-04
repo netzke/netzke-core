@@ -13,41 +13,32 @@ module Netzke
     autoload :Base,     'netzke/component/base'
     autoload :Actions,  'netzke/component/actions'
     autoload :Api,      'netzke/component/api'
-    
-    # What's below will go to a separate gem
-    # autoload :Panel, 'netzke/component/panel'
+  end
+  
+  class Engine < ::Rails::Engine
+    config.before_configuration do
+      # Include javascript & styles required by all Netzke components. 
+      # These files will get loaded at the initial load of the framework (along with Ext).
+      Netzke::Component::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"
+      Netzke::Component::Base.config[:stylesheets] << "#{File.dirname(__FILE__)}/../stylesheets/core.css"
+    end
   end
 end
 
 # Rails specific
 if defined? Rails
-  require 'active_support'
   require 'netzke/rails/routes'
 
-  # Load models and controllers from lib/app
-  %w{ models controllers }.each do |dir|
-    path = File.join(File.dirname(__FILE__), 'app', dir)
-    $LOAD_PATH << path
-    ActiveSupport::Dependencies.autoload_paths << path
-    ActiveSupport::Dependencies.autoload_once_paths.delete(path)
-  end
-
-  require 'netzke/rails/controller_extensions'
   ActiveSupport.on_load(:action_controller) do
+    require 'netzke/rails/controller_extensions'
     include Netzke::ControllerExtensions
   end
 
-  require 'netzke/rails/action_view_ext'
   ActiveSupport.on_load(:action_view) do
+    require 'netzke/rails/action_view_ext'
     include Netzke::ActionViewExt
   end
   
   # Make this plugin auto-reloadable for easier development
   ActiveSupport::Dependencies.autoload_once_paths.delete(File.join(File.dirname(__FILE__)))
 end
-
-# Include javascript & styles required by all Netzke components. 
-# These files will get loaded at the initial load of the framework (along with Ext).
-Netzke::Component::Base.config[:javascripts] << "#{File.dirname(__FILE__)}/../javascripts/core.js"
-Netzke::Component::Base.config[:stylesheets] << "#{File.dirname(__FILE__)}/../stylesheets/core.css"
-

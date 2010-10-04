@@ -6,6 +6,9 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 
+$:.unshift File.expand_path('../../../../lib', __FILE__)
+require 'netzke-core'
+
 module RailsApp
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
