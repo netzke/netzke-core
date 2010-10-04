@@ -228,7 +228,7 @@ module Netzke
 
           # Api (besides the default "load_component_with_cache" - JavaScript side already knows about it)
           endpoints = self.class.endpoints - [:load_component_with_cache]
-          res.merge!(:netzke_api => endpoints) unless endpoints.empty?
+          res.merge!(:endpoints => endpoints) unless endpoints.empty?
 
           # Component class name. Needed for dynamic instantiation in javascript.
           res.merge!(:scoped_class_name => self.class.js_scoped_class_name)

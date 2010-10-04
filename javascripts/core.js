@@ -111,28 +111,12 @@ Netzke.componentMixin = function(receiver){
       
       this.detectComponents(this.items);
       
-      // Dynamically create methods for api points, so that we could later call them like: this.myApiMethod()
-      var apiPoints = this.netzkeApi || [];
-      apiPoints.push('load_component_with_cache'); // all netzke components get this API point
-      Ext.each(apiPoints, function(intp){
-        this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
-      }, this);
-
+      this.normalizeTools();
+      
+      this.processEndpoints();
+      
       // This is where the references to different callback functions will be stored
       this.callbackHash = {};
-
-      // Normalize tools
-      // if (config.tools) {
-      //   var normTools = [];
-      //   Ext.each(config.tools, function(tool){
-      //     // Create an event for each action (so that higher-level components could interfere)
-      //     this.addEvents(tool.id+'click');
-      // 
-      //     var handler = this.toolActionHandler.createDelegate(this, [tool]);
-      //     normTools.push({id : tool, handler : handler, scope : this});
-      //   }, this);
-      //   config.tools = normTools;
-      // }
 
       // Set title
       // if (config.mode === "config"){
@@ -152,6 +136,31 @@ Netzke.componentMixin = function(receiver){
 
       // Call the original initComponent
       this.initComponentWithoutNetzke();
+    },
+
+    /* 
+    Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod() 
+    */
+    processEndpoints : function(){
+      var endpoints = this.endpoints || [];
+      endpoints.push('load_component_with_cache'); // all Netzke components get this endpoint
+      Ext.each(endpoints, function(intp){
+        this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
+      }, this);
+    },
+
+    normalizeTools: function() {
+      if (this.tools) {
+        var normTools = [];
+        Ext.each(this.tools, function(tool){
+          // Create an event for each action (so that higher-level components could interfere)
+          this.addEvents(tool.id+'click');
+      
+          var handler = this.toolActionHandler.createDelegate(this, [tool]);
+          normTools.push({id : tool, handler : handler, scope : this});
+        }, this);
+        this.tools = normTools;
+      }
     },
 
     /* 
