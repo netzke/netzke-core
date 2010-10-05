@@ -7,7 +7,7 @@ class NetzkeController < ApplicationController
     respond_to do |format|
       format.js {
         res = initial_dynamic_javascript << "\n"
-        Netzke::Component::Base.config[:javascripts].each do |path|
+        Netzke::Base.config[:javascripts].each do |path|
           f = File.new(path)
           res << f.read
         end
@@ -16,7 +16,7 @@ class NetzkeController < ApplicationController
       
       format.css {
         res = ""
-        Netzke::Component::Base.config[:stylesheets].each do |path|
+        Netzke::Base.config[:stylesheets].each do |path|
           f = File.new(path)
           res << f.read
         end
@@ -34,7 +34,7 @@ class NetzkeController < ApplicationController
     action = !action.empty? && action.join("__").to_sym
   
     if action
-      w_instance = Netzke::Component::Base.instance_by_config(Netzke::Main.session[:netzke_components][component_name])
+      w_instance = Netzke::Base.instance_by_config(Netzke::Main.session[:netzke_components][component_name])
       # only component's actions starting with "endpoint_" are accessible from outside (security)
       endpoint_action = action.to_s.index('__') ? action : "endpoint_#{action}"
       render :text => w_instance.send(endpoint_action, params), :layout => false

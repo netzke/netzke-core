@@ -1,5 +1,5 @@
 module Netzke
-  class TabPanel < Component::Base
+  class TabPanel < Base
     javascript_base_class "Ext.TabPanel"
     
     def config

@@ -1,7 +1,7 @@
 require 'active_support/core_ext/class/inheritable_attributes'
 
 module Netzke
-  module Component
+  class Base
     module Composition
       extend ActiveSupport::Concern
       

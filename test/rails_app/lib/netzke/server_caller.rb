@@ -1,5 +1,5 @@
 module Netzke
-  class ServerCaller < Component::Base
+  class ServerCaller < Base
     
     js_properties(
       :title => "Server Caller",

@@ -1,11 +1,11 @@
 module Netzke
-  module Component
+  class Base
     module Configuration
       module ClassMethods
         # Override class-level defaults specified in <tt>Netzke::Base.config</tt>. 
         # E.g. in config/initializers/netzke-config.rb:
         # 
-        #     Netzke::Component::GridPanel.configure :default_config => {:persistent_config => true}
+        #     Netzke::Basepack::GridPanel.configure :default_config => {:persistent_config => true}
         def configure(*args)
           if args.first.is_a?(Symbol)
             config[args.first] = args.last

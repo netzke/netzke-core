@@ -2,8 +2,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require 'netzke-core'
 
 module Netzke
-  describe Netzke::Component::Composition do
-    class SomeComponent < Component::Base
+  describe Netzke::Base::Composition do
+    class SomeComponent < Base
       api :method_one, :method_two
 
       def self.config
@@ -32,10 +32,10 @@ module Netzke
       end
     end
 
-    class NestedComponentOne < Component::Base
+    class NestedComponentOne < Base
     end
 
-    class NestedComponentTwo < Component::Base
+    class NestedComponentTwo < Base
       def components
         {
           :nested => {:class_name => 'DeepNestedComponent'}
@@ -43,7 +43,7 @@ module Netzke
       end
     end
 
-    class DeepNestedComponent < Component::Base
+    class DeepNestedComponent < Base
       def components
         {
           :nested => {:class_name => "VeryDeepNestedComponent"}
@@ -51,7 +51,7 @@ module Netzke
       end
     end
 
-    class VeryDeepNestedComponent < Component::Base
+    class VeryDeepNestedComponent < Base
     end
 
     describe "component_instance" do

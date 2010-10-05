@@ -1,5 +1,5 @@
 module Netzke
-  module Component
+  class Base
     # This modules provides (component-specific) session manupulation.
     # The :session_persistence config option should be set to true in order for the component to make use of this.
     module Session

@@ -1,5 +1,5 @@
 module Netzke
-  class KindaComplexComponent < Component::Base
+  class KindaComplexComponent < Base
     # Note the use of ActiveSupport::Concern module
     module BasicStuff
       extend ActiveSupport::Concern

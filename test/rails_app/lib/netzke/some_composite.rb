@@ -1,5 +1,5 @@
 module Netzke
-  class SomeComposite < Component::Base
+  class SomeComposite < Base
     def config
       {
         # 2 different ways to embed an component

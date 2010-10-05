@@ -2,8 +2,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require 'netzke-core'
 
 module Netzke
-  describe Netzke::Component::Composition do
-    class SomeComponent < Component::Base
+  describe Netzke::Base::Composition do
+    class SomeComponent < Base
     end
     class InheritedComponent < SomeComponent
     end

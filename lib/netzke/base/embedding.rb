@@ -1,5 +1,5 @@
 module Netzke
-  module Component
+  class Base
     
     # The following methods are used when a component is generated stand-alone (as a part of a HTML page)
     module Embedding

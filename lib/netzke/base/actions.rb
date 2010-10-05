@@ -1,5 +1,5 @@
 module Netzke
-  module Component
+  class Base
     # Netzke component allows specifying "actions" in Ext-style.
     # Override the +actions+ method in your sub-class to define the actions like this:
     # 

@@ -5,7 +5,7 @@
 
 # require 'netzke/core_ext'
 
-require 'netzke/component/base'
+require 'netzke/base'
 
 module Netzke
   autoload :Main, 'netzke/main'

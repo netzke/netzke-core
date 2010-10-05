@@ -1,5 +1,5 @@
 module Netzke
-  class CompositeTwo < Component::Base
+  class CompositeTwo < Base
     # def config
     #   {}.deep_merge super
     # end

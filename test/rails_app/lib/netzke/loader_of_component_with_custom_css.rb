@@ -1,7 +1,7 @@
 module Netzke
   
   # Loads a component with custom CSS, to make sure that also dynamically loaded components get the correct CSS applied
-  class LoaderOfComponentWithCustomCss < Component::Base
+  class LoaderOfComponentWithCustomCss < Base
     def components
       {
         :component_with_custom_css => {

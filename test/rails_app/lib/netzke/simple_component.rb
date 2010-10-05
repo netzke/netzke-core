@@ -1,5 +1,5 @@
 module Netzke
-  class SimpleComponent < Component::Base
+  class SimpleComponent < Base
     def config
       {
         :title => "SimpleComponent",

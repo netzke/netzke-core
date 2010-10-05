@@ -1,5 +1,5 @@
 module Netzke
-  class ComponentThatHasActions < Component::Base
+  class ComponentThatHasActions < Base
     
     def config
       {

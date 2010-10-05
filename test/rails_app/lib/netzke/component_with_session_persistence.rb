@@ -1,5 +1,5 @@
 module Netzke
-  class ComponentWithSessionPersistence < Component::Base
+  class ComponentWithSessionPersistence < Base
     
     def default_config
       {

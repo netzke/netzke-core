@@ -1,5 +1,5 @@
 module Netzke
-  module Component
+  class Base
     # TODO: 
     # rename persistence_ to persistence_
     module Persistence
@@ -7,7 +7,7 @@ module Netzke
       module ClassMethods
         # Persistent config manager class
         def persistence_manager_class
-          Netzke::Component::Base.config[:persistence_manager].try(:constantize)
+          Netzke::Base.config[:persistence_manager].try(:constantize)
         rescue NameError
           nil
         end

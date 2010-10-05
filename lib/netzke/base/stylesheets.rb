@@ -1,5 +1,5 @@
 module Netzke
-  module Component
+  class Base
     module Stylesheets
       module ClassMethods
         # Returns all extra CSS code (as string) required by this component's class

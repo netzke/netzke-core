@@ -1,6 +1,6 @@
 module Netzke
   module Deprecated
-    class ServerCaller < Component::Base
+    class ServerCaller < Base
       def config
         {
           :title => "Server caller",

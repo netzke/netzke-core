@@ -1,4 +1,4 @@
-Feature: Testing Netzke::Component::Base
+Feature: Testing Netzke::Base
   In order to value
   As a role
   I want feature

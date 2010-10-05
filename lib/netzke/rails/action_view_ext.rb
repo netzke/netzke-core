@@ -23,7 +23,7 @@ module Netzke
       
       # External stylesheets (which cannot be loaded dynamically along with the rest of the component, e.g. due to that 
       # relative paths are used in them)
-      res << "\n" << stylesheet_link_tag(Netzke::Component::Base.config[:external_css])
+      res << "\n" << stylesheet_link_tag(Netzke::Base.config[:external_css])
       
       res
     end
@@ -63,7 +63,7 @@ module Netzke
       class_name = config[:class_name] ||= name.to_s.camelcase
       config[:name] = name
       Netzke::Main.reg_component(config)
-      w = Netzke::Component::Base.instance_by_config(config)
+      w = Netzke::Base.instance_by_config(config)
       w.before_load # inform the component about initial load
       content_for :netzke_js_classes, raw(w.js_missing_code(@rendered_classes ||= []))
       content_for :netzke_css, raw(w.css_missing_code(@rendered_classes ||= []))

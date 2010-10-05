@@ -1,5 +1,5 @@
 module Netzke
-  module Component
+  class Base
     # == Component javascript code
     # Here's a brief explanation on how a javascript class for a component gets built.
     # Component gets defined as a constructor (a function) by +js_class+ class method (see "Inside component's contstructor").
@@ -123,7 +123,7 @@ module Netzke
 
         # are we using JS inheritance? for now, if js_base_class is a Netzke class - yes
         def extends_netzke_component?
-          superclass != Netzke::Component::Base
+          superclass != Netzke::Base
         end
 
         # Declaration of component's class (stored in the cache storage (Ext.netzke.cache) at the client side 

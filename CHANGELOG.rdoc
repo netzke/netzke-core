@@ -14,8 +14,8 @@
   * persistent_config_enabled? is now persistence_enabled?
   * all actions should now be wrapped up in the js_action method
   * +late_component+ option becomes +lazy_loading+
-  * component are now called components
-  * Widget is now called Component
+  * aggregatees are now called components
+  * widgets is now called components, too
   * Using the js_extend_properties class method in your components in deprecated (and maybe even broken). Use js_property (or js_properties) and js_method instead (see multiple examples in test/rails_app)
 
 * New

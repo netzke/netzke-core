@@ -1,7 +1,7 @@
 module Netzke
   
   # This component has the header hidden by custom CSS
-  class ComponentWithCustomCss < Component::Base
+  class ComponentWithCustomCss < Base
     def config
       {
         :title => "ComponentWithCustomCss",

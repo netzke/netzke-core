@@ -1,6 +1,6 @@
 module Netzke
   module ScopedComponents
-    class SomeScopedComponent < Netzke::Component::Base
+    class SomeScopedComponent < Netzke::Base
       def self.js_properties
         {
           :title => "Some Scoped Component Title",

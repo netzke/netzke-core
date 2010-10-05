@@ -1,5 +1,5 @@
 module Netzke
-  class ComponentLoader < Component::Base
+  class ComponentLoader < Base
     component :simple_component, {
       :class_name => "SimpleComponent",
       :title => "Simple Component",
