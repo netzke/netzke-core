@@ -11,7 +11,7 @@ class NetzkeController < ApplicationController
           f = File.new(path)
           res << f.read
         end
-        render :text => res.strip_js_comments
+        render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
       }
       
       format.css {
