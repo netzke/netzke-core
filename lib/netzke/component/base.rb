@@ -44,15 +44,15 @@ module Netzke
     #       :model => "User" # FormPanel specific option
     class Base
       
-      include Persistence
-      include Session
-      include Configuration
-      include Javascript
-      include Services
-      include Composition
-      include Stylesheets
-      include Embedding
-      include Actions
+      include Netzke::Component::Persistence
+      include Netzke::Component::Session
+      include Netzke::Component::Configuration
+      include Netzke::Component::Javascript
+      include Netzke::Component::Services
+      include Netzke::Component::Composition
+      include Netzke::Component::Stylesheets
+      include Netzke::Component::Embedding
+      include Netzke::Component::Actions
 
       attr_accessor :parent, :name, :global_id #, :permissions, :session
 
