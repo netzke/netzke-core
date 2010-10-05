@@ -8,7 +8,7 @@
 require 'netzke/base'
 
 module Netzke
-  autoload :Main, 'netzke/main'
+  autoload :Context, 'netzke/context'
   autoload :ExtComponent, 'netzke/ext_component'
   
   class Engine < ::Rails::Engine

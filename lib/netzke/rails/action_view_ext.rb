@@ -62,7 +62,7 @@ module Netzke
     def netzke(name, config = {})
       class_name = config[:class_name] ||= name.to_s.camelcase
       config[:name] = name
-      Netzke::Main.reg_component(config)
+      Netzke::Context.reg_component(config)
       w = Netzke::Base.instance_by_config(config)
       w.before_load # inform the component about initial load
       content_for :netzke_js_classes, raw(w.js_missing_code(@rendered_classes ||= []))

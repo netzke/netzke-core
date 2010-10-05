@@ -1,14 +1,14 @@
 require 'active_support/core_ext'
 require 'netzke/core_ext'
-require 'netzke/base/javascript'
-require 'netzke/base/stylesheets'
-require 'netzke/base/services'
-require 'netzke/base/composition'
-require 'netzke/base/configuration'
-require 'netzke/base/persistence'
-require 'netzke/base/session'
-require 'netzke/base/embedding'
-require 'netzke/base/actions'
+require 'netzke/javascript'
+require 'netzke/stylesheets'
+require 'netzke/services'
+require 'netzke/composition'
+require 'netzke/configuration'
+require 'netzke/persistence'
+require 'netzke/embedding'
+require 'netzke/actions'
+require 'netzke/session'
 
 module Netzke
   # = Base
@@ -45,15 +45,15 @@ module Netzke
   #       :model => "User" # FormPanel specific option
   class Base
     
-    include self::Persistence
-    include self::Session
-    include self::Configuration
-    include self::Javascript
-    include self::Services
-    include self::Composition
-    include self::Stylesheets
-    include self::Embedding
-    include self::Actions
+    include Session
+    include Persistence
+    include Configuration
+    include Javascript
+    include Services
+    include Composition
+    include Stylesheets
+    include Embedding
+    include Actions
 
     attr_accessor :parent, :name, :global_id #, :permissions, :session
 
@@ -62,7 +62,6 @@ module Netzke
     # * override/add new default configuration options into the "default_config" method 
     # (the config hash is not yet available)
     def initialize(conf = {}, parent = nil)
-      # @session       = Netzke::Base.session
       @passed_config = conf # configuration passed at the moment of instantiation
       @parent        = parent
       @name          = conf[:name].nil? ? short_component_class_name.underscore : conf[:name].to_s

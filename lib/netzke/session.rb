@@ -1,41 +1,35 @@
 module Netzke
+  # This modules provides (component-specific) session manupulation.
+  # The :session_persistence config option should be set to true in order for the component to make use of this.
   module Session
-    module ClassMethods
-      # Access to controller sessions
-      def session
-        @@session ||= {}
-      end
-
-      def session=(s)
-        @@session = s
-      end
-
-      # Should be called by session controller at the moment of successfull login
-      def login
-        session[:_netzke_next_request_is_first_after_login] = true
-      end
-    
-      # Should be called by session controller at the moment of logout
-      def logout
-        session[:_netzke_next_request_is_first_after_logout] = true
-      end
-
-      # Register the configuration for the component in the session, and also remember that the code for it has been rendered
-      def reg_component(config)
-        session[:netzke_components] ||= {}
-        session[:netzke_components][config[:name]] = config
-      end
-      
+    # Top-level session (straight from the controller).
+    def session
+      ::Netzke::Context.session
+    end
+  
+    # Component-specific session.
+    def component_session
+      session[global_id] ||= {}
     end
     
-    module InstanceMethods
-
-      
+    # Returns this component's configuration options stored in the session. Those get merged into the component's configuration at instantiation.
+    def session_options
+      session_persistence_enabled? && component_session[:options] || {}
+    end
+ 
+    # Updates the session options
+    def update_session_options(hash)
+      if session_persistence_enabled?
+        component_session[:options] ||= {}
+        component_session[:options].merge!(hash)
+      else
+        logger.debug "Netzke warning: No session persistence enabled for component '#{global_id}'"
+      end
     end
     
-    def self.included(receiver)
-      receiver.extend         ClassMethods
-      receiver.send :include, InstanceMethods
-    end
+    private
+      def session_persistence_enabled?
+        initial_config[:session_persistence]
+      end
   end
 end
