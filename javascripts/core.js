@@ -598,20 +598,10 @@ Netzke.componentMixin = function(receiver){
 
 // Netzke extensions for Ext.Container
 Ext.override(Ext.Container, {
-  // Given a scoped class name, returns the actual class, e.g.: "Netzke.GridPanel" => Netzke.classes.Netzke.GridPanel
-  classifyScopedName : function(n){
-    var klass = Netzke.classes;
-    Ext.each(n.split("."), function(s){
-      klass = klass[s];
-    });
-    return klass;
-  },
-
   // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
   // TODO: there must be a method to just instantiate a component, but not to add/show it instantly.
   instantiateChild : function(config){
-    var klass = this.classifyScopedName(config.scopedClassName);
-    var instance = new klass(config);
+    var instance = Ext.create(config);
     if (instance.isXType("netzkewindow")) {
       instance.show();
     } else {

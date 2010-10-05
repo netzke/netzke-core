@@ -102,12 +102,6 @@ module Netzke
           js_scope.empty? ? js_default_scope : [js_default_scope, js_scope].join(".")
         end
 
-        # Returns the name of the JavaScript class for this component, including the scope
-        # e.g.: "GridPanelLib.RecordFormWindow"
-        def js_scoped_class_name
-          short_component_class_name.gsub("::", ".")
-        end
-
         # Returns the full name of the JavaScript class, including the scopes *and* the common scope, which is
         # Netzke.classes.
         # E.g.: "Netzke.classes.Netzke.GridPanelLib.RecordFormWindow"
@@ -229,9 +223,6 @@ module Netzke
           # Api (besides the default "load_component_with_cache" - JavaScript side already knows about it)
           endpoints = self.class.endpoints - [:load_component_with_cache]
           res.merge!(:endpoints => endpoints) unless endpoints.empty?
-
-          # Component class name. Needed for dynamic instantiation in javascript.
-          res.merge!(:scoped_class_name => self.class.js_scoped_class_name)
 
           # Inform the JavaScript side if persistent_config is enabled
           # res[:persistent_config] = persistence_enabled?
