@@ -23,8 +23,8 @@ module Netzke
         def config
           set_default_config({
             # Which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
-            :javascripts               => [],
-            :stylesheets               => [],
+            :javascripts               => ["#{File.dirname(__FILE__)}/../../../javascripts/core.js"],
+            :stylesheets               => ["#{File.dirname(__FILE__)}/../../../stylesheets/core.css"],
 
             :external_css              => [],
 

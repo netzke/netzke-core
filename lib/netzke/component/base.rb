@@ -1,4 +1,5 @@
-require 'active_support'
+require 'active_support/core_ext'
+require 'netzke/core_ext'
 require 'netzke/component/javascript'
 require 'netzke/component/stylesheets'
 require 'netzke/component/services'
@@ -7,6 +8,7 @@ require 'netzke/component/configuration'
 require 'netzke/component/persistence'
 require 'netzke/component/session'
 require 'netzke/component/embedding'
+require 'netzke/component/actions'
 
 module Netzke
   module Component
