@@ -3,7 +3,7 @@ module Netzke
     
     def config
       {
-        :bbar => [:some_action.ext_action, :another_action.ext_action],
+        :bbar => [:some_action.action, :another_action.action],
         :tbar => [{
           :xtype =>  'buttongroup',
           :columns => 3,
@@ -22,12 +22,12 @@ module Netzke
               :iconCls => 'add',
               :iconAlign => 'top',
               :arrowAlign => 'bottom',
-              :menu => [:some_action.ext_action]
+              :menu => [:some_action.action]
           },{
-              :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action.ext_action]
-          }, :another_action.ext_action, 
+              :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action.action]
+          }, :another_action.action, 
           {
-              :menu => [:some_action.ext_action], :text => 'Format'
+              :menu => [:some_action.action], :text => 'Format'
           }]
         }]
       }.deep_merge super

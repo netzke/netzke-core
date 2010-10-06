@@ -18,7 +18,7 @@ module Netzke
         end
     
         js_properties(
-          :active_tab => 0, :bbar => [:some_action.ext_action, :another_action.ext_action]
+          :active_tab => 0, :bbar => [:some_action.action, :another_action.action]
         )
       end
 

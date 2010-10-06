@@ -31,7 +31,7 @@ Create YOUR_APP/app/components/hello_world_component.rb, and put in the followin
       js_property :title, "My Hello World Component"
 
       # Bottom bar with an automatically created action
-      js_property :bbar, [:bug_server.ext_action]
+      js_property :bbar, [:bug_server.action]
 
       # Method in the JS class that (by default) processes the action's "click" event
       js_method :on_bug_server, <<-JS

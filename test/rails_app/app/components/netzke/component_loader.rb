@@ -23,7 +23,7 @@ module Netzke
     js_properties(
       :title => "Component Loader",
       :layout => "fit",
-      :bbar => [{:text => "Load component", :ref => "../button"}, {:text => "Load in window", :ref => "../loadInWindowButton"}, :load_with_feedback.ext_action]
+      :bbar => [{:text => "Load component", :ref => "../button"}, {:text => "Load in window", :ref => "../loadInWindowButton"}, :load_with_feedback.action]
     )
     
     js_method :init_component, <<-JS

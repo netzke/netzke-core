@@ -5,7 +5,7 @@
   * ext_config config level is removed; put all that configuration in the top level
   * mentioning actions in the bbar, tbar, etc, should be explicit, e.g.:
   
-      :bbar => [:apply.ext_action, :delete.ext_action]
+      :bbar => [:apply.action, :delete.action]
       
   * late_aggregatee option becomes lazy_loading
   * "aggregatees" are now "components"

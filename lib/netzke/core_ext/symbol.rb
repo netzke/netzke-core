@@ -7,7 +7,7 @@ class Symbol
     ActiveSupport::JSON::Variable.new(self.to_s)
   end
   
-  def ext_action
+  def action
     {:action => self.to_s}
   end
 end

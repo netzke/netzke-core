@@ -4,7 +4,7 @@ module Netzke
       def config
         {
           :title => "Server caller",
-          :bbar => [:call_server.ext_action]
+          :bbar => [:call_server.action]
         }.deep_merge super
       end
       

@@ -1,4 +1,3 @@
-Replace ext_action with action
 Make plugin-wide javascripts and stylesheets load automatically.
 Caching - investigate reusing (fragment?) caching of Rails.
 Use Ext.Direct in the Netzke controller.

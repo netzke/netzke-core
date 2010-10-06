@@ -12,7 +12,7 @@ module Netzke
           
           js_component(:east_panel, :region => :east, :width => 500, :split => true)
         ],
-        :bbar => [:update_west_panel.ext_action, :update_center_panel.ext_action, :update_west_from_server.ext_action, :update_east_south_from_server.ext_action]
+        :bbar => [:update_west_panel.action, :update_center_panel.action, :update_west_from_server.action, :update_east_south_from_server.action]
       }.deep_merge super
     end
     
