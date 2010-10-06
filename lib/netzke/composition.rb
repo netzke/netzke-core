@@ -69,7 +69,7 @@ module Netzke
             raise ArgumentError, "No component '#{aggr}' defined for component '#{composite.global_id}'" if component_config.nil?
             short_component_class_name = component_config[:class_name]
             raise ArgumentError, "No class_name specified for component #{aggr} of #{composite.global_id}" if short_component_class_name.nil?
-            component_class = "Netzke::#{short_component_class_name}".constantize
+            component_class = constantize_class_name(short_component_class_name)
 
             conf = weak_children_config.
               deep_merge(component_config).

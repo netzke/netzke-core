@@ -79,10 +79,18 @@ module Netzke
       self.name.sub(/^Netzke::/, "")
     end
 
+    # Component class, given its name
+    def self.constantize_class_name(class_name)
+      "#{class_name}".constantize rescue "Netzke::#{class_name}".constantize
+    end
+    
+    def constantize_class_name(class_name)
+      self.class.constantize_class_name(class_name)
+    end
+
     # Instance of component by config
     def self.instance_by_config(config)
-      component_class = "Netzke::#{config[:class_name]}".constantize
-      component_class.new(config)
+      constantize_class_name(config[:class_name]).new(config)
     end
   
     def logger
@@ -94,10 +102,6 @@ module Netzke
       self.class.short_component_class_name
     end
   
-    def full_class_name(short_name)
-      "Netzke::#{short_name}"
-    end
-
     def flash(flash_hash)
       level = flash_hash.keys.first
       raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)

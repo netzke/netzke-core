@@ -241,7 +241,7 @@ module Netzke
       # It includes the JS-class for the component itself, as well as JS-classes for all components' (non-late) components.
       def js_missing_code(cached = [])
         code = dependency_classes.inject("") do |r,k| 
-          cached.include?(k) ? r : r + "Netzke::#{k}".constantize.js_code(cached)#.strip_js_comments
+          cached.include?(k) ? r : r + constantize_class_name(k).js_code(cached)#.strip_js_comments
         end
         code.blank? ? nil : code
       end
