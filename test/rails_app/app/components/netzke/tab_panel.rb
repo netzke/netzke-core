@@ -1,6 +1,6 @@
 module Netzke
   class TabPanel < Base
-    javascript_base_class "Ext.TabPanel"
+    js_base_class "Ext.TabPanel"
     
     def config
       {
