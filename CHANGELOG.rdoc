@@ -2,21 +2,17 @@
 * Rails3 compatibility
 
 * API backward incompatibility
-  * ext_config config level is removed; put all that configuration in the top level
-  * mentioning actions in the bbar, tbar, etc, should be explicit, e.g.:
+  * +ext_config+ config level is removed; put all that configuration in the top level
+  * mentioning actions in the +bbar+, +tbar+, etc, should be explicit, e.g.:
   
       :bbar => [:apply.action, :delete.action]
       
-  * late_aggregatee option becomes lazy_loading
-  * "aggregatees" are now "components"
-  * "widgets" are now "components"
-  * 'api' is now 'endpoint'
-  * persistent_config_enabled? is now persistence_enabled?
-  * all actions should now be wrapped up in the js_action method
-  * +late_component+ option becomes +lazy_loading+
-  * aggregatees are now called components
-  * widgets is now called components, too
-  * Using the js_extend_properties class method in your components in deprecated (and maybe even broken). Use js_property (or js_properties) and js_method instead (see multiple examples in test/rails_app)
+  * +late_aggregatee+ is now +lazy_loading+
+  * +aggregatees+ are now +components+
+  * +widgets+ are now +components+, too
+  * +api+ is now +endpoint+
+  * +persistent_config_enabled?+ is now +persistence_enabled?+
+  * Using the +js_extend_properties+ class method in your components in deprecated (and maybe even broken). Use +js_property+ (or +js_properties+) and +js_method+ instead (see multiple examples in test/rails_app)
 
 * New
   * Use the +ext+ helper in the views to embed any (pure) Ext component into a view.
