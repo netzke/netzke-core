@@ -1,11 +1,18 @@
 module Netzke
   module Stylesheets
+	  extend ActiveSupport::Concern
+  
+		included do
+			class_attribute :css_included_files
+			self.css_included_files = []
+		end
+			
     module ClassMethods
       # Returns all extra CSS code (as string) required by this component's class
       def css_included
         # Prevent re-including code that was already included by the parent
         # (thus, only include those JS files when include_js was defined in the current class, not in its ancestors)
-        singleton_methods(false).include?(:include_css) ? include_css.inject(""){ |r, path| r + File.new(path).read + "\n"} : ""
+        ((singleton_methods(false).include?(:include_css) ? include_css : [] ) + css_included_files).inject(""){ |r, path| r + File.new(path).read + "\n"}
       end
 
       # All CSS code needed for this class including the one from the ancestor component
@@ -19,6 +26,17 @@ module Netzke
 
         res
       end
+
+			# Definition of CSS files which will be dynamically loaded together with this component
+			# e.g. 
+			# css_include "#{File.dirname(__FILE__)}/themis_navigation/static.css"
+			# or
+			# css_include ["#{File.dirname(__FILE__)}/themis_navigation/one.css","#{File.dirname(__FILE__)}/themis_navigation/two.css"]
+			#	This is alternative to defining self.include_css
+			def css_include param
+				self.css_included_files << param if param.is_a? String
+				self.css_included_files += param if param.is_a? Array
+			end
       
     end
     
@@ -30,11 +48,6 @@ module Netzke
         code.blank? ? nil : code
       end
       
-    end
-    
-    def self.included(receiver)
-      receiver.extend         ClassMethods
-      receiver.send :include, InstanceMethods
-    end
+    end    
   end
 end

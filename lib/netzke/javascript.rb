@@ -8,6 +8,11 @@ module Netzke
   # * Component's constructor gets called with a parameter that is a configuration object provided by +config+ instance method. This configuration is specific for the instance of the component, and, for example, contains this component's unique id. As another example, by means of this configuration object, a grid receives the configuration array for its columns, a form - for its fields, etc.
   module Javascript
     extend ActiveSupport::Concern
+
+		included do
+			class_attribute :js_included_files
+			self.js_included_files = []
+		end
     
     module ClassMethods
 
@@ -34,6 +39,17 @@ module Netzke
       def js_methods
         read_clean_inheritable_hash(:js_methods)
       end
+
+			# Definition of JS files which will be dynamically loaded together with this component
+			# e.g. 
+			# js_include "#{File.dirname(__FILE__)}/themis_navigation/static.js"
+			# or
+			# js_include ["#{File.dirname(__FILE__)}/themis_navigation/one.js","#{File.dirname(__FILE__)}/themis_navigation/two.js"]
+			#	This is alternative to defining self.include_js
+			def js_include param
+				self.js_included_files << param if param.is_a? String
+				self.js_included_files += param if param.is_a? Array
+			end
       
       # Definition of a public JS property, e.g.:
       # 
@@ -163,11 +179,11 @@ module Netzke
 
         # Prevent re-including code that was already included by the parent
         # (thus, only include those JS files when include_js was defined in the current class, not in its ancestors)
-        singleton_methods(false).include?(:include_js) && include_js.each do |path|
+        ((singleton_methods(false).include?(:include_js) ? include_js : []) + js_included_files).each do |path|
           f = File.new(path)
           res << f.read << "\n"
         end
-
+				
         res
       end
 
