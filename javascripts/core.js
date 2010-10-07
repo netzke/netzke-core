@@ -602,7 +602,7 @@ Ext.override(Ext.Container, {
   // TODO: there must be a method to just instantiate a component, but not to add/show it instantly.
   instantiateChild : function(config){
     var instance = Ext.create(config);
-    if (instance.isXType("netzkewindow")) {
+    if (instance.isXType("window")) {
       instance.show();
     } else {
       this.remove(this.getNetzkeComponent()); // first delete previous component 
