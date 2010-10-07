@@ -10,7 +10,7 @@ The idea behind the Netzke framework is that it allows you write reusable client
 
 For the latest ("edge") stuff, tell bundler to get the gem straight from github:
 
-    gem 'netzke-core', :git => "git@github.com:skozlov/netzke-core.git", :branch => "rails3"
+    gem 'netzke-core', :git => "git://github.com/skozlov/netzke-core.git", :branch => "rails3"
 
 Or install as plugin:
 
@@ -58,7 +58,7 @@ Create YOUR_APP/app/components/hello_world_component.rb, and put in the followin
 
 To embed a Netzke component into your Rails view do the following:
 
-1. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles. 
+1. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles.
 
     <%= netzke_init %>
 
