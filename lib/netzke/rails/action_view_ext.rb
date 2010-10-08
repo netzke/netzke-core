@@ -81,6 +81,14 @@ module Netzke
       content_for :netzke_on_ready, raw("#{comp.js_component_render}")
       raw(comp.js_component_html)
     end
+
+		def netzke_call(global_id,fun,*params)
+			fun=fun.to_s.camelize(:lower)
+			p=params.inject([]) do |r,p|
+				r << p.to_json
+			end.join(', ')
+			"Ext.getCmp('#{global_id}').#{fun}(#{params});"
+		end
   end
 end
 
