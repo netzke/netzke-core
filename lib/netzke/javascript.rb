@@ -9,10 +9,10 @@ module Netzke
   module Javascript
     extend ActiveSupport::Concern
 
-		included do
-			class_attribute :js_included_files
-			self.js_included_files = []
-		end
+    included do
+      class_attribute :js_included_files
+      self.js_included_files = []
+    end
     
     module ClassMethods
 
@@ -40,16 +40,16 @@ module Netzke
         read_clean_inheritable_hash(:js_methods)
       end
 
-			# Definition of JS files which will be dynamically loaded together with this component
-			# e.g. 
-			# js_include "#{File.dirname(__FILE__)}/themis_navigation/static.js"
-			# or
-			# js_include ["#{File.dirname(__FILE__)}/themis_navigation/one.js","#{File.dirname(__FILE__)}/themis_navigation/two.js"]
-			#	This is alternative to defining self.include_js
-			def js_include param
-				self.js_included_files << param if param.is_a? String
-				self.js_included_files += param if param.is_a? Array
-			end
+      # Definition of JS files which will be dynamically loaded together with this component
+      # e.g. 
+      # js_include "#{File.dirname(__FILE__)}/themis_navigation/static.js"
+      # or
+      # js_include ["#{File.dirname(__FILE__)}/themis_navigation/one.js","#{File.dirname(__FILE__)}/themis_navigation/two.js"]
+      #  This is alternative to defining self.include_js
+      def js_include param
+        self.js_included_files << param if param.is_a? String
+        self.js_included_files += param if param.is_a? Array
+      end
       
       # Definition of a public JS property, e.g.:
       # 
@@ -183,7 +183,7 @@ module Netzke
           f = File.new(path)
           res << f.read << "\n"
         end
-				
+        
         res
       end
 

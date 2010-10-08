@@ -2,7 +2,7 @@ module Netzke
   module ControllerExtensions
     def self.included(base)
       base.send(:before_filter, :set_session_data)
-			base.send(:before_filter, :set_controller)
+      base.send(:before_filter, :set_controller)
     end
     
     def set_session_data
@@ -24,8 +24,8 @@ module Netzke
       end
     end
 
-		def set_controller
-			 ::Netzke::Core.controller = self
-		end
+    def set_controller
+       ::Netzke::Core.controller = self
+    end
   end
 end

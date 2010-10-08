@@ -6,13 +6,13 @@ module Netzke
     extend Session
     extend Masquerading
     
-		mattr_accessor :controller
+    mattr_accessor :controller
 
-		mattr_accessor :javascripts
-		@@javascripts = ["#{File.dirname(__FILE__)}/../../javascripts/core.js"]
+    mattr_accessor :javascripts
+    @@javascripts = ["#{File.dirname(__FILE__)}/../../javascripts/core.js"]
 
-		mattr_accessor :stylesheets
-		@@stylesheets = ["#{File.dirname(__FILE__)}/../../stylesheets/core.css"]
+    mattr_accessor :stylesheets
+    @@stylesheets = ["#{File.dirname(__FILE__)}/../../stylesheets/core.css"]
     
     mattr_accessor :external_css
     @@external_css = []

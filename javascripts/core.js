@@ -669,5 +669,5 @@ Ext.apply(Netzke.FeedbackGhost.prototype, {
     } else {
       showBox(msg);
     }
-	}
+  }
 });

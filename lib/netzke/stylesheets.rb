@@ -1,12 +1,12 @@
 module Netzke
   module Stylesheets
-	  extend ActiveSupport::Concern
+    extend ActiveSupport::Concern
   
-		included do
-			class_attribute :css_included_files
-			self.css_included_files = []
-		end
-			
+    included do
+      class_attribute :css_included_files
+      self.css_included_files = []
+    end
+      
     module ClassMethods
       # Returns all extra CSS code (as string) required by this component's class
       def css_included
@@ -27,16 +27,16 @@ module Netzke
         res
       end
 
-			# Definition of CSS files which will be dynamically loaded together with this component
-			# e.g. 
-			# css_include "#{File.dirname(__FILE__)}/themis_navigation/static.css"
-			# or
-			# css_include ["#{File.dirname(__FILE__)}/themis_navigation/one.css","#{File.dirname(__FILE__)}/themis_navigation/two.css"]
-			#	This is alternative to defining self.include_css
-			def css_include param
-				self.css_included_files << param if param.is_a? String
-				self.css_included_files += param if param.is_a? Array
-			end
+      # Definition of CSS files which will be dynamically loaded together with this component
+      # e.g. 
+      # css_include "#{File.dirname(__FILE__)}/themis_navigation/static.css"
+      # or
+      # css_include ["#{File.dirname(__FILE__)}/themis_navigation/one.css","#{File.dirname(__FILE__)}/themis_navigation/two.css"]
+      #  This is alternative to defining self.include_css
+      def css_include param
+        self.css_included_files << param if param.is_a? String
+        self.css_included_files += param if param.is_a? Array
+      end
       
     end
     
