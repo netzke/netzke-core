@@ -87,7 +87,7 @@ module Netzke
 			p=params.inject([]) do |r,p|
 				r << p.to_json
 			end.join(', ')
-			"Ext.getCmp('#{global_id}').#{fun}(#{params});"
+			"Ext.getCmp('#{global_id}').#{fun}(#{p});"
 		end
   end
 end
