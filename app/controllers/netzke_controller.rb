@@ -1,13 +1,13 @@
 class NetzkeController < ApplicationController
   
-  # Collect javascripts and stylesheets from all plugins that registered it in Netzke::Context.javascripts
+  # Collect javascripts and stylesheets from all plugins that registered it in Netzke::Core.javascripts
   # TODO: caching
   # caches_action :netzke
   def netzke
     respond_to do |format|
       format.js {
         res = initial_dynamic_javascript << "\n"
-        Netzke::Context.javascripts.each do |path|
+        Netzke::Core.javascripts.each do |path|
           f = File.new(path)
           res << f.read
         end
@@ -16,7 +16,7 @@ class NetzkeController < ApplicationController
       
       format.css {
         res = ""
-        Netzke::Context.javascripts.each do |path|
+        Netzke::Core.javascripts.each do |path|
           f = File.new(path)
           res << f.read
         end
@@ -34,7 +34,7 @@ class NetzkeController < ApplicationController
     action = !action.empty? && action.join("__").to_sym
   
     if action
-      w_instance = Netzke::Base.instance_by_config(Netzke::Context.session[:netzke_components][component_name])
+      w_instance = Netzke::Base.instance_by_config(Netzke::Core.session[:netzke_components][component_name])
       # only component's actions starting with "endpoint_" are accessible from outside (security)
       endpoint_action = action.to_s.index('__') ? action : "endpoint_#{action}"
       render :text => w_instance.send(endpoint_action, params), :layout => false

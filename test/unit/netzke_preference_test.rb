@@ -3,7 +3,7 @@ require 'netzke-core'
 class NetzkePreferenceTest < ActiveSupport::TestCase
   test "pref to read-write" do
     p = NetzkePreference
-    session = Netzke::Base.session
+    session = Netzke::Core.session
     session.clear
     
     assert_not_nil(p.pref_to_write(:test))
@@ -46,7 +46,7 @@ class NetzkePreferenceTest < ActiveSupport::TestCase
   
   test "multi-user/multi-role support" do
     p = NetzkePreference
-    session = Netzke::Base.session
+    session = Netzke::Core.session
     
     admin_role = Role.create(:name => 'admin')
     user_role = Role.create(:name => 'user')

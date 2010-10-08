@@ -23,7 +23,7 @@ module Netzke
       
       # External stylesheets (which cannot be loaded dynamically along with the rest of the component, e.g. due to that 
       # relative paths are used in them)
-      res << "\n" << stylesheet_link_tag(Netzke::Core.config[:external_css])
+      res << "\n" << stylesheet_link_tag(Netzke::Core.external_css)
       
       res
     end
