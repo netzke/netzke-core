@@ -4,7 +4,7 @@ module Netzke
   module Session
     # Top-level session (straight from the controller).
     def session
-      ::Netzke::Context.session
+      ::Netzke::Core.session
     end
   
     # Component-specific session.

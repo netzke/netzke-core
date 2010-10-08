@@ -22,16 +22,16 @@ module Netzke
       def config
         set_default_config({
           # Which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
-          :javascripts               => ["#{File.dirname(__FILE__)}/../../javascripts/core.js"],
-          :stylesheets               => ["#{File.dirname(__FILE__)}/../../stylesheets/core.css"],
+          # :javascripts               => ["#{File.dirname(__FILE__)}/../../javascripts/core.js"],
+          # :stylesheets               => ["#{File.dirname(__FILE__)}/../../stylesheets/core.css"],
 
-          :external_css              => [],
+          # :external_css              => [],
 
           # AR model that provides us with persistent config functionality
           # :persistence_manager => "NetzkePreference",
 
           # Default location of extjs library
-          :ext_location              => defined?(::Rails) && ::Rails.root.join("public", "extjs"),
+          # :ext_location              => defined?(::Rails) && ::Rails.root.join("public", "extjs"),
         })
       end
 

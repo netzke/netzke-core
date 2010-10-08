@@ -1,17 +1,22 @@
 # require 'active_support/core_ext'
 # require 'active_support/dependencies'
 
-# $LOAD_PATH << File.dirname(__FILE__)
+$LOAD_PATH << File.dirname(__FILE__)
 
 # require 'netzke/core_ext'
 
+require 'netzke/core'
 require 'netzke/base'
 
 module Netzke
-  autoload :Context, 'netzke/context'
+  autoload :Core, 'netzke/core'
   autoload :ExtComponent, 'netzke/ext_component'
   
   class Engine < ::Rails::Engine
+    config.after_initialize do
+      # Do some initialization which is only possible after Rails is initialized
+      Netzke::Core.ext_location ||= ::Rails.root.join("public", "extjs")
+    end
   end
 end
 

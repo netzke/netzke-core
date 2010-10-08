@@ -1,5 +1,5 @@
 module Netzke
-  module Context
+  module Core
     module Session
       # Access to controller sessions
       def session

@@ -29,7 +29,6 @@ module Netzke
             :region => :center
           },{
             :class_name => "SimplePanel",
-            # :name => :south_panel,
             :region => :south,
             :title => "Another panel",
             :height => 200,

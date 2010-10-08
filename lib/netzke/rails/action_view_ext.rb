@@ -23,7 +23,7 @@ module Netzke
       
       # External stylesheets (which cannot be loaded dynamically along with the rest of the component, e.g. due to that 
       # relative paths are used in them)
-      res << "\n" << stylesheet_link_tag(Netzke::Base.config[:external_css])
+      res << "\n" << stylesheet_link_tag(Netzke::Core.config[:external_css])
       
       res
     end
@@ -57,12 +57,12 @@ module Netzke
     end
     
     # Use this helper in your views to embed Netzke components. E.g.:
-    #   netzke :my_grid, :class_name => "GridPanel", :columns => [:id, :name, :created_at]
+    #   netzke :my_grid, :class_name => "Basepack::GridPanel", :columns => [:id, :name, :created_at]
     # On how to configure a component, see documentation for Netzke::Base or/and specific component
     def netzke(name, config = {})
       class_name = config[:class_name] ||= name.to_s.camelcase
       config[:name] = name
-      Netzke::Context.reg_component(config)
+      Netzke::Core.reg_component(config)
       w = Netzke::Base.instance_by_config(config)
       w.before_load # inform the component about initial load
       content_for :netzke_js_classes, raw(w.js_missing_code(@rendered_classes ||= []))

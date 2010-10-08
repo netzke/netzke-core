@@ -1,5 +1,5 @@
 module Netzke
-  module Context
+  module Core
     module Masquerading
       # Example:
       #   masquarade_as(:role, 2)

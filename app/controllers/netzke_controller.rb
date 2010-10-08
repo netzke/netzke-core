@@ -1,13 +1,13 @@
 class NetzkeController < ApplicationController
   
-  # Collect javascripts from all plugins that registered it in Netzke::Base.config[:javascripts]
+  # Collect javascripts and stylesheets from all plugins that registered it in Netzke::Context.javascripts
   # TODO: caching
   # caches_action :netzke
   def netzke
     respond_to do |format|
       format.js {
         res = initial_dynamic_javascript << "\n"
-        Netzke::Base.config[:javascripts].each do |path|
+        Netzke::Context.javascripts.each do |path|
           f = File.new(path)
           res << f.read
         end
@@ -16,7 +16,7 @@ class NetzkeController < ApplicationController
       
       format.css {
         res = ""
-        Netzke::Base.config[:stylesheets].each do |path|
+        Netzke::Context.javascripts.each do |path|
           f = File.new(path)
           res << f.read
         end
