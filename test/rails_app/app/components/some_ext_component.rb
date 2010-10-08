@@ -1,4 +1,4 @@
-class SomeExtComponent < ExtComponent
+class SomeExtComponent < Netzke::ExtComponent
   def config
     {
       :html => "HELLOOO",

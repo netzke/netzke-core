@@ -13,7 +13,7 @@ module Deprecated
       }
     JS
 
-    endpoint :whats_up |params|
+    endpoint :whats_up do |params|
       {:set_title => "Hello from the server!"}
     end
   end
