@@ -18,4 +18,9 @@ class Array
   def recursive_delete_if_nil
     self.map{|el| el.respond_to?('recursive_delete_if_nil') ? el.recursive_delete_if_nil : el}
   end
+  
+  def deep_freeze
+    each { |j| j.deep_freeze if j.respond_to? :deep_freeze }
+    freeze
+  end
 end

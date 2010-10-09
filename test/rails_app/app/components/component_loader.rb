@@ -1,9 +1,5 @@
 class ComponentLoader < Netzke::Base
-  component :simple_component, {
-    :class_name => "SimpleComponent",
-    :title => "Simple Component",
-    :lazy_loading => true
-  }
+  component :simple_component, :title => "Simple Component", :lazy_loading => true
   
   component :component_loaded_in_window, {
     :class_name => "SimpleComponent",

@@ -1,4 +1,6 @@
 class SomeComposite < Netzke::Base
+  js_properties :title => "Static Composite", :layout => 'border'
+  
   def config
     {
       # 2 different ways to embed an component
@@ -15,64 +17,51 @@ class SomeComposite < Netzke::Base
     }.deep_merge super
   end
   
-  def components
-    super.merge(
-      :center_panel => {
-        :class_name => "ServerCaller"
-      },
-      
-      :east_panel => {:class_name => "BorderLayoutPanel", :items => [{
-          :name => :center_panel,
-          :class_name => "SimplePanel",
-          :title => "A panel",
-          :region => :center
-        },{
-          :class_name => "SimplePanel",
-          :region => :south,
-          :title => "Another panel",
-          :height => 200,
-          :split => true
-      }]}
-    )
-  end
+  component :center_panel, :class_name => "ServerCaller"
+  
+  component :east_panel, :class_name => "BorderLayoutPanel", :items => [{
+      :name => :center_panel,
+      :class_name => "SimpleComponent",
+      :title => "A panel",
+      :region => :center
+    },{
+      :class_name => "SimpleComponent",
+      :region => :south,
+      :title => "Another panel",
+      :height => 200,
+      :split => true
+  }]
   
   endpoint :update_east_south do |params|
-    {:east_panel => {:simple_panel1 => {:set_title => "Here's an update for south panel in east panel"}}}
+    {:east_panel => {:simple_component1 => {:set_title => "Here's an update for south panel in east panel"}}}
   end
   
   endpoint :update_west do |params|
     {:west_panel => {:set_title => "Here's an update for west panel"}}
   end
-  
-  def self.js_properties
-    {
-      :title => "Static Composite",
       
-      :layout => 'border',
-      
-      :on_update_west_panel => <<-END_OF_JAVASCRIPT.l,
-        function(){
-          this.items.filter('name', 'west_panel').first().body.update('West Panel Body Updated');
-        }
-      END_OF_JAVASCRIPT
-      
-      :on_update_center_panel => <<-END_OF_JAVASCRIPT.l,
-        function(){
-          this.items.filter('name', 'center_panel').first().body.update('Center Panel Body Updated');
-        }
-      END_OF_JAVASCRIPT
-      
-      :on_update_east_south_from_server => <<-JS.l,
-        function(){
-          this.updateEastSouth();
-        }
-      JS
-      
-      :on_update_west_from_server => <<-JS.l
-        function(){
-          this.updateWest();
-        }
-      JS
+  js_method :on_update_west_panel, <<-JS
+    function(){
+      this.items.filter('name', 'west_panel').first().body.update('West Panel Body Updated');
     }
-  end
+  JS
+      
+  js_method :on_update_center_panel, <<-JS
+    function(){
+      this.items.filter('name', 'center_panel').first().body.update('Center Panel Body Updated');
+    }
+  JS
+      
+  js_method :on_update_east_south_from_server, <<-JS
+    function(){
+      this.updateEastSouth();
+    }
+  JS
+      
+  js_method :on_update_west_from_server, <<-JS
+    function(){
+      this.updateWest();
+    }
+  JS
+  
 end

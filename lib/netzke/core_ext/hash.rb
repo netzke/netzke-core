@@ -59,6 +59,11 @@ class Hash
     res
   end
 
+  def deep_freeze
+    each { |k,v| v.deep_freeze if v.respond_to? :deep_freeze }
+    freeze
+  end
+
   # Javascrit-like access to Hash values
   def method_missing(method, *args)
     if method.to_s =~ /=$/ 

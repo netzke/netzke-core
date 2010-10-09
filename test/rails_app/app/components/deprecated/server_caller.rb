@@ -13,7 +13,11 @@ module Deprecated
       }
     JS
 
-    endpoint :whats_up do |params|
+    ActiveSupport::Deprecation.silence do
+      api :whats_up
+    end
+    
+    def whats_up(params)
       {:set_title => "Hello from the server!"}
     end
   end

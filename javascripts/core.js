@@ -30,10 +30,10 @@ Netzke.deprecationWarning = function(msg){
 Ext.ns('Netzke.page'); // namespace for all component instantces on the page
 Ext.ns('Netzke.classes'); // namespace for all component classes
 
-Ext.QuickTips.init();
-
-// Because of Netzke's double-underscore notation, Ext.TabPanel should have a different id-delimiter
+// Because of Netzke's double-underscore notation, Ext.TabPanel should have a different id-delimiter (yes, this should be in netzke-core)
 Ext.TabPanel.prototype.idDelimiter = "___";
+
+Ext.QuickTips.init();
 
 // We don't want no state managment by default, thank you!
 Ext.state.Provider.prototype.set = function(){};

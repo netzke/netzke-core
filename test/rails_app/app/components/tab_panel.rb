@@ -1,3 +1,4 @@
+# TODO: fix me!
 class TabPanel < Netzke::Base
   js_base_class "Ext.TabPanel"
   

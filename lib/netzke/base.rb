@@ -63,6 +63,7 @@ module Netzke
     # (the config hash is not yet available)
     def initialize(conf = {}, parent = nil)
       @passed_config = conf # configuration passed at the moment of instantiation
+      @passed_config.deep_freeze
       @parent        = parent
       @name          = conf[:name].nil? ? short_component_class_name.underscore : conf[:name].to_s
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
