@@ -91,7 +91,12 @@ module Netzke
     end
   
     def logger
-      Rails.logger if defined?(Rails)
+      if defined?(Rails)
+        Rails.logger
+      else 
+        require 'logger'
+        Logger.new(STDOUT)
+      end
     end
   
     # 'Netzke::Grid' => 'Grid'
