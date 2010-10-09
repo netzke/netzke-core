@@ -31,11 +31,10 @@ module Netzke
       # e.g. 
       # css_include "#{File.dirname(__FILE__)}/themis_navigation/static.css"
       # or
-      # css_include ["#{File.dirname(__FILE__)}/themis_navigation/one.css","#{File.dirname(__FILE__)}/themis_navigation/two.css"]
+      # css_include "#{File.dirname(__FILE__)}/themis_navigation/one.css","#{File.dirname(__FILE__)}/themis_navigation/two.css"
       #  This is alternative to defining self.include_css
-      def css_include param
-        self.css_included_files << param if param.is_a? String
-        self.css_included_files += param if param.is_a? Array
+      def css_include(*args)
+        self.css_included_files += args
       end
       
     end
