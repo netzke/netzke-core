@@ -68,10 +68,6 @@ module Netzke
       @name          = conf[:name].nil? ? short_component_class_name.underscore : conf[:name].to_s
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
-      @components   = {}
-      
-      # Detect components and build normalized @js_items
-      process_items_config
     end
   
     # Short component class name, e.g.: 
@@ -117,7 +113,7 @@ module Netzke
     
     # override this method to do stuff at the moment of loading by some parent
     def before_load
-      component_session.clear
+      # component_session.clear - we don't do it anymore
     end
 
   end

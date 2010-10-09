@@ -226,7 +226,6 @@ module Netzke
 
         # Non-late components
         aggr_hash = {}
-        
         non_late_components.each_pair do |aggr_name, aggr_config|
           aggr_instance = component_instance(aggr_name.to_sym)
           aggr_instance.before_load
@@ -248,7 +247,7 @@ module Netzke
         # Merge with the rest of config options, besides those that are only meant for the server side
         res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
         
-        res[:items] = @js_items
+        res[:items] = normalized_items
         
         res
       end

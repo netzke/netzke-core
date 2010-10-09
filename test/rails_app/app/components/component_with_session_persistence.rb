@@ -1,14 +1,13 @@
 class ComponentWithSessionPersistence < Netzke::Base
-  js_properties :title => "No Title (yet!)", :bbar => [{:text => "Tell server to store new title", :ref => "../button"}]
-  
   def default_config
-    super.merge :session_persistence => true
+    {
+      :title => "No Title (yet!)", :bbar => [{:text => "Tell server to store new title", :ref => "../button"}], :session_persistence => true
+    }.merge super
   end
   
   js_method :bug_server, <<-JS
     function(){
       this.whatsUp();
-      this.update('You should see the response from the server in the title bar the very next moment');
     }
   JS
 
@@ -21,6 +20,7 @@ class ComponentWithSessionPersistence < Netzke::Base
   
   endpoint :whats_up do |params|
     update_session_options(:title => "New Title!")
+    {}
   end
   
 end

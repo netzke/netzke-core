@@ -67,7 +67,8 @@ module Netzke
       
       # All components for this instance, which includes components defined on class level, and components detected in :items
       def components
-        @components.merge(self.class.components)
+        normalized_items if @components.nil?
+        self.class.components.merge(@components || {})
       end
 
       def non_late_components
@@ -199,28 +200,32 @@ module Netzke
       
       private
         
-        # If :items are specified, recursively detect components in them, and build @js_items - normalized items config that will have component configs
-        # replaced by references to corresponding components.
-        def process_items_config
+        def normalized_items
           if config[:items]
-            @js_items = config[:items].dup # we won't try to modify original config
-            @component_index = 0 # for automatic naming those components that have no name specified
-            detect_components_in_items(@js_items)
+            @normalized_items ||= items_with_normalized_components(config[:items])
           end
         end
-
-        def detect_components_in_items(items)
-          items.each_with_index do |item, i|
-            if item.is_a?(Hash) && item[:class_name]
-              aggr_name = item[:name] || :"#{item[:class_name].underscore.split("/").last}#{@component_index}"; @component_index += 1
-              @components[aggr_name.to_sym] = item
-              items[i] = js_component(aggr_name)
+        
+        def items_with_normalized_components(items)
+          @components ||= {}
+          @component_index ||= 0
+          items.each_with_index.map do |item, i|
+            if is_component_config?(item)
+              component_name = item[:name] || :"#{item[:class_name].underscore.split("/").last}#{@component_index}"
+              @component_index += 1
+              @components[component_name.to_sym] = item # collect component configs by the way
+              js_component(component_name) # replace current item with a reference to component
             elsif item.is_a?(Hash)
-              item[:items].is_a?(Array) && detect_components_in_items(item[:items])
+              item[:items].is_a?(Array) ? item.merge(:items => items_with_normalized_components(item[:items])) : item
+            else
+              item
             end
           end
         end
-
+        
+        def is_component_config?(c)
+          !!(c.is_a?(Hash) && c[:class_name])
+        end
     end
     
   end
