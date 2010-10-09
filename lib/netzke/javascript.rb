@@ -22,7 +22,6 @@ module Netzke
       end
       
       # Definition of a public JS method, e.g.:
-      # 
       #     js_method :on_call_server, <<-JS
       #       function(){
       #         this.whatsUp();
@@ -40,19 +39,16 @@ module Netzke
         read_clean_inheritable_hash(:js_methods)
       end
 
-      # Definition of JS files which will be dynamically loaded together with this component
-      # e.g. 
-      # js_include "#{File.dirname(__FILE__)}/themis_navigation/static.js"
+      # Definition of JS files which will be dynamically loaded together with this component, e.g.:
+      #     js_include "#{File.dirname(__FILE__)}/my_component/static.js"
       # or
-      # js_include ["#{File.dirname(__FILE__)}/themis_navigation/one.js","#{File.dirname(__FILE__)}/themis_navigation/two.js"]
-      #  This is alternative to defining self.include_js
-      def js_include(param)
-        self.js_included_files << param if param.is_a? String
-        self.js_included_files += param if param.is_a? Array
+      #     js_include "#{File.dirname(__FILE__)}/my_component/one.js","#{File.dirname(__FILE__)}/my_component/two.js"
+      # This is alternative to defining self.include_js
+      def js_include(*args)
+        self.js_included_files += args
       end
       
       # Definition of a public JS property, e.g.:
-      # 
       #     js_property :title, "My Netzke Component"
       def js_property(name, value = nil)
         name = name.to_sym
@@ -66,7 +62,6 @@ module Netzke
       end
       
       # Assignment of multiple public JS properties in a bunch, e.g.:
-      # 
       #     js_properties :title => "My Component", :border => true, :html => "Inner HTML"
       def js_properties(hsh = nil)
         if hsh.nil?
