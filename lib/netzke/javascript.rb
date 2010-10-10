@@ -220,14 +220,14 @@ module Netzke
         res.merge!(:id => global_id)
 
         # Non-late components
-        aggr_hash = {}
-        non_late_components.each_pair do |aggr_name, aggr_config|
-          aggr_instance = component_instance(aggr_name.to_sym)
-          aggr_instance.before_load
-          aggr_hash[aggr_name] = aggr_instance.js_config
+        comp_hash = {}
+        non_late_components.each_pair do |comp_name, comp_config|
+          comp_instance = component_instance(comp_name.to_sym)
+          comp_instance.before_load
+          comp_hash[comp_name] = comp_instance.js_config
         end
         
-        res[:components] = aggr_hash unless aggr_hash.empty?
+        res[:components] = comp_hash unless comp_hash.empty?
 
         # Api (besides the default "load_component_with_cache" - JavaScript side already knows about it)
         endpoints = self.class.endpoints - [:load_component_with_cache]
