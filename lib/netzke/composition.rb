@@ -61,13 +61,19 @@ module Netzke
     end
     
     module InstanceMethods
+      def items
+        if config[:items]
+          @items ||= items_with_normalized_components(config[:items])
+        end
+      end
+      
       def initial_components
         {}
       end
       
       # All components for this instance, which includes components defined on class level, and components detected in :items
       def components
-        normalized_items if @components.nil?
+        items if @components.nil?
         self.class.components.merge(@components || {})
       end
 
@@ -199,12 +205,6 @@ module Netzke
       end
       
       private
-        
-        def normalized_items
-          if config[:items]
-            @normalized_items ||= items_with_normalized_components(config[:items])
-          end
-        end
         
         def items_with_normalized_components(items)
           @components ||= {}

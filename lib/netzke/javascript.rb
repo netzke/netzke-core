@@ -242,7 +242,7 @@ module Netzke
         # Merge with the rest of config options, besides those that are only meant for the server side
         res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
         
-        res[:items] = normalized_items
+        res[:items] = items
         
         res
       end
