@@ -63,7 +63,7 @@ module Netzke
     module InstanceMethods
       def items
         if config[:items]
-          @items ||= items_with_normalized_components(config[:items])
+          @items ||= normalize_components(config[:items])
         end
       end
       
@@ -206,7 +206,7 @@ module Netzke
       
       private
         
-        def items_with_normalized_components(items)
+        def normalize_components(items)
           @components ||= {}
           @component_index ||= 0
           items.each_with_index.map do |item, i|
@@ -216,7 +216,7 @@ module Netzke
               @components[component_name.to_sym] = item # collect component configs by the way
               js_component(component_name) # replace current item with a reference to component
             elsif item.is_a?(Hash)
-              item[:items].is_a?(Array) ? item.merge(:items => items_with_normalized_components(item[:items])) : item
+              item[:items].is_a?(Array) ? item.merge(:items => normalize_components(item[:items])) : item
             else
               item
             end
