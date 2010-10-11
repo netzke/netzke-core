@@ -1,53 +1,37 @@
 module Netzke
   # Netzke component allows specifying "actions" in Ext-style.
-  # Override the +actions+ method in your sub-class to define the actions like this:
+  # An action can be defined in 2 different ways, both of which result in a method definition like this 
+  #     def _<some_action>_action
+  #       ...
+  #     end
   # 
-  #    def actions
-  #      super.deep_merge(
-  #        :some_action => {:text => "Some action"},
-  #        :another_action => {:disabled => true, :text => "Disabled action", :icon_cls => "my-fancy-icon"}
-  #      )
-  #    end
-  #
-  # Then use them in the config in arbitrary places, using the +action+ method on symbols, e.g.:
+  # The 2 ways to define an action are:
+  # * as a hash:
+  #     action :bug_server, :text => "Call server", :icon => "/images/icons/phone.png"  
   # 
-  #    def config
-  #      {
-  #        :bbar => [:some_action.action, :another_action.action],
-  #        :tbar => [{
-  #          :xtype =>  'buttongroup',
-  #          :columns => 3,
-  #          :title => 'Clipboard',
-  #          :items => [{
-  #              :text => 'Paste',
-  #              :scale => 'large',
-  #              :rowspan => 3, :iconCls => 'add',
-  #              :iconAlign => 'top',
-  #              :cls => 'x-btn-as-arrow'
-  #          },{
-  #              :xtype => 'splitbutton',
-  #              :text => 'Menu Button',
-  #              :scale => 'large',
-  #              :rowspan => 3,
-  #              :iconCls => 'add',
-  #              :iconAlign => 'top',
-  #              :arrowAlign => 'bottom',
-  #              :menu => [:some_action.action]
-  #          },{
-  #              :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action.action]
-  #          }, :another_action.action,
-  #          {
-  #              :menu => [:some_action.action], :text => 'Format'
-  #          }]
-  #        }]
-  #      }.deep_merge super
-  #    end
+  # * as a block:
+  #     action :bug_server do
+  #       {:text => config[:text], :disabled => super[:disabled]}
+  #     end
+  # 
+  # Of course, you could also directly define a method, but is it really needed?
   module Actions
+    extend ActiveSupport::Concern
+
+    included do
+      alias_method_chain :js_config, :actions
+    end
+    
     module ClassMethods
-      def action(name, config)
-        current_actions = read_clean_inheritable_hash(:actions)
-        current_actions.merge!(name => config)
-        write_inheritable_attribute(:actions, current_actions)
+      def action(name, config = {}, &block)
+        method_name = "_#{name}_action"
+        if block_given?
+          define_method(method_name, &block)
+        else
+          define_method(method_name) do
+            config
+          end
+        end
       end
       
       def extract_actions(hsh)
@@ -59,14 +43,14 @@ module Netzke
       def extract_actions_from_array(arry)
         arry.inject({}) do |r, el|
           if el.is_a?(Hash)
-            el[:action] ? r.merge(el[:action] => auto_action_config(el[:action])) : r.merge(extract_actions(el))
+            el[:action] ? r.merge(el[:action] => default_action_config(el[:action])) : r.merge(extract_actions(el))
           else
             r
           end
         end
       end
       
-      def auto_action_config(action_name)
+      def default_action_config(action_name)
         {:text => action_name.to_s.humanize}
       end
     end
@@ -75,7 +59,16 @@ module Netzke
       
       # Actions to be used in the config
       def actions
-        self.class.extract_actions(config).merge(self.class.read_clean_inheritable_hash(:actions) || {})
+        self.class.extract_actions(config).each_pair do |k,v|
+          self.class.action(k, v)
+        end
+        
+        # Call all the action related methods to collect the actions
+        action_method_regexp = /^_(.+)_action$/
+        methods.grep(action_method_regexp).inject({}) do |r, m|
+          m.match(action_method_regexp)
+          r.merge($1.to_sym => send(m))
+        end
       end
 
       def js_config_with_actions #:nodoc
@@ -84,10 +77,5 @@ module Netzke
       
     end
     
-    def self.included(receiver)
-      receiver.extend         ClassMethods
-      receiver.send :include, InstanceMethods
-      receiver.alias_method_chain :js_config, :actions
-    end
   end
 end

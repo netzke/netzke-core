@@ -1,8 +1,16 @@
 class ComponentThatHasActions < Netzke::Base
-  
-  action :some_action, :text => "Some action"
-  
+  # Define actions as a hash
   action :another_action, :disabled => true, :text => "Disabled action"
+  
+  # ... or as a block returning hash
+  action :some_action do
+    {:text => "Some action"}
+  end
+  
+  # ... or directly as a method
+  def _my_action_action
+    {:text => "Not used"}
+  end
   
   js_property :title, "Panel that has actions"
   
