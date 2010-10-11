@@ -194,7 +194,7 @@ Netzke.componentMixin = function(receiver){
           o.handler = this[o.handler.camelize(true)];
         }
         // TODO: this should be configurable!
-        Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu"], function(key){
+        Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu", "buttons"], function(key){
           if (o[key]) {
             this.detectActions(o[key]);
           }
