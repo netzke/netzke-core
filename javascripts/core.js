@@ -6,15 +6,6 @@ At this time the following constants have been set by Rails:
   Netzke.RelativeExtUrl - URL to ext files
 */
 
-// Check Ext JS version
-(function(){
-  var requiredExtVersion = "3.2.1";
-  var currentExtVersion = Ext.version;
-  if (requiredExtVersion !== currentExtVersion) {
-    alert("Netzke needs Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
-  }
-})();
-
 // Initial stuff
 Ext.BLANK_IMAGE_URL = Netzke.RelativeExtUrl + "/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
@@ -23,9 +14,18 @@ Netzke.deprecationWarning = function(msg){
   if (typeof console == 'undefined') {
     // no console defined
   } else {
-    console.info("Netzke deprecation warning: " + msg);
+    console.info("Netzke: " + msg);
   }
-}
+};
+
+// Check Ext JS version
+(function(){
+  var requiredExtVersion = "3.3.0";
+  var currentExtVersion = Ext.version;
+  if (requiredExtVersion !== currentExtVersion) {
+    Netzke.deprecationWarning("Netzke needs Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
+  }
+})();
 
 Ext.ns('Netzke.page'); // namespace for all component instantces on the page
 Ext.ns('Netzke.classes'); // namespace for all component classes
@@ -240,9 +240,6 @@ Netzke.componentMixin = function(receiver){
       
       // params that will be provided for the server API call (load_component_with_cache); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
       var endpointParams = Ext.apply({name: (params.name || params.id), container: params.container}, params.params); 
-
-      // build the cached components list to send it to the server
-      var cachedComponentNames = "";
 
       // recursive function that checks the properties of the caller ("this") and returns the list of those that look like constructor, i.e. have an "xtype" property themselves
       var classesList = function(pref){
