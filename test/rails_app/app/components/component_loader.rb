@@ -1,10 +1,9 @@
 class ComponentLoader < Netzke::Base
-  component :simple_component, :title => "Simple Component", :lazy_loading => true
+  component :simple_component, :title => "Simple Component"
   
   component :component_loaded_in_window, {
     :class_name => "SimpleComponent",
-    :title => "Component loaded in window",
-    :lazy_loading => true
+    :title => "Component loaded in window"
   }
   
   js_method :on_load_with_feedback, <<-JS

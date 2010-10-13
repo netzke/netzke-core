@@ -41,6 +41,7 @@ module Netzke
       def component(name, config = {})
         config[:class_name] ||= name.to_s.camelize
         config[:name] = name.to_s
+        config[:lazy_loading] = true if config[:lazy_loading].nil?
         
         current_components = read_inheritable_attribute(:components) || {}
         current_components.merge!(name => config)
