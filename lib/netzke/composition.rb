@@ -11,7 +11,7 @@ module Netzke
       # * <tt>:cache</tt> - an array of component classes cached at the browser
       # * <tt>:id</tt> - reference to the component
       # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
-      endpoint :load_component_with_cache do |params|
+      endpoint :deliver_component do |params|
         cache = params[:cache].gsub(".", "::").split(",") # array of cached class names (in Ruby)
         component_name = params.delete(:name).underscore.to_sym
         component = components[component_name] && component_instance(component_name)
@@ -21,17 +21,10 @@ module Netzke
           component.before_load
 
           [{
-            :js => component.js_missing_code(cache), 
-            :css => component.css_missing_code(cache)
+            :eval_js => component.js_missing_code(cache), 
+            :eval_css => component.css_missing_code(cache)
           }, {
-            :render_component_in_container => { # TODO: rename it
-              :container => params[:container], 
-              :config => component.js_config
-            }
-          }, {
-            :component_loaded => {
-              :name => component_name
-            }
+            :component_delivered => component.js_config
           }]
         else
           {:feedback => "Couldn't load component '#{component_name}'"}
