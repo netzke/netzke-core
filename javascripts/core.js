@@ -233,54 +233,36 @@ Netzke.componentMixin = function(receiver){
     },
 
     /*
-    Loads component into a container.
+    Loads a component. Config options:
+    'name' (required) - the name of the child component to load
+    'container' - the id of a panel with the 'fit' layout where the loaded widget will be instantiated
+    'callback' - function that gets called after the component is loaded. It receives the component's instance as parameter.
+    'scope' - scope for the callback.
     */
     loadComponent: function(params){
       if (params.id) Netzke.deprecationWarning("Using 'id' in loadComponent is deprecated. Use 'name' instead.");
       
       // params that will be provided for the server API call (load_component_with_cache); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
       var endpointParams = Ext.apply({name: (params.name || params.id), container: params.container}, params.params); 
+      
+      // Build the list of already loaded ("cached") classes
+      endpointParams.cache = [];
+      
+      for (var klass in Netzke.classes) {
+        endpointParams.cache.push(klass);
+      }
+      endpointParams.cache = endpointParams.cache.join();
 
-      // recursive function that checks the properties of the caller ("this") and returns the list of those that look like constructor, i.e. have an "xtype" property themselves
-      var classesList = function(pref){
-        var res = [];
-        for (name in this) {
-          if (this[name].xtype) {
-            res.push(pref + name);
-            this[name].classesList = classesList; // define the same function on each property on the fly
-            res = res.concat(this[name].classesList(pref + name + ".")); // ... and call it, providing our name along with the scope
-          }
-        }
-        return res;
-      };
-
-      // assign this function to Netzke.classes and call it
-      Netzke.classes.classesList = classesList;
-      var cl = Netzke.classes.classesList("");
-
-      // join the classes into a coma-separated list
-      var cache = "";
-      Ext.each(cl, function(c){cache += c + ",";});
-
-      endpointParams.cache = cache;
-
-      // remember the passed callback for the future
+      // remember the passed callback for the future (per loaded component, as there may be simultaneous ongoing calls)
       if (params.callback) {
-        this.callbackHash[params.name.underscore()] = params.callback; // per loaded component, as there may be simultaneous calls
+        this.callbackHash[params.name.underscore()] = params.callback;
       }
 
-      // visually disable the container while the component is being loaded
-      // Ext.getCmp(params.container).disable();
-
-      if (params.container) Ext.getCmp(params.container).removeChild(); // remove the old component if the container is specified
+      // remove the old component if the container is specified
+      if (params.container) Ext.getCmp(params.container).removeChild();
 
       // do the remote API call
       this.loadComponentWithCache(endpointParams);
-    },
-
-    // Returns an component instance if it was instantiated, and fires an exception otherwise
-    componentInstance: function(aggrName) {
-      
     },
 
     /*
@@ -288,8 +270,6 @@ Netzke.componentMixin = function(receiver){
     */
     componentLoaded : function(params){
       if (this.fireEvent('componentload')) {
-        // Enable the container after the component is succesfully loaded
-        // this.getChildComponent(params.id).ownerCt.enable();
 
         // provide the callback to that component that was loading the child, passing the child itself
         var callbackFn = this.callbackHash[params.name];
@@ -297,6 +277,21 @@ Netzke.componentMixin = function(receiver){
           callbackFn.call(params.scope || this, this.getChildComponent(params.name));
           delete this.callbackHash[params.name];
         }
+      }
+    },
+
+    /*
+    Instantiates and inserts a component into a container with layout 'fit'.
+    Arg: an JS object with the following keys:
+      - id: id of the receiving container
+      - config: configuration of the component to be instantiated and inserted into the container
+    */
+    renderComponentInContainer : function(params){
+      var cont = Ext.getCmp(params.container);
+      if (cont) {
+        cont.instantiateChild(params.config);
+      } else {
+        this.instantiateChild(params.config);
       }
     },
 
@@ -332,21 +327,6 @@ Netzke.componentMixin = function(receiver){
     */
     localId : function(parent){
       return this.id.replace(parent.id + "__", "");
-    },
-
-    /*
-    Instantiates and inserts a component into a container with layout 'fit'.
-    Arg: an JS object with the following keys:
-      - id: id of the receiving container
-      - config: configuration of the component to be instantiated and inserted into the container
-    */
-    renderComponentInContainer : function(params){
-      var cont = Ext.getCmp(params.container);
-      if (cont) {
-        cont.instantiateChild(params.config);
-      } else {
-        this.instantiateChild(params.config);
-      }
     },
 
     /*
