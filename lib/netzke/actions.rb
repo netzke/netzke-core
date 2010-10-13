@@ -25,11 +25,13 @@ module Netzke
     module ClassMethods
       def action(name, config = {}, &block)
         method_name = "_#{name}_action"
-        if block_given?
-          define_method(method_name, &block)
-        else
-          define_method(method_name) do
-            config
+        unless instance_methods.include?(method_name.to_sym)
+          if block_given?
+            define_method(method_name, &block)
+          else
+            define_method(method_name) do
+              config
+            end
           end
         end
       end

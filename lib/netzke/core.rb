@@ -1,3 +1,4 @@
+require 'active_support/core_ext'
 require 'netzke/core/session'
 require 'netzke/core/masquerading'
 
