@@ -117,6 +117,9 @@ Netzke.componentMixin = function(receiver){
       
       // This is where the references to different callback functions will be stored
       this.callbackHash = {};
+      
+      // This is where we store the information about components that are currently being loaded with this.loadComponent()
+      this.componentsBeingLoaded = {};
 
       // Set title
       if (this.mode === "config"){
@@ -143,7 +146,7 @@ Netzke.componentMixin = function(receiver){
     */
     processEndpoints : function(){
       var endpoints = this.endpoints || [];
-      endpoints.push('load_component_with_cache'); // all Netzke components get this endpoint
+      endpoints.push('deliver_component'); // all Netzke components get this endpoint
       Ext.each(endpoints, function(intp){
         this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
       }, this);
@@ -233,72 +236,90 @@ Netzke.componentMixin = function(receiver){
     },
 
     /*
-    Loads component into a container.
+    Loads a component. Config options:
+    'name' (required) - the name of the child component to load
+    'container' - the id of a panel with the 'fit' layout where the loaded widget will be instantiated
+    'callback' - function that gets called after the component is loaded. It receives the component's instance as parameter.
+    'scope' - scope for the callback.
     */
     loadComponent: function(params){
-      if (params.id) Netzke.deprecationWarning("Using 'id' in loadComponent is deprecated. Use 'name' instead.");
+      if (params.id) {
+        params.name = params.id;
+        Netzke.deprecationWarning("Using 'id' in loadComponent is deprecated. Use 'name' instead.");
+      }
       
-      // params that will be provided for the server API call (load_component_with_cache); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
-      var endpointParams = Ext.apply({name: (params.name || params.id), container: params.container}, params.params); 
+      // params that will be provided for the server API call (deliver_component); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
+      var serverParams = params.params || {};
+      serverParams.name = params.name;
+      
+      // Build the list of already loaded ("cached") classes
+      serverParams.cache = [];
+      
+      for (var klass in Netzke.classes) {
+        serverParams.cache.push(klass);
+      }
+      
+      serverParams.cache = serverParams.cache.join();
 
-      // recursive function that checks the properties of the caller ("this") and returns the list of those that look like constructor, i.e. have an "xtype" property themselves
-      var classesList = function(pref){
-        var res = [];
-        for (name in this) {
-          if (this[name].xtype) {
-            res.push(pref + name);
-            this[name].classesList = classesList; // define the same function on each property on the fly
-            res = res.concat(this[name].classesList(pref + name + ".")); // ... and call it, providing our name along with the scope
-          }
-        }
-        return res;
-      };
+      var storedConfig = this.componentsBeingLoaded[params.name] = {};
 
-      // assign this function to Netzke.classes and call it
-      Netzke.classes.classesList = classesList;
-      var cl = Netzke.classes.classesList("");
-
-      // join the classes into a coma-separated list
-      var cache = "";
-      Ext.each(cl, function(c){cache += c + ",";});
-
-      endpointParams.cache = cache;
-
-      // remember the passed callback for the future
-      if (params.callback) {
-        this.callbackHash[params.name.underscore()] = params.callback; // per loaded component, as there may be simultaneous calls
+      // Remember where the loaded component should be inserted into
+      if (params.container) {
+        storedConfig.container = params.container;
       }
 
-      // visually disable the container while the component is being loaded
-      // Ext.getCmp(params.container).disable();
+      // remember the passed callback for the future (per loaded component, as there may be simultaneous ongoing calls)
+      if (params.callback) {
+        storedConfig.callback = params.callback;
+        storedConfig.scope = params.scope;
+        // this.callbackHash[params.name.underscore()] = params.callback;
+      }
 
-      if (params.container) Ext.getCmp(params.container).removeChild(); // remove the old component if the container is specified
+      // remove the old component if the container is specified
+      if (params.container) Ext.getCmp(params.container).removeChild();
 
       // do the remote API call
-      this.loadComponentWithCache(endpointParams);
-    },
-
-    // Returns an component instance if it was instantiated, and fires an exception otherwise
-    componentInstance: function(aggrName) {
-      
+      this.deliverComponent(serverParams);
     },
 
     /*
-    Called by the server as callback about loaded component
+    Called by the server after we ask him to load a component
     */
-    componentLoaded : function(params){
-      if (this.fireEvent('componentload')) {
-        // Enable the container after the component is succesfully loaded
-        // this.getChildComponent(params.id).ownerCt.enable();
+    componentDelivered : function(config){
+      if (this.fireEvent('componentload'), config) {
 
-        // provide the callback to that component that was loading the child, passing the child itself
-        var callbackFn = this.callbackHash[params.name];
-        if (callbackFn) {
-          callbackFn.call(params.scope || this, this.getChildComponent(params.name));
-          delete this.callbackHash[params.name];
+        var storedConfig = this.componentsBeingLoaded[config.name] || {};
+        delete this.componentsBeingLoaded[config.name];
+      
+        var componentInstance;
+      
+        if (storedConfig.container) {
+          var container = Ext.getCmp(storedConfig.container);
+          componentInstance = container.instantiateChild(config);
+        } else {
+          componentInstance = this.instantiateChild(config);
+        }
+
+        if (storedConfig.callback) {
+          storedConfig.callback.call(storedConfig.scope || this, componentInstance);
         }
       }
     },
+
+    /*
+    Instantiates and inserts a component into a container with layout 'fit'.
+    Arg: an JS object with the following keys:
+      - id: id of the receiving container
+      - config: configuration of the component to be instantiated and inserted into the container
+    */
+    // renderComponentInContainer : function(params){
+    //   var cont = Ext.getCmp(params.container);
+    //   if (cont) {
+    //     cont.instantiateChild(params.config);
+    //   } else {
+    //     this.instantiateChild(params.config);
+    //   }
+    // },
 
     /*
     Returns the parent component
@@ -335,21 +356,6 @@ Netzke.componentMixin = function(receiver){
     },
 
     /*
-    Instantiates and inserts a component into a container with layout 'fit'.
-    Arg: an JS object with the following keys:
-      - id: id of the receiving container
-      - config: configuration of the component to be instantiated and inserted into the container
-    */
-    renderComponentInContainer : function(params){
-      var cont = Ext.getCmp(params.container);
-      if (cont) {
-        cont.instantiateChild(params.config);
-      } else {
-        this.instantiateChild(params.config);
-      }
-    },
-
-    /*
     Reconfigures the component
     */
     reconfigure: function(config){
@@ -359,7 +365,7 @@ Netzke.componentMixin = function(receiver){
     /*
     Evaluates CSS
     */
-    css : function(code){
+    evalCss : function(code){
       var linkTag = document.createElement('style');
       linkTag.type = 'text/css';
       linkTag.innerHTML = code;
@@ -369,7 +375,7 @@ Netzke.componentMixin = function(receiver){
     /*
     Evaluates JS
     */
-    js : function(code){
+    evalJs : function(code){
       eval(code);
     },
 
@@ -606,6 +612,7 @@ Ext.override(Ext.Container, {
       this.add(instance);
       this.doLayout();
     }
+    return instance;
   },
 
   /** 

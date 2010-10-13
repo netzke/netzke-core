@@ -86,7 +86,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
   
   test "api" do
     component_class = Component
-    assert_equal [:load_component_with_cache, :method_one, :method_two], component_class.endpoints
+    assert_equal [:deliver_component, :method_one, :method_two], component_class.endpoints
   end
 
   test "components" do
