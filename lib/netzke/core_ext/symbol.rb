@@ -7,7 +7,7 @@ class Symbol
     ActiveSupport::JSON::Variable.new(self.to_s)
   end
   
-  def action
-    {:action => self.to_s}
+  def action(config = {})
+    config.merge(:action => self.to_s)
   end
 end

@@ -1,6 +1,3 @@
-# require 'active_support/core_ext'
-# require 'active_support/dependencies'
-
 $LOAD_PATH << File.dirname(__FILE__)
 
 # require 'netzke/core_ext'

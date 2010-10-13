@@ -1,4 +1,4 @@
-class ComponentThatHasActions < Netzke::Base
+class ComponentWithActions < Netzke::Base
   # Define actions as a hash
   action :another_action, :disabled => true, :text => "Disabled action"
   
