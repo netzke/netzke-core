@@ -13,6 +13,7 @@
   * +api+ is now +endpoint+
   * +persistent_config_enabled?+ is now +persistence_enabled?+
   * Using the +js_extend_properties+ class method in your components in deprecated (and maybe even broken). Use +js_property+ (or +js_properties+) and +js_method+ instead (see multiple examples in test/rails_app)
+  * the +load_component_with_cache+ endpoint now becomes +deliver_component+
 
 * New
   * Use the +ext+ helper in the views to embed any (pure) Ext component into a view.

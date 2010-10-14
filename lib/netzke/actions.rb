@@ -67,7 +67,7 @@ module Netzke
         
         # Call all the action related methods to collect the actions
         action_method_regexp = /^_(.+)_action$/
-        methods.grep(action_method_regexp).inject({}) do |r, m|
+        self.class.instance_methods.grep(action_method_regexp).inject({}) do |r, m|
           m.match(action_method_regexp)
           r.merge($1.to_sym => send(m))
         end

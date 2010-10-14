@@ -11,9 +11,3 @@ Scenario: Pressing button should result in corresponding actions
   
   When I press "Some action"
   Then I should see "Some action was triggered"
-
-Scenario: Extending a widget with actions and overriding its bbar
-  When I go to the ExtendedComponentWithActions test page
-  Then action "another_action" should be disabled
-
-
