@@ -1,4 +1,4 @@
-require 'active_support/core_ext/class/inheritable_attributes'
+# require 'active_support/core_ext/class/inheritable_attributes'
 
 module Netzke
   module Composition
@@ -34,30 +34,31 @@ module Netzke
     end # included
     
     module ClassMethods
+      
       # Defines a nested component.
       # For example:
       # 
       #     component :users, :data_class => "GridPanel", :model => "User"
-      def component(name, config = {})
+      def component(name, config = {}, &block)
+        config = config.dup
         config[:class_name] ||= name.to_s.camelize
         config[:name] = name.to_s
+        method_name = "_#{name}_component"
         
-        current_components = read_inheritable_attribute(:components) || {}
-        current_components.merge!(name => config)
-        write_inheritable_attribute(:components, current_components)
+        if block_given?
+          define_method(method_name, &block)
+        else
+          define_method(method_name) do
+            config
+          end
+        end
       end
       
-      # Components previously defined on class level
-      def components
-        read_inheritable_attribute(:components) || {}
-      end
     end
     
     module InstanceMethods
       def items
-        if config[:items]
-          @items ||= normalize_components(config[:items])
-        end
+        @items
       end
       
       def initial_components
@@ -66,8 +67,16 @@ module Netzke
       
       # All components for this instance, which includes components defined on class level, and components detected in :items
       def components
-        items if @components.nil?
-        self.class.components.merge(@components || {})
+        # items if @components.nil? # simply trigger collecting @components from items
+        # self.class.components.merge(@components || {})
+        
+        @components ||= begin
+          method_regexp = /^_(.+)_component$/
+          self.class.instance_methods.grep(method_regexp).inject({}) do |r, m|
+            m.match(method_regexp)
+            r.merge($1.to_sym => send(m))
+          end
+        end
       end
 
       def non_late_components
@@ -200,13 +209,12 @@ module Netzke
       private
         
         def normalize_components(items)
-          @components ||= {}
           @component_index ||= 0
-          items.each_with_index.map do |item, i|
+          @items = items.each_with_index.map do |item, i|
             if is_component_config?(item)
               component_name = item[:name] || :"#{item[:class_name].underscore.split("/").last}#{@component_index}"
               @component_index += 1
-              @components[component_name.to_sym] = item # collect component configs by the way
+              self.class.component(component_name.to_sym, item)
               js_component(component_name) # replace current item with a reference to component
             elsif item.is_a?(Hash)
               item[:items].is_a?(Array) ? item.merge(:items => normalize_components(item[:items])) : item
@@ -214,6 +222,11 @@ module Netzke
               item
             end
           end
+        end
+        
+        def normalize_components_in_items
+          @items = []
+          normalize_components(config[:items] || [])
         end
         
         def is_component_config?(c)

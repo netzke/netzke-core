@@ -72,5 +72,37 @@ module Netzke
       nested_component_two.global_id.should == 'some_component__nested_two'
       deep_nested_component.global_id.should == 'some_component__nested_two__nested'
     end
+    
+    it "should be possible to define components in different ways" do
+      class ComponentOne < Base
+      end
+      class ComponentTwo < Base
+      end
+      class SomeComposite < Base
+        component :component_one do
+          {
+            :class_name => "ComponentOne"
+          }
+        end
+        
+        def config
+          {
+            :items => [
+              {:class_name => "ComponentTwo", :name => "my_component_two"}, 
+              {:class_name => "ComponentTwo"} # name omitted, will be "component_two0"
+            ]
+          }.deep_merge super
+        end
+      end
+      
+      composite = SomeComposite.new
+      components = composite.components
+      
+      components.keys.size.should == 3
+      components[:component_one][:class_name].should == "ComponentOne"
+      components[:my_component_two][:class_name].should == "ComponentTwo"
+      components[:component_two0][:class_name].should == "ComponentTwo"
+      
+    end
   end  
 end
