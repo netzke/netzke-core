@@ -1,6 +1,11 @@
 class SomeComposite < Netzke::Base
   js_properties :title => "Static Composite", :layout => 'border'
   
+  action :update_center_panel
+  action :update_west_panel
+  action :update_west_from_server
+  action :update_east_south_from_server
+  
   def config
     {
       # 2 different ways to embed an component
