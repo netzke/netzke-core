@@ -25,6 +25,7 @@ module Netzke
     module ClassMethods
       def action(name, config = {}, &block)
         method_name = "_#{name}_action"
+        config[:text] ||= name.to_s.humanize
         unless instance_methods.include?(method_name.to_sym)
           if block_given?
             define_method(method_name, &block)
@@ -61,9 +62,9 @@ module Netzke
       
       # Actions to be used in the config
       def actions
-        self.class.extract_actions(config).each_pair do |k,v|
-          self.class.action(k, v)
-        end
+        # self.class.extract_actions(config).each_pair do |k,v|
+        #   self.class.action(k, v)
+        # end
         
         # Call all the action related methods to collect the actions
         action_method_regexp = /^_(.+)_action$/
