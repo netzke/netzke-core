@@ -48,6 +48,10 @@ module Netzke
         {:text => "Action 3"}
       end
     end
+    
+    class YetAnotherExtendedComponent < AnotherExtendedComponent
+      action :action_two, :disabled => false
+    end
   
     it "should auto collect actions from both js_methods and config" do
       component = SomeComponent.new
@@ -79,5 +83,12 @@ module Netzke
       
       component.actions[:action_three][:text].should == "Action 3"
     end
+    
+    it "should only override the specified actions" do
+      component = YetAnotherExtendedComponent.new
+      component.actions[:action_two][:disabled].should == false
+      component.actions[:action_two][:text].should == "Action two, extended"
+    end
+     
   end  
 end

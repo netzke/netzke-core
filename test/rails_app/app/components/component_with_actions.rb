@@ -4,7 +4,7 @@ class ComponentWithActions < Netzke::Base
   
   # ... or as a block returning hash
   action :some_action do
-    {:text => "Some action", :icon => Netzke::Core.icons_uri + "/delete.png"}
+    {:text => "Some Cool Action", :icon => Netzke::Core.icons_uri + "/delete.png"}
   end
   
   # ... or directly as a method
