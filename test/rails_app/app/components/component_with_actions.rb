@@ -1,10 +1,10 @@
 class ComponentWithActions < Netzke::Base
   # Define actions as a hash
-  action :another_action, :disabled => true, :text => "Disabled action"
+  action :another_action, :disabled => true, :text => "Disabled action", :icon => :accept
   
   # ... or as a block returning hash
   action :some_action do
-    {:text => "Some action"}
+    {:text => "Some action", :icon => Netzke::Core.icons_uri + "/delete.png"}
   end
   
   # ... or directly as a method

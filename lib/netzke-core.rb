@@ -13,6 +13,7 @@ module Netzke
     config.after_initialize do
       # Do some initialization which is only possible after Rails is initialized
       Netzke::Core.ext_location ||= ::Rails.root.join("public", "extjs")
+      Netzke::Core.with_icons = File.exists?("#{Rails.root}/public#{Netzke::Core.icons_uri}") if Netzke::Core.with_icons.nil?
     end
   end
 end

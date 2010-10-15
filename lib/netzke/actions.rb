@@ -33,14 +33,16 @@ module Netzke
         if block_given?
           if superclass.instance_methods.map(&:to_s).include?(method_name)
             define_method(method_name) do
-              yield(super())
+              normalize_action_config(yield(super()))
             end
           else
-            define_method(method_name, &block)
+            define_method(method_name) do
+              normalize_action_config(yield)
+            end
           end
         else
           define_method(method_name) do
-            config
+            normalize_action_config(config)
           end
         end
       end
@@ -63,5 +65,14 @@ module Netzke
     def js_config_with_actions #:nodoc
       actions.empty? ? js_config_without_actions : js_config_without_actions.merge(:actions => actions)
     end
+    
+    private
+      def normalize_action_config(config)
+        if config[:icon].is_a?(Symbol)
+          config[:icon] = Netzke::Core.with_icons ? Netzke::Core.icons_uri + "/" + config[:icon].to_s + ".png" : nil
+        end
+        
+        config
+      end
   end
 end
