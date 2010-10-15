@@ -1,5 +1,5 @@
 module Netzke
-  # Netzke component allows specifying "actions" in Ext-style.
+  # Netzke component allows specifying Ext actions.
   # An action can be defined in 2 different ways, both of which result in a method definition like this 
   #     def _<some_action>_action
   #       ...
@@ -11,10 +11,13 @@ module Netzke
   # 
   # * as a block:
   #     action :bug_server do
-  #       {:text => config[:text], :disabled => super[:disabled]}
+  #       {:text => config[:text], :disabled => true}
   #     end
   # 
-  # Of course, you could also directly define a method, but is it really needed?
+  # The block can optionally receive the configuration of an action being overridden:
+  #     action :bug_server do |orig|
+  #       {:text => config[:text] + orig[:text], :disabled => orig[:disabled]}
+  #     end
   module Actions
     extend ActiveSupport::Concern
 
@@ -24,61 +27,41 @@ module Netzke
     
     module ClassMethods
       def action(name, config = {}, &block)
-        method_name = "_#{name}_action"
         config[:text] ||= name.to_s.humanize
-        unless instance_methods.include?(method_name.to_sym)
-          if block_given?
-            define_method(method_name, &block)
-          else
-            define_method(method_name) do
-              config
-            end
-          end
-        end
-      end
-      
-      def extract_actions(hsh)
-        hsh.each_pair.inject({}) do |r,(k,v)| 
-          v.is_a?(Array) ? r.merge(extract_actions_from_array(v)) : r
-        end
-      end
-      
-      def extract_actions_from_array(arry)
-        arry.inject({}) do |r, el|
-          if el.is_a?(Hash)
-            el[:action] ? r.merge(el[:action] => default_action_config(el[:action])) : r.merge(extract_actions(el))
-          else
-            r
-          end
-        end
-      end
-      
-      def default_action_config(action_name)
-        {:text => action_name.to_s.humanize}
-      end
-    end
-    
-    module InstanceMethods
-      
-      # Actions to be used in the config
-      def actions
-        # self.class.extract_actions(config).each_pair do |k,v|
-        #   self.class.action(k, v)
-        # end
+        method_name = action_method_name(name)
         
-        # Call all the action related methods to collect the actions
-        action_method_regexp = /^_(.+)_action$/
-        self.class.instance_methods.grep(action_method_regexp).inject({}) do |r, m|
-          m.match(action_method_regexp)
-          r.merge($1.to_sym => send(m))
+        if block_given?
+          if superclass.instance_methods.map(&:to_s).include?(method_name)
+            define_method(method_name) do
+              yield(super())
+            end
+          else
+            define_method(method_name, &block)
+          end
+        else
+          define_method(method_name) do
+            config
+          end
         end
       end
-
-      def js_config_with_actions #:nodoc
-        actions.empty? ? js_config_without_actions : js_config_without_actions.merge(:actions => actions)
-      end
       
+      def action_method_name(action)
+        "_#{action}_action"
+      end
     end
     
+    # Actions to be used in the config
+    def actions
+      # Call all the action related methods to collect the actions
+      action_method_regexp = /^_(.+)_action$/
+      self.class.instance_methods.grep(action_method_regexp).inject({}) do |r, m|
+        m.match(action_method_regexp)
+        r.merge($1.to_sym => send(m))
+      end
+    end
+
+    def js_config_with_actions #:nodoc
+      actions.empty? ? js_config_without_actions : js_config_without_actions.merge(:actions => actions)
+    end
   end
 end

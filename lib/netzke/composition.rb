@@ -39,6 +39,12 @@ module Netzke
       # For example:
       # 
       #     component :users, :data_class => "GridPanel", :model => "User"
+      # 
+      # It can also accept a block (receiving as parameter the eventual definition from super class):
+      # 
+      #     component :books do |orig|
+      #       {:data_class => "Book", :title => orig[:title] + ", extended"}
+      #     end
       def component(name, config = {}, &block)
         config = config.dup
         config[:class_name] ||= name.to_s.camelize
@@ -46,7 +52,13 @@ module Netzke
         method_name = "_#{name}_component"
         
         if block_given?
-          define_method(method_name, &block)
+          if superclass.instance_methods.map(&:to_s).include?(method_name)
+            define_method(method_name) do
+              yield(super())
+            end
+          else
+            define_method(method_name, &block)
+          end
         else
           define_method(method_name) do
             config
@@ -54,11 +66,17 @@ module Netzke
         end
       end
       
+      # Component's js config used when embedding components as Container's items 
+      # (see some_composite.rb for an example)
+      def js_component(name, config = {})
+        config.merge(:component => name)
+      end
+      
     end
     
     module InstanceMethods
       def items
-        @items
+        @items ||= config[:items]
       end
       
       def initial_components
@@ -110,7 +128,6 @@ module Netzke
       end
 
       # recursively instantiates an component based on its "path": e.g. if we have an component :aggr1 which in its turn has an component :aggr10, the path to the latter would be "aggr1__aggr10"
-      # TODO: introduce memoization
       def component_instance(name, strong_config = {})
         @cached_component_instances ||= {}
         @cached_component_instances[name] ||= begin
@@ -158,10 +175,8 @@ module Netzke
         []
       end
 
-      # Component's js config used when embedding components as Container's items 
-      # (see some_composite.rb for an example)
-      def js_component(name, config = {})
-        config.merge(:component => name)
+      def js_component(*args)
+        self.class.js_component(*args)
       end
 
       # Returns global id of a component in the hierarchy, based on passed reference that follows

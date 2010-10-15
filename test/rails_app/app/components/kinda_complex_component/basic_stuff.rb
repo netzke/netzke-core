@@ -4,6 +4,9 @@ class KindaComplexComponent < Netzke::Base
     extend ActiveSupport::Concern
     
     included do
+      action :some_action
+      action :another_action
+      
       # Calling main class' methods is simple
       js_method :on_some_action, <<-JS
         function(){ this.items.last().setTitle("Action triggered"); }

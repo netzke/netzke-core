@@ -15,6 +15,8 @@ class ComponentLoader < Netzke::Base
     }
   JS
 
+  action :load_with_feedback
+
   js_properties(
     :title => "Component Loader",
     :layout => "fit",

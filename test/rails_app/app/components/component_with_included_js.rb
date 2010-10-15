@@ -3,6 +3,8 @@ class ComponentWithIncludedJs < Netzke::Base
   
   js_base_class "Netzke.ComponentWithIncludedJs"
   
+  action :print_message
+  
   js_property :bbar, [:print_message.action]
   
   js_method :on_print_message, <<-JS

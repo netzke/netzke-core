@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-10-13}
+  s.date = %q{2010-10-15}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -80,6 +80,7 @@ Gem::Specification.new do |s|
      "lib/netzke/stylesheets.rb",
      "lib/tasks/netzke_core_tasks.rake",
      "netzke-core.gemspec",
+     "spec/component/actions_spec.rb",
      "spec/component/base_spec.rb",
      "spec/component/composition_spec.rb",
      "spec/component/javascript_spec.rb",
@@ -96,12 +97,13 @@ Gem::Specification.new do |s|
      "test/rails_app/Rakefile",
      "test/rails_app/app/components/border_layout_panel.rb",
      "test/rails_app/app/components/component_loader.rb",
-     "test/rails_app/app/components/component_that_has_actions.rb",
+     "test/rails_app/app/components/component_with_actions.rb",
      "test/rails_app/app/components/component_with_custom_css.rb",
      "test/rails_app/app/components/component_with_included_js.rb",
      "test/rails_app/app/components/component_with_session_persistence.rb",
      "test/rails_app/app/components/custom.css",
      "test/rails_app/app/components/deprecated/server_caller.rb",
+     "test/rails_app/app/components/extended_component_with_actions.rb",
      "test/rails_app/app/components/extended_server_caller.rb",
      "test/rails_app/app/components/included.js",
      "test/rails_app/app/components/kinda_complex_component.rb",
@@ -175,17 +177,19 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Build ExtJS/Rails components with minimum effort}
   s.test_files = [
-    "spec/component/base_spec.rb",
+    "spec/component/actions_spec.rb",
+     "spec/component/base_spec.rb",
      "spec/component/composition_spec.rb",
      "spec/component/javascript_spec.rb",
      "spec/spec_helper.rb",
      "test/rails_app/app/components/border_layout_panel.rb",
      "test/rails_app/app/components/component_loader.rb",
-     "test/rails_app/app/components/component_that_has_actions.rb",
+     "test/rails_app/app/components/component_with_actions.rb",
      "test/rails_app/app/components/component_with_custom_css.rb",
      "test/rails_app/app/components/component_with_included_js.rb",
      "test/rails_app/app/components/component_with_session_persistence.rb",
      "test/rails_app/app/components/deprecated/server_caller.rb",
+     "test/rails_app/app/components/extended_component_with_actions.rb",
      "test/rails_app/app/components/extended_server_caller.rb",
      "test/rails_app/app/components/kinda_complex_component/basic_stuff.rb",
      "test/rails_app/app/components/kinda_complex_component/extra_stuff.rb",
