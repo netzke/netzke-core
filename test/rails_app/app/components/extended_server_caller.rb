@@ -10,8 +10,9 @@ class ExtendedServerCaller < ServerCaller
     }
   JS
 
-  endpoint :whats_up do |params|
-    {:set_title => super(params)[:set_title] + ", shiny weather"}
+  def whats_up(params)
+    orig = super
+    orig.merge(:set_title => orig[:set_title] + ", shiny weather")
   end
-
+  
 end

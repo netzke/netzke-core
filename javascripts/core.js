@@ -478,7 +478,7 @@ Netzke.componentMixin = function(receiver){
         params: params,
         url: this.endpointUrl(intp),
         callback: function(options, success, response){
-          if (success) {
+          if (success && response.responseText) {
             // execute commands from server
             this.bulkExecute(Ext.decode(response.responseText));
 
