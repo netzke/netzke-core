@@ -20,6 +20,11 @@ module Netzke
 
     mattr_accessor :ext_location
     
+    mattr_accessor :with_icons
+    
+    mattr_accessor :icons_uri
+    @@icons_uri = "/images/icons"
+    
     def self.setup
       yield self
     end
