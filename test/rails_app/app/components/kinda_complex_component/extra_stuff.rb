@@ -1,9 +1,15 @@
 class KindaComplexComponent < Netzke::Base
   module ExtraStuff
+    extend ActiveSupport::Concern
+    
+    included do
+      component :server_caller
+    end
+    
     # Let's add another tab with a Netzke component in it
     def config
       orig = super
-      orig[:items] << {:class_name => "ServerCaller"}
+      orig[:items] << js_component(:server_caller)
       orig
     end
   end

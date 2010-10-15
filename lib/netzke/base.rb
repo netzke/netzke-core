@@ -68,6 +68,10 @@ module Netzke
       @name          = conf[:name].nil? ? short_component_class_name.underscore : conf[:name].to_s
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
+      
+      # initialize @components and @items
+      normalize_components_in_items
+      # auto_collect_actions_from_config_and_js_properties
     end
   
     # Short component class name, e.g.: 

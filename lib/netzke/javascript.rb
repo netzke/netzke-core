@@ -75,13 +75,12 @@ module Netzke
       
       # JS properties and methods merged together
       def js_extend_properties
-        @_js_extend_properties ||= begin
-          res = js_properties.merge(js_methods)
-          extracted_actions = extract_actions(res)
-          # and also eventually include actions defined in the js_properties
-          res.merge!(:actions => extracted_actions) if !extracted_actions.empty?
-          res
-        end
+        @_js_extend_properties ||= js_properties.merge(js_methods)
+          # res = js_properties.merge(js_methods)
+          # extracted_actions = extract_actions(res)
+          # res.merge!(:actions => extracted_actions) if !extracted_actions.empty?
+          # res
+        # end
       end
       
       # TODO: the code below needs refactoring and cleaning-up
