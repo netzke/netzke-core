@@ -256,6 +256,8 @@ Netzke.componentMixin = function(receiver){
         Netzke.deprecationWarning("Using 'id' in loadComponent is deprecated. Use 'name' instead.");
       }
       
+      params.name = params.name.underscore();
+
       // params that will be provided for the server API call (deliver_component); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
       var serverParams = params.params || {};
       serverParams.name = params.name;
