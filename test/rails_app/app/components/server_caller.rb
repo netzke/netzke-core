@@ -1,22 +1,16 @@
 class ServerCaller < Netzke::Base
+  action :bug_server, :text => "Call server"
   
   js_properties(
     :title => "Server Caller",
     :html => "Wow",
-    :bbar => [{:text => "Call server", :ref => "../button"}],
+    :bbar => [:bug_server.action],
   )
   
-  js_method :bug_server, <<-JS
+  js_method :on_bug_server, <<-JS
     function(){
       this.whatsUp();
       this.update('You should see the response from the server in the title bar the very next moment');
-    }
-  JS
-
-  js_method :init_component, <<-JS
-    function(){
-      #{js_full_class_name}.superclass.initComponent.call(this);
-      this.button.on('click', this.bugServer, this);
     }
   JS
 

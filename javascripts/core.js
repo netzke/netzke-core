@@ -199,6 +199,9 @@ Netzke.componentMixin = function(receiver){
         // TODO: this should be configurable!
         Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu", "buttons"], function(key){
           if (o[key]) {
+            var items = [].concat(o[key]); // we need to do it in order to esure that this instance has a separate bbar/tbar/etc, NOT shared via class' prototype
+            delete(o[key]);
+            o[key] = items;
             this.detectActions(o[key]);
           }
         }, this);
@@ -208,6 +211,7 @@ Netzke.componentMixin = function(receiver){
           if (Ext.isObject(el)) {
             if (el.action) {
               a[i] = this.actions[el.action.camelize(true)];
+              delete(el);
             } else {
               this.detectActions(el);
             }
