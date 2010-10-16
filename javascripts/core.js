@@ -18,10 +18,6 @@ Netzke.deprecationWarning = function(msg){
   }
 };
 
-// Set defauls for Combobox
-Ext.form.ComboBox.prototype.typeAhead = true; // Auto complete options if typing
-Ext.form.ComboBox.prototype.resizable = true; // Allow resizing incase text is longer than the ComboBox (GridRowEditor)  
-
 // Check Ext JS version
 (function(){
   var requiredExtVersion = "3.3.0";
