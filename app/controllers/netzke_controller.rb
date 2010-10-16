@@ -16,7 +16,7 @@ class NetzkeController < ApplicationController
       
       format.css {
         res = ""
-        Netzke::Core.javascripts.each do |path|
+        Netzke::Core.stylesheets.each do |path|
           f = File.new(path)
           res << f.read
         end
