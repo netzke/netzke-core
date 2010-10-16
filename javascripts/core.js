@@ -485,8 +485,20 @@ Netzke.componentMixin = function(receiver){
         url: this.endpointUrl(intp),
         callback: function(options, success, response){
           if (success && response.responseText) {
+              
+            var responseObject = Ext.decode(response.responseText);  
+            
+            // Apply form errors if they exist
+            if (responseObject.formErrors  !== undefined) {
+                var formErrors = responseObject.formErrors;
+                delete responseObject.formErrors;
+                Ext.iterate(formErrors, function(field, message){
+                    Ext.getCmp(options.scope.el.id).getForm().findField(field).markInvalid(message.join('<br>'));
+                });
+            }
+
             // execute commands from server
-            this.bulkExecute(Ext.decode(response.responseText));
+            this.bulkExecute(responseObject);  
 
             // provide callback if needed
             if (typeof callback == 'function') { 
