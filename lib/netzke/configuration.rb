@@ -1,45 +1,10 @@
 module Netzke
   module Configuration
     module ClassMethods
-      # Override class-level defaults specified in <tt>Netzke::Base.config</tt>. 
-      # E.g. in config/initializers/netzke-config.rb:
-      # 
-      #     Netzke::Basepack::GridPanel.configure :default_config => {:persistent_config => true}
-      def configure(*args)
-        if args.first.is_a?(Symbol)
-          config[args.first] = args.last
-        else
-          # first arg is hash
-          config.deep_merge!(args.first)
-        end
-    
-        # component may implement some kind of control for configuration consistency
-        enforce_config_consistency if respond_to?(:enforce_config_consistency)
+      def setup
+        yield self
       end
   
-  
-      # Class-level Netzke::Base configuration. The defaults also get specified here.
-      def config
-        set_default_config({
-          # Which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
-          # :javascripts               => ["#{File.dirname(__FILE__)}/../../javascripts/core.js"],
-          # :stylesheets               => ["#{File.dirname(__FILE__)}/../../stylesheets/core.css"],
-
-          # :external_css              => [],
-
-          # AR model that provides us with persistent config functionality
-          # :persistence_manager => "NetzkePreference",
-
-          # Default location of extjs library
-          # :ext_location              => defined?(::Rails) && ::Rails.root.join("public", "extjs"),
-        })
-      end
-
-      def set_default_config(c) #:nodoc:
-        @@config ||= {}
-        @@config[self.name] ||= c
-      end
-
       # Config options that should not go to the client side
       def server_side_config_options
         [:lazy_loading, :class_name]
@@ -50,7 +15,7 @@ module Netzke
     module InstanceMethods
       # Default config - before applying any passed configuration
       def default_config
-        self.class.config[:default_config].nil? ? {} : {}.merge(self.class.config[:default_config])
+        {}.merge(self.class.default_config)
       end
 
       # Static, hardcoded config. Consists of default values merged with config that was passed during instantiation
