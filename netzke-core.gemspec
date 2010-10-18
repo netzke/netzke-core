@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{netzke-core}
-  s.version = "0.6.0"
+  s.version = "0.6.0.beta"
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-10-15}
+  s.date = %q{2010-10-16}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -62,6 +62,7 @@ Gem::Specification.new do |s|
      "lib/netzke/core.rb",
      "lib/netzke/core/masquerading.rb",
      "lib/netzke/core/session.rb",
+     "lib/netzke/core/version.rb",
      "lib/netzke/core_ext.rb",
      "lib/netzke/core_ext/array.rb",
      "lib/netzke/core_ext/hash.rb",

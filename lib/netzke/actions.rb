@@ -27,13 +27,13 @@ module Netzke
     
     module ClassMethods
       def action(name, config = {}, &block)
-        config[:text] ||= name.to_s.humanize
+        config[:name] = name.to_s
         method_name = action_method_name(name)
         
         if block_given?
           if superclass.instance_methods.map(&:to_s).include?(method_name)
             define_method(method_name) do
-              normalize_action_config(yield(super()))
+              normalize_action_config(super().merge(yield(super())))
             end
           else
             define_method(method_name) do
@@ -41,8 +41,14 @@ module Netzke
             end
           end
         else
-          define_method(method_name) do
-            normalize_action_config(config)
+          if superclass.instance_methods.map(&:to_s).include?(method_name)
+            define_method(method_name) do
+              normalize_action_config(super().merge(config))
+            end
+          else
+            define_method(method_name) do
+              normalize_action_config(config)
+            end
           end
         end
       end
@@ -71,6 +77,8 @@ module Netzke
         if config[:icon].is_a?(Symbol)
           config[:icon] = Netzke::Core.with_icons ? Netzke::Core.icons_uri + "/" + config[:icon].to_s + ".png" : nil
         end
+        
+        config[:text] ||= config[:name].humanize
         
         config
       end

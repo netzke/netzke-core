@@ -155,20 +155,24 @@ module Netzke
       
       def dependency_classes
         res = []
+        
         non_late_components.keys.each do |aggr|
           res += component_instance(aggr).dependency_classes
         end
-        res << short_component_class_name
+        
+        res += self.class.class_ancestors
+        
+        res << self.class
         res.uniq
       end
 
       ## Dependencies
-      def dependencies
-        @dependencies ||= begin
-          non_late_components_component_classes = non_late_components.values.map{|v| v[:class_name]}
-          (initial_dependencies + non_late_components_component_classes << self.class.short_component_class_name).uniq
-        end
-      end
+      # def dependencies
+      #   @dependencies ||= begin
+      #     non_late_components_component_classes = non_late_components.values.map{|v| v[:class_name]}
+      #     (initial_dependencies + non_late_components_component_classes << self.class.short_component_class_name).uniq
+      #   end
+      # end
 
       # override this method if you need some extra dependencies, which are not the components
       def initial_dependencies

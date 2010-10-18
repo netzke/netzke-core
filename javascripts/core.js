@@ -199,6 +199,9 @@ Netzke.componentMixin = function(receiver){
         // TODO: this should be configurable!
         Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu", "buttons"], function(key){
           if (o[key]) {
+            var items = [].concat(o[key]); // we need to do it in order to esure that this instance has a separate bbar/tbar/etc, NOT shared via class' prototype
+            delete(o[key]);
+            o[key] = items;
             this.detectActions(o[key]);
           }
         }, this);
@@ -208,6 +211,7 @@ Netzke.componentMixin = function(receiver){
           if (Ext.isObject(el)) {
             if (el.action) {
               a[i] = this.actions[el.action.camelize(true)];
+              delete(el);
             } else {
               this.detectActions(el);
             }
@@ -248,6 +252,8 @@ Netzke.componentMixin = function(receiver){
         Netzke.deprecationWarning("Using 'id' in loadComponent is deprecated. Use 'name' instead.");
       }
       
+      params.name = params.name.underscore();
+
       // params that will be provided for the server API call (deliver_component); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
       var serverParams = params.params || {};
       serverParams.name = params.name;
@@ -478,7 +484,7 @@ Netzke.componentMixin = function(receiver){
         params: params,
         url: this.endpointUrl(intp),
         callback: function(options, success, response){
-          if (success) {
+          if (success && response.responseText) {
             // execute commands from server
             this.bulkExecute(Ext.decode(response.responseText));
 

@@ -185,21 +185,9 @@ module Netzke
         []
       end
 
-      # All JavaScript code needed for this class, including one from the ancestor component
+      # JavaScript code needed for this particulaer class. Includes external JS code and the JS class definition for self.
       def js_code(cached = [])
-        res = ""
-
-        # include the base-class javascript if doing JS inheritance
-        if extends_netzke_component? && !cached.include?(superclass.short_component_class_name)
-          res << superclass.js_code(cached) << "\n"
-        end
-
-        # include static javascripts
-        res << js_included << "\n"
-
-        # our own JS class definition
-        res << js_class(cached)
-        res
+        [js_included, js_class(cached)].join("\n")
       end
       
       # Little helper
@@ -243,16 +231,16 @@ module Netzke
         # Merge with the rest of config options, besides those that are only meant for the server side
         res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
         
-        res[:items] = items
+        res[:items] = items unless items.empty?
         
         res
       end
 
       # All the JS-code required by this instance of the component to be instantiated in the browser.
-      # It includes the JS-class for the component itself, as well as JS-classes for all components' (non-late) components.
+      # It includes JS-classes for the parents, non-lazy-loaded child components, and itself.
       def js_missing_code(cached = [])
         code = dependency_classes.inject("") do |r,k| 
-          cached.include?(k) ? r : r + constantize_class_name(k).js_code(cached)#.strip_js_comments
+          cached.include?(k.to_s) ? r : r + k.js_code(cached)#.strip_js_comments
         end
         code.blank? ? nil : code
       end

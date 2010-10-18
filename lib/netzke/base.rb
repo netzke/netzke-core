@@ -125,5 +125,15 @@ module Netzke
       # component_session.clear - we don't do it anymore
     end
 
+
+    # Dependencies
+    def self.class_ancestors
+      if self == Netzke::Base
+        []
+      else
+        superclass.class_ancestors + [self]
+      end
+    end
+
   end
 end

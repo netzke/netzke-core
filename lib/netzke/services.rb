@@ -1,5 +1,7 @@
 module Netzke
   module Services
+    class BadEndpointReturnType < RuntimeError; end
+    
     module ClassMethods
       # Declare connection points between client side of a component and its server side. For example:
       #
@@ -30,14 +32,15 @@ module Netzke
         end
       end
 
-      # The new, preferred way to specify a endpoint
+      # Defines an endpoint
       def endpoint(name, options = {}, &block)
         add_endpoint(name)
         define_method name, &block if block # if no block is given, the method is supposed to be defined elsewhere
+          
+        # define_method name, &block if block # if no block is given, the method is supposed to be defined elsewhere
         define_method :"endpoint_#{name}" do |*args|
           res = send(name, *args)
-          # don't insist on endpoint method always returning hash or array
-          res.is_a?(Hash) || res.is_a?(Array) ? res.to_nifty_json : res
+          res.respond_to?(:to_nifty_json) && res.to_nifty_json || ""
         end
       end
       
