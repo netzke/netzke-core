@@ -15,6 +15,10 @@ class Array
     end : self
   end
   
+  def deep_each_pair(&block)
+    self.each{ |el| el.respond_to?('deep_each_pair') && el.deep_each_pair(&block) }
+  end
+  
   def recursive_delete_if_nil
     self.map{|el| el.respond_to?('recursive_delete_if_nil') ? el.recursive_delete_if_nil : el}
   end

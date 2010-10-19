@@ -1,4 +1,9 @@
 class Hash
+  def deep_each_pair(&block)
+    self.each_pair do |k,v|
+      v.respond_to?('deep_each_pair') ? v.deep_each_pair(&block) : yield(k,v)
+    end
+  end
 
   # Recursively convert the keys. Example:
   # {:bla_bla => 1, "wow_now" => {:look_ma => true}}.deep_convert_keys{|k| k.to_s.camelize.to_sym} 

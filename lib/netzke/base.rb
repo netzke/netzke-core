@@ -74,7 +74,7 @@ module Netzke
       
       # initialize @components and @items
       normalize_components_in_items
-      # auto_collect_actions_from_config_and_js_properties
+      auto_collect_actions_from_config_and_js_properties
     end
   
     # Short component class name, e.g.: 

@@ -1,21 +1,27 @@
 class SomeComposite < Netzke::Base
-  js_properties :title => "Static Composite", :layout => 'border'
+  js_properties :title => "Static Composite", 
+                :layout => 'border',
+                :bbar => [
+                  :update_west_panel.action, 
+                  :update_center_panel.action,
+                  :update_west_from_server.action,
+                  :update_east_south_from_server.action
+                ]
   
   action :update_center_panel
   action :update_west_panel
   action :update_west_from_server
   action :update_east_south_from_server
   
-  def config
+  config do
     {
       :items => [
         js_component(:center_panel, :region => 'center'),
         js_component(:west_panel, :region => 'west', :width => 300, :split => true),
         {:layout => 'border', :region => :east, :width => 500, :split => true, :items => [
           js_component(:east_center_panel, :region => :center), js_component(:east_south_panel, :region => :south, :height => 200, :split => true)]},
-      ],
-      :bbar => [:update_west_panel.action, :update_center_panel.action, :update_west_from_server.action, :update_east_south_from_server.action]
-    }.deep_merge super
+      ]
+    }
   end
   
   component :west_panel, :class_name => "ExtendedServerCaller"

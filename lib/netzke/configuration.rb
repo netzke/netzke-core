@@ -9,6 +9,13 @@ module Netzke
       def server_side_config_options
         [:lazy_loading, :class_name]
       end
+      
+      def config(level = :final)
+        define_method(:"#{level}_config") do
+          orig = super()
+          orig.merge(yield(orig))
+        end
+      end
   
     end
   
@@ -23,20 +30,29 @@ module Netzke
         @initial_config ||= default_config.deep_merge(@passed_config)
       end
 
-      # Config that is not overwritten by parents and sessions
+      # Config that is not overridden by parents and sessions
       def independent_config
         @independent_config ||= initial_config.deep_merge(persistent_options)
       end
 
+      # Last level config, overridden only by ineritance 
+      def final_config
+        @strong_config ||= independent_config.deep_merge(strong_parent_config).deep_merge(session_options)
+      end
+
       # Resulting config that takes into account all possible ways to configure a component. *Read only*.
       # Translates into something like this:
+      # 
       #     default_config.
       #     deep_merge(@passed_config).
       #     deep_merge(persistent_options).
       #     deep_merge(strong_parent_config).
       #     deep_merge(strong_session_config)
+      # 
+      # Moved out to a separate method in order to provide for easy caching.
+      # *Do not override this method*, use +Base.config+ instead.
       def config
-        @config ||= independent_config.deep_merge(strong_parent_config).deep_merge(session_options)
+        @config ||= final_config
       end
 
       def flat_config(key = nil)

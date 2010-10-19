@@ -75,6 +75,7 @@ module Netzke
     end
     
     module InstanceMethods
+      
       def items
         @items ||= config[:items]
       end

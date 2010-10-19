@@ -242,7 +242,7 @@ Netzke.componentMixin = function(receiver){
     /*
     Loads a component. Config options:
     'name' (required) - the name of the child component to load
-    'container' - the id of a panel with the 'fit' layout where the loaded widget will be instantiated
+    'container' - the id of a panel with the 'fit' layout where the loaded component will be instantiated
     'callback' - function that gets called after the component is loaded. It receives the component's instance as parameter.
     'scope' - scope for the callback.
     */

@@ -6,7 +6,7 @@ module Netzke
     module ClassMethods
       # Persistent config manager class
       def persistence_manager_class
-        Netzke::Base.config[:persistence_manager].try(:constantize)
+        Netzke::Base.persistence_manager.try(:constantize)
       rescue NameError
         nil
       end
