@@ -2,8 +2,7 @@
 class SomeExtComponent < Netzke::ExtComponent
   def config
     {
-      :html => "HELLOOO",
-      :xtype => 'xtype'
+      :html => "HELLOOO"
     }
   end
 end

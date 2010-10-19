@@ -13,16 +13,14 @@ class SomeComposite < Netzke::Base
   action :update_west_from_server
   action :update_east_south_from_server
   
-  config do
-    {
-      :items => [
-        js_component(:center_panel, :region => 'center'),
-        js_component(:west_panel, :region => 'west', :width => 300, :split => true),
-        {:layout => 'border', :region => :east, :width => 500, :split => true, :items => [
-          js_component(:east_center_panel, :region => :center), js_component(:east_south_panel, :region => :south, :height => 200, :split => true)]},
-      ]
-    }
-  end
+  config :items => [
+            js_component(:center_panel, :region => 'center'),
+            js_component(:west_panel, :region => 'west', :width => 300, :split => true),
+            {:layout => 'border', :region => :east, :width => 500, :split => true, :items => [
+              js_component(:east_center_panel, :region => :center), 
+              js_component(:east_south_panel, :region => :south, :height => 200, :split => true)
+            ]},
+          ]
   
   component :west_panel, :class_name => "ExtendedServerCaller"
   

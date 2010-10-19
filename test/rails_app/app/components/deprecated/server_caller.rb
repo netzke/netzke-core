@@ -1,11 +1,7 @@
 module Deprecated
   class ServerCaller < Netzke::Base
-    def config
-      {
-        :title => "Server caller",
-        :bbar => [:call_server.action]
-      }.deep_merge super
-    end
+    js_properties :title => "Server caller",
+                  :bbar => [:call_server.action]
     
     js_method :on_call_server, <<-JS
       function(){

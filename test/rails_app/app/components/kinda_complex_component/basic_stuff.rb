@@ -22,13 +22,13 @@ class KindaComplexComponent < Netzke::Base
       js_properties(
         :active_tab => 0, :bbar => [:some_action.action, :another_action.action]
       )
+      
+      # Instance method, overridden in the ExtraStuff module
+      # config 
     end
-
-    # Instance method, overridden in the ExtraStuff module
-    def config
-      {
-        :items => [{:title => "Panel One"}, {:title => "Panel Two"}]
-      }.deep_merge super
+    
+    def final_config
+      super.merge(:items => [{:title => "Panel One"}, {:title => "Panel Two"}])
     end
     
   end

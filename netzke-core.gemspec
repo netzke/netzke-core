@@ -85,6 +85,7 @@ Gem::Specification.new do |s|
      "spec/component/base_spec.rb",
      "spec/component/composition_spec.rb",
      "spec/component/javascript_spec.rb",
+     "spec/core_ext_spec.rb",
      "spec/spec.opt",
      "spec/spec_helper.rb",
      "stylesheets/core.css",

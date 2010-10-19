@@ -7,7 +7,7 @@ class KindaComplexComponent < Netzke::Base
     end
     
     # Let's add another tab with a Netzke component in it
-    def config
+    def final_config
       orig = super
       orig[:items] << js_component(:server_caller)
       orig

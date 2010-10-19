@@ -52,13 +52,7 @@ module Netzke
         method_name = "_#{name}_component"
         
         if block_given?
-          if superclass.instance_methods.map(&:to_s).include?(method_name)
-            define_method(method_name) do
-              yield(super())
-            end
-          else
-            define_method(method_name, &block)
-          end
+          define_method(method_name, &block)
         else
           define_method(method_name) do
             config

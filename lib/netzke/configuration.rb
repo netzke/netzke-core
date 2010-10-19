@@ -1,5 +1,15 @@
 module Netzke
   module Configuration
+    extend ActiveSupport::Concern
+    
+    CONFIGURATION_LEVELS = [:default, :initial, :independent, :session, :final]
+    
+    included do
+      CONFIGURATION_LEVELS.each do |level|
+        define_method("weak_#{level}_options"){ {} }
+      end
+    end
+    
     module ClassMethods
       def setup
         yield self
@@ -10,10 +20,16 @@ module Netzke
         [:lazy_loading, :class_name]
       end
       
-      def config(level = :final)
-        define_method(:"#{level}_config") do
-          orig = super()
-          orig.merge(yield(orig))
+      def config(*args, &block)
+        level = args.first.is_a?(Symbol) ? args.first : :final
+        config_hash = args.last.is_a?(Hash) && args.last
+        raise ArgumentError, "Config hash or block required" if !block_given? && !config_hash
+        if block_given?
+          define_method(:"weak_#{level}_options", &block)
+        else
+          define_method(:"weak_#{level}_options") do 
+            config_hash
+          end
         end
       end
   
@@ -22,22 +38,26 @@ module Netzke
     module InstanceMethods
       # Default config - before applying any passed configuration
       def default_config
-        {}.merge(self.class.default_config)
+        @default_config ||= {}.merge(weak_default_options).merge(self.class.default_instance_config)
       end
 
       # Static, hardcoded config. Consists of default values merged with config that was passed during instantiation
       def initial_config
-        @initial_config ||= default_config.deep_merge(@passed_config)
+        @initial_config ||= default_config.merge(weak_initial_options).merge(@passed_config)
       end
 
       # Config that is not overridden by parents and sessions
       def independent_config
-        @independent_config ||= initial_config.deep_merge(persistent_options)
+        @independent_config ||= initial_config.merge(weak_independent_options).merge(persistent_options)
+      end
+
+      def session_config
+        @session_config ||= independent_config.merge(weak_session_options).merge(session_options)
       end
 
       # Last level config, overridden only by ineritance 
       def final_config
-        @strong_config ||= independent_config.deep_merge(strong_parent_config).deep_merge(session_options)
+        @strong_config ||= session_config.merge(weak_final_options).merge(strong_parent_config)
       end
 
       # Resulting config that takes into account all possible ways to configure a component. *Read only*.
@@ -109,11 +129,6 @@ module Netzke
         @weak_children_config ||= {}
       end
 
-    end
-  
-    def self.included(receiver)
-      receiver.extend         ClassMethods
-      receiver.send :include, InstanceMethods
     end
   end
 end
