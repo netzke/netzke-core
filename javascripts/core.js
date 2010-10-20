@@ -293,7 +293,6 @@ Netzke.componentMixin = function(receiver){
     */
     componentDelivered : function(config){
       if (this.fireEvent('componentload'), config) {
-
         var storedConfig = this.componentsBeingLoaded[config.name] || {};
         delete this.componentsBeingLoaded[config.name];
       

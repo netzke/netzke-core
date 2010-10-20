@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-10-19}
+  s.date = %q{2010-10-20}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -204,6 +204,7 @@ Gem::Specification.new do |s|
      "test/rails_app/app/components/server_caller.rb",
      "test/rails_app/app/components/simple_component.rb",
      "test/rails_app/app/components/simple_tab_panel.rb",
+     "test/rails_app/app/components/simple_window.rb",
      "test/rails_app/app/components/some_composite.rb",
      "test/rails_app/app/components/some_ext_component.rb",
      "test/rails_app/app/controllers/application_controller.rb",
