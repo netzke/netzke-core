@@ -118,6 +118,7 @@ Gem::Specification.new do |s|
      "test/rails_app/app/components/server_caller.rb",
      "test/rails_app/app/components/simple_component.rb",
      "test/rails_app/app/components/simple_tab_panel.rb",
+     "test/rails_app/app/components/simple_window.rb",
      "test/rails_app/app/components/some_composite.rb",
      "test/rails_app/app/components/some_ext_component.rb",
      "test/rails_app/app/controllers/application_controller.rb",
