@@ -1,10 +1,9 @@
 class ComponentWithSessionPersistence < Netzke::Base
-  def default_config
-    {
-      :title => "No Title (yet!)", :bbar => [{:text => "Tell server to store new title", :ref => "../button"}], :session_persistence => true
-    }.merge super
-  end
+  js_property :title, "No Title (yet!)"
+  js_property :bbar, [{:text => "Tell server to store new title", :ref => "../button"}]
   
+  config :default, :session_persistence => true
+
   js_method :bug_server, <<-JS
     function(){
       this.whatsUp();

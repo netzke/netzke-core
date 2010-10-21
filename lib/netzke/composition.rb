@@ -52,13 +52,7 @@ module Netzke
         method_name = "_#{name}_component"
         
         if block_given?
-          if superclass.instance_methods.map(&:to_s).include?(method_name)
-            define_method(method_name) do
-              yield(super())
-            end
-          else
-            define_method(method_name, &block)
-          end
+          define_method(method_name, &block)
         else
           define_method(method_name) do
             config
@@ -75,8 +69,9 @@ module Netzke
     end
     
     module InstanceMethods
+      
       def items
-        @items ||= config[:items]
+        @items_with_normalized_components
       end
       
       def initial_components
@@ -229,7 +224,7 @@ module Netzke
         
         def normalize_components(items)
           @component_index ||= 0
-          @items = items.each_with_index.map do |item, i|
+          @items_with_normalized_components = items.each_with_index.map do |item, i|
             if is_component_config?(item)
               component_name = item[:name] || :"#{item[:class_name].underscore.split("/").last}#{@component_index}"
               @component_index += 1
@@ -244,8 +239,7 @@ module Netzke
         end
         
         def normalize_components_in_items
-          @items = []
-          normalize_components(config[:items] || [])
+          normalize_components(config[:items]) if config[:items]
         end
         
         def is_component_config?(c)

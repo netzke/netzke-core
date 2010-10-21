@@ -45,6 +45,9 @@ module Netzke
   #       :model => "User" # FormPanel specific option
   class Base
     
+    class_attribute :default_instance_config
+    self.default_instance_config = {}
+    
     include Session
     include Persistence
     include Configuration

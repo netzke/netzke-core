@@ -21,6 +21,9 @@ module Netzke
   module Actions
     extend ActiveSupport::Concern
 
+    ACTION_METHOD_NAME = "%s_action"
+    ACTION_METHOD_REGEXP = /^(.+)_action$/
+    
     included do
       alias_method_chain :js_config, :actions
     end
@@ -28,43 +31,30 @@ module Netzke
     module ClassMethods
       def action(name, config = {}, &block)
         config[:name] = name.to_s
-        method_name = action_method_name(name)
+        method_name = ACTION_METHOD_NAME % name
         
         if block_given?
-          if superclass.instance_methods.map(&:to_s).include?(method_name)
-            define_method(method_name) do
-              normalize_action_config(super().merge(yield(super())))
-            end
-          else
-            define_method(method_name) do
-              normalize_action_config(yield)
-            end
-          end
+          define_method(method_name, &block)
         else
           if superclass.instance_methods.map(&:to_s).include?(method_name)
             define_method(method_name) do
-              normalize_action_config(super().merge(config))
+              super().merge(config)
             end
           else
             define_method(method_name) do
-              normalize_action_config(config)
+              config
             end
           end
         end
-      end
-      
-      def action_method_name(action)
-        "_#{action}_action"
       end
     end
     
     # Actions to be used in the config
     def actions
       # Call all the action related methods to collect the actions
-      action_method_regexp = /^_(.+)_action$/
-      self.class.instance_methods.grep(action_method_regexp).inject({}) do |r, m|
-        m.match(action_method_regexp)
-        r.merge($1.to_sym => send(m))
+      self.class.instance_methods.grep(ACTION_METHOD_REGEXP).inject({}) do |r, m|
+        m.match(ACTION_METHOD_REGEXP)
+        r.merge($1.to_sym => normalize_action_config(send(m)))
       end
     end
 
@@ -82,5 +72,31 @@ module Netzke
         
         config
       end
+      
+      def auto_collect_actions_from_config_and_js_properties
+        # res = extract_actions(js_properties)
+        # puts %Q(!!! res: #{res.inspect}\n)
+      end
+      
+      # def extract_actions(hsh)
+      #   hsh.each_pair.inject({}) do |r,(k,v)| 
+      #     v.is_a?(Array) ? r.merge(extract_actions_from_array(v)) : r
+      #   end
+      # end
+      # 
+      # def extract_actions_from_array(arry)
+      #   arry.inject({}) do |r, el|
+      #     if el.is_a?(Hash)
+      #       el[:action] ? r.merge(el[:action] => default_action_config(el[:action])) : r.merge(extract_actions(el))
+      #     else
+      #       r
+      #     end
+      #   end
+      # end
+      # 
+      # def default_action_config(action_name)
+      #   {:text => action_name.to_s.humanize}
+      # end
+      
   end
 end

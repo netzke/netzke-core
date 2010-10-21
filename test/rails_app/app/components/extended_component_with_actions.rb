@@ -1,9 +1,5 @@
 class ExtendedComponentWithActions < ComponentWithActions
-  def config
-    {
-      :bbar => [:another_action.action]
-    }.deep_merge super
-  end
+  js_property :bbar, [:another_action.action]
   
   action :some_action, :icon => :tick
 end

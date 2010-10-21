@@ -1,48 +1,36 @@
 module Netzke
   module Configuration
-    module ClassMethods
-      # Override class-level defaults specified in <tt>Netzke::Base.config</tt>. 
-      # E.g. in config/initializers/netzke-config.rb:
-      # 
-      #     Netzke::Basepack::GridPanel.configure :default_config => {:persistent_config => true}
-      def configure(*args)
-        if args.first.is_a?(Symbol)
-          config[args.first] = args.last
-        else
-          # first arg is hash
-          config.deep_merge!(args.first)
-        end
+    extend ActiveSupport::Concern
     
-        # component may implement some kind of control for configuration consistency
-        enforce_config_consistency if respond_to?(:enforce_config_consistency)
+    CONFIGURATION_LEVELS = [:default, :initial, :independent, :session, :final]
+    
+    included do
+      CONFIGURATION_LEVELS.each do |level|
+        define_method("weak_#{level}_options"){ {} }
+      end
+    end
+    
+    module ClassMethods
+      def setup
+        yield self
       end
   
-  
-      # Class-level Netzke::Base configuration. The defaults also get specified here.
-      def config
-        set_default_config({
-          # Which javascripts and stylesheets must get included at the initial load (see netzke-core.rb)
-          # :javascripts               => ["#{File.dirname(__FILE__)}/../../javascripts/core.js"],
-          # :stylesheets               => ["#{File.dirname(__FILE__)}/../../stylesheets/core.css"],
-
-          # :external_css              => [],
-
-          # AR model that provides us with persistent config functionality
-          # :persistence_manager => "NetzkePreference",
-
-          # Default location of extjs library
-          # :ext_location              => defined?(::Rails) && ::Rails.root.join("public", "extjs"),
-        })
-      end
-
-      def set_default_config(c) #:nodoc:
-        @@config ||= {}
-        @@config[self.name] ||= c
-      end
-
       # Config options that should not go to the client side
       def server_side_config_options
         [:lazy_loading, :class_name]
+      end
+      
+      def config(*args, &block)
+        level = args.first.is_a?(Symbol) ? args.first : :final
+        config_hash = args.last.is_a?(Hash) && args.last
+        raise ArgumentError, "Config hash or block required" if !block_given? && !config_hash
+        if block_given?
+          define_method(:"weak_#{level}_options", &block)
+        else
+          define_method(:"weak_#{level}_options") do 
+            config_hash
+          end
+        end
       end
   
     end
@@ -50,28 +38,41 @@ module Netzke
     module InstanceMethods
       # Default config - before applying any passed configuration
       def default_config
-        self.class.config[:default_config].nil? ? {} : {}.merge(self.class.config[:default_config])
+        @default_config ||= {}.merge(weak_default_options).merge(self.class.default_instance_config)
       end
 
       # Static, hardcoded config. Consists of default values merged with config that was passed during instantiation
       def initial_config
-        @initial_config ||= default_config.deep_merge(@passed_config)
+        @initial_config ||= default_config.merge(weak_initial_options).merge(@passed_config)
       end
 
-      # Config that is not overwritten by parents and sessions
+      # Config that is not overridden by parents and sessions
       def independent_config
-        @independent_config ||= initial_config.deep_merge(persistent_options)
+        @independent_config ||= initial_config.merge(weak_independent_options).merge(persistent_options)
+      end
+
+      def session_config
+        @session_config ||= independent_config.merge(weak_session_options).merge(session_options)
+      end
+
+      # Last level config, overridden only by ineritance 
+      def final_config
+        @strong_config ||= session_config.merge(weak_final_options).merge(strong_parent_config)
       end
 
       # Resulting config that takes into account all possible ways to configure a component. *Read only*.
       # Translates into something like this:
+      # 
       #     default_config.
       #     deep_merge(@passed_config).
       #     deep_merge(persistent_options).
       #     deep_merge(strong_parent_config).
       #     deep_merge(strong_session_config)
+      # 
+      # Moved out to a separate method in order to provide for easy caching.
+      # *Do not override this method*, use +Base.config+ instead.
       def config
-        @config ||= independent_config.deep_merge(strong_parent_config).deep_merge(session_options)
+        @config ||= final_config
       end
 
       def flat_config(key = nil)
@@ -128,11 +129,6 @@ module Netzke
         @weak_children_config ||= {}
       end
 
-    end
-  
-    def self.included(receiver)
-      receiver.extend         ClassMethods
-      receiver.send :include, InstanceMethods
     end
   end
 end

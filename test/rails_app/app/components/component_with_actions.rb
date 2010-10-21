@@ -19,7 +19,7 @@ class ComponentWithActions < Netzke::Base
   js_property :tbar, [{
     :xtype =>  'buttongroup',
     :columns => 3,
-    :title => 'Clipboard',
+    :title => 'A group',
     :items => [{
         :text => 'Paste',
         :scale => 'large',
