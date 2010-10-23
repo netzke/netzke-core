@@ -1,0 +1,2 @@
+class MultipleComponentsController < ApplicationController
+end

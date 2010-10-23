@@ -3,6 +3,7 @@ Feature: Composition
   As a role
   I want feature
 
+  @javascript
   Scenario: The SomeComposite component should have 2 components rendered properly
     When I go to the SomeComposite test page
     Then I should see "Server Caller"

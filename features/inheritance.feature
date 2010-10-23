@@ -10,7 +10,8 @@ Feature: Inheritance
     When I press "Call server"
     Then I should see "All quiet here on the server, shiny weather"
     And I should see "Added by extended Server Caller"
-  
+
+  @javascript
   Scenario: Extended scoped components should render
     Given I am on the ScopedComponents::ExtendedScopedComponent test page
     Then I should see "Extended Scoped Component Title"

@@ -31,8 +31,10 @@ module Netzke
     # JavaScript for all Netzke classes in this view, and Ext.onReady which renders all Netzke components in this view
     def netzke_js
       res = []
-      res << content_for(:netzke_js_classes)
-      res << "\n"
+      if Netzke::Core.javascript_on_main_page
+        res << content_for(:netzke_js_classes)
+        res << "\n"
+      end
       res << "Ext.onReady(function(){"
       res << content_for(:netzke_on_ready)
       res << "});"
@@ -60,13 +62,28 @@ module Netzke
     #   netzke :my_grid, :class_name => "Basepack::GridPanel", :columns => [:id, :name, :created_at]
     # On how to configure a component, see documentation for Netzke::Base or/and specific component
     def netzke(name, config = {})
+      @rendered_classes ||= []
+      
+      # if we are the first netzke call on the page, reset components hash in the session
+      if @rendered_classes.empty?
+        Netzke::Core.reset_components_in_session
+      end
+      
       class_name = config[:class_name] ||= name.to_s.camelcase
+      
       config[:name] = name
+      
       Netzke::Core.reg_component(config)
+      
       w = Netzke::Base.instance_by_config(config)
       w.before_load # inform the component about initial load
-      content_for :netzke_js_classes, raw(w.js_missing_code(@rendered_classes ||= []))
-      content_for :netzke_css, raw(w.css_missing_code(@rendered_classes ||= []))
+      
+      if Netzke::Core.javascript_on_main_page
+        content_for :netzke_js_classes, raw(w.js_missing_code(@rendered_classes))
+      end
+      
+      content_for :netzke_css, raw(w.css_missing_code(@rendered_classes))
+      
       content_for :netzke_on_ready, raw("#{w.js_component_instance}\n\n#{w.js_component_render}")
       
       # Now mark this component's class as rendered, so that we only generate it once per view

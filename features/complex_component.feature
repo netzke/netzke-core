@@ -3,6 +3,7 @@ Feature: Complex component
   As a role
   I want feature
 
+  @javascript
   Scenario: Complex component must render properly
     When I go to the KindaComplexComponent test page
     Then I should see "Panel One"

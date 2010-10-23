@@ -3,6 +3,7 @@ Feature: Scopes
   As a role
   I want feature
 
+  @javascript
   Scenario: Scoped components should render
     Given I am on the ScopedComponents::SomeScopedComponent test page
     Then I should see "Some Scoped Component Title"

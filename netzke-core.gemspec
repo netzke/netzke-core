@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-10-20}
+  s.date = %q{2010-10-23}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -123,9 +123,11 @@ Gem::Specification.new do |s|
      "test/rails_app/app/components/some_ext_component.rb",
      "test/rails_app/app/controllers/application_controller.rb",
      "test/rails_app/app/controllers/components_controller.rb",
+     "test/rails_app/app/controllers/multiple_components_controller.rb",
      "test/rails_app/app/controllers/welcome_controller.rb",
      "test/rails_app/app/helpers/application_helper.rb",
      "test/rails_app/app/views/layouts/application.html.erb",
+     "test/rails_app/app/views/multiple_components/set_one.html.erb",
      "test/rails_app/config.ru",
      "test/rails_app/config/application.rb",
      "test/rails_app/config/boot.rb",
@@ -210,6 +212,7 @@ Gem::Specification.new do |s|
      "test/rails_app/app/components/some_ext_component.rb",
      "test/rails_app/app/controllers/application_controller.rb",
      "test/rails_app/app/controllers/components_controller.rb",
+     "test/rails_app/app/controllers/multiple_components_controller.rb",
      "test/rails_app/app/controllers/welcome_controller.rb",
      "test/rails_app/app/helpers/application_helper.rb",
      "test/rails_app/config/application.rb",
