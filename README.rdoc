@@ -16,7 +16,7 @@ The idea behind the Netzke framework is that it allows you write reusable client
 
 For the latest ("edge") stuff, tell bundler to get the gem straight from github:
 
-    gem 'netzke-core', :git => "git://github.com/skozlov/netzke-core.git"
+    gem 'netzke-core', :git => "git://github.com/skozlov/netzke-core.git", :branch => "rails3"
 
 Or install as plugin:
 
