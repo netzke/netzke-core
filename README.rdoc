@@ -38,7 +38,10 @@ Create YOUR_APP/app/components/hello_world_component.rb, and put in the followin
 
       # Bottom bar with an automatically created action
       js_property :bbar, [:bug_server.action]
-
+      
+      # Action to be placed on the bottom bar
+      action :bug_server, :text => 'Ask server', :icon => :accept
+      
       # Method in the JS class that (by default) processes the action's "click" event
       js_method :on_bug_server, <<-JS
         function(){
@@ -64,7 +67,15 @@ Create YOUR_APP/app/components/hello_world_component.rb, and put in the followin
 
 To embed a Netzke component into your Rails view do the following:
 
-1. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles.
+1. Add <tt>netzke</tt> routes:
+
+    # in routes.rb
+    RailsApp::Application.routes.draw do
+      netzke
+      ...
+    end
+
+2. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles.
 
     <%= netzke_init %>
 
@@ -72,7 +83,7 @@ You can optionally specify an Ext theme:
 
     <%= netzke_init :ext_theme => 'grey' %>
       
-2. In your view use the <tt>netzke</tt> helper to embed the component:
+3. In your view use the <tt>netzke</tt> helper to embed the component:
 
     <%= netzke :hello_world_component %>
 
