@@ -6,6 +6,12 @@ This is the bare bones of the Netzke framework. Use it to build your own compone
 
 The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a component, and then embed it straight to your Rails' view, load it dynamically into your Ext-based applications, or use it as a building block for other (composite) components. For more info, see the links below.
 
+== Requirements
+
+* Rails >= 3.0.0
+* Ruby >= 1.9.2 (1.8.7 should work, but is not supported as diligently)
+* Ext >= 3.3.0
+
 == Installation
 
 For the latest ("edge") stuff, tell bundler to get the gem straight from github:

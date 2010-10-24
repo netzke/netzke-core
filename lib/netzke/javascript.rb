@@ -156,8 +156,6 @@ module Netzke
       
       # Generates declaration of the JS class as extension of another Netzke component
       def js_class_declaration_extending_component
-        # Do we have js_base_class defined? If so, use it instead of the js_full_class_name of the superclass
-        # js_class = singleton_methods(false).include?(:js_base_class) ? js_base_class : superclass.js_full_class_name
         base_class = superclass.js_full_class_name
 
         # Do we specify our own extend properties? 
@@ -173,7 +171,7 @@ module Netzke
 
         # Prevent re-including code that was already included by the parent
         # (thus, only include those JS files when include_js was defined in the current class, not in its ancestors)
-        ((singleton_methods(false).include?(:include_js) ? include_js : []) + js_included_files).each do |path|
+        ((singleton_methods(false).map(&:to_sym).include?(:include_js) ? include_js : []) + js_included_files).each do |path|
           f = File.new(path)
           res << f.read << "\n"
         end
