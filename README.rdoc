@@ -20,7 +20,7 @@ For the latest ("edge") stuff, tell bundler to get the gem straight from github:
 
 Or install as plugin:
 
-    rails plugin install git://github.com/skozlov/netzke-core.git
+    rails plugin install git://github.com/skozlov/netzke-core.git -r rails3
     
 Netzke assumes that your ExtJS library is in public/extjs (which may be a symbolic link):
 
