@@ -79,7 +79,7 @@ To embed a Netzke component into your Rails view do the following:
 
     <%= netzke_init %>
 
-You can optionally specify an Ext theme:
+    # You can optionally specify an Ext theme:
 
     <%= netzke_init :ext_theme => 'grey' %>
       
