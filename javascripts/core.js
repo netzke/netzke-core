@@ -10,6 +10,11 @@ At this time the following constants have been set by Rails:
 Ext.BLANK_IMAGE_URL = Netzke.RelativeExtUrl + "/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 
+Netzke.isLoading=function () {
+	return Netzke.runningRequests!=0;				
+}
+Netzke.runningRequests=0
+
 Netzke.deprecationWarning = function(msg){
   if (typeof console == 'undefined') {
     // no console defined
@@ -479,6 +484,7 @@ Netzke.componentMixin = function(receiver){
 
     // Does the call to the server and processes the response
     callServer : function(intp, params, callback, scope){
+      Netzke.runningRequests++;
       if (!params) params = {};
         Ext.Ajax.request({
         params: params,
@@ -497,6 +503,7 @@ Netzke.componentMixin = function(receiver){
         },
         scope : this
       });
+      Netzke.runningRequests--;
     },
 
     setResult: function(result) {
