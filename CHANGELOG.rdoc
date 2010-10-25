@@ -1,5 +1,8 @@
-= v0.6.0 - EDGE
-* Rails3 compatibility
+= EDGE
+
+= v0.6.0 - 2010-10-24
+* Rails3 compatibility, thorough rewrite
+* Much more thorough testing
 
 * API backward incompatibility
   * +ext_config+ config level is removed; put all that configuration in the top level
@@ -13,10 +16,16 @@
   * +api+ is now +endpoint+
   * +persistent_config_enabled?+ is now +persistence_enabled?+
   * Using the +js_extend_properties+ class method in your components in deprecated (and maybe even broken). Use +js_property+ (or +js_properties+) and +js_method+ instead (see multiple examples in test/rails_app)
-  * the +load_component_with_cache+ endpoint now becomes +deliver_component+
+  * the +load_component_with_cache+ endpoint renamed to +deliver_component+
 
 * New
-  * Use the +ext+ helper in the views to embed any (pure) Ext component into a view.
+  * +ext+ helper in the views to embed any (pure) Ext component into a view
+  * +component+ DSL method to declare child components
+  * +config+ DSL method to set the configuration of an instance
+  * +action+ DSL method to configure actions
+  * +js_method+ DSL method to define (public) methods in JS class
+  * +js_property+ DSL method to define (public) properties in JS class
+  * +endpoint+ DSL method to define server endpoints
   
 * Different deprecations throughout the code
   

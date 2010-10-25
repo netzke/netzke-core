@@ -4,7 +4,7 @@ class ServerCaller < Netzke::Base
   js_properties(
     :title => "Server Caller",
     :html => "Wow",
-    :bbar => [:bug_server.action],
+    :bbar => [:bug_server.action]
   )
   
   js_method :on_bug_server, <<-JS

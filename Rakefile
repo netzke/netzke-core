@@ -10,7 +10,7 @@ begin
     gemspec.homepage = "http://github.com/skozlov/netzke-core"
     gemspec.rubyforge_project = "netzke-core"
     gemspec.authors = ["Sergei Kozlov"]
-    gemspec.add_dependency("activesupport", ">=3.0.0")
+    gemspec.add_dependency("activesupport", ">=3.0.1")
     gemspec.post_install_message = <<-MESSAGE
 
 ========================================================================
@@ -23,7 +23,7 @@ begin
 
 ========================================================================
 
-    MESSAGE
+MESSAGE
     
   end
   Jeweler::GemcutterTasks.new

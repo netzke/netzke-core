@@ -210,6 +210,7 @@ Netzke.componentMixin = function(receiver){
         Ext.each(a, function(el, i){
           if (Ext.isObject(el)) {
             if (el.action) {
+              if (!this.actions[el.action.camelize(true)]) throw "Netzke: action '"+el.action+"' not defined";
               a[i] = this.actions[el.action.camelize(true)];
               delete(el);
             } else {

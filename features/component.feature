@@ -3,6 +3,7 @@ Feature: Testing Netzke::Base
   As a role
   I want feature
 
+@javascript
 Scenario: A panel should render nicely
   When I go to the SimpleComponent test page
   Then I should see "SimpleComponent"

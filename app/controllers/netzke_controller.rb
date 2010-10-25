@@ -11,6 +11,19 @@ class NetzkeController < ApplicationController
           f = File.new(path)
           res << f.read
         end
+        
+        # If JS classes are not inserted into the main page, we need to render all the classes needed to load the page that includes us
+        # (i.e. netzke/netzke.js) here
+        if !Netzke::Core.javascript_on_main_page
+          rendered_classes = []
+          Netzke::Core.session[:netzke_components].each_pair do |k,v|
+            component = Netzke::Base.instance_by_config(v)
+            res << component.js_missing_code(rendered_classes.map(&:name))
+            rendered_classes += component.dependency_classes
+            rendered_classes.uniq!
+          end
+        end
+
         render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
       }
       

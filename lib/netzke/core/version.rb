@@ -3,10 +3,9 @@ module Netzke
     module Version
       MAJOR = 0
       MINOR = 6
-      PATCH = 0
-      BUILD = 'beta'
+      PATCH = 1
 
-      STRING = [MAJOR, MINOR, PATCH, BUILD].compact.join('.')
+      STRING = [MAJOR, MINOR, PATCH].compact.join('.')
     end
   end
 end
