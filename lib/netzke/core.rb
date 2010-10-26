@@ -40,7 +40,7 @@ module Netzke
     @@icons_uri = "/images/icons"
     
     mattr_accessor :javascript_on_main_page
-    @@javascript_on_main_page = false
+    @@javascript_on_main_page = true
     
     def self.setup
       yield self

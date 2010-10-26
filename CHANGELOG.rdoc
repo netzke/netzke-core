@@ -1,4 +1,5 @@
-= EDGE
+= v0.6.1 - 2010-10-26
+* Disabled buggy implementation of rendering on-page JS classes in netzke.js instead of main page.
 
 = v0.6.0 - 2010-10-24
 * Rails3 compatibility, thorough rewrite
