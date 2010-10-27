@@ -1,3 +1,6 @@
+= v0.6.2 - EDGE
+* Introduced the Symbol#component method to declare components in the config (instead of now deprecated js_component).
+
 = v0.6.1 - 2010-10-26
 * Disabled buggy implementation of rendering on-page JS classes in netzke.js instead of main page.
 

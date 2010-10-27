@@ -10,4 +10,8 @@ class Symbol
   def action(config = {})
     config.merge(:action => self.to_s)
   end
+  
+  def component(config = {})
+    config.merge(:component => self.to_s)
+  end
 end

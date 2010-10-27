@@ -63,6 +63,7 @@ module Netzke
       # Component's js config used when embedding components as Container's items 
       # (see some_composite.rb for an example)
       def js_component(name, config = {})
+        ::ActiveSupport::Deprecation.warn("Using js_component is deprecated. Use Symbol#component instead", caller)
         config.merge(:component => name)
       end
       
@@ -229,7 +230,7 @@ module Netzke
               component_name = item[:name] || :"#{item[:class_name].underscore.split("/").last}#{@component_index}"
               @component_index += 1
               self.class.component(component_name.to_sym, item)
-              js_component(component_name) # replace current item with a reference to component
+              component_name.to_sym.component # replace current item with a reference to component
             elsif item.is_a?(Hash)
               item[:items].is_a?(Array) ? item.merge(:items => normalize_components(item[:items])) : item
             else
