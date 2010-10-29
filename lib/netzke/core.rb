@@ -5,13 +5,13 @@ require 'netzke/core/masquerading'
 
 module Netzke
   # You can configure Netzke::Core like this:
-  # 
+  #
   #     Netzke::Core.setup do |config|
   #       config.ext_location = "/home/netzke/ext-3.3.0"
   #       config.icons_uri = "/images/famfamfam/icons"
   #       # ...
   #     end
-  # 
+  #
   # The following configuration options are available:
   # * ext_location - absolute path to your Ext code root
   # * icons_uri - relative URI to the icons
@@ -20,7 +20,7 @@ module Netzke
   module Core
     extend Session
     extend Masquerading
-    
+
     mattr_accessor :controller
 
     mattr_accessor :javascripts
@@ -28,24 +28,24 @@ module Netzke
 
     mattr_accessor :stylesheets
     @@stylesheets = ["#{File.dirname(__FILE__)}/../../stylesheets/core.css"]
-    
+
     mattr_accessor :external_css
     @@external_css = []
 
     mattr_accessor :ext_location
-    
+
     mattr_accessor :with_icons
-    
+
     mattr_accessor :icons_uri
     @@icons_uri = "/images/icons"
-    
+
     mattr_accessor :javascript_on_main_page
     @@javascript_on_main_page = true
-    
+
     def self.setup
       yield self
     end
-    
+
     def self.reset_components_in_session
       Netzke::Core.session[:netzke_components].try(:clear)
     end

@@ -7,12 +7,12 @@ class NetzkeCoreGenerator < Rails::Generator::Base
       }, :migration_file_name => "create_netzke_preferences"
     end
   end
-  
+
   def self.gem_root
     File.expand_path('../../../', __FILE__)
   end
 
   def self.source_root
     File.join(gem_root, 'templates', 'core')
-  end  
+  end
 end

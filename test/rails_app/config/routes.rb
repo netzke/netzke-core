@@ -57,8 +57,8 @@ RailsApp::Application.routes.draw do
 
   match 'components/:component' => 'components#show', :as => "components"
   match 'ext/:component' => 'components#ext', :as => "ext"
-  
+
   match ':controller(/:action(/:id(.:format)))'
-  
+
   netzke
 end

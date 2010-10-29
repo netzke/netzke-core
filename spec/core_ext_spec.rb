@@ -4,10 +4,10 @@ describe "Core extensions" do
   it "should properly do deep_each_pair" do
     res = {}
     {
-      :one => 1, 
-      :two => {:three => 3}, 
+      :one => 1,
+      :two => {:three => 3},
       :nine => [
-        {:four => 4, :five => {:six => 6}}, 
+        {:four => 4, :five => {:six => 6}},
         {:seven => [{:eight => 8}]}
       ]
     }.deep_each_pair{ |k,v| res[k] = v }

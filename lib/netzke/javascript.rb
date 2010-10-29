@@ -3,7 +3,7 @@ module Netzke
   # Here's a brief explanation on how a javascript class for a component gets built.
   # Component gets defined as a constructor (a function) by +js_class+ class method (see "Inside component's contstructor").
   # +Ext.extend+ provides inheritance from an Ext class specified in +js_base_class+ class method.
-  # 
+  #
   # == Inside component's constructor
   # * Component's constructor gets called with a parameter that is a configuration object provided by +config+ instance method. This configuration is specific for the instance of the component, and, for example, contains this component's unique id. As another example, by means of this configuration object, a grid receives the configuration array for its columns, a form - for its fields, etc.
   module Javascript
@@ -13,14 +13,14 @@ module Netzke
       class_attribute :js_included_files
       self.js_included_files = []
     end
-    
+
     module ClassMethods
 
       # The JS (Ext) class that we inherit from on the JS level
       def js_base_class(class_name = nil)
         class_name.nil? ? (read_inheritable_attribute(:js_base_class) || "Ext.Panel") : write_inheritable_attribute(:js_base_class, class_name)
       end
-      
+
       # Definition of a public JS method, e.g.:
       #     js_method :on_call_server, <<-JS
       #       function(){
@@ -33,7 +33,7 @@ module Netzke
         current_js_methods.merge!(name => definition.l)
         write_inheritable_attribute(:js_methods, current_js_methods)
       end
-      
+
       # Returns all JS method definitions in a hash
       def js_methods
         read_clean_inheritable_hash(:js_methods)
@@ -47,7 +47,7 @@ module Netzke
       def js_include(*args)
         self.js_included_files += args
       end
-      
+
       # Definition of a public JS property, e.g.:
       #     js_property :title, "My Netzke Component"
       def js_property(name, value = nil)
@@ -60,7 +60,7 @@ module Netzke
           write_inheritable_attribute(:js_properties, current_js_properties)
         end
       end
-      
+
       # Assignment of multiple public JS properties in a bunch, e.g.:
       #     js_properties :title => "My Component", :border => true, :html => "Inner HTML"
       def js_properties(hsh = nil)
@@ -72,7 +72,7 @@ module Netzke
           write_inheritable_attribute(:js_properties, current_js_properties)
         end
       end
-      
+
       # JS properties and methods merged together
       def js_extend_properties
         @_js_extend_properties ||= js_properties.merge(js_methods)
@@ -82,13 +82,13 @@ module Netzke
           # res
         # end
       end
-      
+
       # TODO: the code below needs refactoring and cleaning-up
-      
+
       # component's menus
       # def js_menus; []; end
 
-      # Given class name, e.g. GridPanelLib::Components::RecordFormWindow, 
+      # Given class name, e.g. GridPanelLib::Components::RecordFormWindow,
       # returns its scope: "Components.RecordFormWindow"
       def js_class_name_to_scope(name)
         name.split("::")[0..-2].join(".")
@@ -129,7 +129,7 @@ module Netzke
         superclass != Netzke::Base
       end
 
-      # Declaration of component's class (stored in the cache storage (Ext.netzke.cache) at the client side 
+      # Declaration of component's class (stored in the cache storage (Ext.netzke.cache) at the client side
       # to be reused at the moment of component instantiation)
       def js_class(cached = [])
         res = []
@@ -142,29 +142,29 @@ module Netzke
 
         res.join("\n")
       end
-      
-      
+
+
       def js_extra_code
         ""
       end
-      
+
       # Generates declaration of the JS class as direct extension of a Ext component
       def js_class_declaration_new_component
         %(#{js_full_class_name} = Ext.extend(#{js_base_class}, Ext.apply(Netzke.componentMixin(#{js_base_class}),
 #{js_extend_properties.to_nifty_json}));)
       end
-      
+
       # Generates declaration of the JS class as extension of another Netzke component
       def js_class_declaration_extending_component
         base_class = superclass.js_full_class_name
 
-        # Do we specify our own extend properties? 
+        # Do we specify our own extend properties?
         # If so, include them, if not - don't re-include those from the parent.
         js_extend_properties.empty? ? \
         %{#{js_full_class_name} = #{base_class};} :
         %{#{js_full_class_name} = Ext.extend(#{base_class}, #{js_extend_properties.to_nifty_json});}
       end
-      
+
       # Returns all extra JavaScript-code (as string) required by this component's class
       def js_included
         res = ""
@@ -175,7 +175,7 @@ module Netzke
           f = File.new(path)
           res << f.read << "\n"
         end
-        
+
         res
       end
 
@@ -187,7 +187,7 @@ module Netzke
       def js_code(cached = [])
         [js_included, js_class(cached)].join("\n")
       end
-      
+
       # Little helper
       def this; "this".l; end
 
@@ -195,7 +195,7 @@ module Netzke
       def null; "null".l; end
 
     end
-    
+
     module InstanceMethods
       # Config that is used for instantiating the component in javascript
       def js_config
@@ -211,7 +211,7 @@ module Netzke
           comp_instance.before_load
           comp_hash[comp_name] = comp_instance.js_config
         end
-        
+
         # All our non-lazy-loaded children are specified here, while in +items+ we barely reference them, because
         # +items+, generally, only contain a subset of all non-lazy-loaded children.
         res[:components] = comp_hash unless comp_hash.empty?
@@ -228,21 +228,21 @@ module Netzke
 
         # Merge with the rest of config options, besides those that are only meant for the server side
         res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
-        
+
         res[:items] = items unless items.blank?
-        
+
         res
       end
 
       # All the JS-code required by this instance of the component to be instantiated in the browser.
       # It includes JS-classes for the parents, non-lazy-loaded child components, and itself.
       def js_missing_code(cached = [])
-        code = dependency_classes.inject("") do |r,k| 
+        code = dependency_classes.inject("") do |r,k|
           cached.include?(k.to_s) ? r : r + k.js_code(cached)#.strip_js_comments
         end
         code.blank? ? nil : code
       end
-      
+
     end
   end
 end

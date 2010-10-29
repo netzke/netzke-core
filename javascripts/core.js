@@ -94,7 +94,7 @@ Netzke.componentMixin = function(receiver){
     border: false,
     isNetzke: true, // to distinguish Netzke components from regular Ext components
     latestResult: {}, // latest result returned from the server via an API call
-    
+
     /*
     Overriding the constructor to only apply an "alias method chain" to initComponent
     */
@@ -102,22 +102,22 @@ Netzke.componentMixin = function(receiver){
       Netzke.aliasMethodChain(this, "initComponent", "netzke");
       receiver.superclass.constructor.call(this, config);
     },
-    
+
     /* initComponent common for all Netzke components */
     initComponentWithNetzke : function(){
       this.normalizeActions();
-      
+
       this.detectActions(this);
-      
+
       this.detectComponents(this.items);
-      
+
       this.normalizeTools();
-      
+
       this.processEndpoints();
-      
+
       // This is where the references to different callback functions will be stored
       this.callbackHash = {};
-      
+
       // This is where we store the information about components that are currently being loaded with this.loadComponent()
       this.componentsBeingLoaded = {};
 
@@ -141,8 +141,8 @@ Netzke.componentMixin = function(receiver){
       this.initComponentWithoutNetzke();
     },
 
-    /* 
-    Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod() 
+    /*
+    Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod()
     */
     processEndpoints : function(){
       var endpoints = this.endpoints || [];
@@ -158,7 +158,7 @@ Netzke.componentMixin = function(receiver){
         Ext.each(this.tools, function(tool){
           // Create an event for each action (so that higher-level components could interfere)
           this.addEvents(tool.id+'click');
-      
+
           var handler = this.toolActionHandler.createDelegate(this, [tool]);
           normTools.push({id : tool, handler : handler, scope : this});
         }, this);
@@ -166,8 +166,8 @@ Netzke.componentMixin = function(receiver){
       }
     },
 
-    /* 
-    Replaces actions configs with Ext.Action instances, assigning default handler to them 
+    /*
+    Replaces actions configs with Ext.Action instances, assigning default handler to them
     */
     normalizeActions : function(){
       var normActions = {};
@@ -222,7 +222,7 @@ Netzke.componentMixin = function(receiver){
     },
 
     /*
-    Detects component placeholders in the passed object (typically, "items"), 
+    Detects component placeholders in the passed object (typically, "items"),
     and merges them with the corresponding config from this.components.
     This way it becomes ready to be instantiated properly by Ext.
     */
@@ -252,20 +252,20 @@ Netzke.componentMixin = function(receiver){
         params.name = params.id;
         Netzke.deprecationWarning("Using 'id' in loadComponent is deprecated. Use 'name' instead.");
       }
-      
+
       params.name = params.name.underscore();
 
       // params that will be provided for the server API call (deliver_component); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
       var serverParams = params.params || {};
       serverParams.name = params.name;
-      
+
       // Build the list of already loaded ("cached") classes
       serverParams.cache = [];
-      
+
       for (var klass in Netzke.classes) {
         serverParams.cache.push(klass);
       }
-      
+
       serverParams.cache = serverParams.cache.join();
 
       var storedConfig = this.componentsBeingLoaded[params.name] = {};
@@ -296,9 +296,9 @@ Netzke.componentMixin = function(receiver){
       if (this.fireEvent('componentload'), config) {
         var storedConfig = this.componentsBeingLoaded[config.name] || {};
         delete this.componentsBeingLoaded[config.name];
-      
+
         var componentInstance;
-      
+
         if (storedConfig.container) {
           var container = Ext.getCmp(storedConfig.container);
           componentInstance = container.instantiateChild(config);
@@ -352,9 +352,9 @@ Netzke.componentMixin = function(receiver){
     },
 
     /*
-    Gets id in the context of provided parent. 
-    For example, the components "properties", being a child of "books" has global id "books__properties", 
-    which *is* its widegt's real id. This methods, with the instance of "books" passed as parameter, 
+    Gets id in the context of provided parent.
+    For example, the components "properties", being a child of "books" has global id "books__properties",
+    which *is* its widegt's real id. This methods, with the instance of "books" passed as parameter,
     returns "properties".
     */
     localId : function(parent){
@@ -386,18 +386,18 @@ Netzke.componentMixin = function(receiver){
     },
 
     /*
-    Executes a bunch of methods. This method is called almost every time a communication to the server takes place. 
+    Executes a bunch of methods. This method is called almost every time a communication to the server takes place.
     Thus the server side of a component can provide any set of commands to its client side.
     Args:
-      - instructions: array of methods, in the order of execution. 
+      - instructions: array of methods, in the order of execution.
         Each item is an object in one of the following 2 formats:
           1) {method1:args1, method2:args2}, where methodN is a name of a public method of this component; these methods are called in no particular order
           2) {component:component_id, methods:arrayOfMethods}, used for recursive call to bulkExecute on some child component
 
-    Example: 
+    Example:
       - [
           // the same as this.feedback("Your order is accepted")
-          {feedback: "You order is accepted"}, 
+          {feedback: "You order is accepted"},
 
           // the same as this.getChildComponent('users').bulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}])
           {component:'users', methods:[{setTitle:'Suprise!'}, {setDisabled:true}] },
@@ -451,12 +451,12 @@ Netzke.componentMixin = function(receiver){
     //     var customHandler = action.initialConfig.customHandler;
     //     var methodName = (customHandler && customHandler.camelize(true)) || "on" + actionName.camelize();
     //     if (!this[methodName]) {throw "Netzke: action handler '" + methodName + "' is undefined"}
-    // 
+    //
     //     // call the handler passing it the triggering component
     //     this[methodName](comp);
     //   }
     // },
-    // 
+    //
     // // Common handler for tools
     // toolActionHandler : function(tool){
     //   // If firing corresponding event doesn't return false, call the handler
@@ -472,7 +472,7 @@ Netzke.componentMixin = function(receiver){
       Netzke.deprecationWarning("buildApiUrl() is deprecated. Use endpointUrl() first");
       return this.endpointUrl(endpoint);
     },
-    
+
     endpointUrl: function(endpoint){
       return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
     },
@@ -489,7 +489,7 @@ Netzke.componentMixin = function(receiver){
             this.bulkExecute(Ext.decode(response.responseText));
 
             // provide callback if needed
-            if (typeof callback == 'function') { 
+            if (typeof callback == 'function') {
               if (!scope) scope = this;
               callback.apply(scope, [this.latestResult]);
             }
@@ -551,23 +551,23 @@ Netzke.componentMixin = function(receiver){
     //   if (!owner) {
     //     owner = this;
     //   }
-    //   
-    //   if (!!this.hostMenu) { 
-    //     this.hostMenu(menu, owner); 
+    //
+    //   if (!!this.hostMenu) {
+    //     this.hostMenu(menu, owner);
     //   } else {
     //     if (this.ownerComponent) {
     //       this.ownerComponent.addMenu(menu, owner);
     //     }
     //   }
     // },
-    // 
+    //
     // cleanUpMenu : function(owner){
     //   if (!owner) {
     //     owner = this;
     //   }
-    //   
-    //   if (!!this.unhostMenu) { 
-    //     this.unhostMenu(owner); 
+    //
+    //   if (!!this.unhostMenu) {
+    //     this.unhostMenu(owner);
     //   } else {
     //     if (this.ownerComponent) {
     //       this.ownerComponent.cleanUpMenu(owner);
@@ -599,7 +599,7 @@ Netzke.componentMixin = function(receiver){
         this[methodName]();
       }
     },
-    
+
     onComponentLoad:Ext.emptyFn // gets overridden
   }
 }
@@ -614,14 +614,14 @@ Ext.override(Ext.Container, {
     if (instance.isXType("window")) {
       instance.show();
     } else {
-      this.remove(this.getNetzkeComponent()); // first delete previous component 
+      this.remove(this.getNetzkeComponent()); // first delete previous component
       this.add(instance);
       this.doLayout();
     }
     return instance;
   },
 
-  /** 
+  /**
     Get Netzke component that this Ext.Container is part of (*not* the parent component, for which call getParent)
     It searches up the Ext.Container hierarchy until it finds a Container that has isNetzke property set to true
     (or until it reaches the top).
@@ -637,12 +637,12 @@ Ext.override(Ext.Container, {
       }
     }
   },
-  
+
   // Get the component that we are hosting
   getNetzkeComponent: function(){
     return this.items ? this.items.first() : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
   },
-  
+
   // Remove the child
   removeChild : function(){
     this.remove(this.getNetzkeComponent());

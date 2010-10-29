@@ -9,11 +9,11 @@ module Netzke
         reset_masquerading
         session.merge!(:"masq_#{authority_level}" => authority_id)
       end
-  
+
       def reset_masquerading
         session[:masq_world] = session[:masq_role] = session[:masq_user] = nil
       end
-  
+
       # Who are we acting as?
       def authority_level
         if session[:masq_world]
@@ -28,7 +28,7 @@ module Netzke
           :none # or nil ?
         end
       end
-    
+
     end
   end
 end

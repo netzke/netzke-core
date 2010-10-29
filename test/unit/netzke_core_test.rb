@@ -4,25 +4,25 @@ require 'netzke-core'
 module Netzke
   class Component < Base
     api :method_one, :method_two
-    
+
     def self.config
       super.merge({
         :pref_one => 1,
         :pref_two => 2
       })
     end
-    
+
     def initial_components
       {
         :nested_one => {:class_name => 'NestedComponentOne'},
         :nested_two => {:class_name => 'NestedComponentTwo'}
       }
     end
-  
+
     def available_permissions
       %w(read update)
     end
-    
+
     def default_config
       {
         :config_uno => true,
@@ -49,18 +49,18 @@ module Netzke
       }
     end
   end
-  
+
   class VeryDeepNestedComponent < Base
   end
 
   class JsInheritanceComponent < Component
   end
-  
+
   module ScopedComponents
     class SomeScopedComponent < Base
     end
   end
-  
+
   class InheritedComponent < Component
     def self.config
       super.merge({
@@ -72,18 +72,18 @@ end
 
 class NetzkeCoreTest < ActiveSupport::TestCase
   include Netzke
-  
+
   def setup
   end
-  
+
   test "base class loaded" do
     assert_kind_of Netzke::Base, Netzke::Base.new
   end
-  
+
   test "short component class name" do
     assert_equal 'Component', Component.short_component_class_name
   end
-  
+
   test "api" do
     component_class = Component
     assert_equal [:deliver_component, :method_one, :method_two], component_class.endpoints
@@ -91,22 +91,22 @@ class NetzkeCoreTest < ActiveSupport::TestCase
 
   test "components" do
     component = Component.new(:name => 'my_component')
-    
+
     # instantiate components
     nested_component_one = component.component_instance(:nested_one)
     nested_component_two = component.component_instance(:nested_two)
     deep_nested_component = component.component_instance(:nested_two__nested)
-    
+
     assert_kind_of NestedComponentOne, nested_component_one
     assert_kind_of NestedComponentTwo, nested_component_two
     assert_kind_of DeepNestedComponent, deep_nested_component
-    
+
     assert_equal 'my_component', component.global_id
     assert_equal 'my_component__nested_one', nested_component_one.global_id
     assert_equal 'my_component__nested_two', nested_component_two.global_id
     assert_equal 'my_component__nested_two__nested', deep_nested_component.global_id
   end
-  
+
   test "global_id_by_reference" do
     w = Component.new(:name => "a_component")
     deep_nested_component = w.component_instance(:nested_two__nested)
@@ -117,7 +117,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_equal("a_component__nested_two__nested__non_existing", deep_nested_component.global_id_by_reference(:non_existing))
     assert_nil(deep_nested_component.global_id_by_reference(:parent__parent__parent)) # too far up
   end
-  
+
   test "default config" do
     component = Component.new
     assert_equal({:config_uno => true, :config_dos => false}, component.config)
@@ -132,7 +132,7 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert(component.dependencies.include?('NestedComponentTwo'))
     assert(!component.dependencies.include?('DeepNestedComponent'))
   end
-  
+
   test "dependency classes" do
     component = Component.new
     # not testing the order
@@ -160,18 +160,18 @@ class NetzkeCoreTest < ActiveSupport::TestCase
 
     Netzke::Component.config[:pref_for_component] = 1
     Netzke::InheritedComponent.config[:pref_for_component] = 2
-    
+
     # this is broken in 1.9
     # assert_equal(1, Netzke::Component.config[:pref_for_component])
     # assert_equal(2, Netzke::InheritedComponent.config[:pref_for_component])
-    # 
+    #
   end
 
   test "JS class names and scopes" do
     klass = Netzke::NestedComponentOne
     assert_equal("Netzke.classes", klass.js_full_scope)
     assert_equal("", klass.js_class_name_to_scope(klass.short_component_class_name))
-    
+
     klass = Netzke::ScopedComponents::SomeScopedComponent
     assert_equal("Netzke.classes", klass.js_default_scope)
     assert_equal("ScopedComponents::SomeScopedComponent", klass.short_component_class_name)

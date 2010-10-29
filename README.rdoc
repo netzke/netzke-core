@@ -36,10 +36,10 @@ Create YOUR_APP/app/components/hello_world_component.rb, and put in the followin
 
       # Bottom bar with an automatically created action
       js_property :bbar, [:bug_server.action]
-      
+
       # Action to be placed on the bottom bar
       action :bug_server, :text => 'Ask server', :icon => :accept
-      
+
       # Method in the JS class that (by default) processes the action's "click" event
       js_method :on_bug_server, <<-JS
         function(){

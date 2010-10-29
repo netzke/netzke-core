@@ -16,4 +16,3 @@ Feature: Inheritance
     Given I am on the ScopedComponents::ExtendedScopedComponent test page
     Then I should see "Extended Scoped Component Title"
     And I should see "Extended Scoped Component HTML"
-  

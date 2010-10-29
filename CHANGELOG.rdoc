@@ -11,9 +11,9 @@
 * API backward incompatibility
   * +ext_config+ config level is removed; put all that configuration in the top level
   * mentioning actions in the +bbar+, +tbar+, etc, should be explicit, e.g.:
-  
+
       :bbar => [:apply.action, :delete.action]
-      
+
   * +late_aggregatee+ is now +lazy_loading+
   * +aggregatees+ are now +components+
   * +widgets+ are now +components+, too
@@ -30,9 +30,9 @@
   * +js_method+ DSL method to define (public) methods in JS class
   * +js_property+ DSL method to define (public) properties in JS class
   * +endpoint+ DSL method to define server endpoints
-  
+
 * Different deprecations throughout the code
-  
+
 = v0.5.3 - 2010-06-14
 * Fix: Getting rid of deprecation warnings about tasks not sitting in lib.
 
@@ -206,7 +206,7 @@
 = v0.1.0.2
 * Meta: fix outdated Manifest
 
-= v0.1.0.1 
+= v0.1.0.1
 * Meta work: replacing underscore with dash in the name
 
 = v0.1.0 - 2008-12-11

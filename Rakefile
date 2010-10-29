@@ -16,7 +16,7 @@ begin
 ========================================================================
 
            Thanks for installing Netzke Core!
-           
+
   Netzke home page:     http://netzke.org
   Netzke Google Groups: http://groups.google.com/group/netzke
   Netzke tutorials:     http://blog.writelesscode.com
@@ -24,7 +24,7 @@ begin
 ========================================================================
 
 MESSAGE
-    
+
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

@@ -1,5 +1,5 @@
 class NetzkeController < ApplicationController
-  
+
   # Collect javascripts and stylesheets from all plugins that registered it in Netzke::Core.javascripts
   # TODO: caching
   # caches_action :netzke
@@ -11,7 +11,7 @@ class NetzkeController < ApplicationController
           f = File.new(path)
           res << f.read
         end
-        
+
         # If JS classes are not inserted into the main page, we need to render all the classes needed to load the page that includes us
         # (i.e. netzke/netzke.js) here
         if !Netzke::Core.javascript_on_main_page
@@ -26,7 +26,7 @@ class NetzkeController < ApplicationController
 
         render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
       }
-      
+
       format.css {
         res = ""
         Netzke::Core.stylesheets.each do |path|
@@ -37,15 +37,15 @@ class NetzkeController < ApplicationController
       }
     end
   end
-  
-  # Main dispatcher of the HTTP requests. The URL contains the name of the component, 
-  # as well as the method of this component to be called, according to the double underscore notation. 
+
+  # Main dispatcher of the HTTP requests. The URL contains the name of the component,
+  # as well as the method of this component to be called, according to the double underscore notation.
   # E.g.: some_grid__post_grid_data.
   def method_missing(method_name)
     component_name, *action = method_name.to_s.split('__')
     component_name = component_name.to_sym
     action = !action.empty? && action.join("__").to_sym
-  
+
     if action
       w_instance = Netzke::Base.instance_by_config(Netzke::Core.session[:netzke_components][component_name])
       # only component's actions starting with "endpoint_" are accessible from outside (security)
@@ -55,7 +55,7 @@ class NetzkeController < ApplicationController
       super
     end
   end
-  
+
   private
     # Generates initial javascript code that is dependent on Rails environement
     def initial_dynamic_javascript
@@ -66,5 +66,5 @@ class NetzkeController < ApplicationController
       res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}/extjs';}
       res.join("\n")
     end
-  
+
 end

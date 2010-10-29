@@ -167,7 +167,7 @@ Gem::Specification.new do |s|
 ========================================================================
 
            Thanks for installing Netzke Core!
-           
+
   Netzke home page:     http://netzke.org
   Netzke Google Groups: http://groups.google.com/group/netzke
   Netzke tutorials:     http://blog.writelesscode.com

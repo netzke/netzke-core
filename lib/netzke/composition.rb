@@ -3,11 +3,11 @@
 module Netzke
   module Composition
     extend ActiveSupport::Concern
-    
+
     included do
-      
+
       # Loads a component on browser's request. Every Nettzke component gets this endpoint.
-      # <tt>params</tt> should contain: 
+      # <tt>params</tt> should contain:
       # * <tt>:cache</tt> - an array of component classes cached at the browser
       # * <tt>:id</tt> - reference to the component
       # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
@@ -21,7 +21,7 @@ module Netzke
           component.before_load
 
           [{
-            :eval_js => component.js_missing_code(cache), 
+            :eval_js => component.js_missing_code(cache),
             :eval_css => component.css_missing_code(cache)
           }, {
             :component_delivered => component.js_config
@@ -30,18 +30,18 @@ module Netzke
           {:feedback => "Couldn't load component '#{component_name}'"}
         end
       end
-      
+
     end # included
-    
+
     module ClassMethods
-      
+
       # Defines a nested component.
       # For example:
-      # 
+      #
       #     component :users, :data_class => "GridPanel", :model => "User"
-      # 
+      #
       # It can also accept a block (receiving as parameter the eventual definition from super class):
-      # 
+      #
       #     component :books do |orig|
       #       {:data_class => "Book", :title => orig[:title] + ", extended"}
       #     end
@@ -50,7 +50,7 @@ module Netzke
         config[:class_name] ||= name.to_s.camelize
         config[:name] = name.to_s
         method_name = "_#{name}_component"
-        
+
         if block_given?
           define_method(method_name, &block)
         else
@@ -59,31 +59,31 @@ module Netzke
           end
         end
       end
-      
-      # Component's js config used when embedding components as Container's items 
+
+      # Component's js config used when embedding components as Container's items
       # (see some_composite.rb for an example)
       def js_component(name, config = {})
         ::ActiveSupport::Deprecation.warn("Using js_component is deprecated. Use Symbol#component instead", caller)
         config.merge(:component => name)
       end
-      
+
     end
-    
+
     module InstanceMethods
-      
+
       def items
         @items_with_normalized_components
       end
-      
+
       def initial_components
         {}
       end
-      
+
       # All components for this instance, which includes components defined on class level, and components detected in :items
       def components
         # items if @components.nil? # simply trigger collecting @components from items
         # self.class.components.merge(@components || {})
-        
+
         @components ||= begin
           method_regexp = /^_(.+)_component$/
           self.class.instance_methods.grep(method_regexp).inject({}) do |r, m|
@@ -148,16 +148,16 @@ module Netzke
           composite
         end
       end
-      
+
       def dependency_classes
         res = []
-        
+
         non_late_components.keys.each do |aggr|
           res += component_instance(aggr).dependency_classes
         end
-        
+
         res += self.class.class_ancestors
-        
+
         res << self.class
         res.uniq
       end
@@ -180,7 +180,7 @@ module Netzke
       end
 
       # Returns global id of a component in the hierarchy, based on passed reference that follows
-      # the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will 
+      # the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will
       # result in <tt>nil</tt>, while referring to a non-existent component will simply provide an erroneous ID.
       # Example:
       # <tt>parent__parent__child__subchild</tt> will traverse the hierarchy 2 levels up, then going down to "child",
@@ -198,7 +198,7 @@ module Netzke
       end
 
       # Method dispatcher - instantiates an component and calls the method on it
-      # E.g.: 
+      # E.g.:
       #   users__center__get_data
       #     instantiates component "users", and calls "center__get_data" on it
       #   books__move_column
@@ -220,9 +220,9 @@ module Netzke
           super
         end
       end
-      
+
       private
-        
+
         def normalize_components(items)
           @component_index ||= 0
           @items_with_normalized_components = items.each_with_index.map do |item, i|
@@ -238,15 +238,15 @@ module Netzke
             end
           end
         end
-        
+
         def normalize_components_in_items
           normalize_components(config[:items]) if config[:items]
         end
-        
+
         def is_component_config?(c)
           !!(c.is_a?(Hash) && c[:class_name])
         end
     end
-    
+
   end
 end

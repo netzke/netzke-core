@@ -54,13 +54,13 @@ module Netzke
 
     class VeryDeepNestedComponent < Base
     end
-    
+
     class ComponentOne < Base
     end
-    
+
     class ComponentTwo < Base
     end
-    
+
     class SomeComposite < Base
       component :component_one do
         {
@@ -68,11 +68,11 @@ module Netzke
           :title => "My Cool Component"
         }
       end
-      
+
       def config
         {
           :items => [
-            {:class_name => "ComponentTwo", :name => "my_component_two"}, 
+            {:class_name => "ComponentTwo", :name => "my_component_two"},
             {:class_name => "ComponentTwo"} # name omitted, will be "component_two1"
           ]
         }.deep_merge super
@@ -96,37 +96,37 @@ module Netzke
       nested_component_two.global_id.should == 'some_component__nested_two'
       deep_nested_component.global_id.should == 'some_component__nested_two__nested'
     end
-    
+
     it "should be possible to define nested components in different ways" do
       composite = SomeComposite.new
       components = composite.components
-      
+
       components.keys.size.should == 3
       components[:component_one][:class_name].should == "ComponentOne"
       components[:my_component_two][:class_name].should == "ComponentTwo"
       components[:component_two1][:class_name].should == "ComponentTwo"
-      
+
     end
 
     # DIDN'T WORK OUT till now
     # it "should be possible to override the superclass's declaration of a component" do
     #   composite = SomeComposite.new
     #   composite.components[:component_one][:title].should == "My Cool Component"
-    #   
+    #
     #   class ExtendedComposite < SomeComposite
     #     component :component_one do |orig|
     #       orig.merge(:title => orig[:title] + ", extended")
     #     end
-    #     
+    #
     #     component :component_two do
     #       {:title => "Another Nested Component"}
     #     end
     #   end
-    #   
+    #
     #   extended_composite = ExtendedComposite.new
     #   extended_composite.components[:component_one][:title].should == "My Cool Component, extended"
     #   extended_composite.components[:component_one][:class_name].should == "ComponentOne"
     #   extended_composite.components[:component_two][:title].should == "Another Nested Component"
     # end
-  end  
+  end
 end

@@ -15,7 +15,7 @@ Some day
     endpoint :call_server do |params, orig|
       orig.merge(:set_title => orig[:set_title] + " extended")
     end
-  
+
 Bad idea because calling the super method is often required AFTER doing something in the override, not BEFORE. For example, deliver_component in GridPanel in Basepack is overridden to reconfigure the components on the fly before actually delivering the component (i.e. calling super).
 So, to override an endpoint, simply define a method with endpoint's name, e.g.:
 

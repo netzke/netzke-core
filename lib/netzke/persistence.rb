@@ -1,8 +1,8 @@
 module Netzke
-  # TODO: 
+  # TODO:
   # rename persistence_ to persistence_
   module Persistence
-    
+
     module ClassMethods
       # Persistent config manager class
       def persistence_manager_class
@@ -12,14 +12,14 @@ module Netzke
       end
 
     end
-  
+
     module InstanceMethods
-      
+
       # If the component has persistent config in its disposal
       def persistence_enabled?
         !persistence_manager_class.nil? && initial_config[:persistent_config]
       end
-      
+
       # Access to own persistent config, e.g.:
       #     persistent_config["window.size"] = 100
       #     persistent_config["window.size"] => 100
@@ -30,7 +30,7 @@ module Netzke
       #     config_class.component_name = persistence_key.to_s # pass to the config class our unique name
       #     config_class
       #   else
-      #     # if we can't use presistent config, all the calls to it will always return nil, 
+      #     # if we can't use presistent config, all the calls to it will always return nil,
       #     # and the "="-operation will be ignored
       #     logger.debug "==> NETZKE: no persistent config is set up for component '#{global_id}'"
       #     {}
@@ -44,7 +44,7 @@ module Netzke
         config_class
       end
 
-      # A string which will identify NetzkePreference records for this component. 
+      # A string which will identify NetzkePreference records for this component.
       # If <tt>persistence_key</tt> is passed, use it. Otherwise use global component's id.
       def persistence_key #:nodoc:
         # initial_config[:persistence_key] ? parent.try(:persistence_key) ? "#{parent.persistence_key}__#{initial_config[:persistence_key]}".to_sym : initial_config[:persistence_key] : global_id.to_sym
@@ -56,18 +56,18 @@ module Netzke
       #   current_config.deep_merge!(hsh.deep_convert_keys{ |k| k.to_s }) # first, recursively stringify the keys
       #   persistent_config[:ext_config] = current_config
       # end
-      
+
       # Returns a hash built from all persistent config values for the current component, following the double underscore
       # naming convention. E.g., if we have the following persistent config pairs:
       #     enabled  => true
       #     layout__width => 100
       #     layout__header__height => 20
-      # 
+      #
       # this method will return the following hash:
       #     {:enabled => true, :layout => {:width => 100, :header => {:height => 20}}}
       # def persistence_hash_OLD
       #   return {} if !persistence_enabled?
-      #   
+      #
       #   @persistence_hash ||= begin
       #     prefs = NetzkePreference.find_all_for_component(persistence_key.to_s)
       #     res = {}
@@ -80,7 +80,7 @@ module Netzke
       #         anchor = tmp_res[level_prefix] if level_prefix == hsh_levels.first
       #         tmp_res = tmp_res[level_prefix]
       #       end
-      #       # Now 'anchor' is a hash that represents the path to the single value, 
+      #       # Now 'anchor' is a hash that represents the path to the single value,
       #       # for example: {:ext_config => {:title => 100}} (which corresponds to ext_config__title)
       #       # So we need to recursively merge it into the final result
       #       res.deep_merge!(hsh_levels.first => anchor)
@@ -88,7 +88,7 @@ module Netzke
       #     res.deep_convert_keys{ |k| k.to_sym } # recursively symbolize the keys
       #   end
       # end
-      
+
       def update_persistent_options(hash)
         if persistence_enabled?
           options = persistent_options
@@ -97,19 +97,19 @@ module Netzke
           logger && logger.debug("Netzke warning: No persistence enabled for component '#{global_id}'")
         end
       end
-      
+
       def persistent_options
         return {} if !persistence_enabled?
         persistence_manager_class.pref_to_read(global_id).try(:value) || {}
       end
-      
+
       # A convenience method for instances
       def persistence_manager_class
         self.class.persistence_manager_class
       end
-      
+
     end
-  
+
     def self.included(receiver)
       receiver.extend         ClassMethods
       receiver.send :include, InstanceMethods

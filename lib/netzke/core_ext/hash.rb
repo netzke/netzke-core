@@ -6,7 +6,7 @@ class Hash
   end
 
   # Recursively convert the keys. Example:
-  # {:bla_bla => 1, "wow_now" => {:look_ma => true}}.deep_convert_keys{|k| k.to_s.camelize.to_sym} 
+  # {:bla_bla => 1, "wow_now" => {:look_ma => true}}.deep_convert_keys{|k| k.to_s.camelize.to_sym}
   #   => {:BlaBla => 1, "WowNow" => {:LookMa => true}}
   def deep_convert_keys(&block)
     block_given? ? self.inject({}) do |h,(k,v)|
@@ -22,12 +22,12 @@ class Hash
       h.merge(new_key => new_value)
     end
   end
-  
+
   # First camelizes the keys, then convert the whole hash to JSON
   def to_nifty_json
     self.recursive_delete_if_nil.jsonify.to_json
   end
-  
+
   # Converts values of a Hash in such a way that they can be easily stored in the database: hashes and arrays are jsonified, symbols - stringified
   def deebeefy_values
     inject({}) do |options, (k, v)|
@@ -45,7 +45,7 @@ class Hash
       h
     end
   end
-  
+
   # add flatten_with_type method to Hash
   def flatten_with_type(preffix = "")
     res = []
@@ -55,7 +55,7 @@ class Hash
         res += v.flatten_with_type(name)
       else
         res << {
-          :name => name, 
+          :name => name,
           :value => v,
           :type => (["TrueClass", "FalseClass"].include?(v.class.name) ? 'Boolean' : v.class.name).to_sym
         }
@@ -71,7 +71,7 @@ class Hash
 
   # Javascrit-like access to Hash values
   def method_missing(method, *args)
-    if method.to_s =~ /=$/ 
+    if method.to_s =~ /=$/
       method_base = method.to_s.sub(/=$/,'').to_sym
       key = self[method_base.to_s].nil? ? method_base : method_base.to_s
       self[key] = args.first
@@ -80,5 +80,5 @@ class Hash
       self[key]
     end
   end
-  
+
 end
