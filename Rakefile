@@ -7,8 +7,7 @@ begin
     gemspec.summary = "Build ExtJS/Rails components with minimum effort"
     gemspec.description = "Allows building ExtJS/Rails reusable code in a DRY way"
     gemspec.email = "sergei@playcode.nl"
-    gemspec.homepage = "http://github.com/skozlov/netzke-core"
-    gemspec.rubyforge_project = "netzke-core"
+    gemspec.homepage = "http://netzke.org"
     gemspec.authors = ["Sergei Kozlov"]
     gemspec.add_dependency("activesupport", ">=3.0.1")
     gemspec.post_install_message = <<-MESSAGE
