@@ -2,14 +2,14 @@
 
 Create Ext JS + Rails components with minimum effort.
 
-This is the bare bones of the Netzke framework. Use it to build your own components from scratch. For pre-built components (like panels, grids, forms, trees, applications), see the netzke-basepack (http://github.com/skozlov/netzke-basepack) project.
+This is the bare bones of the Netzke framework. Use it to build your own components from scratch. For pre-built components (like panels, grids, forms, trees, applications), see the http://github.com/skozlov/netzke-basepack.
 
 The idea behind the Netzke framework is that it allows you write reusable client/server code. Create a component, and then embed it straight to your Rails' view, load it dynamically into your Ext-based applications, or use it as a building block for other (composite) components. For more info, see the links below.
 
 == Requirements
 
+* Ruby >= 1.9.2 (1.8.7 may work, too)
 * Rails >= 3.0.0
-* Ruby >= 1.9.2 (1.8.7 should work, but may not be supported as diligently)
 * Ext >= 3.3.0
 
 == Installation
@@ -18,15 +18,13 @@ For the latest ("edge") stuff, tell bundler to get the gem straight from github:
 
     gem 'netzke-core', :git => "git://github.com/skozlov/netzke-core.git"
 
-Or install as plugin:
-
-    rails plugin install git://github.com/skozlov/netzke-core.git
-    
 Netzke assumes that your ExtJS library is in public/extjs (which may be a symbolic link):
 
     ln -s ~/code/sencha/ext-3.3.0 public/extjs
 
 == Usage
+
+=== Creating a simple component
 
 Let's create a simple "Hello world!" component and embed it into a Rails' view. It'll be an Ext.Panel-based component with a button that triggers a client-server communication.
 
@@ -64,10 +62,11 @@ Create YOUR_APP/app/components/hello_world_component.rb, and put in the followin
       JS
     end
 
+=== Embedding components into Rails views
 
 To embed a Netzke component into your Rails view do the following:
 
-1. Add <tt>netzke</tt> routes:
+* Add <tt>netzke</tt> routes:
 
     # in routes.rb
     RailsApp::Application.routes.draw do
@@ -75,15 +74,15 @@ To embed a Netzke component into your Rails view do the following:
       ...
     end
 
-2. In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles.
+* In your layout, within the "head" tag, use the <tt>netzke_init</tt> helper to include all the necessary JavaScript and styles.
 
     <%= netzke_init %>
 
     # You can optionally specify an Ext theme:
 
     <%= netzke_init :ext_theme => 'grey' %>
-      
-3. In your view use the <tt>netzke</tt> helper to embed the component:
+
+* In your view use the <tt>netzke</tt> helper to embed the component:
 
     <%= netzke :hello_world_component %>
 
@@ -98,11 +97,11 @@ netzke-core is bundled with cucumber and RSpec tests. Before you can run them, y
 For cucumber tests:
 
     cucumber features
-    
+
 RSpec tests:
 
     rspec spec
-    
+
 == Testing playground
 
 The bundled test/rails_app application is also a convenient playground to learn more about the framework, as it may be run as a stand-alone Rails app. It's also a pretty good source of examples. After starting it, access any of the app/components/netzke test components by using the following url:
@@ -110,7 +109,7 @@ The bundled test/rails_app application is also a convenient playground to learn 
     http://localhost:3000/components/<name of the component's class>
 
 e.g.:
-  
+
     http://localhost:3000/components/ServerCaller
 
 or, for scoped components:

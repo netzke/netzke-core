@@ -11,7 +11,6 @@ require 'netzke/actions'
 require 'netzke/session'
 
 module Netzke
-  # = Base
   # Base class for every Netzke component
   #
   # To instantiate a component in the controller:
