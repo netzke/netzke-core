@@ -1,4 +1,7 @@
-= v0.6.2 - EDGE
+= v0.6.3 - EDGE
+* The +ext_config+ option is back, deprecated.
+
+= v0.6.2 - 2010-10-27
 * Introduced the Symbol#component method to declare components in the config (instead of now deprecated js_component).
 
 = v0.6.1 - 2010-10-26

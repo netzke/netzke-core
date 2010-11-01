@@ -229,9 +229,20 @@ module Netzke
         # Merge with the rest of config options, besides those that are only meant for the server side
         res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
 
+        if config[:ext_config].present?
+          ::ActiveSupport::Deprecation.warn("Using ext_config option is deprecated. All config options must be specified at the same level in the hash.", caller)
+          res.merge!(config[:ext_config])
+        end
+
         res[:items] = items unless items.blank?
 
         res
+      end
+      
+      # Helper to access config[:ext_config] - DEPRECATED
+      def ext_config
+        ::ActiveSupport::Deprecation.warn("Using ext_config is deprecated. All config options must be specified at the same level in the hash.", caller)
+        config[:ext_config] || {}
       end
 
       # All the JS-code required by this instance of the component to be instantiated in the browser.
