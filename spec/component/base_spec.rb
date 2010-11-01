@@ -7,19 +7,19 @@ describe Netzke::Base do
       class_attribute :with_feature
       self.with_feature = "yes"
     end
-    
+
     class Child < Parent; end
-    
+
     Parent.with_feature.should == "yes"
     Child.with_feature.should == "yes"
-    
+
     Child.with_feature = "no"
-    
+
     Parent.with_feature.should == "yes"
     Child.with_feature.should == "no"
-    
+
     Parent.with_feature = "maybe"
     Parent.with_feature.should == "maybe"
     Child.with_feature.should == "no"
   end
-end  
+end

@@ -14,7 +14,7 @@ module Netzke
       def login
         session[:_netzke_next_request_is_first_after_login] = true
       end
-  
+
       # Should be called by session controller at the moment of logout
       def logout
         session[:_netzke_next_request_is_first_after_logout] = true

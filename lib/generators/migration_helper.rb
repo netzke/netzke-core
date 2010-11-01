@@ -1,7 +1,7 @@
 module MigrationHelper
-  include Rails::Generators::Migration  
-  
-  module ClassMethods    
+  include Rails::Generators::Migration
+
+  module ClassMethods
     def migration_lookup_at(dirname) #:nodoc:
       Dir.glob("#{dirname}/[0-9]*_*.rb")
     end
@@ -23,10 +23,10 @@ module MigrationHelper
     rescue
       raise NotImplementedError
     end
-  end         
+  end
 
-  def self.included(base) #:nodoc: 
+  def self.included(base) #:nodoc:
     puts "MigrationHelper included by #{base}"
-    base.extend ClassMethods      
+    base.extend ClassMethods
   end
 end

@@ -11,43 +11,22 @@ require 'netzke/actions'
 require 'netzke/session'
 
 module Netzke
-  # = Base
-  # Base class for every Netzke component
+  # The base for every Netzke component
   #
-  # To instantiate a component in the controller:
+  # == Class-level configuration
+  # You can configure any component's class as follows:
+  #     # e.g. in the initializers/netzke.rb
+  #     MyComponent.setup do |config|
+  #       config.default_instance_config = { :some_option => true }
+  #     end
   #
-  #     netzke :component_name, configuration_hash
-  # 
-  # == Configuration
-  # * <tt>:class_name</tt> - name of the component class in the scope of the Netzke module, e.g. "FormPanel".
-  # When a component is defined in the controller and this option is omitted, component class is deferred from the component's
-  # name. E.g.:
-  # 
-  #   netzke :grid_panel, :model => "User"
-  # 
-  # In this case <tt>:class_name</tt> is assumed to be "GridPanel"
-  # 
-  # * <tt>:persistent_config</tt> - if set to <tt>true</tt>, the component will use persistent storage to store its state;
-  # for instance, Netzke::GridPanel stores there its columns state (width, visibility, order, headers, etc).
-  # A component may or may not provide interface to its persistent settings. GridPanel and FormPanel from netzke-basepack
-  # are examples of components that by default do.
-  # 
-  # Examples of configuration:
-  #
-  #     netzke :books, 
-  #       :class_name => "GridPanel", 
-  #       :model => "Book", # GridPanel specific option
-  #       :persistent_config => false, # don't use persistent config for this instance
-  #       :icon_cls => 'icon-grid', 
-  #       :title => "My books"
-  # 
-  #     netzke :form_panel, 
-  #       :model => "User" # FormPanel specific option
+  # Netzke::Base provides the following class-level configuration options:
+  # * default_instance_config - a hash that will be used as default configuration for this component's instances
   class Base
-    
+
     class_attribute :default_instance_config
     self.default_instance_config = {}
-    
+
     include Session
     include Persistence
     include Configuration
@@ -58,12 +37,50 @@ module Netzke
     include Embedding
     include Actions
 
-    attr_accessor :parent, :name, :global_id #, :permissions, :session
+    # Parent component
+    attr_reader :parent
 
-    # Component initialization process
-    # * the config hash is available to the component after the "super" call in the initializer
-    # * override/add new default configuration options into the "default_config" method 
-    # (the config hash is not yet available)
+    # Name that the parent can reference us by. The last part of +global_id+
+    attr_reader :name
+
+    # Global id in the components tree, following the double-underscore notation, e.g. +books__config_panel__form+
+    attr_reader :global_id
+
+    class << self
+      # Component's short class name, e.g.:
+      # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
+      def short_component_class_name
+        self.name.sub(/^Netzke::/, "")
+      end
+
+      # Component's class, given its name
+      def constantize_class_name(class_name)
+        "#{class_name}".constantize rescue "Netzke::#{class_name}".constantize
+      end
+
+      # Instance of component by config
+      def instance_by_config(config)
+        constantize_class_name(config[:class_name]).new(config)
+      end
+
+      # All ancestor classes in the Netzke class hierarchy (i.e. up to Netzke::Base)
+      def class_ancestors
+        if self == Netzke::Base
+          []
+        else
+          superclass.class_ancestors + [self]
+        end
+      end
+
+      # Same as +read_inheritable_attribute+ returning a hash, but returns empty hash when it's equal to superclass's
+      def read_clean_inheritable_hash(attr_name)
+        res = read_inheritable_attribute(attr_name) || {}
+        # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
+        res == self.superclass.read_inheritable_attribute(attr_name) ? {} : res
+      end
+    end
+
+    # Instantiates a component instance. A parent can optionally be provided.
     def initialize(conf = {}, parent = nil)
       @passed_config = conf # configuration passed at the moment of instantiation
       @passed_config.deep_freeze
@@ -71,72 +88,42 @@ module Netzke
       @name          = conf[:name].nil? ? short_component_class_name.underscore : conf[:name].to_s
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
-      
+
       # initialize @components and @items
       normalize_components_in_items
       # auto_collect_actions_from_config_and_js_properties
     end
-  
-    # Short component class name, e.g.: 
-    #   Netzke::Module::SomeComponent => Module::SomeComponent
-    def self.short_component_class_name
-      self.name.sub(/^Netzke::/, "")
-    end
 
-    # Component class, given its name
-    def self.constantize_class_name(class_name)
-      "#{class_name}".constantize rescue "Netzke::#{class_name}".constantize
-    end
-    
+    # Proxy to the equally named class method
     def constantize_class_name(class_name)
       self.class.constantize_class_name(class_name)
     end
 
-    # Instance of component by config
-    def self.instance_by_config(config)
-      constantize_class_name(config[:class_name]).new(config)
-    end
-  
-    def logger
-      if defined?(Rails)
-        Rails.logger
-      else 
-        require 'logger'
-        Logger.new(STDOUT)
-      end
-    end
-  
-    # 'Netzke::Grid' => 'Grid'
+    # Proxy to the equally named class method
     def short_component_class_name
       self.class.short_component_class_name
     end
-  
-    def flash(flash_hash)
-      level = flash_hash.keys.first
-      raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)
-      @flash << {:level => level, :msg => flash_hash[level]}
-    end
 
-    def self.read_clean_inheritable_hash(attr_name)
-      res = read_inheritable_attribute(attr_name) || {}
-      # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
-      res == self.superclass.read_inheritable_attribute(attr_name) ? {} : res
-    end
-    
-    # override this method to do stuff at the moment of loading by some parent
+    # Override this method to do stuff at the moment of first-time loading
     def before_load
-      # component_session.clear - we don't do it anymore
     end
 
+    private
 
-    # Dependencies
-    def self.class_ancestors
-      if self == Netzke::Base
-        []
-      else
-        superclass.class_ancestors + [self]
+      def logger #:nodoc:
+        if defined?(Rails)
+          Rails.logger
+        else
+          require 'logger'
+          Logger.new(STDOUT)
+        end
       end
-    end
+
+      def flash(flash_hash) #:nodoc:
+        level = flash_hash.keys.first
+        raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)
+        @flash << {:level => level, :msg => flash_hash[level]}
+      end
 
   end
 end

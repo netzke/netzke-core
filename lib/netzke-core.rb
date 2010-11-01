@@ -8,7 +8,7 @@ require 'netzke/base'
 module Netzke
   autoload :Core, 'netzke/core'
   autoload :ExtComponent, 'netzke/ext_component'
-  
+
   class Engine < ::Rails::Engine
     config.after_initialize do
       # Do some initialization which is only possible after Rails is initialized
@@ -31,7 +31,7 @@ if defined? Rails
     require 'netzke/rails/action_view_ext'
     include Netzke::ActionViewExt
   end
-  
+
   # Make this plugin auto-reloadable for easier development
   # ActiveSupport::Dependencies.autoload_once_paths.delete(File.join(File.dirname(__FILE__)))
 end

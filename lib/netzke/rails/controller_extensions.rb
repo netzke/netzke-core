@@ -4,7 +4,7 @@ module Netzke
       base.send(:before_filter, :set_session_data)
       base.send(:before_filter, :set_controller)
     end
-    
+
     def set_session_data
       ::Netzke::Core.session = session
       session[:netzke_user_id] = defined?(current_user) ? current_user.try(:id) : nil

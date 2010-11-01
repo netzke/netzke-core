@@ -8,7 +8,7 @@ Feature: Custom css
     When I go to the ComponentWithCustomCss test page
     Then I should see "ComponentWithCustomCss"
     But  the body of ComponentWithCustomCss component should not be invisible
-  
+
   @javascript
   Scenario: A dynamically loaded component with a hidden body should not display its body
     When I go to the LoaderOfComponentWithCustomCss test page
