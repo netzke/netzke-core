@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{netzke-core}
-  s.version = "0.6.2"
+  s.version = "0.6.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-10-27}
+  s.date = %q{2010-11-02}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -162,7 +162,7 @@ Gem::Specification.new do |s|
     "test/unit/netzke_preference_test.rb",
     "uninstall.rb"
   ]
-  s.homepage = %q{http://github.com/skozlov/netzke-core}
+  s.homepage = %q{http://netzke.org}
   s.post_install_message = %q{
 ========================================================================
 
@@ -176,7 +176,6 @@ Gem::Specification.new do |s|
 
 }
   s.require_paths = ["lib"]
-  s.rubyforge_project = %q{netzke-core}
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Build ExtJS/Rails components with minimum effort}
   s.test_files = [
