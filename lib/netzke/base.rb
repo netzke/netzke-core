@@ -5,7 +5,7 @@ require 'netzke/stylesheets'
 require 'netzke/services'
 require 'netzke/composition'
 require 'netzke/configuration'
-require 'netzke/persistence'
+require 'netzke/state'
 require 'netzke/embedding'
 require 'netzke/actions'
 require 'netzke/session'
@@ -28,7 +28,7 @@ module Netzke
     self.default_instance_config = {}
 
     include Session
-    include Persistence
+    include State
     include Configuration
     include Javascript
     include Services
