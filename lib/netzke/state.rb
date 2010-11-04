@@ -1,48 +1,64 @@
+require 'active_support/core_ext/hash/indifferent_access'
 module Netzke
-  # TODO:
-  # rename persistence_ to persistence_
+  # When a persistence subsystem (such as netzke-persistence) is used, a widget can store its state using the +update_state+ method that accepts a hash, e.g.:
+  #     update_state(:position => {:x => 100, :y => 200})
+  # 
+  # Later the state can be retrieved by calling the +state+ method:
+  # 
+  #     state[:position] #=> {:x => 100, :y => 200}
+  # 
+  # To enable persistence in a component, configure it with +persistence+ option set to +true+.
+  # 
+  # == Sharing a state
+  # 
+  # Different components can share a state by sharing the persistence key, which can be provided as configuration option, e.g.:
+  # 
+  #     netzke :books, :class_name => "Basepack::GridPanel", :persistence_key => "books_state_identifier"
+  #     netzke :deleted_books, :class_name => "Basepack::GridPanel", :persistence_key => "books_state_identifier"
+  # 
+  # Make sure that the provided persistence_key has effect on _application_ level, _not_ only within the view.
+  # By default persistence_key is set to component's global id. Thus, _two components named equally will share the state even being used in different views_!
+  # 
   module State
-    # If the component has persistent config in its disposal
-    # def persistence_enabled?
-    #   !!(Netzke::Core.persistence_manager_class && initial_config[:persistence])
-    # end
-
-    # Access to the global persistent config (e.g. of another component)
-    def global_persistent_config(owner = nil)
-      config_class = Netzke::Core.persistence_manager_class
-      config_class.component_name = owner
-      config_class
-    end
-
-    # A string which will identify NetzkePreference records for this component.
-    # If <tt>persistence_key</tt> is passed, use it. Otherwise use global component's id.
-    def persistence_key #:nodoc:
+    # A string which will identify the component in persistence subsystem.
+    # If +persistence_key+ is passed, use it. Otherwise use global_id.
+    def persistence_key
       initial_config[:persistence_key] ? initial_config[:persistence_key] : global_id
     end
 
-    def update_persistent_options(hash)
-      options = persistent_options
-      state_record(:persistent_config).update_attribute(:value, options.deep_merge(hash))
+    # Component's persistent state.
+    def state
+      @state ||= (state_manager.state || {}).symbolize_keys
+    end
+    
+    # Merges passed hash into component's state.
+    def update_state(hsh)
+      state_manager.update_state!(hsh)
+      @state = nil # reset cache
     end
 
+    # Options merged into component's configuration right after default and user-passed config, thus being reflected in +Netzke::Base#independent_config+ (see Netzke::Configuration).
     def persistent_options
-      state_manager.state_to_read.try(:value).try(:fetch, :persistent_options, {}) || {}
+      (state[:persistent_options] || {}).symbolize_keys
+    end
+    
+    # Updates +persistent_options+
+    def update_persistent_options(hsh)
+      new_persistent_options = persistent_options.merge(hsh)
+      new_persistent_options.delete_if{ |k,v| v.nil? } # setting values to nil means deleting them
+      update_state(:persistent_options => new_persistent_options)
     end
 
+    protected 
+    
+    # Initialized state manager class. At this moment this class has current_user, component, and session set.
     def state_manager
-      @@state_manager ||= Netzke::Core.persistence_manager_class.init({
+      @state_manager ||= Netzke::Core.persistence_manager_class.init({
         :component => persistence_key,
         :current_user => Netzke::Core.controller.respond_to?(:current_user) && Netzke::Core.controller.current_user,
         :session => Netzke::Core.session
       })
     end
 
-    def update_state(hsh)
-      state_manager.update_state!(hsh)
-    end
-
-    def state
-      state_manager.state_to_read.try(:value) || {}
-    end
   end
 end
