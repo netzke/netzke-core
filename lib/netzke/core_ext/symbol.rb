@@ -8,10 +8,10 @@ class Symbol
   end
 
   def action(config = {})
-    config.merge(:action => self.to_s)
+    config.merge(:action => self)
   end
 
   def component(config = {})
-    config.merge(:component => self.to_s)
+    config.merge(:component => self)
   end
 end
