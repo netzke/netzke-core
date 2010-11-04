@@ -1,8 +1,0 @@
-Description:
-    Generates a netzke preferences migration
-
-Example:
-    rails g netzke:core
-
-    This will create:
-        A netzke preferences migration
