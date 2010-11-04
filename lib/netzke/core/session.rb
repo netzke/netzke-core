@@ -1,15 +1,6 @@
 module Netzke
   module Core
     module Session
-      # Access to controller sessions
-      def session
-        @@session ||= {}
-      end
-
-      def session=(s)
-        @@session = s
-      end
-
       # Should be called by session controller at the moment of successfull login
       def login
         session[:_netzke_next_request_is_first_after_login] = true

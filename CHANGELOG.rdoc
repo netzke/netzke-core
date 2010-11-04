@@ -1,5 +1,6 @@
 = v0.6.4 - EDGE
 * Defined Netzke.isLoading(), useful for testing.
+* Persistence support
 
 = v0.6.3 - 2010-11-02
 * The +ext_config+ option is back, deprecated.

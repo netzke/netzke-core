@@ -48,7 +48,7 @@ module Netzke
 
       # Config that is not overridden by parents and sessions
       def independent_config
-        @independent_config ||= initial_config.merge(weak_independent_options).merge(persistent_options)
+        @independent_config ||= initial_config.merge(weak_independent_options).merge(persistence_enabled? ? persistent_options : {})
       end
 
       def session_config
