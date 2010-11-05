@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{netzke-core}
-  s.version = "0.6.3"
+  s.version = "0.6.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-11-02}
+  s.date = %q{2010-11-05}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -45,14 +45,9 @@ Gem::Specification.new do |s|
     "features/step_definitions/web_steps.rb",
     "features/support/env.rb",
     "features/support/paths.rb",
-    "generators/netzke_core/USAGE",
-    "generators/netzke_core/netzke_core_generator.rb",
     "init.rb",
     "install.rb",
     "javascripts/core.js",
-    "lib/generators/migration_helper.rb",
-    "lib/generators/netzke/USAGE",
-    "lib/generators/netzke/core_generator.rb",
     "lib/netzke-core.rb",
     "lib/netzke/actions.rb",
     "lib/netzke/base.rb",
@@ -71,12 +66,12 @@ Gem::Specification.new do |s|
     "lib/netzke/embedding.rb",
     "lib/netzke/ext_component.rb",
     "lib/netzke/javascript.rb",
-    "lib/netzke/persistence.rb",
     "lib/netzke/rails/action_view_ext.rb",
     "lib/netzke/rails/controller_extensions.rb",
     "lib/netzke/rails/routes.rb",
     "lib/netzke/services.rb",
     "lib/netzke/session.rb",
+    "lib/netzke/state.rb",
     "lib/netzke/stylesheets.rb",
     "lib/tasks/netzke_core_tasks.rake",
     "netzke-core.gemspec",
