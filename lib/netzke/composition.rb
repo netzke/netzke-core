@@ -211,7 +211,7 @@ module Netzke
         if action
           if components[component]
             # only actions starting with "endpoint_" are accessible
-            endpoint_action = action.to_s.index('__') ? action : "endpoint_#{action}"
+            endpoint_action = action.to_s.index('__') ? action : "_#{action}_ep_wrapper"
             component_instance(component).send(endpoint_action, params)
           else
             component_missing(component)

@@ -15,31 +15,31 @@ module Netzke
       # See netzke-basepack's GridPanel for an example.
       #
       def api(*api_points)
-        ::ActiveSupport::Deprecation.warn("Using the 'api' call is deprecated. Use the 'endpoint' approach instead", caller)
+        ::ActiveSupport::Deprecation.warn("Using the 'api' call has no longer effect. Define endpoints instead.", caller)
 
-        api_points.each do |apip|
-          add_endpoint(apip)
-        end
+        # api_points.each do |apip|
+        #   add_endpoint(apip)
+        # end
 
         # It may be needed later for security
-        api_points.each do |apip|
-          module_eval <<-END, __FILE__, __LINE__
-          def endpoint_#{apip}(*args)
-            before_api_call_result = defined?(before_api_call) && before_api_call('#{apip}', *args) || {}
-            (before_api_call_result.empty? ? #{apip}(*args) : before_api_call_result).to_nifty_json
-          end
-          END
-        end
+        # api_points.each do |apip|
+        #   module_eval <<-END, __FILE__, __LINE__
+        #   def endpoint_#{apip}(*args)
+        #     before_api_call_result = defined?(before_api_call) && before_api_call('#{apip}', *args) || {}
+        #     (before_api_call_result.empty? ? #{apip}(*args) : before_api_call_result).to_nifty_json
+        #   end
+        #   END
+        # end
       end
 
       # Defines an endpoint
       def endpoint(name, options = {}, &block)
         add_endpoint(name)
-        define_method name, &block if block # if no block is given, the method is supposed to be defined elsewhere
+        define_method("#{name}_endpoint", &block) if block # if no block is given, the method is supposed to be defined elsewhere
 
         # define_method name, &block if block # if no block is given, the method is supposed to be defined elsewhere
-        define_method :"endpoint_#{name}" do |*args|
-          res = send(name, *args)
+        define_method :"_#{name}_ep_wrapper" do |*args|
+          res = send("#{name}_endpoint", *args)
           res.respond_to?(:to_nifty_json) && res.to_nifty_json || ""
         end
       end

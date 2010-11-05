@@ -1,6 +1,10 @@
 = v0.6.4 - EDGE
-* Defined Netzke.isLoading(), useful for testing.
-* Persistence support
+* enhancements
+  * Defined Netzke.isLoading(), useful for testing.
+  * Persistence suppor
+
+* API change
+  * +endpoint+ DSL call now results in a method called <endpoint_name>_endpoint, _not_ just <endpoint_name> (beware when overriding endpoint definitions)
 
 = v0.6.3 - 2010-11-02
 * The +ext_config+ option is back, deprecated.
@@ -126,8 +130,8 @@
 * New: String#to_b converts a string to true/false
 * New: Netzke::Base.session introduced for session data
 * New: weak_children_config and strong_children_config can now be declared by a widget, which specifies weak and strong configuration that every child of this widget will receive (e.g. display/hide configuration tool)
-* Fix: (degradation) flash message is now shown again in case of erroneous attempt to load a widget
-* New: widgets now can check session[:netzke_just_logged_in] and session[:netzke_just_logged_out] automatically set by Netzke after login/logout
+* Fix: (degradation) flash message is now shown again in case of erroneous attempt to load a widge
+* New: widgets now can check session[:netzke_just_logged_in] and session[:netzke_just_logged_out] automatically set by Netzke after login/logou
 
 = v0.2.11
 * Introduction of getOwnerComponent()-method to Ext.Component. It provides the Netzke widget this Component belongs to.
@@ -167,12 +171,12 @@
 
 = v0.2.3
 * FeedbackGhost will show the feedback on the top of the screen independent of the page scrolling.
-* Ext.Panel#loadComponent will accept null as url to delete the currently loaded widget
+* Ext.Panel#loadComponent will accept null as url to delete the currently loaded widge
 * Bug fix: persistent_config works again
 
 = v0.2.2
 * js_ext_config instance method added for overwriting
-* Multiuser support
+* Multiuser suppor
 * Using Rails.logger for logging
 * "config"-class method for every class inheriting Netzke::Base - for class-level configurations
 
@@ -211,7 +215,7 @@
 * JS-class code generation code slightly reworked
 
 = v0.1.0.2
-* Meta: fix outdated Manifest
+* Meta: fix outdated Manifes
 
 = v0.1.0.1
 * Meta work: replacing underscore with dash in the name

@@ -49,7 +49,7 @@ class NetzkeController < ApplicationController
     if action
       w_instance = Netzke::Base.instance_by_config(Netzke::Core.session[:netzke_components][component_name])
       # only component's actions starting with "endpoint_" are accessible from outside (security)
-      endpoint_action = action.to_s.index('__') ? action : "endpoint_#{action}"
+      endpoint_action = action.to_s.index('__') ? action : "_#{action}_ep_wrapper"
       render :text => w_instance.send(endpoint_action, params), :layout => false
     else
       super

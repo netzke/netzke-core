@@ -83,7 +83,6 @@ Gem::Specification.new do |s|
     "spec/spec.opt",
     "spec/spec_helper.rb",
     "stylesheets/core.css",
-    "templates/core/create_netzke_preferences.rb",
     "test/fixtures/roles.yml",
     "test/fixtures/users.yml",
     "test/rails_app/.gitignore",
