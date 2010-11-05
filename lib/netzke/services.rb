@@ -53,7 +53,7 @@ module Netzke
 
       # Returns registered endpoints
       def registered_endpoints
-        read_inheritable_attribute(:endpoints)
+        read_inheritable_attribute(:endpoints) || []
       end
     end
 
