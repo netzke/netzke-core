@@ -22,7 +22,6 @@ module Netzke
     extend ActiveSupport::Concern
 
     ACTION_METHOD_NAME = "%s_action"
-    ACTION_METHOD_REGEXP = /^(.+)_action$/
 
     included do
       alias_method_chain :js_config, :actions
@@ -30,6 +29,7 @@ module Netzke
 
     module ClassMethods
       def action(name, config = {}, &block)
+        register_action(name)
         config[:name] = name.to_s
         method_name = ACTION_METHOD_NAME % name
 
@@ -47,15 +47,24 @@ module Netzke
           end
         end
       end
+
+      # Register an action
+      def register_action(name)
+        current_actions = read_inheritable_attribute(:actions) || []
+        current_actions << name
+        write_inheritable_attribute(:actions, current_actions.uniq)
+      end
+
+      # Returns registered actions
+      def registered_actions
+        read_inheritable_attribute(:actions) || []
+      end
+
     end
 
-    # Actions to be used in the config
+    # All actions for this instance
     def actions
-      # Call all the action related methods to collect the actions
-      self.class.instance_methods.grep(ACTION_METHOD_REGEXP).inject({}) do |r, m|
-        m.match(ACTION_METHOD_REGEXP)
-        r.merge($1.to_sym => normalize_action_config(send(m)))
-      end
+      @actions ||= self.class.registered_actions.inject({}){ |res, name| res.merge(name.to_sym => normalize_action_config(send(ACTION_METHOD_NAME % name))) }
     end
 
     def js_config_with_actions #:nodoc
