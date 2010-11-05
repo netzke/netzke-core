@@ -1,23 +1,23 @@
 require 'active_support/core_ext/hash/indifferent_access'
 module Netzke
-  # When a persistence subsystem (such as netzke-persistence) is used, a widget can store its state using the +update_state+ method that accepts a hash, e.g.:
+  # When a persistence subsystem (such as {netzke-persistence}[https://github.com/skozlov/netzke-persistence]) is used, a widget can store its state using the +update_state+ method that accepts a hash, e.g.:
   #     update_state(:position => {:x => 100, :y => 200})
   # 
   # Later the state can be retrieved by calling the +state+ method:
   # 
   #     state[:position] #=> {:x => 100, :y => 200}
   # 
-  # To enable persistence in a component, configure it with +persistence+ option set to +true+.
+  # To enable persistence for a specific component, configure it with +persistence+ option set to +true+.
   # 
-  # == Sharing a state
+  # == Sharing state
   # 
-  # Different components can share a state by sharing the persistence key, which can be provided as configuration option, e.g.:
+  # Different components can share the state by sharing the persistence key, which can be provided as configuration option, e.g.:
   # 
   #     netzke :books, :class_name => "Basepack::GridPanel", :persistence_key => "books_state_identifier"
   #     netzke :deleted_books, :class_name => "Basepack::GridPanel", :persistence_key => "books_state_identifier"
   # 
   # Make sure that the provided persistence_key has effect on _application_ level, _not_ only within the view.
-  # By default persistence_key is set to component's global id. Thus, _two components named equally will share the state even being used in different views_!
+  # By default persistence_key is set to component's global id. Thus, <i>two components named equally will share the state even being used in different views</i>.
   # 
   module State
     # A string which will identify the component in persistence subsystem.

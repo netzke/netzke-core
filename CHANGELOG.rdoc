@@ -1,7 +1,7 @@
 = v0.6.4 - EDGE
 * enhancements
   * Defined Netzke.isLoading(), useful for testing.
-  * Persistence suppor
+  * Persistence support
 
 * API change
   * +endpoint+ DSL call now results in a method called <endpoint_name>_endpoint, _not_ just <endpoint_name> (beware when overriding endpoint definitions, or calling endpoint methods on child components)
