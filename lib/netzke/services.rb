@@ -18,7 +18,7 @@ module Netzke
         ::ActiveSupport::Deprecation.warn("Using the 'api' call has no longer effect. Define endpoints instead.", caller)
 
         # api_points.each do |apip|
-        #   add_endpoint(apip)
+        #   register_endpoint(apip)
         # end
 
         # It may be needed later for security
@@ -34,7 +34,7 @@ module Netzke
 
       # Defines an endpoint
       def endpoint(name, options = {}, &block)
-        add_endpoint(name)
+        register_endpoint(name)
         define_method("#{name}_endpoint", &block) if block # if no block is given, the method is supposed to be defined elsewhere
 
         # define_method name, &block if block # if no block is given, the method is supposed to be defined elsewhere
@@ -45,14 +45,14 @@ module Netzke
       end
 
       # Register an endpoint
-      def add_endpoint(ep)
+      def register_endpoint(ep)
         current_endpoints = read_inheritable_attribute(:endpoints) || []
         current_endpoints << ep
         write_inheritable_attribute(:endpoints, current_endpoints.uniq)
       end
 
       # Returns registered endpoints
-      def endpoints
+      def registered_endpoints
         read_inheritable_attribute(:endpoints)
       end
     end

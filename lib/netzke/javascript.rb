@@ -217,7 +217,7 @@ module Netzke
         res[:components] = comp_hash unless comp_hash.empty?
 
         # Api (besides the default "deliver_component" - JavaScript side already knows about it)
-        endpoints = self.class.endpoints - [:deliver_component]
+        endpoints = self.class.registered_endpoints - [:deliver_component]
         res.merge!(:endpoints => endpoints) unless endpoints.empty?
 
         # Inform the JavaScript side if persistent_config is enabled
