@@ -160,7 +160,7 @@ Gem::Specification.new do |s|
   s.post_install_message = %q{
 ========================================================================
 
-           Thanks for installing Netzke Core!
+           Thanks for installing netzke-core!
 
   Netzke home page:     http://netzke.org
   Netzke Google Groups: http://groups.google.com/group/netzke

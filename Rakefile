@@ -14,7 +14,7 @@ begin
 
 ========================================================================
 
-           Thanks for installing Netzke Core!
+           Thanks for installing netzke-core!
 
   Netzke home page:     http://netzke.org
   Netzke Google Groups: http://groups.google.com/group/netzke

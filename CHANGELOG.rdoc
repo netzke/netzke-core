@@ -1,10 +1,11 @@
-= v0.6.4 - EDGE
+= v0.6.4 - 2010-11-05
 * enhancements
-  * Defined Netzke.isLoading(), useful for testing.
+  * Implemented Netzke.isLoading(), useful for testing
   * Persistence support
 
 * API change
   * +endpoint+ DSL call now results in a method called <endpoint_name>_endpoint, _not_ just <endpoint_name> (beware when overriding endpoint definitions, or calling endpoint methods on child components)
+  * Using +api+ for endpoint declaration is gone
 
 = v0.6.3 - 2010-11-02
 * The +ext_config+ option is back, deprecated.
