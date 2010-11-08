@@ -1,4 +1,3 @@
-.vimrc
 *.log
 pkg
 doc
@@ -9,3 +8,4 @@ test/rails_app/tmp/
 test/rails_app/public/extjs
 test/rails_app/public/images/icons
 *.gem
+.vimrc
