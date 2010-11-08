@@ -302,14 +302,7 @@ Netzke.componentMixin = function(receiver){
         var storedConfig = this.componentsBeingLoaded[config.name] || {};
         delete this.componentsBeingLoaded[config.name];
 
-        var componentInstance;
-
-        if (storedConfig.container) {
-          var container = Ext.getCmp(storedConfig.container);
-          componentInstance = container.instantiateChild(config);
-        } else {
-          componentInstance = this.instantiateChild(config);
-        }
+        var componentInstance = this.instantiateAndRenderComponent(config, storedConfig.container);
 
         if (storedConfig.callback) {
           storedConfig.callback.call(storedConfig.scope || this, componentInstance);
@@ -317,6 +310,16 @@ Netzke.componentMixin = function(receiver){
       }
     },
 
+    instantiateAndRenderComponent : function(config, containerId){
+      var componentInstance;
+      if (containerId) {
+        var container = Ext.getCmp(containerId);
+        componentInstance = container.instantiateChild(config);
+      } else {
+        componentInstance = this.instantiateChild(config);
+      }
+      return componentInstance;
+    },
     /*
     Instantiates and inserts a component into a container with layout 'fit'.
     Arg: an JS object with the following keys:
@@ -420,7 +423,8 @@ Netzke.componentMixin = function(receiver){
       } else {
         for (var instr in instructions) {
           if (Ext.isFunction(this[instr])) {
-            this[instr].apply(this, [instructions[instr]]); // execute the method
+            // Executing the method. If arguments are an array, expand that into arguments.
+            this[instr].apply(this, Ext.isArray(instructions[instr]) ? instructions[instr] : [instructions[instr]]);
           } else {
             var childComponent = this.getChildComponent(instr);
             if (childComponent) {

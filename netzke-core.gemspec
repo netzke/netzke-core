@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{netzke-core}
-  s.version = "0.6.4"
+  s.version = "0.6.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-11-05}
+  s.date = %q{2010-11-08}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     "app/controllers/netzke_controller.rb",
     "app/models/netzke_preference.rb",
     "autotest/discover.rb",
+    "config/database.yml",
     "features/actions.feature",
     "features/basic.feature",
     "features/client-server.feature",
