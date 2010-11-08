@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-11-08}
+  s.date = %q{2010-11-09}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
     "features/custom_css.feature",
     "features/file_inclusion.feature",
     "features/inheritance.feature",
+    "features/js_mixins.feature",
     "features/persistence.feature",
     "features/scopes.feature",
     "features/step_definitions/custom_css_steps.rb",
@@ -96,10 +97,15 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_actions.rb",
     "test/rails_app/app/components/component_with_custom_css.rb",
     "test/rails_app/app/components/component_with_included_js.rb",
+    "test/rails_app/app/components/component_with_js_mixin.rb",
+    "test/rails_app/app/components/component_with_js_mixin/javascripts/another_method_set.js",
+    "test/rails_app/app/components/component_with_js_mixin/javascripts/some_method_set.js",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/custom.css",
     "test/rails_app/app/components/deprecated/server_caller.rb",
     "test/rails_app/app/components/extended_component_with_actions.rb",
+    "test/rails_app/app/components/extended_component_with_js_mixin.rb",
+    "test/rails_app/app/components/extended_component_with_js_mixin/javascripts/some_method_set.js",
     "test/rails_app/app/components/extended_server_caller.rb",
     "test/rails_app/app/components/included.js",
     "test/rails_app/app/components/kinda_complex_component.rb",
@@ -185,9 +191,11 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_actions.rb",
     "test/rails_app/app/components/component_with_custom_css.rb",
     "test/rails_app/app/components/component_with_included_js.rb",
+    "test/rails_app/app/components/component_with_js_mixin.rb",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/deprecated/server_caller.rb",
     "test/rails_app/app/components/extended_component_with_actions.rb",
+    "test/rails_app/app/components/extended_component_with_js_mixin.rb",
     "test/rails_app/app/components/extended_server_caller.rb",
     "test/rails_app/app/components/kinda_complex_component.rb",
     "test/rails_app/app/components/kinda_complex_component/basic_stuff.rb",

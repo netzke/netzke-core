@@ -2,6 +2,7 @@
 * enhancements
   * An endpoint can now "call" JavaScript functions that accept multiple parameters, by specifying an array, e.g.:
       {:some_js_function => [arg1, arg2]}
+	* New API: +js_mixin+ method (see RDocs)
 
 = v0.6.4 - 2010-11-05
 * enhancements

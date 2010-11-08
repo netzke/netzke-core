@@ -43,6 +43,14 @@ Ext.QuickTips.init();
 // We don't want no state managment by default, thank you!
 Ext.state.Provider.prototype.set = function(){};
 
+Netzke.chainApply = function(){
+  var res = {};
+  Ext.each(arguments, function(o){
+    Ext.apply(res, o);
+  });
+  return res;
+};
+
 // Some Ruby-ish String extensions
 // from http://code.google.com/p/inflection-js/
 String.prototype.camelize=function(lowFirstLetter)
