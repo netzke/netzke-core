@@ -4,6 +4,8 @@ module Netzke
   module Composition
     extend ActiveSupport::Concern
 
+    COMPONENT_METHOD_NAME = "%s_component"
+
     included do
 
       # Loads a component on browser's request. Every Nettzke component gets this endpoint.
@@ -46,16 +48,23 @@ module Netzke
       #       {:data_class => "Book", :title => orig[:title] + ", extended"}
       #     end
       def component(name, config = {}, &block)
+        register_component(name)
         config = config.dup
         config[:class_name] ||= name.to_s.camelize
         config[:name] = name.to_s
-        method_name = "_#{name}_component"
+        method_name = COMPONENT_METHOD_NAME % name
 
         if block_given?
           define_method(method_name, &block)
         else
-          define_method(method_name) do
-            config
+          if superclass.instance_methods.map(&:to_s).include?(method_name)
+            define_method(method_name) do
+              super().merge(config)
+            end
+          else
+            define_method(method_name) do
+              config
+            end
           end
         end
       end
@@ -65,6 +74,18 @@ module Netzke
       def js_component(name, config = {})
         ::ActiveSupport::Deprecation.warn("Using js_component is deprecated. Use Symbol#component instead", caller)
         config.merge(:component => name)
+      end
+
+      # Register a component
+      def register_component(name)
+        current_components = read_inheritable_attribute(:components) || []
+        current_components << name
+        write_inheritable_attribute(:components, current_components.uniq)
+      end
+
+      # Returns registered components
+      def registered_components
+        read_inheritable_attribute(:components) || []
       end
 
     end
@@ -81,16 +102,7 @@ module Netzke
 
       # All components for this instance, which includes components defined on class level, and components detected in :items
       def components
-        # items if @components.nil? # simply trigger collecting @components from items
-        # self.class.components.merge(@components || {})
-
-        @components ||= begin
-          method_regexp = /^_(.+)_component$/
-          self.class.instance_methods.grep(method_regexp).inject({}) do |r, m|
-            m.match(method_regexp)
-            r.merge($1.to_sym => send(m))
-          end
-        end
+        @components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }
       end
 
       def non_late_components
@@ -211,7 +223,7 @@ module Netzke
         if action
           if components[component]
             # only actions starting with "endpoint_" are accessible
-            endpoint_action = action.to_s.index('__') ? action : "endpoint_#{action}"
+            endpoint_action = action.to_s.index('__') ? action : "_#{action}_ep_wrapper"
             component_instance(component).send(endpoint_action, params)
           else
             component_missing(component)

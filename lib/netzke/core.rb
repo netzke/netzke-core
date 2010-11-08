@@ -21,7 +21,12 @@ module Netzke
     extend Session
     extend Masquerading
 
+    # set in Netzke::ControllerExtensions
     mattr_accessor :controller
+    
+    # set in Netzke::ControllerExtensions
+    mattr_accessor :session
+    @@session = {}
 
     mattr_accessor :javascripts
     @@javascripts = ["#{File.dirname(__FILE__)}/../../javascripts/core.js"]
@@ -32,8 +37,8 @@ module Netzke
     mattr_accessor :external_css
     @@external_css = []
 
+    # Set in the Engine after_initialize callback
     mattr_accessor :ext_location
-
     mattr_accessor :with_icons
 
     mattr_accessor :icons_uri
@@ -41,6 +46,12 @@ module Netzke
 
     mattr_accessor :javascript_on_main_page
     @@javascript_on_main_page = true
+
+    mattr_accessor :persistence_manager
+    @@persistence_manager = "NetzkeComponentState"
+    
+    # Set in the Engine after_initialize callback
+    mattr_accessor :persistence_manager_class
 
     def self.setup
       yield self
