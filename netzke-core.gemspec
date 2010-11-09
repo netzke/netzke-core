@@ -68,6 +68,7 @@ Gem::Specification.new do |s|
     "lib/netzke/embedding.rb",
     "lib/netzke/ext_component.rb",
     "lib/netzke/javascript.rb",
+    "lib/netzke/rails.rb",
     "lib/netzke/rails/action_view_ext.rb",
     "lib/netzke/rails/controller_extensions.rb",
     "lib/netzke/rails/routes.rb",
