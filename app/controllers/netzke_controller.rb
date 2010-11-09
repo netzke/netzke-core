@@ -38,6 +38,57 @@ class NetzkeController < ApplicationController
     end
   end
 
+  def touch
+    respond_to do |format|
+      format.js {
+        res = initial_dynamic_javascript << "\n"
+        res << "Netzke.componentMixin = function(){return {}};"
+        res << %q(
+Netzke.chainApply = function(){
+  var res = {};
+  Ext.each(arguments, function(o){
+    Ext.apply(res, o);
+  });
+  return res;
+};
+Ext.ns('Netzke.page'); // namespace for all component instantces on the page
+Ext.ns('Netzke.classes'); // namespace for all component classes
+        )
+
+
+
+        #Netzke::Core.javascripts.each do |path|
+          #f = File.new(path)
+          #res << f.read
+        #end
+
+        # If JS classes are not inserted into the main page, we need to render all the classes needed to load the page that includes us
+        # (i.e. netzke/netzke.js) here
+        if !Netzke::Core.javascript_on_main_page
+          rendered_classes = []
+          Netzke::Core.session[:netzke_components].each_pair do |k,v|
+            component = Netzke::Base.instance_by_config(v)
+            res << component.js_missing_code(rendered_classes.map(&:name))
+            rendered_classes += component.dependency_classes
+            rendered_classes.uniq!
+          end
+        end
+
+        render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
+      }
+
+      format.css {
+        res = ""
+        Netzke::Core.stylesheets.each do |path|
+          f = File.new(path)
+          res << f.read
+        end
+        render :text => res
+      }
+    end
+  end
+
+
   # Main dispatcher of the HTTP requests. The URL contains the name of the component,
   # as well as the method of this component to be called, according to the double underscore notation.
   # E.g.: some_grid__post_grid_data.

@@ -60,6 +60,9 @@ RailsApp::Application.routes.draw do
 
   # Components configured in Rails views
   match 'components/embedded/:action' => 'components', :as => "embedded_components"
+  
+  # Touch components
+  match 'components/touch/:component' => 'touch#index', :as => "touch"
 
   # Non-Netzke Ext components
   match 'ext/:component' => 'components#ext', :as => "ext"

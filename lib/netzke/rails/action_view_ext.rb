@@ -1,6 +1,9 @@
+require 'netzke/rails/action_view_ext/touch'
 module Netzke
   module Rails
     module ActionViewExt
+      include Touch
+
       # Include JavaScript
       def netzke_js_include
         res = []
@@ -87,8 +90,8 @@ module Netzke
 
         content_for :netzke_on_ready, raw("#{w.js_component_instance}\n\n#{w.js_component_render}")
 
-        # Now mark this component's class as rendered (by storing it's xtype), so that we only generate it once per view
-        @rendered_classes << class_name.to_s.gsub("::", "").downcase unless @rendered_classes.include?(class_name)
+        # Now mark this component's class as rendered, so that we only generate it once per view
+        @rendered_classes << class_name unless @rendered_classes.include?(class_name)
 
         # Return the html for this component
         raw(w.js_component_html)
