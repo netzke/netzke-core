@@ -7,12 +7,14 @@ module Netzke
   autoload :Core, 'netzke/core'
   autoload :ExtComponent, 'netzke/ext_component'
 
-  class Engine < ::Rails::Engine
-    config.after_initialize do
-      # Do some initialization which is only possible after Rails is initialized
-      Netzke::Core.ext_location ||= ::Rails.root.join("public", "extjs")
-      Netzke::Core.with_icons = File.exists?("#{::Rails.root}/public#{Netzke::Core.icons_uri}") if Netzke::Core.with_icons.nil?
-      Netzke::Core.persistence_manager_class = Netzke::Core.persistence_manager.constantize rescue nil
+  module Core
+    class Engine < ::Rails::Engine
+      config.after_initialize do
+        # Do some initialization which is only possible after Rails is initialized
+        Netzke::Core.ext_location ||= ::Rails.root.join("public", "extjs")
+        Netzke::Core.with_icons = File.exists?("#{::Rails.root}/public#{Netzke::Core.icons_uri}") if Netzke::Core.with_icons.nil?
+        Netzke::Core.persistence_manager_class = Netzke::Core.persistence_manager.constantize rescue nil
+      end
     end
   end
 end
