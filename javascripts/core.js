@@ -306,16 +306,16 @@ Netzke.componentMixin = function(receiver){
     Called by the server after we ask him to load a component
     */
     componentDelivered : function(config){
-      if (this.fireEvent('componentload'), config) {
-        var storedConfig = this.componentsBeingLoaded[config.name] || {};
-        delete this.componentsBeingLoaded[config.name];
+      var storedConfig = this.componentsBeingLoaded[config.name] || {};
+      delete this.componentsBeingLoaded[config.name];
 
-        var componentInstance = this.instantiateAndRenderComponent(config, storedConfig.container);
+      var componentInstance = this.instantiateAndRenderComponent(config, storedConfig.container);
 
-        if (storedConfig.callback) {
-          storedConfig.callback.call(storedConfig.scope || this, componentInstance);
-        }
+      if (storedConfig.callback) {
+        storedConfig.callback.call(storedConfig.scope || this, componentInstance);
       }
+
+      this.fireEvent('componentload', componentInstance);
     },
 
     instantiateAndRenderComponent : function(config, containerId){

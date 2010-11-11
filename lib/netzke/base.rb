@@ -118,8 +118,8 @@ module Netzke
     private
 
       def logger #:nodoc:
-        if defined?(Rails)
-          Rails.logger
+        if defined?(::Rails)
+          ::Rails.logger
         else
           require 'logger'
           Logger.new(STDOUT)

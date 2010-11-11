@@ -75,7 +75,7 @@ module Netzke
 
       # JS properties and methods merged together
       def js_extend_properties
-        @_js_extend_properties ||= js_properties.merge(js_methods)
+        @_js_extend_properties ||= js_properties.merge(js_methods).merge(:superclass => "#{superclass.js_base_class}.prototype".l)
       end
 
       # Mixes the JavaScript object defined in <component_file_name>/javascripts/<name>.js as public properties for the generated class

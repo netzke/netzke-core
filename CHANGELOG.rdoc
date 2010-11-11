@@ -3,6 +3,10 @@
   * An endpoint can now "call" JavaScript functions that accept multiple parameters, by specifying an array, e.g.:
       {:some_js_function => [arg1, arg2]}
 	* New API: +js_mixin+ method (see RDocs)
+	* JavaScript instance of a component now has the property "superclass", which refers to the prototype of the parent class. Handy when calling the super methods.
+
+* bug fix
+	* The "componentload" event now gets fired after a component is dynamically loaded. The handler receives the instance of the loaded component.
 
 = v0.6.4 - 2010-11-05
 * enhancements
