@@ -55,7 +55,9 @@ module Netzke
 
       # Component's class, given its name
       def constantize_class_name(class_name)
-        "#{class_name}".constantize rescue "Netzke::#{class_name}".constantize
+        "#{class_name}".constantize
+      rescue NameError
+        "Netzke::#{class_name}".constantize
       end
 
       # Instance of component by config
