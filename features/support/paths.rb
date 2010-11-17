@@ -26,6 +26,9 @@ module NavigationHelpers
     when /the component loader page/
       '/panel/component_loader'
 
+    when /the "(.*)" view/
+      embedded_components_path(:action => $1.gsub(" ", "_"))
+
     when /the (.*) test page/
       components_path(:component => $1)
 

@@ -1,0 +1,5 @@
+<%# Use this layout when you dynamically load views with other Netzke components into some Ext.Panel, e.g. with Ext.updater.
+Because the main Netzke/Ext code is already loaded, all we need to load is the JavaScript for components that are
+embedded in the loaded view. TODO: fix class caching in this scenario. %>
+<%= netzke_js %>
+<%= yield %>
