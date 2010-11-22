@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{netzke-core}
-  s.version = "0.6.4"
+  s.version = "0.6.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-11-05}
+  s.date = %q{2010-11-17}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     "app/controllers/netzke_controller.rb",
     "app/models/netzke_preference.rb",
     "autotest/discover.rb",
+    "config/database.yml",
     "features/actions.feature",
     "features/basic.feature",
     "features/client-server.feature",
@@ -38,6 +39,8 @@ Gem::Specification.new do |s|
     "features/custom_css.feature",
     "features/file_inclusion.feature",
     "features/inheritance.feature",
+    "features/js_mixins.feature",
+    "features/nested_views.feature",
     "features/persistence.feature",
     "features/scopes.feature",
     "features/step_definitions/custom_css_steps.rb",
@@ -66,6 +69,7 @@ Gem::Specification.new do |s|
     "lib/netzke/embedding.rb",
     "lib/netzke/ext_component.rb",
     "lib/netzke/javascript.rb",
+    "lib/netzke/rails.rb",
     "lib/netzke/rails/action_view_ext.rb",
     "lib/netzke/rails/controller_extensions.rb",
     "lib/netzke/rails/routes.rb",
@@ -95,10 +99,15 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_actions.rb",
     "test/rails_app/app/components/component_with_custom_css.rb",
     "test/rails_app/app/components/component_with_included_js.rb",
+    "test/rails_app/app/components/component_with_js_mixin.rb",
+    "test/rails_app/app/components/component_with_js_mixin/javascripts/another_method_set.js",
+    "test/rails_app/app/components/component_with_js_mixin/javascripts/some_method_set.js",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/custom.css",
     "test/rails_app/app/components/deprecated/server_caller.rb",
     "test/rails_app/app/components/extended_component_with_actions.rb",
+    "test/rails_app/app/components/extended_component_with_js_mixin.rb",
+    "test/rails_app/app/components/extended_component_with_js_mixin/javascripts/some_method_set.js",
     "test/rails_app/app/components/extended_server_caller.rb",
     "test/rails_app/app/components/included.js",
     "test/rails_app/app/components/kinda_complex_component.rb",
@@ -110,6 +119,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/scoped_components/some_scoped_component.rb",
     "test/rails_app/app/components/server_caller.rb",
     "test/rails_app/app/components/simple_component.rb",
+    "test/rails_app/app/components/simple_panel.rb",
     "test/rails_app/app/components/simple_tab_panel.rb",
     "test/rails_app/app/components/simple_window.rb",
     "test/rails_app/app/components/some_composite.rb",
@@ -119,7 +129,10 @@ Gem::Specification.new do |s|
     "test/rails_app/app/controllers/multiple_components_controller.rb",
     "test/rails_app/app/controllers/welcome_controller.rb",
     "test/rails_app/app/helpers/application_helper.rb",
+    "test/rails_app/app/views/components/panel_with_autoload.html.erb",
+    "test/rails_app/app/views/components/some_tab_panel.html.erb",
     "test/rails_app/app/views/layouts/application.html.erb",
+    "test/rails_app/app/views/layouts/nested.html.erb",
     "test/rails_app/app/views/multiple_components/set_one.html.erb",
     "test/rails_app/config.ru",
     "test/rails_app/config/application.rb",
@@ -184,9 +197,11 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_actions.rb",
     "test/rails_app/app/components/component_with_custom_css.rb",
     "test/rails_app/app/components/component_with_included_js.rb",
+    "test/rails_app/app/components/component_with_js_mixin.rb",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/deprecated/server_caller.rb",
     "test/rails_app/app/components/extended_component_with_actions.rb",
+    "test/rails_app/app/components/extended_component_with_js_mixin.rb",
     "test/rails_app/app/components/extended_server_caller.rb",
     "test/rails_app/app/components/kinda_complex_component.rb",
     "test/rails_app/app/components/kinda_complex_component/basic_stuff.rb",
@@ -197,6 +212,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/scoped_components/some_scoped_component.rb",
     "test/rails_app/app/components/server_caller.rb",
     "test/rails_app/app/components/simple_component.rb",
+    "test/rails_app/app/components/simple_panel.rb",
     "test/rails_app/app/components/simple_tab_panel.rb",
     "test/rails_app/app/components/simple_window.rb",
     "test/rails_app/app/components/some_composite.rb",

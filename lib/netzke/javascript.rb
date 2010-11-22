@@ -75,12 +75,31 @@ module Netzke
 
       # JS properties and methods merged together
       def js_extend_properties
-        @_js_extend_properties ||= js_properties.merge(js_methods)
-          # res = js_properties.merge(js_methods)
-          # extracted_actions = extract_actions(res)
-          # res.merge!(:actions => extracted_actions) if !extracted_actions.empty?
-          # res
-        # end
+        @js_extend_properties ||= js_properties.merge(js_methods)
+      end
+
+      # Mixes the JavaScript object defined in <component_file_name>/javascripts/<name>.js as public properties for the generated class
+      # E.g. (in grid_panel.rb):
+      #
+      #     js_mixin :edit_in_form
+      #
+      # This will mixin the object defined in grid_panel/javascript/edit_in_form.js file, which may contain something like this:
+      #     {
+      #       onEditInForm: function(){
+      #         // implementation
+      #       },
+      #       // ...
+      #     }
+      def js_mixin(name)
+        current_mixins = read_clean_inheritable_array(:js_mixins) || []
+        caller_file = caller.first.split(":").first
+        current_mixins << File.read("#{File.dirname(caller_file)}/#{File.basename(caller_file, ".rb")}/javascripts/#{name}.js");
+        write_inheritable_attribute(:js_mixins, current_mixins)
+      end
+
+      # Returns all objects to be mixed in (as array of strings)
+      def js_mixins
+        read_clean_inheritable_array(:js_mixins) || []
       end
 
       # TODO: the code below needs refactoring and cleaning-up
@@ -150,7 +169,8 @@ module Netzke
 
       # Generates declaration of the JS class as direct extension of a Ext component
       def js_class_declaration_new_component
-        %(#{js_full_class_name} = Ext.extend(#{js_base_class}, Ext.apply(Netzke.componentMixin(#{js_base_class}),
+        mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
+        %(#{js_full_class_name} = Ext.extend(#{js_base_class}, Netzke.chainApply(Netzke.componentMixin(#{js_base_class}), #{mixins}
 #{js_extend_properties.to_nifty_json}));)
       end
 
@@ -158,11 +178,9 @@ module Netzke
       def js_class_declaration_extending_component
         base_class = superclass.js_full_class_name
 
-        # Do we specify our own extend properties?
-        # If so, include them, if not - don't re-include those from the parent.
-        js_extend_properties.empty? ? \
-        %{#{js_full_class_name} = #{base_class};} :
-        %{#{js_full_class_name} = Ext.extend(#{base_class}, #{js_extend_properties.to_nifty_json});}
+        mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
+
+        %{#{js_full_class_name} = Ext.extend(#{base_class}, Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}));}
       end
 
       # Returns all extra JavaScript-code (as string) required by this component's class

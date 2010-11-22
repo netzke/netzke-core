@@ -55,7 +55,9 @@ module Netzke
 
       # Component's class, given its name
       def constantize_class_name(class_name)
-        "#{class_name}".constantize rescue "Netzke::#{class_name}".constantize
+        "#{class_name}".constantize
+      rescue NameError
+        "Netzke::#{class_name}".constantize
       end
 
       # Instance of component by config
@@ -77,6 +79,13 @@ module Netzke
         res = read_inheritable_attribute(attr_name) || {}
         # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
         res == self.superclass.read_inheritable_attribute(attr_name) ? {} : res
+      end
+
+      # Same as +read_inheritable_attribute+ returning a hash, but returns empty hash when it's equal to superclass's
+      def read_clean_inheritable_array(attr_name)
+        res = read_inheritable_attribute(attr_name) || []
+        # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
+        res == self.superclass.read_inheritable_attribute(attr_name) ? [] : res
       end
     end
 
@@ -111,8 +120,8 @@ module Netzke
     private
 
       def logger #:nodoc:
-        if defined?(Rails)
-          Rails.logger
+        if defined?(::Rails)
+          ::Rails.logger
         else
           require 'logger'
           Logger.new(STDOUT)

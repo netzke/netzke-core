@@ -1,0 +1,2 @@
+<%# This is just a panel that has +autoload+ option to load some content from the autoloaded_content action, which in its turn renders a view with a Netzke component in it %>
+<%= netzke :panel_with_autoload, :class_name => "SimplePanel", :html => "Some content", :autoLoad => {:url => "autoloaded_content", :scripts => true}%>

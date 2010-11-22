@@ -43,6 +43,14 @@ Ext.QuickTips.init();
 // We don't want no state managment by default, thank you!
 Ext.state.Provider.prototype.set = function(){};
 
+Netzke.chainApply = function(){
+  var res = {};
+  Ext.each(arguments, function(o){
+    Ext.apply(res, o);
+  });
+  return res;
+};
+
 // Some Ruby-ish String extensions
 // from http://code.google.com/p/inflection-js/
 String.prototype.camelize=function(lowFirstLetter)
@@ -298,25 +306,28 @@ Netzke.componentMixin = function(receiver){
     Called by the server after we ask him to load a component
     */
     componentDelivered : function(config){
-      if (this.fireEvent('componentload'), config) {
-        var storedConfig = this.componentsBeingLoaded[config.name] || {};
-        delete this.componentsBeingLoaded[config.name];
+      var storedConfig = this.componentsBeingLoaded[config.name] || {};
+      delete this.componentsBeingLoaded[config.name];
 
-        var componentInstance;
+      var componentInstance = this.instantiateAndRenderComponent(config, storedConfig.container);
 
-        if (storedConfig.container) {
-          var container = Ext.getCmp(storedConfig.container);
-          componentInstance = container.instantiateChild(config);
-        } else {
-          componentInstance = this.instantiateChild(config);
-        }
-
-        if (storedConfig.callback) {
-          storedConfig.callback.call(storedConfig.scope || this, componentInstance);
-        }
+      if (storedConfig.callback) {
+        storedConfig.callback.call(storedConfig.scope || this, componentInstance);
       }
+
+      this.fireEvent('componentload', componentInstance);
     },
 
+    instantiateAndRenderComponent : function(config, containerId){
+      var componentInstance;
+      if (containerId) {
+        var container = Ext.getCmp(containerId);
+        componentInstance = container.instantiateChild(config);
+      } else {
+        componentInstance = this.instantiateChild(config);
+      }
+      return componentInstance;
+    },
     /*
     Instantiates and inserts a component into a container with layout 'fit'.
     Arg: an JS object with the following keys:
@@ -420,7 +431,8 @@ Netzke.componentMixin = function(receiver){
       } else {
         for (var instr in instructions) {
           if (Ext.isFunction(this[instr])) {
-            this[instr].apply(this, [instructions[instr]]); // execute the method
+            // Executing the method. If arguments are an array, expand that into arguments.
+            this[instr].apply(this, Ext.isArray(instructions[instr]) ? instructions[instr] : [instructions[instr]]);
           } else {
             var childComponent = this.getChildComponent(instr);
             if (childComponent) {
