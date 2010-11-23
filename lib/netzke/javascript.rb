@@ -92,7 +92,7 @@ module Netzke
       #     }
       def js_mixin(name)
         current_mixins = read_clean_inheritable_array(:js_mixins) || []
-        caller_file = caller.first.split(":").first
+        caller_file = caller.first.split(".rb:").first		
         current_mixins << File.read("#{File.dirname(caller_file)}/#{File.basename(caller_file, ".rb")}/javascripts/#{name}.js");
         write_inheritable_attribute(:js_mixins, current_mixins)
       end
