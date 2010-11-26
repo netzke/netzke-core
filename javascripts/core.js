@@ -684,7 +684,9 @@ Ext.apply(Netzke.FeedbackGhost.prototype, {
 
     var showBox = function(msg, lvl){
       if (!lvl) {lvl = 'notice'};
-      var msgCt = Ext.DomHelper.insertFirst(document.body, {'class':'netzke-feedback'}, true);
+
+      var msgCt = Ext.get('netzke-feedback') || Ext.DomHelper.insertFirst(document.body, {id: 'netzke-feedback', 'class':'netzke-feedback'}, true);
+
       var m = Ext.DomHelper.append(msgCt, {html:createBox(msg,lvl)}, true);
       m.slideIn('t').pause(2).ghost("b", {remove:true});
     }
