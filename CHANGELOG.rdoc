@@ -5,7 +5,8 @@
 	* New API: +js_mixin+ method (see RDocs)
 
 * bug fix
-	* The "componentload" event now gets fired after a component is dynamically loaded. The handler receives the instance of the loaded component.
+  * The "componentload" event now gets fired after a component is dynamically loaded. The handler receives the instance of the loaded component.
+  * Feedback does not insert a new div every time being called
 
 = v0.6.4 - 2010-11-05
 * enhancements

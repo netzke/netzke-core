@@ -45,7 +45,9 @@ module Netzke
       #     js_include "#{File.dirname(__FILE__)}/my_component/one.js","#{File.dirname(__FILE__)}/my_component/two.js"
       # This is alternative to defining self.include_js
       def js_include(*args)
-        self.js_included_files += args
+        callr = caller.first
+
+        self.js_included_files += args.map{ |a| a.is_a?(Symbol) ? expand_js_include_path(a, callr) : a }
       end
 
       # Definition of a public JS property, e.g.:
@@ -90,10 +92,10 @@ module Netzke
       #       },
       #       // ...
       #     }
-      def js_mixin(name)
+      def js_mixin(*args)
         current_mixins = read_clean_inheritable_array(:js_mixins) || []
-        caller_file = caller.first.split(":").first
-        current_mixins << File.read("#{File.dirname(caller_file)}/#{File.basename(caller_file, ".rb")}/javascripts/#{name}.js");
+        callr = caller.first
+        args.each{ |a| current_mixins << (a.is_a?(Symbol) ? File.read(expand_js_include_path(a, callr)) : File.read(a))}
         write_inheritable_attribute(:js_mixins, current_mixins)
       end
 
@@ -212,6 +214,12 @@ module Netzke
       # Little helper
       def null; "null".l; end
 
+      private
+
+        def expand_js_include_path(sym, callr)
+          %Q(#{callr.split(".rb:").first}/javascripts/#{sym}.js)
+        end
+
     end
 
     module InstanceMethods
@@ -256,7 +264,7 @@ module Netzke
 
         res
       end
-      
+
       # Helper to access config[:ext_config] - DEPRECATED
       def ext_config
         ::ActiveSupport::Deprecation.warn("Using ext_config is deprecated. All config options must be specified at the same level in the hash.", caller)
