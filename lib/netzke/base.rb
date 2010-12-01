@@ -46,6 +46,8 @@ module Netzke
     # Global id in the components tree, following the double-underscore notation, e.g. +books__config_panel__form+
     attr_reader :global_id
 
+
+		
     class << self
       # Component's short class name, e.g.:
       # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
@@ -53,11 +55,19 @@ module Netzke
         self.name.sub(/^Netzke::/, "")
       end
 
+
       # Component's class, given its name
       def constantize_class_name(class_name)
         "#{class_name}".constantize
       rescue NameError
         "Netzke::#{class_name}".constantize
+      end
+
+      # Component's class, given its name
+      def constantize_class_name_or_nil(class_name)
+        "#{class_name}".constantize
+      rescue NameError
+        nil
       end
 
       # Instance of component by config
@@ -87,8 +97,11 @@ module Netzke
         # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
         res == self.superclass.read_inheritable_attribute(attr_name) ? [] : res
       end
-    end
+		extend ActiveSupport::Memoizable
+			memoize :constantize_class_name
+			memoize :constantize_class_name_or_nil
 
+    end
 
 		def self.instance (conf, parent)
 			@@instance_cache||={}
