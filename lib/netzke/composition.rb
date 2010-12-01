@@ -153,7 +153,7 @@ module Netzke
               deep_merge(strong_config). # we may want to reconfigure the component at the moment of instantiation
               merge(:name => aggr)
 
-            composite = component_class.new(conf, composite) # params: config, parent
+            composite = component_class.instance(conf, composite) # params: config, parent
             # composite.weak_children_config = weak_children_config
             # composite.strong_children_config = strong_children_config
           end
