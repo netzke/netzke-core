@@ -103,15 +103,8 @@ module Netzke
 
     end
 
-		def self.instance (conf, parent)
-			@@instance_cache||={}
-			@@instance_cache[[conf,parent]]||=self.new conf, parent
-		end
-
     # Instantiates a component instance. A parent can optionally be provided.
     def initialize(conf = {}, parent = nil)
-			@@instance_cache||={}
-			
       @passed_config = conf # configuration passed at the moment of instantiation
       @passed_config.deep_freeze
       @parent        = parent
