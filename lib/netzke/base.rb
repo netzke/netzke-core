@@ -46,6 +46,8 @@ module Netzke
     # Global id in the components tree, following the double-underscore notation, e.g. +books__config_panel__form+
     attr_reader :global_id
 
+
+		
     class << self
       # Component's short class name, e.g.:
       # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
@@ -53,11 +55,19 @@ module Netzke
         self.name.sub(/^Netzke::/, "")
       end
 
+
       # Component's class, given its name
       def constantize_class_name(class_name)
         "#{class_name}".constantize
       rescue NameError
         "Netzke::#{class_name}".constantize
+      end
+
+      # Component's class, given its name
+      def constantize_class_name_or_nil(class_name)
+        "#{class_name}".constantize
+      rescue NameError
+        nil
       end
 
       # Instance of component by config
@@ -93,8 +103,15 @@ module Netzke
 
     end
 
+		def self.instance (conf, parent)
+			@@instance_cache||={}
+			@@instance_cache[[conf,parent]]||=self.new conf, parent
+		end
+
     # Instantiates a component instance. A parent can optionally be provided.
     def initialize(conf = {}, parent = nil)
+			@@instance_cache||={}
+			
       @passed_config = conf # configuration passed at the moment of instantiation
       @passed_config.deep_freeze
       @parent        = parent
