@@ -60,6 +60,10 @@ module Netzke
         @strong_config ||= session_config.merge(weak_final_options).merge(strong_parent_config)
       end
 
+      def configuration
+        final_config
+      end
+
       # Resulting config that takes into account all possible ways to configure a component. *Read only*.
       # Translates into something like this:
       #
@@ -72,7 +76,7 @@ module Netzke
       # Moved out to a separate method in order to provide for easy caching.
       # *Do not override this method*, use +Base.config+ instead.
       def config
-        @config ||= final_config
+        @config ||= configuration
       end
 
       def flat_config(key = nil)
