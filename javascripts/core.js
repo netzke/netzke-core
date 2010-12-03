@@ -11,7 +11,7 @@ Ext.BLANK_IMAGE_URL = Netzke.RelativeExtUrl + "/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 
 Netzke.isLoading=function () {
-	return Netzke.runningRequests!=0;				
+  return Netzke.runningRequests!=0;
 }
 Netzke.runningRequests=0
 
@@ -295,8 +295,13 @@ Netzke.componentMixin = function(receiver){
         // this.callbackHash[params.name.underscore()] = params.callback;
       }
 
-      // remove the old component if the container is specified
-      if (params.container) Ext.getCmp(params.container).removeChild();
+      var container = params.container && Ext.getCmp(params.container);
+      if (container) {
+        // remove the old component if the container is specified
+        container.removeChild();
+        // mask the container
+        if (this.loadMaskMsg) container.getEl().mask(this.loadMaskMsg);
+      }
 
       // do the remote API call
       this.deliverComponent(serverParams);
@@ -308,6 +313,10 @@ Netzke.componentMixin = function(receiver){
     componentDelivered : function(config){
       var storedConfig = this.componentsBeingLoaded[config.name] || {};
       delete this.componentsBeingLoaded[config.name];
+
+      if (storedConfig.container) {
+        if (this.loadMaskMsg) Ext.getCmp(storedConfig.container).getEl().unmask();
+      }
 
       var componentInstance = this.instantiateAndRenderComponent(config, storedConfig.container);
 

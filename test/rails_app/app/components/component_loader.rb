@@ -29,6 +29,7 @@ class ComponentLoader < Netzke::Base
   action :load_window_with_simple_component
 
   js_properties(
+    :load_mask_msg => "Loading...",
     :title => "Component Loader",
     :layout => "fit",
     :bbar => [{:text => "Load component", :ref => "../button"}, {:text => "Load in window", :ref => "../loadInWindowButton"}, :load_with_feedback.action, :load_window_with_simple_component.action]
@@ -56,4 +57,5 @@ class ComponentLoader < Netzke::Base
       }, this);
     }
   JS
+
 end

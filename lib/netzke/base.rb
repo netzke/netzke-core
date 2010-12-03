@@ -89,6 +89,20 @@ module Netzke
       end
     end
 
+
+    def self.total_instances
+      @@instances || 0
+    end
+
+    def self.reset_total_instances
+      @@instances = 0
+    end
+
+    def self.increase_total_instances
+      @@instances ||= 0
+      @@instances += 1
+    end
+
     # Instantiates a component instance. A parent can optionally be provided.
     def initialize(conf = {}, parent = nil)
       @passed_config = conf # configuration passed at the moment of instantiation
@@ -101,6 +115,8 @@ module Netzke
       # initialize @components and @items
       normalize_components_in_items
       # auto_collect_actions_from_config_and_js_properties
+
+      self.class.increase_total_instances
     end
 
     # Proxy to the equally named class method
