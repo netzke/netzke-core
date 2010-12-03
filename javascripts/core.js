@@ -300,7 +300,7 @@ Netzke.componentMixin = function(receiver){
         // remove the old component if the container is specified
         container.removeChild();
         // mask the container
-        if (this.loadMaskMsg) container.getEl().mask(this.loadMaskMsg);
+        if (this.loadMaskMsg) container.getEl().mask(this.loadMaskMsg, this.loadMaskMsgCls || "x-mask-loading");
       }
 
       // do the remote API call
