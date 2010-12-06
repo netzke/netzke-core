@@ -150,9 +150,9 @@ module Netzke
         superclass != Netzke::Base
       end
 
-      # Declaration of component's class (stored in the cache storage (Ext.netzke.cache) at the client side
+      # Declaration of component's class (stored in the cache storage (Ext.cache) at the client side
       # to be reused at the moment of component instantiation)
-      def js_class(cached = [])
+      def js_class
         res = []
         # Defining the scope if it isn't known yet
         res << %{Ext.ns("#{js_full_scope}");} unless js_full_scope == js_default_scope
@@ -204,8 +204,8 @@ module Netzke
       end
 
       # JavaScript code needed for this particulaer class. Includes external JS code and the JS class definition for self.
-      def js_code(cached = [])
-        [js_included, js_class(cached)].join("\n")
+      def js_code
+        [js_included, js_class].join("\n")
       end
 
       # Little helper
@@ -275,7 +275,7 @@ module Netzke
       # It includes JS-classes for the parents, non-lazy-loaded child components, and itself.
       def js_missing_code(cached = [])
         code = dependency_classes.inject("") do |r,k|
-          cached.include?(k.to_s) ? r : r + k.js_code(cached)#.strip_js_comments
+          cached.include?(k.js_xtype) ? r : r + k.js_code#.strip_js_comments
         end
         code.blank? ? nil : code
       end
