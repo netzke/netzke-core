@@ -14,7 +14,7 @@ module Netzke
       # * <tt>:id</tt> - reference to the component
       # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
       endpoint :deliver_component do |params|
-        cache = params[:cache].gsub(".", "::").split(",") # array of cached class names (in Ruby)
+        cache = params[:cache].split(",") # array of cached xtypes
         component_name = params.delete(:name).underscore.to_sym
         component = components[component_name] && component_instance(component_name)
 
@@ -135,7 +135,7 @@ module Netzke
         {:feedback => @flash}.to_nifty_json
       end
 
-      # recursively instantiates an component based on its "path": e.g. if we have an component :aggr1 which in its turn has an component :aggr10, the path to the latter would be "aggr1__aggr10"
+      # recursively instantiates an component based on its "path": e.g. if we have component :aggr1 which in its turn has component :aggr10, the path to the latter would be "aggr1__aggr10"
       def component_instance(name, strong_config = {})
         @cached_component_instances ||= {}
         @cached_component_instances[name] ||= begin
@@ -143,7 +143,7 @@ module Netzke
           name.to_s.split('__').each do |aggr|
             aggr = aggr.to_sym
             component_config = composite.components[aggr]
-            raise ArgumentError, "No component '#{aggr}' defined for component '#{composite.global_id}'" if component_config.nil?
+            raise ArgumentError, "No child component '#{aggr}' defined for component '#{composite.global_id}'" if component_config.nil?
             short_component_class_name = component_config[:class_name]
             raise ArgumentError, "No class_name specified for component #{aggr} of #{composite.global_id}" if short_component_class_name.nil?
             component_class = constantize_class_name(short_component_class_name)

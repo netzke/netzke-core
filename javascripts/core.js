@@ -100,6 +100,14 @@ Netzke.aliasMethodChain = function(klass, method, feature) {
   klass[method] = klass[method + "With" + feature.capitalize()];
 }
 
+Netzke.cache = [];
+
+Ext.ComponentMgr.all.on('add', function(key, o){
+  if (o.isNetzke && Netzke.cache.indexOf(o.xtype) == -1) {
+    Netzke.cache.push(o.xtype);
+  }
+});
+
 // Properties/methods common to all component classes
 Netzke.componentMixin = function(receiver){
   return {
@@ -272,14 +280,8 @@ Netzke.componentMixin = function(receiver){
       var serverParams = params.params || {};
       serverParams.name = params.name;
 
-      // Build the list of already loaded ("cached") classes
-      serverParams.cache = [];
-
-      for (var klass in Netzke.classes) {
-        serverParams.cache.push(klass);
-      }
-
-      serverParams.cache = serverParams.cache.join();
+      // coma-separated list of xtypes of already loaded classes
+      serverParams.cache = Netzke.cache.join();
 
       var storedConfig = this.componentsBeingLoaded[params.name] = {};
 

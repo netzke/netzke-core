@@ -62,7 +62,7 @@ module Netzke
 
       # Instance of component by config
       def instance_by_config(config)
-        constantize_class_name(config[:class_name]).new(config)
+        (config[:klass] || constantize_class_name(config[:class_name])).new(config)
       end
 
       # All ancestor classes in the Netzke class hierarchy (i.e. up to Netzke::Base)
