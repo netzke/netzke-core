@@ -102,11 +102,13 @@ Netzke.aliasMethodChain = function(klass, method, feature) {
 
 Netzke.cache = [];
 
-Ext.ComponentMgr.all.on('add', function(key, o){
-  if (o.isNetzke && Netzke.cache.indexOf(o.xtype) == -1) {
-    Netzke.cache.push(o.xtype);
+// Registering a Netzke component
+Netzke.reg = function(xtype, klass) {
+  if (!Ext.ComponentMgr.types[xtype]) {
+    Ext.reg(xtype, klass);
+    Netzke.cache.push(xtype);
   }
-});
+};
 
 // Properties/methods common to all component classes
 Netzke.componentMixin = function(receiver){
