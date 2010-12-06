@@ -159,7 +159,7 @@ module Netzke
 
         res << (extends_netzke_component? ? js_class_declaration_extending_component : js_class_declaration_new_component)
 
-        res << %(Ext.reg("#{js_xtype}", #{js_full_class_name});)
+        res << %(Netzke.reg("#{js_xtype}", #{js_full_class_name});)
 
         res.join("\n")
       end
