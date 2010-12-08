@@ -97,11 +97,12 @@ module Netzke
         # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
         res == self.superclass.read_inheritable_attribute(attr_name) ? [] : res
       end
-		
-		extend ActiveSupport::Memoizable
-		memoize :constantize_class_name
-		memoize :constantize_class_name_or_nil
-
+		  
+		  if Rails.configuration.cache_classes
+    		extend ActiveSupport::Memoizable
+    		memoize :constantize_class_name
+    		memoize :constantize_class_name_or_nil
+      end
     end
 
 
