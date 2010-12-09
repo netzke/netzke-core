@@ -303,8 +303,13 @@ Netzke.componentMixin = function(receiver){
       if (container) {
         // remove the old component if the container is specified
         container.removeChild();
-        // mask the container
-        if (this.loadMaskMsg) container.getEl().mask(this.loadMaskMsg, this.loadMaskMsgCls || "x-mask-loading");
+      }
+
+      if (this.loadMaskMsg) {
+        var maskConfig = {msg: this.loadMaskMsg, removeMask: true};
+        if (this.loadMaskMsgCls) maskConfig.msgCls = this.loadMaskMsgCls;
+        storedConfig.loadMaskCmp = new Ext.LoadMask((container || this).getEl(), maskConfig);
+        storedConfig.loadMaskCmp.show();
       }
 
       // do the remote API call
@@ -319,10 +324,7 @@ Netzke.componentMixin = function(receiver){
       var storedConfig = this.componentsBeingLoaded[config.name] || {};
       delete this.componentsBeingLoaded[config.name];
 
-      // remove the mask if it was used
-      if (storedConfig.container) {
-        if (this.loadMaskMsg) Ext.getCmp(storedConfig.container).getEl().unmask();
-      }
+      if (storedConfig.loadMaskCmp) storedConfig.loadMaskCmp.hide();
 
       // instantiate and render it
       var componentInstance = this.instantiateAndRenderComponent(config, storedConfig.container);
