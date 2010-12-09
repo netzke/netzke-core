@@ -46,6 +46,12 @@ module Netzke
     # Global id in the components tree, following the double-underscore notation, e.g. +books__config_panel__form+
     attr_reader :global_id
 
+    def clean_up
+      component_session=nil
+      Netzke::Core.session.delete_if do |k, v|
+        k.starts_with? self.global_id
+      end
+    end
 
 		
     class << self
