@@ -9,6 +9,7 @@
   * The "componentload" event now gets fired after a component is dynamically loaded. The handler receives the instance of the loaded component.
   * Feedback does not insert a new div every time being called
   * JS class caching was broken for name-scoped classes
+  * When a component was dynamically loaded into a hidden container, it wasn't shown when the container got shown next time
 
 = v0.6.4 - 2010-11-05
 * enhancements
