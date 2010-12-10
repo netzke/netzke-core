@@ -119,15 +119,21 @@ Netzke.componentMixin = function(receiver){
     latestResult: {}, // latest result returned from the server via an API call
 
     /*
+    Mask shown during loading of a component. Set to false to not mask. Pass config for Ext.LoadMask for configuring msg/cls, etc.
+    Set msg to null if mask without any msg is desirable.
+    */
+    componentLoadMask: true,
+
+    /*
     Overriding the constructor to only apply an "alias method chain" to initComponent
     */
-    constructor : function(config){
+    constructor: function(config){
       Netzke.aliasMethodChain(this, "initComponent", "netzke");
       receiver.superclass.constructor.call(this, config);
     },
 
     /* initComponent common for all Netzke components */
-    initComponentWithNetzke : function(){
+    initComponentWithNetzke: function(){
       this.normalizeActions();
 
       this.detectActions(this);
@@ -167,7 +173,7 @@ Netzke.componentMixin = function(receiver){
     /*
     Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod()
     */
-    processEndpoints : function(){
+    processEndpoints: function(){
       var endpoints = this.endpoints || [];
       endpoints.push('deliver_component'); // all Netzke components get this endpoint
       Ext.each(endpoints, function(intp){
@@ -305,10 +311,8 @@ Netzke.componentMixin = function(receiver){
         container.removeChild();
       }
 
-      if (this.loadMaskMsg) {
-        var maskConfig = {msg: this.loadMaskMsg, removeMask: true};
-        if (this.loadMaskMsgCls) maskConfig.msgCls = this.loadMaskMsgCls;
-        storedConfig.loadMaskCmp = new Ext.LoadMask((container || this).getEl(), maskConfig);
+      if (this.componentLoadMask){
+        storedConfig.loadMaskCmp = new Ext.LoadMask((container || this).getEl(), this.componentLoadMask);
         storedConfig.loadMaskCmp.show();
       }
 
@@ -324,7 +328,10 @@ Netzke.componentMixin = function(receiver){
       var storedConfig = this.componentsBeingLoaded[config.name] || {};
       delete this.componentsBeingLoaded[config.name];
 
-      if (storedConfig.loadMaskCmp) storedConfig.loadMaskCmp.hide();
+      if (storedConfig.loadMaskCmp) {
+        storedConfig.loadMaskCmp.hide();
+        storedConfig.loadMaskCmp.destroy();
+      }
 
       // instantiate and render it
       var componentInstance = this.instantiateAndRenderComponent(config, storedConfig.container);
