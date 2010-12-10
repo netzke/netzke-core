@@ -155,6 +155,11 @@ module Netzke
     def before_load
     end
 
+    def clean_up
+      component_session.clear
+      components.keys.each { |k| component_instance(k).clean_up }
+    end
+
     private
 
       def logger #:nodoc:

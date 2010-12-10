@@ -33,7 +33,6 @@ class ComponentLoader < Netzke::Base
   action :load_composite
 
   js_properties(
-    :load_mask_msg => "Loading...",
     :title => "Component Loader",
     :layout => "fit",
     :bbar => [{:text => "Load component", :ref => "../button"}, {:text => "Load in window", :ref => "../loadInWindowButton"}, :load_with_feedback.action, :load_window_with_simple_component.action, :load_composite.action]
@@ -60,12 +59,21 @@ class ComponentLoader < Netzke::Base
       }, this);
 
       this.loadInWindowButton.on('click', function(){
-        var w = new Ext.Window({width: 500, height: 400, modal: true, layout:'fit'});
+        var w = new Ext.Window({
+          width: 500, height: 400, modal: true, layout:'fit',
+          items: [{xtype: 'panel'}]
+        });
         w.show(null, function(){
-          this.loadComponent({name: 'component_loaded_in_window', container: w.getId()});
+          this.loadComponent({name: 'component_loaded_in_window', container: w.items.first().getId()});
         }, this);
       }, this);
     }
   JS
+
+  # For visual testing purposes
+  # def deliver_component_endpoint(params)
+  #   sleep 2
+  #   super
+  # end
 
 end
