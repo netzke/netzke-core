@@ -304,7 +304,7 @@ Netzke.componentMixin = function(receiver){
         // remove the old component if the container is specified
         container.removeChild();
         // mask the container
-        if (this.loadMaskMsg && container.getEl()) container.getEl().mask(this.loadMaskMsg, this.loadMaskMsgCls || "x-mask-loading");
+        if (this.loadMaskMsg) container.getEl().mask(this.loadMaskMsg, this.loadMaskMsgCls || "x-mask-loading");
       }
 
       // do the remote API call
@@ -315,14 +315,16 @@ Netzke.componentMixin = function(receiver){
     Called by the server after we ask him to load a component
     */
     componentDelivered : function(config){
+      // retrieve the loading config for this component
       var storedConfig = this.componentsBeingLoaded[config.name] || {};
       delete this.componentsBeingLoaded[config.name];
 
-      if (this.loadMaskMsg && storedConfig.container) {
-				var el = Ext.getCmp(storedConfig.container).getEl()
-				if(el) el.unmask();
+      // remove the mask if it was used
+      if (storedConfig.container) {
+        if (this.loadMaskMsg) Ext.getCmp(storedConfig.container).getEl().unmask();
       }
 
+      // instantiate and render it
       var componentInstance = this.instantiateAndRenderComponent(config, storedConfig.container);
 
       if (storedConfig.callback) {
@@ -332,6 +334,9 @@ Netzke.componentMixin = function(receiver){
       this.fireEvent('componentload', componentInstance);
     },
 
+    /*
+    Instantiates and renders a component with given config and container
+    */
     instantiateAndRenderComponent : function(config, containerId){
       var componentInstance;
       if (containerId) {
@@ -342,6 +347,7 @@ Netzke.componentMixin = function(receiver){
       }
       return componentInstance;
     },
+
     /*
     Instantiates and inserts a component into a container with layout 'fit'.
     Arg: an JS object with the following keys:
@@ -649,7 +655,14 @@ Ext.override(Ext.Container, {
     } else {
       this.remove(this.getNetzkeComponent()); // first delete previous component
       this.add(instance);
-      this.doLayout();
+
+      // Sometimes a child is getting loaded into a hidden container...
+      if (this.isVisible()) {
+        this.doLayout();
+      } else {
+        this.on('show', function(cmp){cmp.doLayout();}, {single: true});
+      }
+
     }
     return instance;
   },
