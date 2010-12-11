@@ -1,3 +1,4 @@
+require "netzke/javascript/scopes"
 module Netzke
   # == Component javascript code
   # Here's a brief explanation on how a javascript class for a component gets built.
@@ -10,23 +11,34 @@ module Netzke
     extend ActiveSupport::Concern
 
     included do
+      include Scopes
+
       class_attribute :js_included_files
       self.js_included_files = []
     end
 
     module ClassMethods
 
-      # The JS (Ext) class that we inherit from on the JS level
+      # Used it to specify what JavaScript class this component's JavaScript class will be extending, e.g.:
+      #
+      #     js_base_class "Ext.TabPanel"
+      #
+      # By default, "Ext.Panel" is assumed.
+      #
+      # If called without parameters, returns the JS base class declared for the component.
       def js_base_class(class_name = nil)
         class_name.nil? ? (read_inheritable_attribute(:js_base_class) || "Ext.Panel") : write_inheritable_attribute(:js_base_class, class_name)
       end
 
-      # Definition of a public JS method, e.g.:
-      #     js_method :on_call_server, <<-JS
-      #       function(){
-      #         this.whatsUp();
+      # Use it to define a public method of the component's JavaScript class, e.g.:
+      #
+      #     js_method :do_something, <<-JS
+      #       function(params){
+      #         // implementation, maybe dynamically generated
       #       }
       #     JS
+      #
+      # This will effectively result in definition of a public method called +doSomething+ in the JavaScript class (note the conversion from underscore_name to camelCaseName).
       def js_method(name, definition = nil)
         definition = yield.l if block_given?
         current_js_methods = read_clean_inheritable_hash(:js_methods)
@@ -39,18 +51,46 @@ module Netzke
         read_clean_inheritable_hash(:js_methods)
       end
 
-      # Definition of JS files which will be dynamically loaded together with this component, e.g.:
-      #     js_include "#{File.dirname(__FILE__)}/my_component/static.js"
-      # or
+      # Use it to specify JS files to be loaded before this component's JS code. Useful when using external extensions required by this component.
+      # It may accept one or more symbols or strings. Strings will be interpreted as full paths to included JS file:
+      #
       #     js_include "#{File.dirname(__FILE__)}/my_component/one.js","#{File.dirname(__FILE__)}/my_component/two.js"
-      # This is alternative to defining self.include_js
+      #
+      # Symbols will be expanded following a convention, e.g.:
+      #
+      #     class MyComponent < Netzke::Base
+      #       js_include :some_library
+      #       # ...
+      #     end
+      #
+      # This will "include" a JavaScript file +{component_location}/my_component/javascripts/some_library.js+
       def js_include(*args)
         callr = caller.first
 
         self.js_included_files += args.map{ |a| a.is_a?(Symbol) ? expand_js_include_path(a, callr) : a }
       end
 
-      # Definition of a public JS property, e.g.:
+      # Used to define default properties of the JavaScript class, e.g.:
+      #
+      #     js_properties :collapsible => true, :hide_collapse_tool => true
+      #
+      # (this will result in the definition of the following properties in the JavaScript class's prototype: +collapsible+ and +hideCollapseTool+ (note the automatic conversion from underscore to camelcase))
+      #
+      # Also, +js_property+ can be used to define properties one by one.
+      #
+      # For the complete list of available options refer to the Ext documentation, the "Config Options" section of a the component specified with +js_base_class+.
+      # Note, that not all the configuration options can be defined on the prototype of the class. For example, defining +items+ on the prototype won't take any effect, so, +items+ should be passed as a configuration option at the moment of instantiation (see Netzke::Base#configuration and Netzke::Base#default_config).
+      def js_properties(hsh = nil)
+        if hsh.nil?
+          read_clean_inheritable_hash(:js_properties)
+        else
+          current_js_properties = read_clean_inheritable_hash(:js_properties)
+          current_js_properties.merge!(hsh)
+          write_inheritable_attribute(:js_properties, current_js_properties)
+        end
+      end
+
+      # Used to define a single JS class property, e.g.:
       #     js_property :title, "My Netzke Component"
       def js_property(name, value = nil)
         name = name.to_sym
@@ -63,35 +103,26 @@ module Netzke
         end
       end
 
-      # Assignment of multiple public JS properties in a bunch, e.g.:
-      #     js_properties :title => "My Component", :border => true, :html => "Inner HTML"
-      def js_properties(hsh = nil)
-        if hsh.nil?
-          read_clean_inheritable_hash(:js_properties)
-        else
-          current_js_properties = read_clean_inheritable_hash(:js_properties)
-          current_js_properties.merge!(hsh)
-          write_inheritable_attribute(:js_properties, current_js_properties)
-        end
-      end
-
-      # JS properties and methods merged together
-      def js_extend_properties
-        @js_extend_properties ||= js_properties.merge(js_methods)
-      end
-
-      # Mixes the JavaScript object defined in <component_file_name>/javascripts/<name>.js as public properties for the generated class
-      # E.g. (in grid_panel.rb):
+      # Use it to "mixin" JavaScript objects defined in a separate file.
       #
-      #     js_mixin :edit_in_form
+      # You do not _have_ to use +js_method+ or +js_properties+ if those methods or properties are not supposed to be changed _dynamically_ (by means of configuring the component on the class level). Instead, you may "mixin" a JavaScript object defined in the JavaScript file named following a certain convention. This way static JavaScript code will rest in a corresponding .js file, not in the Ruby class. E.g.:
       #
-      # This will mixin the object defined in grid_panel/javascript/edit_in_form.js file, which may contain something like this:
+      #     class MyComponent < Netzke::Base
+      #       js_mixin :some_functionality
+      #       #...
+      #     end
+      #
+      # This will "mixin" a JavaScript object defined in a file called +{component_location}/my_component/javascripts/some_functionality.js+, which way contain something like this:
+      #
       #     {
-      #       onEditInForm: function(){
-      #         // implementation
-      #       },
-      #       // ...
+      #       someProperty: 100,
+      #
+      #       someMethod: function(params){
+      #         // ...
+      #       }
       #     }
+      #
+      # Also accepts a string, which will be interpreted as a full path to the file (useful for sharing mixins between classes).
       def js_mixin(*args)
         current_mixins = read_clean_inheritable_array(:js_mixins) || []
         callr = caller.first
@@ -104,54 +135,14 @@ module Netzke
         read_clean_inheritable_array(:js_mixins) || []
       end
 
-      # TODO: the code below needs refactoring and cleaning-up
-
-      # component's menus
-      # def js_menus; []; end
-
-      # Given class name, e.g. GridPanelLib::Components::RecordFormWindow,
-      # returns its scope: "Components.RecordFormWindow"
-      def js_class_name_to_scope(name)
-        name.split("::")[0..-2].join(".")
-      end
-
-      # Top level scope which will be used to scope out Netzke classes
-      def js_default_scope
-        "Netzke.classes"
-      end
-
-      # Scope of this component without default scope
-      # e.g.: GridPanelLib.Components
-      def js_scope
-        js_class_name_to_scope(short_component_class_name)
-      end
-
-      # Returns the scope of this component
-      # e.g. "Netzke.classes.GridPanelLib"
-      def js_full_scope
-        js_scope.empty? ? js_default_scope : [js_default_scope, js_scope].join(".")
-      end
-
-      # Returns the full name of the JavaScript class, including the scopes *and* the common scope, which is
-      # Netzke.classes.
-      # E.g.: "Netzke.classes.Netzke.GridPanelLib.RecordFormWindow"
-      def js_full_class_name
-        [js_full_scope, short_component_class_name.split("::").last].join(".")
-      end
-
       # Builds this component's xtype
       # E.g.: netzkewindow, netzkegridpanel
       def js_xtype
         name.gsub("::", "").downcase
       end
 
-      # are we using JS inheritance? for now, if js_base_class is a Netzke class - yes
-      def extends_netzke_component?
-        superclass != Netzke::Base
-      end
-
-      # Declaration of component's class (stored in the cache storage (Ext.cache) at the client side
-      # to be reused at the moment of component instantiation)
+      # Component's JavaScript class declaration.
+      # It gets stored in the JS class cache storage (Netzke.classes) at the client side to be reused at the moment of component instantiation.
       def js_class
         res = []
         # Defining the scope if it isn't known yet
@@ -165,27 +156,7 @@ module Netzke
       end
 
 
-      def js_extra_code
-        ""
-      end
-
-      # Generates declaration of the JS class as direct extension of a Ext component
-      def js_class_declaration_new_component
-        mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
-        %(#{js_full_class_name} = Ext.extend(#{js_base_class}, Netzke.chainApply(Netzke.componentMixin(#{js_base_class}), #{mixins}
-#{js_extend_properties.to_nifty_json}));)
-      end
-
-      # Generates declaration of the JS class as extension of another Netzke component
-      def js_class_declaration_extending_component
-        base_class = superclass.js_full_class_name
-
-        mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
-
-        %{#{js_full_class_name} = Ext.extend(#{base_class}, Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}));}
-      end
-
-      # Returns all extra JavaScript-code (as string) required by this component's class
+      # Returns all included JavaScript files as a string
       def js_included
         res = ""
 
@@ -199,6 +170,7 @@ module Netzke
         res
       end
 
+      # DEPRECATED. Returns an array of included files. Made to be overridden. +js_include+ is preferred way.
       def include_js
         []
       end
@@ -208,29 +180,56 @@ module Netzke
         [js_included, js_class].join("\n")
       end
 
-      # Little helper
-      def this; "this".l; end
+      protected
 
-      # Little helper
-      def null; "null".l; end
+        # Little helper
+        def this; "this".l; end
 
-      private
+        # Little helper. E.g.:
+        #
+        #     js_property :load_mask, null
+        def null; "null".l; end
 
-        def expand_js_include_path(sym, callr)
+        # JS properties and methods merged together
+        def js_extend_properties
+          @js_extend_properties ||= js_properties.merge(js_methods)
+        end
+
+        # Generates declaration of the JS class as direct extension of a Ext component
+        def js_class_declaration_new_component
+          mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
+          %(#{js_full_class_name} = Ext.extend(#{js_base_class}, Netzke.chainApply(Netzke.componentMixin(#{js_base_class}), #{mixins}
+  #{js_extend_properties.to_nifty_json}));)
+        end
+
+        # Generates declaration of the JS class as extension of another Netzke component
+        def js_class_declaration_extending_component
+          base_class = superclass.js_full_class_name
+
+          mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
+
+          %{#{js_full_class_name} = Ext.extend(#{base_class}, Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}));}
+        end
+
+        def expand_js_include_path(sym, callr) # :nodoc:
           %Q(#{callr.split(".rb:").first}/javascripts/#{sym}.js)
+        end
+
+        def extends_netzke_component? # :nodoc:
+          superclass != Netzke::Base
         end
 
     end
 
     module InstanceMethods
-      # Config that is used for instantiating the component in javascript
+      # Config that, after being converted to JSON, is used for instantiating the component in JavaScript.
       def js_config
         res = {}
 
         # Unique id of the component
-        res.merge!(:id => global_id)
+        res[:id] = global_id
 
-        # Non-late components
+        # Non-lazy-loaded components
         comp_hash = {}
         non_late_components.each_pair do |comp_name, comp_config|
           comp_instance = component_instance(comp_name.to_sym)
@@ -242,9 +241,9 @@ module Netzke
         # +items+, generally, only contain a subset of all non-lazy-loaded children.
         res[:components] = comp_hash unless comp_hash.empty?
 
-        # Api (besides the default "deliver_component" - JavaScript side already knows about it)
+        # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
         endpoints = self.class.registered_endpoints - [:deliver_component]
-        res.merge!(:endpoints => endpoints) unless endpoints.empty?
+        res[:endpoints] = endpoints unless endpoints.empty?
 
         # Inform the JavaScript side if persistent_config is enabled
         # res[:persistent_config] = persistence_enabled?
@@ -260,15 +259,10 @@ module Netzke
           res.merge!(config[:ext_config])
         end
 
+        # Items (nested Ext/Netzke components)
         res[:items] = items unless items.blank?
 
         res
-      end
-
-      # Helper to access config[:ext_config] - DEPRECATED
-      def ext_config
-        ::ActiveSupport::Deprecation.warn("Using ext_config is deprecated. All config options must be specified at the same level in the hash.", caller)
-        config[:ext_config] || {}
       end
 
       # All the JS-code required by this instance of the component to be instantiated in the browser.
@@ -278,6 +272,12 @@ module Netzke
           cached.include?(k.js_xtype) ? r : r + k.js_code#.strip_js_comments
         end
         code.blank? ? nil : code
+      end
+
+      # DEPRECATED. Helper to access config[:ext_config].
+      def ext_config
+        ::ActiveSupport::Deprecation.warn("Using ext_config is deprecated. All config options must be specified at the same level in the hash.", caller)
+        config[:ext_config] || {}
       end
 
     end
