@@ -24,7 +24,9 @@ Netzke assumes that your ExtJS library is in public/extjs (which may be a symbol
 
 == Usage
 
-=== Creating a simple component
+Refer to https://github.com/skozlov/netzke-core/wiki/Defining-and-extending-components for details on building/extending components using netzke-core.
+
+=== "Hello world" component
 
 Let's create a simple "Hello world!" component and embed it into a Rails' view. It'll be an Ext.Panel-based component with a button that triggers a client-server communication.
 
