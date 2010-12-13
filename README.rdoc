@@ -100,7 +100,7 @@ That's it. While playing with the component, use Firebug or similar tool to chec
 
 == Sencha Touch support
 
-netzke-core has support for Sencha Touch. Create reusable code for Sencha Touch with the same ease as you do for Sencha Ext, getting *reusability*, *composition*, *inheritance*, and dead-simple <strong>client-server communication</strong> out-of-the-box.
+netzke-core has support for Sencha Touch. Create reusable code for Sencha Touch with the same ease as you do for Sencha Ext, getting *reusability*, *composition*, *inheritance*, and dead-simple *client*-*server* *communication* out-of-the-box.
 
 Here's how the code for Sencha Touch HelloWorldComponent may look like:
 
