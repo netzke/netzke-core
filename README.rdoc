@@ -32,7 +32,7 @@ Sencha Touch files are assumed to be in public/sencha-touch:
 
 Refer to https://github.com/skozlov/netzke-core/wiki/Defining-and-extending-components for details on building/extending components using netzke-core.
 
-API docs: http://api.netzke.org/core/
+API docs: http://api.netzke.org/core
 
 === "Hello world" component (Ext)
 
@@ -128,7 +128,7 @@ Here's how the code for Sencha Touch HelloWorldComponent may look like:
       end
     end
 
-Embed the component just the same way you do in case of Ext. The only difference is in calling +netzke_init+, which should be provided with the +:platform+ config option set to +:touch+:
+Embed the component just the same way you do in case of Ext. The only difference is in calling +netzke_init+, which should be provided with the :platform config option set to :touch:
 
     <%= netzke_init :platform => :touch %>
 
