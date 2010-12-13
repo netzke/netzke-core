@@ -2,10 +2,6 @@ module Touch
   class ServerCaller < Netzke::Base
     js_base_class "Ext.Panel"
 
-    js_properties(
-      :fullscreen => true
-    )
-
     def configuration
       super.merge({
         :docked_items => [{:dock => :top, :xtype => :toolbar, :title => 'Server Caller', :items => [
