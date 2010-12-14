@@ -4,5 +4,5 @@ class ComponentWithCustomCss < Netzke::Base
 
   js_property :html, "A component with the body hidden by means of custom CSS"
 
-  css_include "#{File.dirname(__FILE__)}/custom.css"
+  css_include :custom
 end

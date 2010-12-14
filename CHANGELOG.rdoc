@@ -2,8 +2,9 @@
 * enhancements
   * An endpoint can now "call" JavaScript functions that accept multiple parameters, by specifying an array, e.g.:
       {:some_js_function => [arg1, arg2]}
-  * New API: +js_mixin+ method (see RDocs)
-  * Set JS class property +load_mask_msg+ if you want to see a mask when a component gets dynamically loaded with +loadComponent+. Also +load_mask_msg_cls+ will be used as the second param for the Ext.Element#mask call, and defaults to "x-mask-loading".
+  * New API: +js_mixin+ method to "mixin" JavaScript objects from external files (see RDocs)
+  * New JS class +componentLoadMask+ property to configure a mask when a component gets dynamically loaded with +loadComponent+. Accepts the same configuration as Ext.LoadMask.
+  * +js_include+ and +css_include+ accept both symbols and strings, where strings would contain full paths to the included file, whereas symbols get expanded to full paths following simple conventions (see RDocs for details)
 
 * bug fix
   * The "componentload" event now gets fired after a component is dynamically loaded. The handler receives the instance of the loaded component.
