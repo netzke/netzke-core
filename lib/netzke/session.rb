@@ -2,6 +2,22 @@ module Netzke
   # This modules provides (component-specific) session manupulation.
   # The :session_persistence config option should be set to true in order for the component to make use of this.
   module Session
+    class ComponentSessionProxy < Hash #:nodoc:
+      def initialize(component_id)
+        @component_id = component_id
+        super
+      end
+
+      def [](key)
+        (Netzke::Core.session[@component_id] || {})[key]
+      end
+
+      def []=(key, value)
+        (Netzke::Core.session[@component_id] ||= {})[key] = value
+        # super
+      end
+    end
+
     # Top-level session (straight from the controller).
     def session
       ::Netzke::Core.session
@@ -9,7 +25,7 @@ module Netzke
 
     # Component-specific session.
     def component_session
-      session[global_id] ||= {}
+      @component_session_proxy ||= ComponentSessionProxy.new(global_id)
     end
 
     # Returns this component's configuration options stored in the session. Those get merged into the component's configuration at instantiation.
@@ -20,8 +36,7 @@ module Netzke
     # Updates the session options
     def update_session_options(hash)
       if session_persistence_enabled?
-        component_session[:options] ||= {}
-        component_session[:options].merge!(hash)
+        component_session.deep_merge!(:options => hash)
       else
         logger.debug "Netzke warning: No session persistence enabled for component '#{global_id}'"
       end

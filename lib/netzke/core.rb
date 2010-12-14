@@ -15,15 +15,16 @@ module Netzke
   # The following configuration options are available:
   # * ext_location - absolute path to your Ext code root
   # * icons_uri - relative URI to the icons
-  # * javascript_on_main_page (true/false, defaults to false) - if you want the JS classes to be inserted into the code of the page,
-  # rather than into netzke.js (setting to true can be handy for debugging)
   module Core
     extend Session
     extend Masquerading
+    # Ext or Touch
+    mattr_accessor :platform
+    @@platform = :ext
 
     # set in Netzke::ControllerExtensions
     mattr_accessor :controller
-    
+
     # set in Netzke::ControllerExtensions
     mattr_accessor :session
     @@session = {}
@@ -38,18 +39,16 @@ module Netzke
     @@external_css = []
 
     # Set in the Engine after_initialize callback
-    mattr_accessor :ext_location
+    mattr_accessor :ext_location # TODO: rename to ext_path
+    mattr_accessor :touch_location # TODO: rename to touch_path
     mattr_accessor :with_icons
 
     mattr_accessor :icons_uri
     @@icons_uri = "/images/icons"
 
-    mattr_accessor :javascript_on_main_page
-    @@javascript_on_main_page = true
-
     mattr_accessor :persistence_manager
     @@persistence_manager = "NetzkeComponentState"
-    
+
     # Set in the Engine after_initialize callback
     mattr_accessor :persistence_manager_class
 
