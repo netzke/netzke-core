@@ -1,5 +1,5 @@
 module Netzke
-  module Rails
+  module Railz
     module ActionViewExt
       # Implementation of Ext-specific helpers
       module Ext #:nodoc:

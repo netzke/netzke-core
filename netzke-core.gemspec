@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-12-14}
+  s.date = %q{2010-12-15}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -72,12 +72,12 @@ Gem::Specification.new do |s|
     "lib/netzke/ext_component.rb",
     "lib/netzke/javascript.rb",
     "lib/netzke/javascript/scopes.rb",
-    "lib/netzke/rails.rb",
-    "lib/netzke/rails/action_view_ext.rb",
-    "lib/netzke/rails/action_view_ext/ext.rb",
-    "lib/netzke/rails/action_view_ext/touch.rb",
-    "lib/netzke/rails/controller_extensions.rb",
-    "lib/netzke/rails/routes.rb",
+    "lib/netzke/railz.rb",
+    "lib/netzke/railz/action_view_ext.rb",
+    "lib/netzke/railz/action_view_ext/ext.rb",
+    "lib/netzke/railz/action_view_ext/touch.rb",
+    "lib/netzke/railz/controller_extensions.rb",
+    "lib/netzke/railz/routes.rb",
     "lib/netzke/services.rb",
     "lib/netzke/session.rb",
     "lib/netzke/state.rb",

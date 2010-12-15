@@ -22,13 +22,13 @@ end
 
 # Rails specific
 if defined? Rails
-  require 'netzke/rails'
+  require 'netzke/railz'
 
   ActiveSupport.on_load(:action_controller) do
-    include Netzke::Rails::ControllerExtensions
+    include Netzke::Railz::ControllerExtensions
   end
 
   ActiveSupport.on_load(:action_view) do
-    include Netzke::Rails::ActionViewExt
+    include Netzke::Railz::ActionViewExt
   end
 end

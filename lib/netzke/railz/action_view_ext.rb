@@ -1,7 +1,7 @@
-require 'netzke/rails/action_view_ext/ext'
-require 'netzke/rails/action_view_ext/touch'
+require 'netzke/railz/action_view_ext/ext'
+require 'netzke/railz/action_view_ext/touch'
 module Netzke
-  module Rails
+  module Railz
     module ActionViewExt
       include Ext
       include Touch
