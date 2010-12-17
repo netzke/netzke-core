@@ -1,5 +1,5 @@
 module Netzke
-  module Rails
+  module Railz
     module ControllerExtensions
       def self.included(base)
         base.send(:before_filter, :set_session_data)

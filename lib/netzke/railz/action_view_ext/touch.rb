@@ -1,5 +1,5 @@
 module Netzke
-  module Rails
+  module Railz
     module ActionViewExt
       # Implementation of Touch-specific helpers
       module Touch #:nodoc:
