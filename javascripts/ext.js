@@ -8,10 +8,10 @@ Ext.state.Provider.prototype.set = function(){};
 
 // Check Ext JS version
 (function(){
-  var requiredExtVersion = "3.3.0";
+  var requiredExtVersion = "3.3.1";
   var currentExtVersion = Ext.version;
   if (requiredExtVersion !== currentExtVersion) {
-    Netzke.deprecationWarning("Netzke needs Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
+    Netzke.deprecationWarning("Need Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
   }
 })();
 
