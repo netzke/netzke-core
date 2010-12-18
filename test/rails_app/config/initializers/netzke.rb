@@ -1,3 +1,3 @@
 Netzke::Core.setup do |config|
-  # config.ext_location = "blah"
+  # config.icons_uri = "/images/icons"
 end
