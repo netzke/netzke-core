@@ -72,9 +72,10 @@ module Netzke
     end
 
     private
+
       def normalize_action_config(config)
         if config[:icon].is_a?(Symbol)
-          config[:icon] = Netzke::Core.with_icons ? Netzke::Core.icons_uri + "/" + config[:icon].to_s + ".png" : nil
+          config[:icon] = uri_to_icon(config[:icon])
         end
 
         config[:text] ||= config[:name].humanize
@@ -82,30 +83,8 @@ module Netzke
         config
       end
 
-      def auto_collect_actions_from_config_and_js_properties
-        # res = extract_actions(js_properties)
-        # puts %Q(!!! res: #{res.inspect}\n)
+      def uri_to_icon(icon)
+        Netzke::Core.with_icons ? Netzke::Core.icons_uri + "/" + icon.to_s + ".png" : nil
       end
-
-      # def extract_actions(hsh)
-      #   hsh.each_pair.inject({}) do |r,(k,v)|
-      #     v.is_a?(Array) ? r.merge(extract_actions_from_array(v)) : r
-      #   end
-      # end
-      #
-      # def extract_actions_from_array(arry)
-      #   arry.inject({}) do |r, el|
-      #     if el.is_a?(Hash)
-      #       el[:action] ? r.merge(el[:action] => default_action_config(el[:action])) : r.merge(extract_actions(el))
-      #     else
-      #       r
-      #     end
-      #   end
-      # end
-      #
-      # def default_action_config(action_name)
-      #   {:text => action_name.to_s.humanize}
-      # end
-
   end
 end

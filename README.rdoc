@@ -30,7 +30,7 @@ Sencha Touch files are assumed to be in public/sencha-touch:
 
 == Usage
 
-Refer to https://github.com/skozlov/netzke-core/wiki/Defining-and-extending-components for details on building/extending components using netzke-core.
+Refer to https://github.com/skozlov/netzke/wiki/Details-on-building-and-extending-components for details on building/extending components.
 
 API docs: http://api.netzke.org/core
 

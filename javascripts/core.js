@@ -212,7 +212,7 @@ Netzke.componentMixin = function(receiver){
 
     // Returns API url based on provided API point
     buildApiUrl: function(endpoint){
-      Netzke.deprecationWarning("buildApiUrl() is deprecated. Use endpointUrl() first");
+      Netzke.deprecationWarning("buildApiUrl() is deprecated. Use endpointUrl() instead.");
       return this.endpointUrl(endpoint);
     },
 

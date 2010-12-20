@@ -18,6 +18,7 @@ module Netzke
   module Core
     extend Session
     extend Masquerading
+
     # Ext or Touch
     mattr_accessor :platform
     @@platform = :ext
