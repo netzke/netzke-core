@@ -53,7 +53,7 @@ module Netzke
       end
     end
 
-		
+    
     class << self
       # Component's short class name, e.g.:
       # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
@@ -103,12 +103,12 @@ module Netzke
         # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
         res == self.superclass.read_inheritable_attribute(attr_name) ? [] : res
       end
-		  
-		  if Rails.configuration.cache_classes
-    		extend ActiveSupport::Memoizable
-    		memoize :constantize_class_name
-    		memoize :constantize_class_name_or_nil
-      end
+      
+#      if Rails.configuration.cache_classes
+      extend ActiveSupport::Memoizable
+      memoize :constantize_class_name
+      memoize :constantize_class_name_or_nil
+#      end
     end
 
 
