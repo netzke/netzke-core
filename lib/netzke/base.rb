@@ -1,4 +1,5 @@
 require 'active_support/core_ext'
+require 'active_support/memoizable'
 require 'netzke/core_ext'
 require 'netzke/javascript'
 require 'netzke/stylesheets'
@@ -47,6 +48,8 @@ module Netzke
     attr_reader :global_id
 
     class << self
+      extend ActiveSupport::Memoizable
+
       # Component's short class name, e.g.:
       # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
       def short_component_class_name
@@ -57,8 +60,14 @@ module Netzke
       def constantize_class_name(class_name)
         "#{class_name}".constantize
       rescue NameError
-        "Netzke::#{class_name}".constantize
+        begin
+          "Netzke::#{class_name}".constantize
+        rescue NameError
+          nil
+        end
       end
+
+      memoize :constantize_class_name
 
       # Instance of component by config
       def instance_by_config(config)
