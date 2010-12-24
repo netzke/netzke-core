@@ -67,7 +67,7 @@ module Netzke
         end
       end
 
-      memoize :constantize_class_name
+      memoize :constantize_class_name unless Rails.env.development?
 
       # Instance of component by config
       def instance_by_config(config)
