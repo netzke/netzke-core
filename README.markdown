@@ -13,8 +13,8 @@ Netzke Core is the bare bones of the Netzke framework. For **pre-built full-feat
 
 ### Getting started
 
-* Follow the simple [installation](https://github.com/skozlov/netzke/wiki/Installation) steps.
-* Learn how to build the [Hello World!](https://github.com/skozlov/netzke/wiki/Hello-world-extjs) component.
+* Follow the simple [installation](https://github.com/skozlov/netzke-core/wiki/Installation) steps.
+* Learn how to build the [Hello World!](https://github.com/skozlov/netzke-core/wiki/Hello-world-extjs) component.
 * Dive into the [documentation](https://github.com/skozlov/netzke/wiki).
 * Get help on the [Google Groups](http://groups.google.com/group/netzke).
 
@@ -22,11 +22,11 @@ Netzke Core is the bare bones of the Netzke framework. For **pre-built full-feat
 
 Netzke Core has support for Sencha Touch, so you can create components for mobile web apps as easily.
 
-* Learn how to build the [Hello World!](https://github.com/skozlov/netzke/wiki/Hello-world-touch) Sencha Touch component.
+* Learn how to build the [Hello World!](https://github.com/skozlov/netzke-core/wiki/Hello-world-touch) Sencha Touch component.
 
-### Automatic tests
+### Automated tests
 
-* Learn how to run cucumber and RSpec [tests](https://github.com/skozlov/netzke/wiki/Testing-Netzke-Core).
+* Learn how to run Cucumber and RSpec [tests](https://github.com/skozlov/netzke-core/wiki/Testing-Netzke-Core).
 
 ### Playground
 
@@ -43,8 +43,8 @@ or, for scoped components:
     http://localhost:3000/components/ScopedComponents::SomeScopedComponent
 
 ### More info
-* Netzke [website](http://netzke.org)
-* [Live-demo](http://demo.netzke.org) with sample code
+* [Project website](http://netzke.org)
+* [Live-demo](http://demo.netzke.org) (with sample code)
 * I'm [twitting](http://twitter.com/skozlov) about Netzke development
 * The [netzke-basepack](https://github.com/skozlov/netzke-basepack) project (pre-built full-featured components)
 
