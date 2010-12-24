@@ -32,7 +32,7 @@ Netzke Core has support for Sencha Touch, so you can create components for mobil
 
 Netzke Core is bundled with Cucumber and RSpec tests. If you would like to contribute to the project, you may want to learn how to [run the tests](https://github.com/skozlov/netzke-core/wiki/Automated-testing).
 
-Besides, the bundled test application is a convenient [playground](https://github.com/skozlov/netzke-core/wiki/Automated-testing) for those who search to experiment with the framework.
+Besides, the bundled test application is a convenient [playground](https://github.com/skozlov/netzke-core/wiki/Playground) for those who search to experiment with the framework.
 
 ### Useful links
 * [Project website](http://netzke.org).
