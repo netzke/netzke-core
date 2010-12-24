@@ -9,24 +9,24 @@ Netzke is a framework that greatly facilitates creation of Sencha [Ext JS](http:
 
 Having these at your disposal, you can quickly build _amazingly_ complex RIA ("Rich Internet Applications") without turning your code into a mess.
 
-Netzke Core is the bare bones of the Netzke framework. For pre-built full-featured components (like grids, forms, tab/accordion panels, applications, etc), see [netzke-basepack](http://github.com/skozlov/netzke-basepack) (Ext JS).
+Netzke Core is the bare bones of the Netzke framework. For **pre-built full-featured components** (like grids, forms, tab/accordion panels, applications, etc), see [netzke-basepack](http://github.com/skozlov/netzke-basepack) (Ext JS).
 
 ### Getting started
 
-* Follow the simple [installation](https://github.com/skozlov/netzke/wiki/Installation) steps
-* Learn how to build the [Hello World!](https://github.com/skozlov/netzke/wiki/Hello-world-extjs) component
-* Dive into the [documentation](https://github.com/skozlov/netzke/wiki)
-* Get help on the [Google Groups](http://groups.google.com/group/netzke)
+* Follow the simple [installation](https://github.com/skozlov/netzke/wiki/Installation) steps.
+* Learn how to build the [Hello World!](https://github.com/skozlov/netzke/wiki/Hello-world-extjs) component.
+* Dive into the [documentation](https://github.com/skozlov/netzke/wiki).
+* Get help on the [Google Groups](http://groups.google.com/group/netzke).
 
 ### Sencha Touch support
 
 Netzke Core has support for Sencha Touch, so you can create components for mobile web apps as easily.
 
-* Learn how to build the [Hello World!](https://github.com/skozlov/netzke/wiki/Hello-world-touch) Sencha Touch component
+* Learn how to build the [Hello World!](https://github.com/skozlov/netzke/wiki/Hello-world-touch) Sencha Touch component.
 
 ### Automatic tests
 
-* Learn how to run cucumber and RSpec [tests](https://github.com/skozlov/netzke/wiki/Testing-Netzke-Core)
+* Learn how to run cucumber and RSpec [tests](https://github.com/skozlov/netzke/wiki/Testing-Netzke-Core).
 
 ### Playground
 
@@ -48,5 +48,5 @@ or, for scoped components:
 * I'm [twitting](http://twitter.com/skozlov) about Netzke development
 * The [netzke-basepack](https://github.com/skozlov/netzke-basepack) project (pre-built full-featured components)
 
----
-Copyright (c) 2008-2010 Sergei Kozlov, released under the MIT license
+
+*Copyright (c) 2008-2010 Sergei Kozlov, released under the MIT license*
