@@ -26,7 +26,7 @@ Netzke Core has support for Sencha Touch, so you can create components for mobil
 
 ### Automated tests
 
-* Learn how to run Cucumber and RSpec [tests](https://github.com/skozlov/netzke-core/wiki/Testing-Netzke-Core).
+* Learn how to run Cucumber and RSpec [tests](https://github.com/skozlov/netzke-core/wiki/Automated-testing).
 
 ### Playground
 
