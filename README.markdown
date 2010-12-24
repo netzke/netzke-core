@@ -9,7 +9,7 @@ Netzke is a framework that greatly facilitates creation of Sencha [Ext JS](http:
 
 Having these at your disposal, you can quickly build _amazingly_ complex RIA ("Rich Internet Applications") without turning your code into a mess.
 
-Netzke Core is the bare bones of the Netzke framework. For **pre-built full-featured components** (like grids, forms, tab/accordion panels, applications, etc), see [netzke-basepack](http://github.com/skozlov/netzke-basepack) (Ext JS).
+Netzke Core is the bare bones of the Netzke framework. For **pre-built** full-featured **components** (like grids, forms, tab/accordion panels, applications, etc), see [netzke-basepack](http://github.com/skozlov/netzke-basepack) (Ext JS).
 
 ### Getting started
 
