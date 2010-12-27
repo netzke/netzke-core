@@ -19,6 +19,13 @@ module Netzke
       # after loading initializers and classes
       config.after_initialize do
         Netzke::Core.with_icons = File.exists?("#{::Rails.root}/public#{Netzke::Core.icons_uri}") if Netzke::Core.with_icons.nil?
+
+        # If need to cache classes, memoize Netzke::Base.constantize_class_name for performance
+        if Rails.configuration.cache_classes
+          class << Netzke::Base
+            memoize :constantize_class_name
+          end
+        end
       end
     end
   end

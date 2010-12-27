@@ -56,7 +56,8 @@ module Netzke
         self.name.sub(/^Netzke::/, "")
       end
 
-      # Component's class, given its name
+      # Component's class, given its name.
+      # Note: this method will be memoized if Rails.configuration.cache_classes is true.
       def constantize_class_name(class_name)
         "#{class_name}".constantize
       rescue NameError
@@ -66,8 +67,6 @@ module Netzke
           nil
         end
       end
-
-      memoize :constantize_class_name unless Rails.env.development?
 
       # Instance of component by config
       def instance_by_config(config)
