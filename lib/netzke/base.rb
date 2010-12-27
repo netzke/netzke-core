@@ -1,4 +1,5 @@
 require 'active_support/core_ext'
+require 'active_support/memoizable'
 require 'netzke/core_ext'
 require 'netzke/javascript'
 require 'netzke/stylesheets'
@@ -46,34 +47,25 @@ module Netzke
     # Global id in the components tree, following the double-underscore notation, e.g. +books__config_panel__form+
     attr_reader :global_id
 
-    def clean_up
-      component_session=nil
-      Netzke::Core.session.delete_if do |k, v|
-        k.starts_with? self.global_id
-      end
-    end
-
-    
     class << self
+      extend ActiveSupport::Memoizable
+
       # Component's short class name, e.g.:
       # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
       def short_component_class_name
         self.name.sub(/^Netzke::/, "")
       end
 
-
-      # Component's class, given its name
+      # Component's class, given its name.
+      # Note: this method will be memoized if Rails.configuration.cache_classes is true.
       def constantize_class_name(class_name)
         "#{class_name}".constantize
       rescue NameError
-        "Netzke::#{class_name}".constantize
-      end
-
-      # Component's class, given its name
-      def constantize_class_name_or_nil(class_name)
-        "#{class_name}".constantize
-      rescue NameError
-        nil
+        begin
+          "Netzke::#{class_name}".constantize
+        rescue NameError
+          nil
+        end
       end
 
       # Instance of component by config
@@ -103,12 +95,6 @@ module Netzke
         # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
         res == self.superclass.read_inheritable_attribute(attr_name) ? [] : res
       end
-      
-#      if Rails.configuration.cache_classes
-      extend ActiveSupport::Memoizable
-      memoize :constantize_class_name
-      memoize :constantize_class_name_or_nil
-#      end
     end
 
 

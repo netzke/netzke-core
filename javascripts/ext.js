@@ -174,8 +174,10 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       container.removeChild();
     }
 
-    if (this.componentLoadMask){
-      storedConfig.loadMaskCmp = new Ext.LoadMask((container || this).getEl(), this.componentLoadMask);
+    // Show loading mask if possible
+    var containerEl = (container || this).getEl();
+    if (this.componentLoadMask && containerEl){
+      storedConfig.loadMaskCmp = new Ext.LoadMask(containerEl, this.componentLoadMask);
       storedConfig.loadMaskCmp.show();
     }
 

@@ -6,6 +6,7 @@
   * New JS class +componentLoadMask+ property to configure a mask when a component gets dynamically loaded with +loadComponent+. Accepts the same configuration as Ext.LoadMask.
   * +js_include+ and +css_include+ accept both symbols and strings, where strings would contain full paths to the included file, whereas symbols get expanded to full paths following simple conventions (see RDocs for details)
   * Make some of Netzke::Core setup happen earlier in the loading process, so that we can safely use it while defining components.
+  * Performance improvements by memoizing +Base.constantize_class_name+.
 
 * bug fix
   * The "componentload" event now gets fired after a component is dynamically loaded. The handler receives the instance of the loaded component.

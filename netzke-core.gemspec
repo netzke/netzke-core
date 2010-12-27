@@ -9,12 +9,12 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2010-12-19}
+  s.date = %q{2010-12-27}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
     "LICENSE",
-    "README.rdoc",
+    "README.markdown",
     "TODO"
   ]
   s.files = [
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
     "CHANGELOG.rdoc",
     "LICENSE",
     "Manifest",
-    "README.rdoc",
+    "README.markdown",
     "Rakefile",
     "TODO",
     "app/controllers/netzke_controller.rb",
@@ -116,6 +116,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/extended_component_with_js_mixin.rb",
     "test/rails_app/app/components/extended_component_with_js_mixin/javascripts/some_method_set.js",
     "test/rails_app/app/components/extended_server_caller.rb",
+    "test/rails_app/app/components/hello_world_component.rb",
     "test/rails_app/app/components/included.js",
     "test/rails_app/app/components/kinda_complex_component.rb",
     "test/rails_app/app/components/kinda_complex_component/basic_stuff.rb",
@@ -218,6 +219,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/extended_component_with_actions.rb",
     "test/rails_app/app/components/extended_component_with_js_mixin.rb",
     "test/rails_app/app/components/extended_server_caller.rb",
+    "test/rails_app/app/components/hello_world_component.rb",
     "test/rails_app/app/components/kinda_complex_component.rb",
     "test/rails_app/app/components/kinda_complex_component/basic_stuff.rb",
     "test/rails_app/app/components/kinda_complex_component/extra_stuff.rb",
