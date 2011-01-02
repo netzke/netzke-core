@@ -8,8 +8,9 @@ module Netzke
     class InheritedComponent < SomeComponent
     end
 
-    describe "extends_netzke_component?" do
-      InheritedComponent.extends_netzke_component?.should == true
+    it "should be indicated by extends_netzke_component? if we're extending a Netzke component" do
+      SomeComponent.send(:"extends_netzke_component?").should == false
+      InheritedComponent.send(:"extends_netzke_component?").should == true
     end
   end
 end
