@@ -1,3 +1,4 @@
+Ext.ns("Netzke.classes.Core");
 Ext.apply(Netzke.classes.Core.Mixin, {
   /* initComponent common for all Netzke components */
   initComponentWithNetzke: function(){
@@ -18,7 +19,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   Detects action configs in the passed object, and replaces them with instances of Ext.Action created by normalizeActions().
   This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
   */
-  // Modified for Touch!
   detectActions: function(o){
     if (Ext.isObject(o)) {
       if ((typeof o.handler === 'string') && Ext.isFunction(this[o.handler.camelize(true)])) {

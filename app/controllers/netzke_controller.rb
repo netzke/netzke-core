@@ -7,23 +7,30 @@ class NetzkeController < ApplicationController
     respond_to do |format|
       format.js {
         res = initial_dynamic_javascript << "\n"
-        Netzke::Core.javascripts.each do |path|
+
+        # Core JavaScript
+        res << File.new(File.expand_path("../../../javascripts/core.js", __FILE__)).read
+        # Ext-specific JavaScript
+        res << File.new(File.expand_path("../../../javascripts/ext.js", __FILE__)).read
+
+        # Pluggable JavaScript (used by other Netzke-powered gems like netzke-basepack)
+        Netzke::Core.ext_javascripts.each do |path|
           f = File.new(path)
           res << f.read
         end
-
-        # Ext-specific stuff
-        res << File.new(File.expand_path("../../../javascripts/ext.js", __FILE__)).read
 
         render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
       }
 
       format.css {
-        res = ""
-        Netzke::Core.stylesheets.each do |path|
+        res = File.new(File.expand_path("../../../stylesheets/core.css", __FILE__))
+
+        # Pluggable stylesheets (may be used by other Netzke-powered gems like netzke-basepack)
+        Netzke::Core.ext_stylesheets.each do |path|
           f = File.new(path)
           res << f.read
         end
+
         render :text => res
       }
     end
@@ -34,22 +41,29 @@ class NetzkeController < ApplicationController
       format.js {
         res = initial_dynamic_javascript << "\n"
 
-        Netzke::Core.javascripts.each do |path|
+        # Core JavaScript
+        res << File.new(File.expand_path("../../../javascripts/core.js", __FILE__)).read
+        # Touch-specific JavaScript
+        res << File.new(File.expand_path("../../../javascripts/touch.js", __FILE__)).read
+
+        # Pluggable JavaScript (may be used by other Netzke-powered gems like netzke-basepack)
+        Netzke::Core.touch_javascripts.each do |path|
           f = File.new(path)
           res << f.read
         end
-
-        res << File.new(File.expand_path("../../../javascripts/touch.js", __FILE__)).read
 
         render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
       }
 
       format.css {
-        res = ""
-        Netzke::Core.stylesheets.each do |path|
+        res = File.new(File.expand_path("../../../stylesheets/core.css", __FILE__))
+
+        # Pluggable stylesheets (may be used by other Netzke-powered gems like netzke-basepack)
+        Netzke::Core.touch_stylesheets.each do |path|
           f = File.new(path)
           res << f.read
         end
+
         render :text => res
       }
     end

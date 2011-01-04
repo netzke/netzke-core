@@ -23,6 +23,7 @@ Feature: Composition
   Scenario: Server should be able to address (deeply) nested components
     Given I am on the SomeComposite test page
     When I press "Update west from server"
+    And I sleep 1 second
     Then I should see "Here's an update for west panel"
 
     When I press "Update east south from server"
