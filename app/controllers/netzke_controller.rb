@@ -23,7 +23,7 @@ class NetzkeController < ApplicationController
       }
 
       format.css {
-        res = File.new(File.expand_path("../../../stylesheets/core.css", __FILE__))
+        res = File.new(File.expand_path("../../../stylesheets/core.css", __FILE__)).read
 
         # Pluggable stylesheets (may be used by other Netzke-powered gems like netzke-basepack)
         Netzke::Core.ext_stylesheets.each do |path|
@@ -56,7 +56,7 @@ class NetzkeController < ApplicationController
       }
 
       format.css {
-        res = File.new(File.expand_path("../../../stylesheets/core.css", __FILE__))
+        res = File.new(File.expand_path("../../../stylesheets/core.css", __FILE__)).read
 
         # Pluggable stylesheets (may be used by other Netzke-powered gems like netzke-basepack)
         Netzke::Core.touch_stylesheets.each do |path|

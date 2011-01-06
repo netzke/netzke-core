@@ -147,6 +147,7 @@ module Netzke
             component_class_name = component_config[:class_name]
             raise ArgumentError, "No class_name specified for component #{aggr} of #{composite.global_id}" if component_class_name.nil?
             component_class = constantize_class_name(component_class_name)
+            raise ArgumentError, "Unknown constant #{component_class_name}" if component_class.nil?
 
             conf = weak_children_config.
               deep_merge(component_config).
