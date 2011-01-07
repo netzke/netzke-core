@@ -231,7 +231,7 @@ module Netzke
 
         # Non-lazy-loaded components
         comp_hash = {}
-        non_late_components.each_pair do |comp_name, comp_config|
+        eager_loaded_components.each_pair do |comp_name, comp_config|
           comp_instance = component_instance(comp_name.to_sym)
           comp_instance.before_load
           comp_hash[comp_name] = comp_instance.js_config

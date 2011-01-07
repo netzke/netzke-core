@@ -27,6 +27,7 @@ Feature: Composition
     Then I should see "Here's an update for west panel"
 
     When I press "Update east south from server"
+    And I sleep 1 second
     Then I should see "Here's an update for south panel in east panel"
 
 

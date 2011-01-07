@@ -32,10 +32,12 @@ class ComponentLoader < Netzke::Base
 
   action :load_composite
 
+  action :load_with_params
+
   js_properties(
     :title => "Component Loader",
     :layout => "fit",
-    :bbar => [{:text => "Load component", :ref => "../button"}, {:text => "Load in window", :ref => "../loadInWindowButton"}, :load_with_feedback.action, :load_window_with_simple_component.action, :load_composite.action]
+    :bbar => [{:text => "Load component", :ref => "../button"}, {:text => "Load in window", :ref => "../loadInWindowButton"}, :load_with_feedback.action, :load_window_with_simple_component.action, :load_composite.action, :load_with_params.action]
   )
 
   js_method :on_load_window_with_simple_component, <<-JS
@@ -47,6 +49,12 @@ class ComponentLoader < Netzke::Base
   js_method :on_load_composite, <<-JS
     function(params){
       this.loadComponent({name: "some_composite"});
+    }
+  JS
+
+  js_method :on_load_with_params, <<-JS
+    function(params){
+      this.loadComponent({name: "simple_component", params: {html: "Simple Component with changed HTML"}});
     }
   JS
 
@@ -69,6 +77,13 @@ class ComponentLoader < Netzke::Base
       }, this);
     }
   JS
+
+  def deliver_component_endpoint(params)
+    if params[:name] == "simple_component" && params[:html]
+      components[:simple_component].merge!(:html => params[:html])
+    end
+    super
+  end
 
   # For visual testing purposes
   # def deliver_component_endpoint(params)

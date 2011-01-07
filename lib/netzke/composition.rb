@@ -1,6 +1,21 @@
 # require 'active_support/core_ext/class/inheritable_attributes'
 
 module Netzke
+  # You can define a nested components by calling the class method +component+:
+  #
+  #     component :users, :data_class => "GridPanel", :model => "User"
+  #
+  # The method also accepts a block in case you want access to the component's instance:
+  #
+  #     component :books do
+  #       {:data_class => "Book", :title => build_title}
+  #     end
+  #
+  # To override a component, define a method {component_name}_component, e.g.:
+  #
+  #     def books_component
+  #       super.merge(:title => "Modified Title")
+  #     end
   module Composition
     extend ActiveSupport::Concern
 
@@ -15,7 +30,7 @@ module Netzke
       # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
       endpoint :deliver_component do |params|
         cache = params[:cache].split(",") # array of cached xtypes
-        component_name = params.delete(:name).underscore.to_sym
+        component_name = params[:name].underscore.to_sym
         component = components[component_name] && component_instance(component_name)
 
         if component
@@ -38,15 +53,6 @@ module Netzke
     module ClassMethods
 
       # Defines a nested component.
-      # For example:
-      #
-      #     component :users, :data_class => "GridPanel", :model => "User"
-      #
-      # It can also accept a block (receiving as parameter the eventual definition from super class):
-      #
-      #     component :books do |orig|
-      #       {:data_class => "Book", :title => orig[:title] + ", extended"}
-      #     end
       def component(name, config = {}, &block)
         register_component(name)
         config = config.dup
@@ -69,6 +75,7 @@ module Netzke
         end
       end
 
+      # DEPRECATED in favor of Symbol#component
       # Component's js config used when embedding components as Container's items
       # (see some_composite.rb for an example)
       def js_component(name, config = {})
@@ -91,11 +98,13 @@ module Netzke
     end
 
     module InstanceMethods
+      extend ActiveSupport::Memoizable
 
-      def items
+      def items #:nodoc:
         @items_with_normalized_components
       end
 
+      # DEPRECATED in favor of Base.component
       def initial_components
         {}
       end
@@ -105,14 +114,16 @@ module Netzke
         @components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }
       end
 
-      def non_late_components
+      def eager_loaded_components
         components.reject{|k,v| v[:lazy_loading]}
       end
 
+      # DEPRECATED
       def add_component(aggr)
         components.merge!(aggr)
       end
 
+      # DEPRECATED
       def remove_component(aggr)
         if config[:persistent_config]
           persistence_manager_class.delete_all_for_component("#{global_id}__#{aggr}")
@@ -120,52 +131,41 @@ module Netzke
         components[aggr] = nil
       end
 
-      # The difference between components and late components is the following: the former gets instantiated together with its composite and is normally *instantly* visible as a part of it (for example, the component in the initially expanded panel in an Accordion). A late component doesn't get instantiated along with its composite. Until it gets requested from the server, it doesn't take any part in its composite's life. An example of late component could be a component that is loaded dynamically into a previously collapsed panel of an Accordion, or a preferences window (late component) for a component (composite) that only gets shown when user wants to edit component's preferences.
-      def initial_late_components
-        {}
-      end
-
-      def add_late_component(aggr)
-        components.merge!(aggr.merge(:lazy_loading => true))
-      end
-
-      # called when the method_missing tries to processes a non-existing component
+      # Called when the method_missing tries to processes a non-existing component
       def component_missing(aggr)
         flash :error => "Unknown component #{aggr} for component #{name}"
         {:feedback => @flash}.to_nifty_json
       end
 
-      # recursively instantiates an component based on its "path": e.g. if we have component :aggr1 which in its turn has component :aggr10, the path to the latter would be "aggr1__aggr10"
+      # Recursively instantiates a component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
       def component_instance(name, strong_config = {})
-        @cached_component_instances ||= {}
-        @cached_component_instances[name] ||= begin
-          composite = self
-          name.to_s.split('__').each do |aggr|
-            aggr = aggr.to_sym
-            component_config = composite.components[aggr]
-            raise ArgumentError, "No child component '#{aggr}' defined for component '#{composite.global_id}'" if component_config.nil?
-            component_class_name = component_config[:class_name]
-            raise ArgumentError, "No class_name specified for component #{aggr} of #{composite.global_id}" if component_class_name.nil?
-            component_class = constantize_class_name(component_class_name)
-            raise ArgumentError, "Unknown constant #{component_class_name}" if component_class.nil?
+        composite = self
+        name.to_s.split('__').each do |cmp|
+          cmp = cmp.to_sym
 
-            conf = weak_children_config.
-              deep_merge(component_config).
-              deep_merge(strong_config). # we may want to reconfigure the component at the moment of instantiation
-              merge(:name => aggr)
+          component_config = composite.components[cmp]
+          raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.global_id}'" if component_config.nil?
 
-            composite = component_class.new(conf, composite) # params: config, parent
-            # composite.weak_children_config = weak_children_config
-            # composite.strong_children_config = strong_children_config
-          end
-          composite
+          component_class_name = component_config[:class_name]
+          raise ArgumentError, "No class_name specified for component #{cmp} of #{composite.global_id}" if component_class_name.nil?
+
+          component_class = constantize_class_name(component_class_name)
+          raise ArgumentError, "Unknown constant #{component_class_name}" if component_class.nil?
+
+          instance_config = weak_children_config.merge(component_config).merge(strong_config).merge(:name => cmp)
+
+          composite = component_class.new(instance_config, composite) # params: config, parent
         end
+        composite
       end
 
+      memoize :component_instance # for performance
+
+      # All components that we depend on (used to render all necessary JavaScript and stylesheets)
       def dependency_classes
         res = []
 
-        non_late_components.keys.each do |aggr|
+        eager_loaded_components.keys.each do |aggr|
           res += component_instance(aggr).dependency_classes
         end
 
@@ -175,19 +175,7 @@ module Netzke
         res.uniq
       end
 
-      ## Dependencies
-      # def dependencies
-      #   @dependencies ||= begin
-      #     non_late_components_component_classes = non_late_components.values.map{|v| v[:class_name]}
-      #     (initial_dependencies + non_late_components_component_classes << self.class.short_component_class_name).uniq
-      #   end
-      # end
-
-      # override this method if you need some extra dependencies, which are not the components
-      def initial_dependencies
-        []
-      end
-
+      # DEPRECATED
       def js_component(*args)
         self.class.js_component(*args)
       end
@@ -234,9 +222,9 @@ module Netzke
         end
       end
 
-      private
+      protected
 
-        def normalize_components(items)
+        def normalize_components(items) #:nodoc:
           @component_index ||= 0
           @items_with_normalized_components = items.each_with_index.map do |item, i|
             if is_component_config?(item)
@@ -252,11 +240,11 @@ module Netzke
           end
         end
 
-        def normalize_components_in_items
+        def normalize_components_in_items #:nodoc:
           normalize_components(config[:items]) if config[:items]
         end
 
-        def is_component_config?(c)
+        def is_component_config?(c) #:nodoc:
           !!(c.is_a?(Hash) && c[:class_name])
         end
     end
