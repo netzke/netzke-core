@@ -12,12 +12,8 @@ module Netzke
       })
     end
 
-    def initial_components
-      {
-        :nested_one => {:class_name => 'NestedComponentOne'},
-        :nested_two => {:class_name => 'NestedComponentTwo'}
-      }
-    end
+    component :nested_one, :class_name => 'NestedComponentOne'
+    component :nested_two, :class_name => 'NestedComponentTwo'
 
     def available_permissions
       %w(read update)

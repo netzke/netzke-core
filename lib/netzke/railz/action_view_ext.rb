@@ -29,9 +29,9 @@ module Netzke
         @rendered_classes ||= []
 
         # if we are the first netzke call on the page, reset components hash in the session
-        if @rendered_classes.empty?
-          Netzke::Core.reset_components_in_session
-        end
+        # if @rendered_classes.empty?
+        #   Netzke::Core.reset_components_in_session
+        # end
 
         class_name = config[:class_name] ||= name.to_s.camelcase
 

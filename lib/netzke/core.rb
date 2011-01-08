@@ -30,14 +30,21 @@ module Netzke
     mattr_accessor :session
     @@session = {}
 
-    mattr_accessor :javascripts
-    @@javascripts = ["#{File.dirname(__FILE__)}/../../javascripts/core.js"]
+    mattr_accessor :ext_javascripts
+    @@ext_javascripts = []
 
-    mattr_accessor :stylesheets
-    @@stylesheets = ["#{File.dirname(__FILE__)}/../../stylesheets/core.css"]
+    mattr_accessor :ext_stylesheets
+    @@ext_stylesheets = []
 
-    mattr_accessor :external_css
-    @@external_css = []
+    mattr_accessor :touch_javascripts
+    @@touch_javascripts = []
+
+    mattr_accessor :touch_stylesheets
+    @@touch_stylesheets = []
+
+    # Stylesheets that cannot be loaded dynamically along with the rest of the component, e.g. due to that relative paths are used in them
+    mattr_accessor :external_ext_css
+    @@external_ext_css = []
 
     # Set in the Engine after_initialize callback
     mattr_accessor :ext_location # TODO: rename to ext_path

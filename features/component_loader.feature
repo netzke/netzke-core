@@ -19,12 +19,17 @@ Feature: Component loader
     When I press "Load with feedback"
     Then I should see "Callback invoked!"
 
-
   @selenium
   Scenario: Component loader should load a window component with another component in it
     Given I am on the ComponentLoader test page
     When I press "Load window with simple component"
     Then I should see "Simple Component Inside Window"
     And I should see "Inner text"
+
+  @selenium
+  Scenario: Component loader should load a component with params properly
+    Given I am on the ComponentLoader test page
+    When I press "Load with params"
+    Then I should see "Simple Component with changed HTML"
 
 

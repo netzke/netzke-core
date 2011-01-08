@@ -97,158 +97,156 @@ Netzke.reg = function(xtype, klass) {
 Netzke.classes.Core.Mixin = {};
 
 // Properties/methods common to all Netzke component classes
-Netzke.componentMixin = function(receiver){
-  return Ext.apply({
-    isNetzke: true, // to distinguish Netzke components from regular Ext components
-    latestResult: {}, // latest result returned from the server via an API call
-    /*
-    Overriding the constructor to only apply an "alias method chain" to initComponent
-    */
-    constructor: function(config){
-      Netzke.aliasMethodChain(this, "initComponent", "netzke");
-      receiver.superclass.constructor.call(this, config);
-    },
+Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
+  isNetzke: true, // to distinguish Netzke components from regular Ext components
+  latestResult: {}, // latest result returned from the server via an API call
+  /*
+  Overriding the constructor to only apply an "alias method chain" to initComponent
+  */
+  // constructor: function(config){
+    // Netzke.aliasMethodChain(this, "initComponent", "netzke");
+    // receiver.superclass.constructor.call(this, config);
+  // },
 
-    /*
-    Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod()
-    */
-    processEndpoints: function(){
-      var endpoints = this.endpoints || [];
-      endpoints.push('deliver_component'); // all Netzke components get this endpoint
-      Ext.each(endpoints, function(intp){
-        this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
+  /*
+  Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod()
+  */
+  processEndpoints: function(){
+    var endpoints = this.endpoints || [];
+    endpoints.push('deliver_component'); // all Netzke components get this endpoint
+    Ext.each(endpoints, function(intp){
+      this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
+    }, this);
+  },
+
+  /*
+  Detects component placeholders in the passed object (typically, "items"),
+  and merges them with the corresponding config from this.components.
+  This way it becomes ready to be instantiated properly by Ext.
+  */
+  detectComponents: function(o){
+    if (Ext.isObject(o)) {
+      if (o.items) this.detectComponents(o.items);
+    } else if (Ext.isArray(o)) {
+      var a = o;
+      Ext.each(a, function(el, i){
+        if (el.component) {
+          a[i] = Ext.apply(this.components[el.component.camelize(true)], el);
+          delete a[i].component;
+        } else if (el.items) this.detectComponents(el.items);
       }, this);
-    },
+    }
+  },
 
-    /*
-    Detects component placeholders in the passed object (typically, "items"),
-    and merges them with the corresponding config from this.components.
-    This way it becomes ready to be instantiated properly by Ext.
-    */
-    detectComponents: function(o){
-      if (Ext.isObject(o)) {
-        if (o.items) this.detectComponents(o.items);
-      } else if (Ext.isArray(o)) {
-        var a = o;
-        Ext.each(a, function(el, i){
-          if (el.component) {
-            a[i] = Ext.apply(this.components[el.component.camelize(true)], el);
-            delete a[i].component;
-          } else if (el.items) this.detectComponents(el.items);
-        }, this);
-      }
-    },
+  /*
+  Evaluates CSS
+  */
+  evalCss : function(code){
+    var linkTag = document.createElement('style');
+    linkTag.type = 'text/css';
+    linkTag.innerHTML = code;
+    document.body.appendChild(linkTag);
+  },
 
-    /*
-    Evaluates CSS
-    */
-    evalCss : function(code){
-      var linkTag = document.createElement('style');
-      linkTag.type = 'text/css';
-      linkTag.innerHTML = code;
-      document.body.appendChild(linkTag);
-    },
+  /*
+  Evaluates JS
+  */
+  evalJs : function(code){
+    eval(code);
+  },
 
-    /*
-    Evaluates JS
-    */
-    evalJs : function(code){
-      eval(code);
-    },
+  /*
+  Gets id in the context of provided parent.
+  For example, the components "properties", being a child of "books" has global id "books__properties",
+  which *is* its widegt's real id. This methods, with the instance of "books" passed as parameter,
+  returns "properties".
+  */
+  localId : function(parent){
+    return this.id.replace(parent.id + "__", "");
+  },
 
-    /*
-    Gets id in the context of provided parent.
-    For example, the components "properties", being a child of "books" has global id "books__properties",
-    which *is* its widegt's real id. This methods, with the instance of "books" passed as parameter,
-    returns "properties".
-    */
-    localId : function(parent){
-      return this.id.replace(parent.id + "__", "");
-    },
+  /*
+  Executes a bunch of methods. This method is called almost every time a communication to the server takes place.
+  Thus the server side of a component can provide any set of commands to its client side.
+  Args:
+    - instructions: array of methods, in the order of execution.
+      Each item is an object in one of the following 2 formats:
+        1) {method1:args1, method2:args2}, where methodN is a name of a public method of this component; these methods are called in no particular order
+        2) {component:component_id, methods:arrayOfMethods}, used for recursive call to bulkExecute on some child component
 
-    /*
-    Executes a bunch of methods. This method is called almost every time a communication to the server takes place.
-    Thus the server side of a component can provide any set of commands to its client side.
-    Args:
-      - instructions: array of methods, in the order of execution.
-        Each item is an object in one of the following 2 formats:
-          1) {method1:args1, method2:args2}, where methodN is a name of a public method of this component; these methods are called in no particular order
-          2) {component:component_id, methods:arrayOfMethods}, used for recursive call to bulkExecute on some child component
+  Example:
+    - [
+        // the same as this.feedback("Your order is accepted")
+        {feedback: "You order is accepted"},
 
-    Example:
-      - [
-          // the same as this.feedback("Your order is accepted")
-          {feedback: "You order is accepted"},
+        // the same as this.getChildComponent('users').bulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}])
+        {component:'users', methods:[{setTitle:'Suprise!'}, {setDisabled:true}] },
 
-          // the same as this.getChildComponent('users').bulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}])
-          {component:'users', methods:[{setTitle:'Suprise!'}, {setDisabled:true}] },
-
-          // ... etc:
-          {updateStore:{records:[[1, 'Name1'],[2, 'Name2']], total:10}},
-          {setColums:[{},{}]},
-          {setMenus:[{},{}]},
-          ...
-        ]
-    */
-    bulkExecute : function(instructions){
-      if (Ext.isArray(instructions)) {
-        Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
-      } else {
-        for (var instr in instructions) {
-          if (Ext.isFunction(this[instr])) {
-            // Executing the method. If arguments are an array, expand that into arguments.
-            this[instr].apply(this, Ext.isArray(instructions[instr]) ? instructions[instr] : [instructions[instr]]);
+        // ... etc:
+        {updateStore:{records:[[1, 'Name1'],[2, 'Name2']], total:10}},
+        {setColums:[{},{}]},
+        {setMenus:[{},{}]},
+        ...
+      ]
+  */
+  bulkExecute : function(instructions){
+    if (Ext.isArray(instructions)) {
+      Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
+    } else {
+      for (var instr in instructions) {
+        if (Ext.isFunction(this[instr])) {
+          // Executing the method. If arguments are an array, expand that into arguments.
+          this[instr].apply(this, Ext.isArray(instructions[instr]) ? instructions[instr] : [instructions[instr]]);
+        } else {
+          var childComponent = this.getChildComponent(instr);
+          if (childComponent) {
+            childComponent.bulkExecute(instructions[instr]);
           } else {
-            var childComponent = this.getChildComponent(instr);
-            if (childComponent) {
-              childComponent.bulkExecute(instructions[instr]);
-            } else {
-              throw "Netzke: Unknown method or child component '" + instr +"' in component '" + this.id + "'"
-            }
+            throw "Netzke: Unknown method or child component '" + instr +"' in component '" + this.id + "'"
           }
         }
       }
-    },
-
-    // Returns API url based on provided API point
-    buildApiUrl: function(endpoint){
-      Netzke.deprecationWarning("buildApiUrl() is deprecated. Use endpointUrl() instead.");
-      return this.endpointUrl(endpoint);
-    },
-
-    endpointUrl: function(endpoint){
-      return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
-    },
-
-    // Does the call to the server and processes the response
-    callServer : function(intp, params, callback, scope){
-      Netzke.runningRequests++;
-      if (!params) params = {};
-        Ext.Ajax.request({
-        params: params,
-        url: this.endpointUrl(intp),
-        callback: function(options, success, response){
-          if (success && response.responseText) {
-            // execute commands from server
-            this.bulkExecute(Ext.decode(response.responseText));
-
-            // provide callback if needed
-            if (typeof callback == 'function') {
-              if (!scope) scope = this;
-              callback.apply(scope, [this.latestResult]);
-            }
-          }
-        },
-        scope : this
-      });
-      Netzke.runningRequests--;
-    },
-
-    setResult: function(result) {
-      this.latestResult = result;
     }
-  }, Netzke.classes.Core.Mixin);
-};
+  },
+
+  // Returns API url based on provided API point
+  buildApiUrl: function(endpoint){
+    Netzke.deprecationWarning("buildApiUrl() is deprecated. Use endpointUrl() instead.");
+    return this.endpointUrl(endpoint);
+  },
+
+  endpointUrl: function(endpoint){
+    return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
+  },
+
+  // Does the call to the server and processes the response
+  callServer : function(intp, params, callback, scope){
+    Netzke.runningRequests++;
+    if (!params) params = {};
+      Ext.Ajax.request({
+      params: params,
+      url: this.endpointUrl(intp),
+      callback: function(options, success, response){
+        if (success && response.responseText) {
+          // execute commands from server
+          this.bulkExecute(Ext.decode(response.responseText));
+
+          // provide callback if needed
+          if (typeof callback == 'function') {
+            if (!scope) scope = this;
+            callback.apply(scope, [this.latestResult]);
+          }
+        }
+      },
+      scope : this
+    });
+    Netzke.runningRequests--;
+  },
+
+  setResult: function(result) {
+    this.latestResult = result;
+  }
+});
 
 
 // Netzke extensions for Ext.Container

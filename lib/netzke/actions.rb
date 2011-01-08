@@ -1,22 +1,21 @@
 module Netzke
-  # Netzke component allows specifying Ext actions.
-  # An action can be defined in 2 different ways, both of which result in a method definition like this
-  #     def _<some_action>_action
-  #       ...
-  #     end
-  #
+  # Netzke components allow specifying Ext actions.
   # The 2 ways to define an action are:
-  # * as a hash:
-  #     action :bug_server, :text => "Call server", :icon => "/images/icons/phone.png"
+  # * as a hash, e.g:
   #
-  # * as a block:
+  #     action :bug_server, :text => "Call server", :icon => :phone
+  #
+  # (if the same action was defined in the super class, the superclass's definition get merged with the current definition)
+  #
+  # * as a block, in case you need access to the component's instance, e.g.:
   #     action :bug_server do
   #       {:text => config[:text], :disabled => true}
   #     end
   #
-  # The block can optionally receive the configuration of an action being overridden:
-  #     action :bug_server do |orig|
-  #       {:text => config[:text] + orig[:text], :disabled => orig[:disabled]}
+  # Both of the ways result in a definition of an instance method named {action_name}_action. So, overriding an action in the child class is done be redefining the method, e.g.:
+  #
+  #     def bug_server_action
+  #       # super will have the superclass's action definition
   #     end
   module Actions
     extend ActiveSupport::Concern
