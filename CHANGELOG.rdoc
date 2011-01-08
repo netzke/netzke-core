@@ -1,4 +1,5 @@
 = v0.6.5 - EDGE
+* fixes for the IE
 * enhancements
   * An endpoint can now "call" JavaScript functions that accept multiple parameters, by specifying an array, e.g.:
       {:some_js_function => [arg1, arg2]}

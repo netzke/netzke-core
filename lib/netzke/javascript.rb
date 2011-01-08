@@ -198,7 +198,12 @@ module Netzke
         # Generates declaration of the JS class as direct extension of a Ext component
         def js_class_declaration_new_component
           mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
-          %(#{js_full_class_name} = Ext.extend(#{js_base_class}, Netzke.chainApply(Netzke.componentMixin(#{js_base_class}), #{mixins}
+          %(#{js_full_class_name} = function(config){
+            Netzke.aliasMethodChain(this, "initComponent", "netzke");
+            #{js_full_class_name}.superclass.constructor.call(this, config);
+          };
+
+          Ext.extend(#{js_full_class_name}, #{js_base_class}, Netzke.chainApply(Netzke.componentMixin, #{mixins}
   #{js_extend_properties.to_nifty_json}));)
         end
 
