@@ -32,8 +32,15 @@ module Netzke
     end
 
     # Merges passed hash into component's state.
-    def update_state(hsh)
-      state_manager.update_state!(hsh)
+    # Can also accept 2 arguments which will be treated as a hash pair. E.g.:
+    #
+    #     update_state(:peoples_most_feared_number, 13)
+    #
+    # is equivalent to:
+    #
+    #     update_state(:peoples_most_feared_number => 13)
+    def update_state(*args)
+      state_manager.update_state!(args.first.is_a?(Hash) ? args.first : {args.first => args.last})
       @state = nil # reset cache
     end
 

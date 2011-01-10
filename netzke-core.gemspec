@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-01-08}
+  s.date = %q{2011-01-10}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -88,6 +88,7 @@ Gem::Specification.new do |s|
     "spec/component/base_spec.rb",
     "spec/component/composition_spec.rb",
     "spec/component/javascript_spec.rb",
+    "spec/component/state_spec.rb",
     "spec/core_ext_spec.rb",
     "spec/spec.opt",
     "spec/spec_helper.rb",
@@ -165,6 +166,7 @@ Gem::Specification.new do |s|
     "test/rails_app/config/locales/en.yml",
     "test/rails_app/config/routes.rb",
     "test/rails_app/db/development_structure.sql",
+    "test/rails_app/db/migrate/20110110132720_create_netzke_component_states.rb",
     "test/rails_app/db/schema.rb",
     "test/rails_app/db/seeds.rb",
     "test/rails_app/lib/tasks/.gitkeep",
@@ -205,6 +207,7 @@ Gem::Specification.new do |s|
     "spec/component/base_spec.rb",
     "spec/component/composition_spec.rb",
     "spec/component/javascript_spec.rb",
+    "spec/component/state_spec.rb",
     "spec/core_ext_spec.rb",
     "spec/spec_helper.rb",
     "test/rails_app/app/components/border_layout_panel.rb",
@@ -256,6 +259,7 @@ Gem::Specification.new do |s|
     "test/rails_app/config/initializers/secret_token.rb",
     "test/rails_app/config/initializers/session_store.rb",
     "test/rails_app/config/routes.rb",
+    "test/rails_app/db/migrate/20110110132720_create_netzke_component_states.rb",
     "test/rails_app/db/schema.rb",
     "test/rails_app/db/seeds.rb",
     "test/rails_app/spec/controllers/touch_controller_spec.rb",
