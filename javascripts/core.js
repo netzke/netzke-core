@@ -142,10 +142,12 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   Evaluates CSS
   */
   evalCss : function(code){
-    var linkTag = document.createElement('style');
-    linkTag.type = 'text/css';
-    linkTag.innerHTML = code;
-    document.body.appendChild(linkTag);
+    var head = Ext.fly(document.getElementsByTagName('head')[0]);
+    Ext.DomHelper.append(head, {
+      tag: 'style',
+      type: 'text/css',
+      html: code
+    });
   },
 
   /*
