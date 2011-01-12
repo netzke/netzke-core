@@ -1,5 +1,5 @@
 class ServerCaller < Netzke::Base
-  action :bug_server, :text => "Call server"
+  action :bug_server # Actual action's text is set in en.yml
 
   js_properties(
     :title => "Server Caller",

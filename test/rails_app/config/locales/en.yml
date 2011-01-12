@@ -2,4 +2,10 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  server_caller:
+    actions:
+      bug_server: "Call server"
+  extended_server_caller:
+    actions:
+      bug_server: "Call server"
+      bug_server_tooltip: "With tooltip"
