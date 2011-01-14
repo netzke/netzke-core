@@ -1,6 +1,7 @@
-= v0.6.5 - 2011-01-11
+= v0.6.5 - 2011-01-14
 * enhancements
-  * various fixes for IE
+  * Various fixes for IE
+  * Support for Sencha Touch
   * An endpoint can now "call" JavaScript functions that accept multiple parameters, by specifying an array, e.g.:
       {:some_js_function => [arg1, arg2]}
   * New API: +js_mixin+ method to "mixin" JavaScript objects from external files (see RDocs).
