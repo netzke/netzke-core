@@ -1,3 +1,5 @@
+= v0.6.6 - to be released
+
 = v0.6.5 - 2011-01-14
 * enhancements
   * Various fixes for IE
