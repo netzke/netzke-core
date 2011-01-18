@@ -28,7 +28,7 @@ module Netzke
 
     # Component's persistent state.
     def state
-      @state ||= (state_manager.state || {}).symbolize_keys
+      @state ||= (state_manager.try(:state) || {}).symbolize_keys
     end
 
     # Merges passed hash into component's state.
@@ -40,18 +40,18 @@ module Netzke
     #
     #     update_state(:peoples_most_feared_number => 13)
     def update_state(*args)
-      state_manager.update_state!(args.first.is_a?(Hash) ? args.first : {args.first => args.last})
+      state_manager.try(:update_state!, args.first.is_a?(Hash) ? args.first : {args.first => args.last})
       @state = nil # reset cache
     end
 
     # Component's persistent state.
     def global_state
-      @global_state ||= (global_state_manager.state || {}).symbolize_keys
+      @global_state ||= (global_state_manager.try(:state) || {}).symbolize_keys
     end
 
     # Merges passed hash into component's state.
     def update_global_state(hsh)
-      global_state_manager.update_state!(hsh)
+      global_state_manager.try(:update_state!, hsh)
       @global_state = nil # reset cache
     end
 
@@ -71,7 +71,7 @@ module Netzke
 
     # Initialized state manager class. At this moment this class has current_user, component, and session set.
     def state_manager
-      @state_manager ||= Netzke::Core.persistence_manager_class.init({
+      @state_manager ||= Netzke::Core.persistence_manager_class && Netzke::Core.persistence_manager_class.init({
         :component => persistence_key,
         :current_user => Netzke::Core.controller.respond_to?(:current_user) && Netzke::Core.controller.current_user,
         :session => Netzke::Core.session
@@ -80,7 +80,7 @@ module Netzke
 
     # Initialized state manager class, configured for managing global (not component specific) settings. At this moment this class has current_user and session set.
     def global_state_manager
-      @global_state_manager ||= Netzke::Core.persistence_manager_class.init({
+      @global_state_manager ||= Netzke::Core.persistence_manager_class && Netzke::Core.persistence_manager_class.init({
         :current_user => Netzke::Core.controller.respond_to?(:current_user) && Netzke::Core.controller.current_user,
         :session => Netzke::Core.session
       })
