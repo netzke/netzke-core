@@ -69,4 +69,18 @@ class Hash
     freeze
   end
 
+  # From http://rubyworks.github.com/facets
+  def update_keys #:yield:
+    if block_given?
+      keys.each { |old_key| store(yield(old_key), delete(old_key)) }
+    else
+      to_enum(:update_keys)
+    end
+  end
+
+  def literalize_keys
+    update_keys{ |k| k.to_s.l }
+    self
+  end
+
 end

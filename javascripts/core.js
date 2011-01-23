@@ -11,9 +11,9 @@ Ext.BLANK_IMAGE_URL = Netzke.RelativeExtUrl + "/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 
 Netzke.isLoading=function () {
-  return Netzke.runningRequests!=0;
+  return Netzke.runningRequests != 0;
 }
-Netzke.runningRequests=0
+Netzke.runningRequests = 0;
 
 Netzke.deprecationWarning = function(msg){
   if (typeof console == 'undefined') {
