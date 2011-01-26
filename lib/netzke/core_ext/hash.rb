@@ -69,16 +69,18 @@ class Hash
     freeze
   end
 
-  # Javascrit-like access to Hash values
-  def method_missing(method, *args)
-    if method.to_s =~ /=$/
-      method_base = method.to_s.sub(/=$/,'').to_sym
-      key = self[method_base.to_s].nil? ? method_base : method_base.to_s
-      self[key] = args.first
+  # From http://rubyworks.github.com/facets
+  def update_keys #:yield:
+    if block_given?
+      keys.each { |old_key| store(yield(old_key), delete(old_key)) }
     else
-      key = self[method.to_s].nil? ? method : method.to_s
-      self[key]
+      to_enum(:update_keys)
     end
+  end
+
+  def literalize_keys
+    update_keys{ |k| k.to_s.l }
+    self
   end
 
 end

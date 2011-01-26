@@ -146,6 +146,10 @@ module Netzke
       components.keys.each { |k| component_instance(k).clean_up }
     end
 
+    def i18n_id
+      self.class.name.split("::").map{|c| c.underscore}.join(".")
+    end
+
     private
 
       def logger #:nodoc:

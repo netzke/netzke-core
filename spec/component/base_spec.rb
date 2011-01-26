@@ -22,4 +22,15 @@ describe Netzke::Base do
     Parent.with_feature.should == "maybe"
     Child.with_feature.should == "no"
   end
+
+  it "should return correct i18n_id" do
+    module Netzke
+      module MyComponents
+        class CoolComponent < Netzke::Base
+        end
+      end
+    end
+
+    Netzke::MyComponents::CoolComponent.new.i18n_id.should == "netzke.my_components.cool_component"
+  end
 end

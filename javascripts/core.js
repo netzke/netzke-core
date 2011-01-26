@@ -11,9 +11,9 @@ Ext.BLANK_IMAGE_URL = Netzke.RelativeExtUrl + "/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 
 Netzke.isLoading=function () {
-  return Netzke.runningRequests!=0;
+  return Netzke.runningRequests != 0;
 }
-Netzke.runningRequests=0
+Netzke.runningRequests = 0;
 
 Netzke.deprecationWarning = function(msg){
   if (typeof console == 'undefined') {
@@ -142,10 +142,12 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   Evaluates CSS
   */
   evalCss : function(code){
-    var linkTag = document.createElement('style');
-    linkTag.type = 'text/css';
-    linkTag.innerHTML = code;
-    document.body.appendChild(linkTag);
+    var head = Ext.fly(document.getElementsByTagName('head')[0]);
+    Ext.DomHelper.append(head, {
+      tag: 'style',
+      type: 'text/css',
+      html: code
+    });
   },
 
   /*

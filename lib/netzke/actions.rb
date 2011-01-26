@@ -1,5 +1,7 @@
 module Netzke
-  # Netzke components allow specifying Ext actions.
+  # Netzke components allow specifying Ext actions (see http://dev.sencha.com/deploy/dev/docs/?class=Ext.Action)
+  #
+  # == Defining actions in a component
   # The 2 ways to define an action are:
   # * as a hash, e.g:
   #
@@ -17,6 +19,16 @@ module Netzke
   #     def bug_server_action
   #       # super will have the superclass's action definition
   #     end
+  #
+  # == I18n of actions
+  # The text and tooltip for an action will be automatically picked up from a locale file when possible.
+  # E.g., an action named "some_action" and defined in the component +MyComponents::CoolComponent+, will look for its text in:
+  #
+  #     I18n.t('my_components.cool_component.actions.some_action')
+  #
+  # and for its tooltip in:
+  #
+  #     I18n.t('my_components.cool_component.actions.some_action_tooltip')
   module Actions
     extend ActiveSupport::Concern
 
@@ -63,7 +75,7 @@ module Netzke
 
     # All actions for this instance
     def actions
-      @actions ||= self.class.registered_actions.inject({}){ |res, name| res.merge(name.to_sym => normalize_action_config(send(ACTION_METHOD_NAME % name))) }
+      @actions ||= self.class.registered_actions.inject({}){ |res, name| res.merge(name.to_sym => normalize_action_config(send(ACTION_METHOD_NAME % name).merge(:name => name.to_s))) }
     end
 
     def js_config_with_actions #:nodoc
@@ -77,7 +89,10 @@ module Netzke
           config[:icon] = uri_to_icon(config[:icon])
         end
 
-        config[:text] ||= config[:name].humanize
+        # Default text and tooltip
+        default_text = I18n.t(i18n_id + ".actions." + config[:name], :default => config[:name].humanize)
+        config[:text] ||= default_text
+        config[:tooltip] ||= I18n.t(i18n_id + ".actions." + config[:name] + "_tooltip", :default => default_text)
 
         config
       end
