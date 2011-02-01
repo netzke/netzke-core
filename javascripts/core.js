@@ -131,6 +131,10 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       this[intp.camelize(true)] = function(arg, callback, scope) {
         scope=scope || that;
         Netzke.providers[compName][intp.camelize(true)].call(typeof scope != 'undefined' ? scope : that, arg, function(result, remotingEvent) {
+          if(remotingEvent.message) {
+            console.error("RPC event indicates an error: ", remotingEvent);
+            throw new Error(remotingEvent.message);
+          }
           scope.bulkExecute(result);
         });
       }
@@ -140,16 +144,13 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       "url": Netzke.RelativeUrlRoot + "/netzke/direct/"+compName, // url to connect to the Ext.Direct server-side router.
       "namespace":"Netzke.providers", // namespace to create the Remoting Provider in
       "actions": {},
-      "enableBuffer": 1000
+      "maxRetries": 2, // try to dispatch every rpc 3 times
+      "enableBuffer": true, // buffer/batch requests within 10ms timeframe
+      "timeout": 30000 // 30s timeout per request
     };
     // need to do this in a seperate step because JSON doesn't support variable keys
     providerConfig['actions'][compName]=directActions; // array of methods within each server side Class
     
-    // var provider=new Ext.direct.RemotingProvider(providerConfig);
-    // provider.on("data", function (provider, event) {
-    //   console.info(provider);
-    //   console.info(event);
-    // });
     Ext.Direct.addProvider(providerConfig);
   },
 
