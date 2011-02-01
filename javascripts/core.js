@@ -102,6 +102,17 @@ Ext.Direct.on('rpcresult', function(e){
             out.el.scrollTo('t', 100000, true);
 });
 
+Netzke.classes.RailsCompatibleRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
+  getCallData: function(t){
+      return {
+          act: t.action,
+          method: t.method,
+          data: t.data,
+          type: 'rpc',
+          tid: t.tid
+      };
+  },  
+});
 
 // Properties/methods common to all Netzke component classes
 Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
@@ -141,7 +152,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     }, this);
     providerConfig={
       "type":"remoting",       // create a Ext.direct.RemotingProvider
-      "url": Netzke.RelativeUrlRoot + "/netzke/direct/"+compName, // url to connect to the Ext.Direct server-side router.
+      "url": Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
       "namespace":"Netzke.providers", // namespace to create the Remoting Provider in
       "actions": {},
       "maxRetries": 2, // try to dispatch every rpc 3 times
@@ -150,8 +161,8 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     };
     // need to do this in a seperate step because JSON doesn't support variable keys
     providerConfig['actions'][compName]=directActions; // array of methods within each server side Class
-    
-    Ext.Direct.addProvider(providerConfig);
+    var provider=new Netzke.classes.RailsCompatibleRemotingProvider(providerConfig);
+    Ext.Direct.addProvider(provider);
   },
 
   /*

@@ -70,19 +70,28 @@ class NetzkeController < ApplicationController
   end
   
   private
-  def invoke_endpoint component_name, action, tid
+  def invoke_endpoint component_name, action, data, tid
+    data=data[0] || {} # we get data as an array, extract the single argument if available
     component_instance=Netzke::Base.instance_by_config Netzke::Core.session[:netzke_components][component_name]
     endpoint_action = action.index('__') ? action : "_#{action}_ep_wrapper"
     # TODO: decode data and pass it
-    return "{ \"type\": \"rpc\", \"tid\": #{tid}, \"action\": \"#{component_name}\", \"method\": \"#{action}\", \"result\": #{component_instance.send(endpoint_action, params)}}"
+    return "{ \"type\": \"rpc\", \"tid\": #{tid}, \"action\": \"#{component_name}\", \"method\": \"#{action}\", \"result\": #{component_instance.send(endpoint_action, data)}}"
   end
   public  
 
   # Handler for Ext.Direct RPC calls
   def direct
-    #if params['_json'] TODO: handle batched requests
-    result=invoke_endpoint params[:id].underscore.to_sym, params[:method].underscore, params[:tid]
-    render :text => result, :layout => false
+    result=""
+    if params['_json'] # this seems to be a batched request
+      params['_json'].each do |batch|
+        result+= result.blank? ? '[' : ', '
+        result+=invoke_endpoint batch[:act].underscore.to_sym, batch[:method].underscore, batch[:data], batch[:tid]
+      end
+      result+=']'
+    else # this is a single request
+      result=invoke_endpoint params[:act].underscore.to_sym, params[:method].underscore, params[:data], params[:tid]
+    end
+    render :text => result, :layout => false    
   end
 
   # Main dispatcher of the HTTP requests. The URL contains the name of the component,
