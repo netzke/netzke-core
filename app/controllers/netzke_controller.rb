@@ -68,7 +68,22 @@ class NetzkeController < ApplicationController
       }
     end
   end
+  
+  private
+  def invoke_endpoint component_name, action, tid
+    component_instance=Netzke::Base.instance_by_config Netzke::Core.session[:netzke_components][component_name]
+    endpoint_action = action.index('__') ? action : "_#{action}_ep_wrapper"
+    # TODO: decode data and pass it
+    return "{ \"type\": \"rpc\", \"tid\": #{tid}, \"action\": \"#{component_name}\", \"method\": \"#{action}\", \"result\": #{component_instance.send(endpoint_action, params)}}"
+  end
+  public  
 
+  # Handler for Ext.Direct RPC calls
+  def direct
+    #if params['_json'] TODO: handle batched requests
+    result=invoke_endpoint params[:id].underscore.to_sym, params[:method].underscore, params[:tid]
+    render :text => result, :layout => false
+  end
 
   # Main dispatcher of the HTTP requests. The URL contains the name of the component,
   # as well as the method of this component to be called, according to the double underscore notation.

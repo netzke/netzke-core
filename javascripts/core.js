@@ -96,6 +96,13 @@ Netzke.reg = function(xtype, klass) {
 
 Netzke.classes.Core.Mixin = {};
 
+// Handle rpcresult type server events (responses to endpoint calls)
+Ext.Direct.on('rpcresult', function(e){
+    out.append(String.format('<p><i>{0}</i></p>', e.data));
+            out.el.scrollTo('t', 100000, true);
+});
+
+
 // Properties/methods common to all Netzke component classes
 Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   isNetzke: true, // to distinguish Netzke components from regular Ext components
@@ -110,13 +117,40 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
 
   /*
   Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod()
+  using Ext.Direct
   */
   processEndpoints: function(){
     var endpoints = this.endpoints || [];
+    var compName=this.id.camelize(true);
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
+    var directActions = [];
+    var that=this;
     Ext.each(endpoints, function(intp){
-      this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
+      directActions.push({"name":intp.camelize(true), "len":1});
+      //this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
+      this[intp.camelize(true)] = function(arg, callback, scope) {
+        scope=scope || that;
+        Netzke.providers[compName][intp.camelize(true)].call(typeof scope != 'undefined' ? scope : that, arg, function(result, remotingEvent) {
+          scope.bulkExecute(result);
+        });
+      }
     }, this);
+    providerConfig={
+      "type":"remoting",       // create a Ext.direct.RemotingProvider
+      "url": Netzke.RelativeUrlRoot + "/netzke/direct/"+compName, // url to connect to the Ext.Direct server-side router.
+      "namespace":"Netzke.providers", // namespace to create the Remoting Provider in
+      "actions": {},
+      "enableBuffer": 1000
+    };
+    // need to do this in a seperate step because JSON doesn't support variable keys
+    providerConfig['actions'][compName]=directActions; // array of methods within each server side Class
+    
+    // var provider=new Ext.direct.RemotingProvider(providerConfig);
+    // provider.on("data", function (provider, event) {
+    //   console.info(provider);
+    //   console.info(event);
+    // });
+    Ext.Direct.addProvider(providerConfig);
   },
 
   /*
