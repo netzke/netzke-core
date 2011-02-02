@@ -132,7 +132,6 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   */
   processEndpoints: function(){
     var endpoints = this.endpoints || [];
-    var compName=this.id.camelize(true);
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
     var directActions = [];
     var that=this;
@@ -141,7 +140,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       //this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
       this[intp.camelize(true)] = function(arg, callback, scope) {
         scope=scope || that;
-        Netzke.providers[compName][intp.camelize(true)].call(typeof scope != 'undefined' ? scope : that, arg, function(result, remotingEvent) {
+        Netzke.providers[this.id][intp.camelize(true)].call(typeof scope != 'undefined' ? scope : that, arg, function(result, remotingEvent) {
           if(remotingEvent.message) {
             console.error("RPC event indicates an error: ", remotingEvent);
             throw new Error(remotingEvent.message);
@@ -160,7 +159,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       "timeout": 30000 // 30s timeout per request
     };
     // need to do this in a seperate step because JSON doesn't support variable keys
-    providerConfig['actions'][compName]=directActions; // array of methods within each server side Class
+    providerConfig['actions'][this.id]=directActions; // array of methods within each server side Class
     var provider=new Netzke.classes.RailsCompatibleRemotingProvider(providerConfig);
     Ext.Direct.addProvider(provider);
   },
