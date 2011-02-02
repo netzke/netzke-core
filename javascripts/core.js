@@ -102,17 +102,36 @@ Ext.Direct.on('rpcresult', function(e){
             out.el.scrollTo('t', 100000, true);
 });
 
-Netzke.classes.RailsCompatibleRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
+Netzke.classes.NetzkeRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
   getCallData: function(t){
-      return {
-          act: t.action,
-          method: t.method,
-          data: t.data,
-          type: 'rpc',
-          tid: t.tid
-      };
-  },  
+    return {
+      act: t.action, // rails doesn't really support having a parameter named "action"
+      method: t.method,
+      data: t.data,
+      type: 'rpc',
+      tid: t.tid
+    }
+  },
+  addAction: function(action, methods) {
+    var cls = this.namespace[action] || (this.namespace[action] = {});
+    for(var i = 0, len = methods.length; i < len; i++){
+        var m = methods[i];
+        cls[m.name] = this.createMethod(action, m);
+    }
+  }
 });
+
+Netzke.netzkeRemotingProvider=new Netzke.classes.NetzkeRemotingProvider({
+  "type":"remoting",       // create a Ext.direct.RemotingProvider
+  "url": Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
+  "namespace":"Netzke.providers", // namespace to create the Remoting Provider in
+  "actions": {},
+  "maxRetries": 2, // try to dispatch every rpc 3 times
+  "enableBuffer": true, // buffer/batch requests within 10ms timeframe
+  "timeout": 30000 // 30s timeout per request
+});
+
+Ext.Direct.addProvider(Netzke.netzkeRemotingProvider);
 
 // Properties/methods common to all Netzke component classes
 Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
@@ -139,6 +158,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       directActions.push({"name":intp.camelize(true), "len":1});
       //this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
       this[intp.camelize(true)] = function(arg, callback, scope) {
+        Netzke.runningRequests++;
         scope=scope || that;
         Netzke.providers[this.id][intp.camelize(true)].call(typeof scope != 'undefined' ? scope : that, arg, function(result, remotingEvent) {
           if(remotingEvent.message) {
@@ -146,25 +166,16 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
             throw new Error(remotingEvent.message);
           }
           that.bulkExecute(result); // invoke the endpoint result on the calling component
-          if(callback) {
-            callback.call(scope); // invoke the callback on the provided scope, or on the calling component if no scope set
+          if(typeof callback == "function") {
+            callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
           }
+          Netzke.runningRequests--;
         });
       }
     }, this);
-    providerConfig={
-      "type":"remoting",       // create a Ext.direct.RemotingProvider
-      "url": Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
-      "namespace":"Netzke.providers", // namespace to create the Remoting Provider in
-      "actions": {},
-      "maxRetries": 2, // try to dispatch every rpc 3 times
-      "enableBuffer": true, // buffer/batch requests within 10ms timeframe
-      "timeout": 30000 // 30s timeout per request
-    };
-    // need to do this in a seperate step because JSON doesn't support variable keys
-    providerConfig['actions'][this.id]=directActions; // array of methods within each server side Class
-    var provider=new Netzke.classes.RailsCompatibleRemotingProvider(providerConfig);
-    Ext.Direct.addProvider(provider);
+
+    Netzke.netzkeRemotingProvider.addAction(this.id, directActions);
+
   },
 
   /*
@@ -287,10 +298,10 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
             callback.apply(scope, [this.latestResult]);
           }
         }
+        Netzke.runningRequests--;
       },
       scope : this
     });
-    Netzke.runningRequests--;
   },
 
   setResult: function(result) {
