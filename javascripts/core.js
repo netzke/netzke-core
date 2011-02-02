@@ -146,7 +146,9 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
             throw new Error(remotingEvent.message);
           }
           that.bulkExecute(result); // invoke the endpoint result on the calling component
-          callback.call(scope); // invoke the callback on the provided scope, or on the calling component if no scope set
+          if(callback) {
+            callback.call(scope); // invoke the callback on the provided scope, or on the calling component if no scope set
+          }
         });
       }
     }, this);
