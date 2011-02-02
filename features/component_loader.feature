@@ -14,10 +14,22 @@ Feature: Component loader
     Then I should see "Component loaded in window"
 
   @selenium
-  Scenario: Component loader should invoke a callback
+  Scenario: Component loader should invoke a callback in loadComponent
     Given I am on the ComponentLoader test page
     When I press "Load with feedback"
     Then I should see "Callback invoked!"
+
+  @selenium
+  Scenario: Component loader should invoke a generic endpoint callback
+    Given I am on the ComponentLoader test page
+    When I press "Load with generic callback"
+    Then I should see "Generic callback invoked!"
+
+  @selenium
+  Scenario: Component loader should invoke a generic endpoint callback
+    Given I am on the ComponentLoader test page
+    When I press "Load with generic callback and scope"
+    Then I should see "Fancy title set!"
 
   @selenium
   Scenario: Component loader should load a window component with another component in it

@@ -18,6 +18,7 @@ class ComponentLoader < Netzke::Base
 
   component :some_composite, :lazy_loading => true
 
+  # this action is using loadComponent "special" callback
   js_method :on_load_with_feedback, <<-JS
     function(){
       this.loadComponent({name: 'simple_component', callback: function(){
@@ -25,6 +26,38 @@ class ComponentLoader < Netzke::Base
       }, scope: this});
     }
   JS
+  
+  # this action is using generic endpoint callback
+  action :load_with_generic_callback
+  js_method :on_load_with_generic_callback, <<-JS
+    function(){
+      this.doNothing({}, function () {
+        this.setTitle("Generic callback invoked!");
+      });
+    }
+  JS
+      
+  # this action is using generic endpoint callback with scope
+  action :load_with_generic_callback_and_scope
+  js_method :on_load_with_generic_callback_and_scope, <<-JS
+    function(){
+      var that=this;
+      var fancyScope={
+        setFancyTitle: function () {
+          that.setTitle("Fancy title set!");
+        }
+      };
+      this.doNothing({}, function () {
+        this.setFancyTitle();
+      }, fancyScope);
+    }
+  JS
+
+  endpoint :do_nothing do |params|
+    # here be tumbleweed
+#    {}
+  end
+
 
   action :load_with_feedback
 
@@ -37,7 +70,7 @@ class ComponentLoader < Netzke::Base
   js_properties(
     :title => "Component Loader",
     :layout => "fit",
-    :bbar => [{:text => "Load component", :ref => "../button"}, {:text => "Load in window", :ref => "../loadInWindowButton"}, :load_with_feedback.action, :load_window_with_simple_component.action, :load_composite.action, :load_with_params.action]
+    :bbar => [{:text => "Load component", :ref => "../button"}, {:text => "Load in window", :ref => "../loadInWindowButton"}, :load_with_feedback.action, :load_window_with_simple_component.action, :load_composite.action, :load_with_params.action, :load_with_generic_callback.action, :load_with_generic_callback_and_scope.action]
   )
 
   js_method :on_load_window_with_simple_component, <<-JS

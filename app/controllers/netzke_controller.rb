@@ -86,7 +86,7 @@ class NetzkeController < ApplicationController
     #  => type: rpc
     #  => tid, action, method as in the request, so that the client can mark the transaction and won't retry it
     #  => result: JavaScript code from he endpoint result which gets applied to the client-side component instance
-    result=root_component.send(endpoint_action, data)    
+    result=root_component.send(endpoint_action, data)
     return "{ \"type\": \"rpc\", \"tid\": #{tid}, \"action\": \"#{component_name}\", \"method\": \"#{action}\", \"result\": #{result.blank? ? '{}' : result}}"
   end
   public  
