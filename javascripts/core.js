@@ -266,7 +266,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
             throw "Netzke: Unknown method or child component '" + instr +"' in component '" + this.id + "'"
           }
         }
-
+      }
     }
   },
 
