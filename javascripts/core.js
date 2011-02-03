@@ -266,7 +266,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
             throw "Netzke: Unknown method or child component '" + instr +"' in component '" + this.id + "'"
           }
         }
-      }
+
     }
   },
 
@@ -277,6 +277,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   },
 
   endpointUrl: function(endpoint){
+    Netzke.deprecationWarning("endpointUrl() is deprecated. Use Ext.direct counterparts instead.\nFor example, specify a DirectProxy instead of HttpProxy ( proxy: new Ext.data.DirectProxy({directFn: Netzke.providers[this.id].endPoint}) ),\nor specify api instead of url config option for BasicForm ( api: { load: Netzke.providers[this.id].loadEndPoint, submit: Netzke.providers[this.id].submitEndPoint} )");
     return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
   },
 
