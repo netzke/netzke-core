@@ -136,7 +136,7 @@ module Netzke
       end
 
       # Builds this component's xtype
-      # E.g.: netzkewindow, netzkegridpanel
+      # E.g.: netzkebasepackwindow, netzkebasepackgridpanel
       def js_xtype
         name.gsub("::", "").downcase
       end

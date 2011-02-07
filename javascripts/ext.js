@@ -87,7 +87,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       this.addEvents(name+'click');
 
       // Configure the action
-      var actionConfig = this.actions[name];
+      var actionConfig = Ext.apply({}, this.actions[name]); // do not modify original this.actions
       actionConfig.customHandler = actionConfig.handler;
       actionConfig.handler = this.actionHandler.createDelegate(this); // handler common for all actions
       actionConfig.name = name;
