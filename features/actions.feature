@@ -9,5 +9,5 @@ Scenario: Pressing button should result in corresponding actions
   Then I should see "Disabled action"
   And button "Disabled action" should be disabled
 
-  When I press "Some action"
+  When I press "Some Cool Action"
   Then I should see "Some action was triggered"
