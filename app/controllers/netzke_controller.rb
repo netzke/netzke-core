@@ -68,7 +68,43 @@ class NetzkeController < ApplicationController
       }
     end
   end
+  
+  private
+  def invoke_endpoint component_name, action, data, tid
+    data=data[0] || {} # we get data as an array, extract the single argument if available
 
+    root_component_name, *sub_components = component_name.split('__')
+    root_component = Netzke::Base.instance_by_config Netzke::Core.session[:netzke_components][root_component_name.to_sym]
+    if sub_components.empty?
+      # we need to dispatch to root component, send it _#{action}_ep_wrapper
+      endpoint_action = "_#{action}_ep_wrapper"
+    else
+      # we need to dispatch to one or more sub_components, send subcomp__subsubcomp__endpoint to root component
+      endpoint_action = sub_components.join('__')+'__'+action      
+    end
+    # send back JSON as specified in Ext.direct spec
+    #  => type: rpc
+    #  => tid, action, method as in the request, so that the client can mark the transaction and won't retry it
+    #  => result: JavaScript code from he endpoint result which gets applied to the client-side component instance
+    result=root_component.send(endpoint_action, data)
+    return "{ \"type\": \"rpc\", \"tid\": #{tid}, \"action\": \"#{component_name}\", \"method\": \"#{action}\", \"result\": #{result.blank? ? '{}' : result}}"
+  end
+  public  
+
+  # Handler for Ext.Direct RPC calls
+  def direct
+    result=""
+    if params['_json'] # this is a batched request
+      params['_json'].each do |batch|
+        result+= result.blank? ? '[' : ', '
+        result+=invoke_endpoint batch[:act], batch[:method].underscore, batch[:data], batch[:tid]
+      end
+      result+=']'
+    else # this is a single request
+      result=invoke_endpoint params[:act], params[:method].underscore, params[:data], params[:tid]
+    end
+    render :text => result, :layout => false    
+  end
 
   # Main dispatcher of the HTTP requests. The URL contains the name of the component,
   # as well as the method of this component to be called, according to the double underscore notation.
