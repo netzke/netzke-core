@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-02-07}
+  s.date = %q{2011-02-10}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -113,6 +113,10 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_js_mixin/javascripts/method_set_two.js",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/deprecated/server_caller.rb",
+    "test/rails_app/app/components/ext_direct/composite.rb",
+    "test/rails_app/app/components/ext_direct/details.rb",
+    "test/rails_app/app/components/ext_direct/selector.rb",
+    "test/rails_app/app/components/ext_direct/statistics.rb",
     "test/rails_app/app/components/extended_component_with_actions.rb",
     "test/rails_app/app/components/extended_component_with_js_mixin.rb",
     "test/rails_app/app/components/extended_component_with_js_mixin/javascripts/some_method_set.js",
@@ -127,6 +131,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/scoped_components/extended_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/some_scoped_component.rb",
     "test/rails_app/app/components/server_caller.rb",
+    "test/rails_app/app/components/server_counter.rb",
     "test/rails_app/app/components/simple_component.rb",
     "test/rails_app/app/components/simple_panel.rb",
     "test/rails_app/app/components/simple_tab_panel.rb",
@@ -218,6 +223,10 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_js_mixin.rb",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/deprecated/server_caller.rb",
+    "test/rails_app/app/components/ext_direct/composite.rb",
+    "test/rails_app/app/components/ext_direct/details.rb",
+    "test/rails_app/app/components/ext_direct/selector.rb",
+    "test/rails_app/app/components/ext_direct/statistics.rb",
     "test/rails_app/app/components/extended_component_with_actions.rb",
     "test/rails_app/app/components/extended_component_with_js_mixin.rb",
     "test/rails_app/app/components/extended_server_caller.rb",
@@ -230,6 +239,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/scoped_components/extended_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/some_scoped_component.rb",
     "test/rails_app/app/components/server_caller.rb",
+    "test/rails_app/app/components/server_counter.rb",
     "test/rails_app/app/components/simple_component.rb",
     "test/rails_app/app/components/simple_panel.rb",
     "test/rails_app/app/components/simple_tab_panel.rb",
