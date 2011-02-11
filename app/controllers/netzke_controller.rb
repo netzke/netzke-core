@@ -94,16 +94,23 @@ class NetzkeController < ApplicationController
   # Handler for Ext.Direct RPC calls
   def direct
     result=""
+    error=false
     if params['_json'] # this is a batched request
       params['_json'].each do |batch|
         result+= result.blank? ? '[' : ', '
-        result+=invoke_endpoint batch[:act], batch[:method].underscore, batch[:data], batch[:tid]
+        begin
+          result+=invoke_endpoint batch[:act], batch[:method].underscore, batch[:data], batch[:tid]
+        rescue Exception  => e
+          Rails.logger.error "!!! Error invoking endpoint: #{batch[:act]} #{batch[:method].underscore} #{batch[:data].inspect} #{batch[:tid]}\n"
+          error=true
+          break;
+        end
       end
       result+=']'
     else # this is a single request
       result=invoke_endpoint params[:act], params[:method].underscore, params[:data], params[:tid]
     end
-    render :text => result, :layout => false    
+    render :text => result, :layout => false, :status => error ? 500 : 200
   end
 
   # Main dispatcher of the HTTP requests. The URL contains the name of the component,

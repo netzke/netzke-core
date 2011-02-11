@@ -117,8 +117,39 @@ Netzke.classes.NetzkeRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
     for(var i = 0, len = methods.length; i < len; i++){
         var m = methods[i];
         cls[m.name] = this.createMethod(action, m);
+      }
+  },
+  onData: function(opt, success, xhr){
+    // process response regardess of status
+    // i.e. in a batch request,
+    // - we request tids 1,2,3.
+    // - server is able to process 1 but not 2
+    // - server will stop and *not* process 3, because it could be dependant on 2 (this best possible approach to this
+    //   situation, as we don't have transactions)
+    // - server will respond with status 500, indicating a fault
+    // - in the response, server will respond with the result from tid 1
+    // - client marks tid 1 as success (deletes the transaction from pending), and will retry 2 and 3 - this is the
+    //   change in Ext.direct.RemotingProvider's default behaviour
+    try {
+    } catch (err) {
+      // ignore error
     }
+    var events=this.getEvents(xhr);
+
+    for(var i = 0, len = events.length; i < len; i++){
+      var e = events[i],
+      t = this.getTransaction(e);
+      this.fireEvent('data', this, e);
+      if(t){
+        this.doCallback(t, e, true);
+        Ext.Direct.removeTransaction(t);
+      }
+    }
+    
+    Netzke.classes.NetzkeRemotingProvider.superclass.onData.call(this, opt, success, xhr);    
   }
+    
+  
 });
 
 Netzke.netzkeRemotingProvider=new Netzke.classes.NetzkeRemotingProvider({
