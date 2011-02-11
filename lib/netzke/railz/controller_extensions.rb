@@ -26,7 +26,7 @@ module Netzke
       end
 
       def set_controller
-         ::Netzke::Core.controller = self
+        ::Netzke::Core.controller = self
       end
     end
   end

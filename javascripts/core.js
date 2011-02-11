@@ -218,7 +218,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   },
 
   endpointUrl: function(endpoint){
-    return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
+    return Netzke.RelativeUrlRoot + "/netzke/dispatcher?address=" + this.id + "__" + endpoint;
   },
 
   // Does the call to the server and processes the response
