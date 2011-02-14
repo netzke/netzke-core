@@ -102,6 +102,8 @@ class NetzkeController < ApplicationController
           result+=invoke_endpoint batch[:act], batch[:method].underscore, batch[:data], batch[:tid]
         rescue Exception  => e
           Rails.logger.error "!!! Error invoking endpoint: #{batch[:act]} #{batch[:method].underscore} #{batch[:data].inspect} #{batch[:tid]}\n"
+          Rails.logger.error e.message
+          Rails.logger.error e.backtrace
           error=true
           break;
         end
