@@ -145,11 +145,11 @@ Netzke.classes.NetzkeRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
         Ext.Direct.removeTransaction(t);
       }
     }
-    
-    Netzke.classes.NetzkeRemotingProvider.superclass.onData.call(this, opt, success, xhr);    
+
+    Netzke.classes.NetzkeRemotingProvider.superclass.onData.call(this, opt, success, xhr);
   }
-    
-  
+
+
 });
 
 Netzke.netzkeRemotingProvider=new Netzke.classes.NetzkeRemotingProvider({

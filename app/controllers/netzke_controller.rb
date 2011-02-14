@@ -1,8 +1,5 @@
 class NetzkeController < ApplicationController
 
-  # Collect javascripts and stylesheets from all plugins that registered it in Netzke::Core.javascripts
-  # TODO: caching
-  # caches_action :netzke
   def ext
     respond_to do |format|
       format.js {
@@ -115,10 +112,11 @@ class NetzkeController < ApplicationController
     render :text => result, :layout => false, :status => error ? 500 : 200
   end
 
+  protected
   # Main dispatcher of the HTTP requests. The URL contains the name of the component,
   # as well as the method of this component to be called, according to the double underscore notation.
   # E.g.: some_grid__post_grid_data.
-  def method_missing(method_name)
+  def endpoint_dispatch(method_name)
     component_name, *action = method_name.to_s.split('__')
     component_name = component_name.to_sym
     action = !action.empty? && action.join("__").to_sym

@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-02-10}
+  s.date = %q{2011-02-14}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
     "features/component_loader.feature",
     "features/composition.feature",
     "features/custom_css.feature",
+    "features/ext.direct.feature",
     "features/file_inclusion.feature",
     "features/inheritance.feature",
     "features/js_include.feature",
