@@ -23,3 +23,9 @@ end
 When /^I sleep 1 second$/ do
   sleep 1
 end
+
+When /^total requests made should be (\d+)$/ do |count|
+  page.driver.browser.execute_script(<<-JS).should == true
+    return Netzke.connectionCount == #{count};
+  JS
+end
