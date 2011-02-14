@@ -65,7 +65,7 @@ class NetzkeController < ApplicationController
       }
     end
   end
-  
+
   private
   def invoke_endpoint component_name, action, data, tid
     data=data[0] || {} # we get data as an array, extract the single argument if available
@@ -77,17 +77,18 @@ class NetzkeController < ApplicationController
       endpoint_action = "_#{action}_ep_wrapper"
     else
       # we need to dispatch to one or more sub_components, send subcomp__subsubcomp__endpoint to root component
-      endpoint_action = sub_components.join('__')+'__'+action      
+      endpoint_action = sub_components.join('__')+'__'+action
     end
     # send back JSON as specified in Ext.direct spec
     #  => type: rpc
     #  => tid, action, method as in the request, so that the client can mark the transaction and won't retry it
     #  => result: JavaScript code from he endpoint result which gets applied to the client-side component instance
-    result=root_component.send(endpoint_action, data)
-    return "{ \"type\": \"rpc\", \"tid\": #{tid}, \"action\": \"#{component_name}\", \"method\": \"#{action}\", \"result\": #{result.blank? ? '{}' : result}}"
-  end
-  public  
+    result = root_component.send(endpoint_action, data)
 
+    {:type => "rpc", :tid => tid, :action => component_name, :method => action, :result => result.present? && result.l || {}}.to_json
+  end
+
+  public
   # Handler for Ext.Direct RPC calls
   def direct
     result=""

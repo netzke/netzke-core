@@ -9,14 +9,14 @@ class ServerCounter < Netzke::Base
     :title => "Server Counter",
     :html => "Wow",
     :bbar => [:count_one_time.action, :count_seven_times.action, :count_eight_times_special.action, :fail_in_the_middle.action, :do_ordered.action]
-  )  
+  )
 
   js_method :on_count_one_time, <<-JS
     function(){
       this.count({how_many: 1});
     }
   JS
-  
+
   js_method :init_component, <<-JS
     function () {
       #{js_full_class_name}.superclass.initComponent.call(this);
@@ -24,9 +24,8 @@ class ServerCounter < Netzke::Base
         Netzke.connectionCount = Netzke.connectionCount || 0;
         Netzke.connectionCount++;
         Netzke.lastOptions=options;
-        console.info("!!! Netzke.connectionCount:", Netzke.connectionCount);
       });
-      
+
     }
   JS
 
@@ -48,23 +47,23 @@ class ServerCounter < Netzke::Base
     function () {
       this.successingEndpoint();
       this.failingEndpoint();
-      this.successingEndpoint();      
+      this.successingEndpoint();
     }
   JS
-  
+
   js_method :on_do_ordered, <<-JS
     function () {
       this.firstEp();
       this.secondEp();
     }
   JS
-    
+
   endpoint :count do |params|
     component_session[:count]||=0
     component_session[:count]+=params[:how_many]
     {:update => "I am at "+component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : '')}
   end
-  
+
   endpoint :successing_endpoint do |params|
     {:update  => "Something successed "}
   end
@@ -73,7 +72,7 @@ class ServerCounter < Netzke::Base
     throw "something happened"
     {:update => "This will never get returned"}
   end
-  
+
   endpoint :first_ep do |params|
     component_session[:count]||=0
     component_session[:count]+=1
@@ -82,9 +81,8 @@ class ServerCounter < Netzke::Base
 
   endpoint :second_ep do |params|
     component_session[:count]||=0
-    component_session[:count]+=1    
+    component_session[:count]+=1
     {:update => "Second. "+ component_session[:count].to_s}
   end
-  
 
 end
