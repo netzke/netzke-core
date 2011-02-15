@@ -85,16 +85,21 @@ module Netzke
     private
 
       def normalize_action_config(config)
-        if config[:icon].is_a?(Symbol)
-          config[:icon] = uri_to_icon(config[:icon])
+        config.tap do |c|
+          if c[:icon].is_a?(Symbol)
+            c[:icon] = uri_to_icon(c[:icon])
+          end
+
+          # Default text and tooltip
+          c[:text] ||= c[:name].humanize
+          c[:tooltip] ||= c[:name].humanize
+
+          # If we have an I18n for it, use it
+          default_text = I18n.t(i18n_id + ".actions." + c[:name], :default => "")
+          c[:text] = default_text if default_text.present?
+          default_tooltip = I18n.t(i18n_id + ".actions." + c[:name] + "_tooltip", :default => default_text)
+          c[:tooltip] = default_tooltip if default_tooltip.present?
         end
-
-        # Default text and tooltip
-        default_text = I18n.t(i18n_id + ".actions." + config[:name], :default => config[:name].humanize)
-        config[:text] ||= default_text
-        config[:tooltip] ||= I18n.t(i18n_id + ".actions." + config[:name] + "_tooltip", :default => default_text)
-
-        config
       end
 
       def uri_to_icon(icon)

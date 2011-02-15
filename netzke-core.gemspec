@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-02-14}
+  s.date = %q{2011-02-15}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
     "features/custom_css.feature",
     "features/ext.direct.feature",
     "features/file_inclusion.feature",
+    "features/i18n.feature",
     "features/inheritance.feature",
     "features/js_include.feature",
     "features/nested_views.feature",
@@ -121,6 +122,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/extended_component_with_actions.rb",
     "test/rails_app/app/components/extended_component_with_js_mixin.rb",
     "test/rails_app/app/components/extended_component_with_js_mixin/javascripts/some_method_set.js",
+    "test/rails_app/app/components/extended_localized_panel.rb",
     "test/rails_app/app/components/extended_server_caller.rb",
     "test/rails_app/app/components/hello_world_component.rb",
     "test/rails_app/app/components/included.js",
@@ -128,6 +130,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/kinda_complex_component/basic_stuff.rb",
     "test/rails_app/app/components/kinda_complex_component/extra_stuff.rb",
     "test/rails_app/app/components/loader_of_component_with_custom_css.rb",
+    "test/rails_app/app/components/localized_panel.rb",
     "test/rails_app/app/components/scoped_components/deep_scoped_components/some_deep_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/extended_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/some_scoped_component.rb",
@@ -170,6 +173,7 @@ Gem::Specification.new do |s|
     "test/rails_app/config/initializers/secret_token.rb",
     "test/rails_app/config/initializers/session_store.rb",
     "test/rails_app/config/locales/en.yml",
+    "test/rails_app/config/locales/es.yml",
     "test/rails_app/config/routes.rb",
     "test/rails_app/db/development_structure.sql",
     "test/rails_app/db/migrate/20110110132720_create_netzke_component_states.rb",
@@ -230,12 +234,14 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/ext_direct/statistics.rb",
     "test/rails_app/app/components/extended_component_with_actions.rb",
     "test/rails_app/app/components/extended_component_with_js_mixin.rb",
+    "test/rails_app/app/components/extended_localized_panel.rb",
     "test/rails_app/app/components/extended_server_caller.rb",
     "test/rails_app/app/components/hello_world_component.rb",
     "test/rails_app/app/components/kinda_complex_component.rb",
     "test/rails_app/app/components/kinda_complex_component/basic_stuff.rb",
     "test/rails_app/app/components/kinda_complex_component/extra_stuff.rb",
     "test/rails_app/app/components/loader_of_component_with_custom_css.rb",
+    "test/rails_app/app/components/localized_panel.rb",
     "test/rails_app/app/components/scoped_components/deep_scoped_components/some_deep_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/extended_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/some_scoped_component.rb",

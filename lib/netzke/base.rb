@@ -111,6 +111,10 @@ module Netzke
       @@instances += 1
     end
 
+    def self.i18n_id
+      name.split("::").map{|c| c.underscore}.join(".")
+    end
+
     # Instantiates a component instance. A parent can optionally be provided.
     def initialize(conf = {}, parent = nil)
       @passed_config = conf # configuration passed at the moment of instantiation
@@ -147,7 +151,7 @@ module Netzke
     end
 
     def i18n_id
-      self.class.name.split("::").map{|c| c.underscore}.join(".")
+      self.class.i18n_id
     end
 
     private

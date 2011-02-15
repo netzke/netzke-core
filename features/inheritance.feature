@@ -5,9 +5,9 @@ Feature: Inheritance
 
   @javascript
   Scenario: Inherited component should successfully call parent methods in Ruby and JavaScript
-    When I go to the ExtendedServerCaller test page
+    When I go to the "en" version of the ExtendedServerCaller page
     Then I should see "Extended Server Caller"
-    When I press "Call server"
+    When I press "Call server extensively"
     Then I should see "All quiet here on the server, shiny weather"
     And I should see "Added by extended Server Caller"
 

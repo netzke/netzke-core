@@ -32,6 +32,9 @@ module NavigationHelpers
     when /the (.*) test page/
       components_path(:component => $1)
 
+    when /the "(.+)" version of the (.*) page/
+      components_path(:component => $2, :locale => $1)
+
     else
       begin
         page_name =~ /the (.*) page/
