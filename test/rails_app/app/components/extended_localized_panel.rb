@@ -1,0 +1,2 @@
+class ExtendedLocalizedPanel < LocalizedPanel
+end

@@ -103,6 +103,35 @@ module Netzke
         end
       end
 
+      # Defines the "i18n" config property, that is a translation object for this component, such as:
+      #     i18n: {
+      #       overwriteConfirm: "Are you sure you want to overwrite preset '{0}'?",
+      #       overwriteConfirmTitle: "Overwriting preset",
+      #       deleteConfirm: "Are you sure you want to delete preset '{0}'?",
+      #       deleteConfirmTitle: "Deleting preset"
+      #     }
+      #
+      # E.g.:
+      #     js_translate :overwrite_confirm, :overwrite_confirm_title, :delete_confirm, :delete_confirm_title
+      #
+      # TODO: make the name of the root property configurable
+      def js_translate(*properties)
+        if properties.empty?
+          read_clean_inheritable_hash(:js_translated_properties)
+        else
+          current_translated_properties = read_clean_inheritable_hash(:js_translated_properties)
+          properties.each do |p|
+            if p.is_a?(Hash)
+              # TODO: make it possible to nest translated objects
+            else
+              current_translated_properties[p] = p
+            end
+          end
+
+          write_inheritable_attribute(:js_translated_properties, current_translated_properties)
+        end
+      end
+
       # Use it to "mixin" JavaScript objects defined in a separate file.
       #
       # You do not _have_ to use +js_method+ or +js_properties+ if those methods or properties are not supposed to be changed _dynamically_ (by means of configuring the component on the class level). Instead, you may "mixin" a JavaScript object defined in the JavaScript file named following a certain convention. This way static JavaScript code will rest in a corresponding .js file, not in the Ruby class. E.g.:
@@ -267,6 +296,8 @@ module Netzke
         # Items (nested Ext/Netzke components)
         res[:items] = items unless items.blank?
 
+        res[:i18n] = js_translate_properties if js_translate_properties.present?
+
         res
       end
 
@@ -284,6 +315,16 @@ module Netzke
         ::ActiveSupport::Deprecation.warn("Using ext_config is deprecated. All config options must be specified at the same level in the hash.", caller)
         config[:ext_config] || {}
       end
+
+      private
+
+        # Merges all the translations in the class hierarchy
+        def js_translate_properties
+          @js_translate_properties ||= self.class.class_ancestors.inject({}) do |r,klass|
+            hsh = klass.js_translate.keys.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }
+            r.merge(hsh)
+          end
+        end
 
     end
   end

@@ -7,5 +7,12 @@ en:
       bug_server: "Call server"
   extended_server_caller:
     actions:
-      bug_server: "Call server"
-      bug_server_tooltip: "With tooltip"
+      bug_server: "Call server extensively"
+      bug_server_tooltip: "With custom tooltip"
+  localized_panel:
+    title: Localized Panel
+    property_one: First property
+    property_two: Second property
+    action_two: Second action
+    actions:
+      action_one: First action

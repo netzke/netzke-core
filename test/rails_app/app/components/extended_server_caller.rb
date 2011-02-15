@@ -1,5 +1,4 @@
 class ExtendedServerCaller < ServerCaller
-
   js_properties :title => "Extended Server Caller"
 
   js_method :on_bug_server, <<-JS

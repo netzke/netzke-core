@@ -1,4 +1,7 @@
 = v0.6.6 - to be released
+* enhancements
+  * Introduced +js_translate+ class method that allows specifying i18n properties used in the JavaScript class
+  * Better handling of actions i18n
 
 = v0.6.5 - 2011-01-14
 * enhancements
