@@ -89,7 +89,7 @@ Netzke.cache = [];
 // Registering a Netzke component
 Netzke.reg = function(xtype, klass) {
   if (!Ext.ComponentMgr.types[xtype]) {
-    Ext.reg(xtype, klass);
+    Ext.ComponentMgr.registerType(xtype, klass);
     Netzke.cache.push(xtype);
   }
 };

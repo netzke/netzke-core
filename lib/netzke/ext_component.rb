@@ -13,7 +13,7 @@ module Netzke
 
     # Rendering
     def js_component_render
-      %Q{Ext.ComponentMgr.create(#{config.to_nifty_json}).render("ext-#{name.to_s.split('_').join('-')}");}
+      %Q{Ext.ComponentMgr.create("#{js_full_class_name}", #{config.to_nifty_json}).render("ext-#{name.to_s.split('_').join('-')}");}
     end
 
     # Container for rendering

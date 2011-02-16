@@ -8,8 +8,8 @@ Ext.state.Provider.prototype.set = function(){};
 
 // Check Ext JS version
 (function(){
-  var requiredExtVersion = "3.3.1";
-  var currentExtVersion = Ext.version;
+  var requiredExtVersion = "4.0.0.0.dev";
+  var currentExtVersion = Ext.getVersion('core').toArray().join(".");
   if (requiredExtVersion !== currentExtVersion) {
     Netzke.deprecationWarning("Need Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
   }
@@ -89,7 +89,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       // Configure the action
       var actionConfig = Ext.apply({}, this.actions[name]); // do not modify original this.actions
       actionConfig.customHandler = actionConfig.handler;
-      actionConfig.handler = this.actionHandler.createDelegate(this); // handler common for all actions
+      actionConfig.handler = Ext.Function.bind(this.actionHandler, this); // handler common for all actions
       actionConfig.name = name;
       normActions[name] = new Ext.Action(actionConfig);
     }
