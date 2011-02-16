@@ -20,6 +20,6 @@ Then /^button "([^"]*)" should be disabled$/ do |arg1|
   JS
 end
 
-When /^I sleep 1 second$/ do
-  sleep 1
+When /I sleep (\d+) seconds?/ do |arg1|
+  sleep arg1.to_i
 end
