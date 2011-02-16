@@ -170,6 +170,12 @@ module Netzke
         name.gsub("::", "").downcase
       end
 
+      # Builds this component's alias
+      # E.g.: netzke.basepack.window, netzke.basepack.gridpanel
+      def js_alias
+        name.gsub("::", ".").downcase
+      end
+
       # Component's JavaScript class declaration.
       # It gets stored in the JS class cache storage (Netzke.classes) at the client side to be reused at the moment of component instantiation.
       def js_class
@@ -179,7 +185,7 @@ module Netzke
 
         res << (extends_netzke_component? ? js_class_declaration_extending_component : js_class_declaration_new_component)
 
-        res << %(Netzke.reg("#{js_xtype}", #{js_full_class_name});)
+        # res << %(Netzke.reg("#{js_xtype}", #{js_full_class_name});)
 
         res.join("\n")
       end
@@ -229,6 +235,7 @@ module Netzke
           mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
           %(Ext.define('#{js_full_class_name}', Ext.apply({
             extend: '#{js_base_class}',
+            alias: '#{js_alias}',
             constructor: function(config) {
               Netzke.aliasMethodChain(this, "initComponent", "netzke");
               #{js_full_class_name}.superclass.constructor.call(this, config);

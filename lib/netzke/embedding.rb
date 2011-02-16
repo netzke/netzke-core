@@ -4,7 +4,7 @@ module Netzke
 
     # Instantiating
     def js_component_instance
-      %Q{Netzke.page.#{name.jsonify} = Ext.create("#{self.class.js_full_class_name}", #{js_config.to_nifty_json});}
+      %Q{Netzke.page.#{name.jsonify} = Ext.create("#{self.class.js_alias}", #{js_config.to_nifty_json});}
     end
 
     # Rendering
