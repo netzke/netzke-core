@@ -96,7 +96,7 @@ class NetzkeController < ApplicationController
       res << %(Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection)
       res << %{Ext.ns('Netzke');}
       res << %{Netzke.RelativeUrlRoot = '#{ActionController::Base.config.relative_url_root}';}
-      res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}/extjs';}
+      res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}/extjs4';}
       res.join("\n")
     end
 
