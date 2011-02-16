@@ -1,5 +1,7 @@
 ## Netzke Core
 
+**Note:** this is a very experimental branch where the work on supporting Ext JS 4 is taking place. In order to run the `test_app`, you need to symlink your Ext JS 4 library into `public/extjs4` (not `public/extjs` as in other branches)
+
 Netzke Core is the bare bones of the [Netzke framework](https://github.com/skozlov/netzke). For pre-built full-featured components (like grids, forms, tab/accordion panels, applications, etc), see [netzke-basepack](http://github.com/skozlov/netzke-basepack) (Ext JS).
 
 Netzke Core takes the burden of implementing the following key aspects of the framework:
