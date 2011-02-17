@@ -26,6 +26,10 @@ class ComponentLoader < Netzke::Base
     }
   JS
 
+  action :load_component
+
+  action :load_in_window
+
   action :load_with_feedback
 
   action :load_window_with_simple_component
@@ -37,7 +41,7 @@ class ComponentLoader < Netzke::Base
   js_properties(
     :title => "Component Loader",
     :layout => "fit",
-    :bbar => [{:text => "Load component", :ref => "../button"}, {:text => "Load in window", :ref => "../loadInWindowButton"}, :load_with_feedback.action, :load_window_with_simple_component.action, :load_composite.action, :load_with_params.action]
+    :bbar => [:load_component.action, :load_in_window.action, :load_with_feedback.action, :load_window_with_simple_component.action, :load_composite.action, :load_with_params.action]
   )
 
   js_method :on_load_window_with_simple_component, <<-JS
@@ -58,22 +62,20 @@ class ComponentLoader < Netzke::Base
     }
   JS
 
-  js_method :init_component, <<-JS
+  js_method :on_load_component, <<-JS
     function(){
-      #{js_full_class_name}.superclass.initComponent.call(this);
+      this.loadComponent({name: 'simple_component', container: this.getId()});
+    }
+  JS
 
-      this.button.on('click', function(){
-        this.loadComponent({name: 'simple_component', container: this.getId()});
-      }, this);
-
-      this.loadInWindowButton.on('click', function(){
-        var w = new Ext.Window({
-          width: 500, height: 400, modal: true, layout:'fit',
-          items: [{xtype: 'panel'}]
-        });
-        w.show(null, function(){
-          this.loadComponent({name: 'component_loaded_in_window', container: w.items.first().getId()});
-        }, this);
+  js_method :on_load_in_window, <<-JS
+    function(){
+      var w = new Ext.Window({
+        width: 500, height: 400, modal: true, layout:'fit',
+        items: [{xtype: 'panel'}]
+      });
+      w.show(null, function(){
+        this.loadComponent({name: 'component_loaded_in_window', container: w.items.first().getId()});
       }, this);
     }
   JS
