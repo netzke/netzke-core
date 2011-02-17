@@ -112,6 +112,7 @@ Netzke.classes.NetzkeRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
       tid: t.tid
     }
   },
+
   addAction: function(action, methods) {
     var cls = this.namespace[action] || (this.namespace[action] = {});
     for(var i = 0, len = methods.length; i < len; i++){
@@ -119,6 +120,7 @@ Netzke.classes.NetzkeRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
         cls[m.name] = this.createMethod(action, m);
       }
   },
+
   onData: function(opt, success, xhr){
     // process response regardess of status
     // i.e. in a batch request,
@@ -149,15 +151,14 @@ Netzke.classes.NetzkeRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
     Netzke.classes.NetzkeRemotingProvider.superclass.onData.call(this, opt, success, xhr);
   }
 
-
 });
 
-Netzke.netzkeRemotingProvider=new Netzke.classes.NetzkeRemotingProvider({
+Netzke.netzkeRemotingProvider = new Netzke.classes.NetzkeRemotingProvider({
   "type":"remoting",       // create a Ext.direct.RemotingProvider
   "url": Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
   "namespace":"Netzke.providers", // namespace to create the Remoting Provider in
   "actions": {},
-  "maxRetries": 2, // try to dispatch every rpc 3 times
+  "maxRetries": Netzke.core.directMaxRetries,
   "enableBuffer": true, // buffer/batch requests within 10ms timeframe
   "timeout": 30000 // 30s timeout per request
 });
