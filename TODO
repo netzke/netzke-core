@@ -1,7 +1,9 @@
+Make :items option understand also a hash.
 Caching for netzke_controller-provided JS and CSS.
 Caching - investigate reusing (fragment?) caching of Rails.
 Use Ext.Direct in the Netzke controller.
 Let specify per API point if it will use a GET or a POST request.
+
 
 
 = Ideas that didn't work out
