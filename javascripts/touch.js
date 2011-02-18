@@ -16,6 +16,17 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   },
 
   /*
+  Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod()
+  */
+  processEndpoints: function(){
+    var endpoints = this.endpoints || [];
+    endpoints.push('deliver_component'); // all Netzke components get this endpoint
+    Ext.each(endpoints, function(intp){
+      this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
+    }, this);
+  },
+
+  /*
   Detects action configs in the passed object, and replaces them with instances of Ext.Action created by normalizeActions().
   This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
   */

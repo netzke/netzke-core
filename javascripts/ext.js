@@ -135,7 +135,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       directActions.push({"name":intp.camelize(true), "len":1});
       //this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
       this[intp.camelize(true)] = function(arg, callback, scope) {
-        console.info("Netzke.providers: ", Netzke.providers);
         Netzke.runningRequests++;
         scope=scope || that;
         Netzke.providers[this.id][intp.camelize(true)].call(typeof scope != 'undefined' ? scope : that, arg, function(result, remotingEvent) {

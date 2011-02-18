@@ -206,9 +206,14 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     return this.endpointUrl(endpoint);
   },
 
+  // endpointUrl: function(endpoint){
+  //   Netzke.deprecationWarning("endpointUrl() is deprecated. Use Ext.direct counterparts instead.\nFor example, specify a DirectProxy instead of HttpProxy ( proxy: new Ext.data.DirectProxy({directFn: Netzke.providers[this.id].endPoint}) ),\nor specify api instead of url config option for BasicForm ( api: { load: Netzke.providers[this.id].loadEndPoint, submit: Netzke.providers[this.id].submitEndPoint} )");
+  //   return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
+  // },
+
+  // Used by Touch components
   endpointUrl: function(endpoint){
-    Netzke.deprecationWarning("endpointUrl() is deprecated. Use Ext.direct counterparts instead.\nFor example, specify a DirectProxy instead of HttpProxy ( proxy: new Ext.data.DirectProxy({directFn: Netzke.providers[this.id].endPoint}) ),\nor specify api instead of url config option for BasicForm ( api: { load: Netzke.providers[this.id].loadEndPoint, submit: Netzke.providers[this.id].submitEndPoint} )");
-    return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
+    return Netzke.RelativeUrlRoot + "/netzke/dispatcher?address=" + this.id + "__" + endpoint;
   },
 
   // Does the call to the server and processes the response
