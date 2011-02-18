@@ -96,12 +96,6 @@ Netzke.reg = function(xtype, klass) {
 
 Netzke.classes.Core.Mixin = {};
 
-// Handle rpcresult type server events (responses to endpoint calls)
-Ext.Direct.on('rpcresult', function(e){
-  out.append(String.format('<p><i>{0}</i></p>', e.data));
-  out.el.scrollTo('t', 100000, true);
-});
-
 Netzke.classes.NetzkeRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
   getCallData: function(t){
     return {
