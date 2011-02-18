@@ -256,11 +256,11 @@ Ext.override(Ext.Container, {
   // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
   // TODO: there must be a method to just instantiate a component, but not to add/show it instantly.
   instantiateChild : function(config){
-    var instance = Ext.create(config);
+    var instance = Ext.create(config.alias, config);
     if (instance.isXType("window")) {
       instance.show();
     } else {
-      this.remove(this.getNetzkeComponent()); // first delete previous component
+      this.removeChild(); // first delete previous component
       this.add(instance);
 
       // Sometimes a child is getting loaded into a hidden container...
@@ -298,7 +298,8 @@ Ext.override(Ext.Container, {
 
   // Remove the child
   removeChild : function(){
-    this.remove(this.getNetzkeComponent());
+    var currentChild = this.getNetzkeComponent();
+    if (currentChild) {this.remove(currentChild);}
   }
 });
 

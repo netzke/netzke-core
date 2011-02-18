@@ -1,6 +1,6 @@
 module Netzke
   module Services
-    class BadEndpointReturnType < RuntimeError; end
+    extend ActiveSupport::Concern
 
     module ClassMethods
       # Declare connection points between client side of a component and its server side. For example:
@@ -57,12 +57,34 @@ module Netzke
       end
     end
 
-    module InstanceMethods
+    included do
+
+      # Loads a component on browser's request. Every Nettzke component gets this endpoint.
+      # <tt>params</tt> should contain:
+      # * <tt>:cache</tt> - an array of component classes cached at the browser
+      # * <tt>:id</tt> - reference to the component
+      # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
+      endpoint :deliver_component do |params|
+        cache = params[:cache].split(",") # array of cached xtypes
+        component_name = params[:name].underscore.to_sym
+        component = components[component_name] && component_instance(component_name)
+
+        if component
+          # inform the component that it's being loaded
+          component.before_load
+
+          [{
+            :eval_js => component.js_missing_code(cache),
+            :eval_css => component.css_missing_code(cache)
+          }, {
+            :component_delivered => component.js_config
+          }]
+        else
+          {:feedback => "Couldn't load component '#{component_name}'"}
+        end
+      end
+
     end
 
-    def self.included(receiver)
-      receiver.extend         ClassMethods
-      receiver.send :include, InstanceMethods
-    end
   end
 end
