@@ -16,6 +16,10 @@ module Netzke
         (Netzke::Core.session[@component_id] ||= {})[key] = value
         # super
       end
+
+      def clear
+        Netzke::Core.session[@component_id].clear if Netzke::Core.session[@component_id]
+      end
     end
 
     # Top-level session (straight from the controller).

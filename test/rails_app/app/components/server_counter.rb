@@ -1,14 +1,14 @@
 class ServerCounter < Netzke::Base
   action :count_one_time # 1 request
   action :count_seven_times # 7 requests (should be batched)
-  action :count_eight_times_special # passingm multiple arguments
+  action :count_eight_times_special # passing multiple arguments
   action :fail_in_the_middle # calls 3 endpoints of which the second fails
   action :do_ordered # used for test if call order is preserved
-  action :count_appending
+  action :fail_two_out_of_five # sends 5 requests, 2 will fail, but the request should be processed in order
 
   js_properties(
     :title => "Server Counter",
-    :bbar => [:count_one_time.action, :count_seven_times.action, :count_eight_times_special.action, :fail_in_the_middle.action, :do_ordered.action, :count_appending.action]
+    :bbar => [:count_one_time.action, :count_seven_times.action, :count_eight_times_special.action, :fail_in_the_middle.action, :do_ordered.action, :fail_two_out_of_five.action]
   )
 
   js_method :on_count_one_time, <<-JS
@@ -66,22 +66,23 @@ class ServerCounter < Netzke::Base
     }
   JS
 
-  js_method :on_count_appending, <<-JS
+  js_method :on_fail_two_out_of_five, <<-JS
     function(){
-      for(var i=0; i<5; i++) {
-        this.countAppending();
+      for(var i=1; i<=5; i++) {
+        this.failTwoOutOfFive(i);
       }
     }
   JS
 
   def before_load
+    component_session[:is_retry] = false
     component_session[:count] = 0
   end
 
   endpoint :count do |params|
-    component_session[:count]||=0
-    component_session[:count]+=params[:how_many]
-    {:update => "I am at "+component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : '')}
+    component_session[:count] ||= 0
+    component_session[:count] += params[:how_many]
+    {:update => "I am at " + component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : '')}
   end
 
   endpoint :successing_endpoint do |params|
@@ -105,17 +106,18 @@ class ServerCounter < Netzke::Base
     {:update => "Second. "+ component_session[:count].to_s}
   end
 
-  endpoint :count_appending do |params|
+  endpoint :fail_two_out_of_five do |count|
     component_session[:count] ||= 0
     component_session[:count] += 1
 
-    # On the 3rd request fail, but don't fail at a retry
-    if (component_session[:count] == 3 && !component_session[:is_retry])
+    # 2nd and 4th request fail, but only first time, not at a retry
+    if ([2,4].include?(component_session[:count]) && !component_session[:is_retry])
       component_session[:is_retry] = true
       throw "Oops..."
     end
 
-    {:update_appending => component_session[:count].to_s}
+    component_session[:is_retry] = false
+    {:update_appending => count}
   end
 
 end

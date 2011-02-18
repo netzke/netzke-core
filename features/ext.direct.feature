@@ -18,7 +18,13 @@ Scenario: Doing two calls to different endpoints preserves the order in request 
   Then I should see "Second. 2"
 
 @javascript
-Scenario: Updating 3 components in one request
+Scenario: 2 out of 5 requests fail, but the retry mechanism should recover, and process them in order
+  Given I go to the ServerCounter test page
+  When I press "Fail two out of five"
+  Then I should see "1,2,3,4,5"
+
+@javascript
+Scenario: Updating 3 components (in one request)
   Given I go to the ExtDirect::Composite test page
   When I fill in "User:" with "Power User"
   And I press "Update"
