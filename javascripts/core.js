@@ -132,10 +132,7 @@ Netzke.classes.NetzkeRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
     // - in the response, server will respond with the result from tid 1
     // - client marks tid 1 as success (deletes the transaction from pending), and will retry 2 and 3 - this is the
     //   change in Ext.direct.RemotingProvider's default behaviour
-    try {
-    } catch (err) {
-      // ignore error
-    }
+
     var events=this.getEvents(xhr);
 
     for(var i = 0, len = events.length; i < len; i++){
