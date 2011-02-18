@@ -96,66 +96,6 @@ Netzke.reg = function(xtype, klass) {
 
 Netzke.classes.Core.Mixin = {};
 
-Netzke.classes.NetzkeRemotingProvider=Ext.extend(Ext.direct.RemotingProvider,{
-  getCallData: function(t){
-    return {
-      act: t.action, // rails doesn't really support having a parameter named "action"
-      method: t.method,
-      data: t.data,
-      type: 'rpc',
-      tid: t.tid
-    }
-  },
-
-  addAction: function(action, methods) {
-    var cls = this.namespace[action] || (this.namespace[action] = {});
-    for(var i = 0, len = methods.length; i < len; i++){
-        var m = methods[i];
-        cls[m.name] = this.createMethod(action, m);
-      }
-  },
-
-  onData: function(opt, success, xhr){
-    // process response regardess of status
-    // i.e. in a batch request,
-    // - we request tids 1,2,3.
-    // - server is able to process 1 but not 2
-    // - server will stop and *not* process 3, because it could be dependant on 2 (this best possible approach to this
-    //   situation, as we don't have transactions)
-    // - server will respond with status 500, indicating a fault
-    // - in the response, server will respond with the result from tid 1
-    // - client marks tid 1 as success (deletes the transaction from pending), and will retry 2 and 3 - this is the
-    //   change in Ext.direct.RemotingProvider's default behaviour
-
-    var events=this.getEvents(xhr);
-
-    for(var i = 0, len = events.length; i < len; i++){
-      var e = events[i],
-      t = this.getTransaction(e);
-      this.fireEvent('data', this, e);
-      if(t){
-        this.doCallback(t, e, true);
-        Ext.Direct.removeTransaction(t);
-      }
-    }
-
-    Netzke.classes.NetzkeRemotingProvider.superclass.onData.call(this, opt, success, xhr);
-  }
-
-});
-
-Netzke.netzkeRemotingProvider = new Netzke.classes.NetzkeRemotingProvider({
-  "type":"remoting",       // create a Ext.direct.RemotingProvider
-  "url": Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
-  "namespace":"Netzke.providers", // namespace to create the Remoting Provider in
-  "actions": {},
-  "maxRetries": Netzke.core.directMaxRetries,
-  "enableBuffer": true, // buffer/batch requests within 10ms timeframe
-  "timeout": 30000 // 30s timeout per request
-});
-
-Ext.Direct.addProvider(Netzke.netzkeRemotingProvider);
-
 // Properties/methods common to all Netzke component classes
 Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   isNetzke: true, // to distinguish Netzke components from regular Ext components
@@ -167,39 +107,6 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     // Netzke.aliasMethodChain(this, "initComponent", "netzke");
     // receiver.superclass.constructor.call(this, config);
   // },
-
-  /*
-  Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod()
-  using Ext.Direct
-  */
-  processEndpoints: function(){
-    var endpoints = this.endpoints || [];
-    endpoints.push('deliver_component'); // all Netzke components get this endpoint
-    var directActions = [];
-    var that=this;
-    Ext.each(endpoints, function(intp){
-      directActions.push({"name":intp.camelize(true), "len":1});
-      //this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
-      this[intp.camelize(true)] = function(arg, callback, scope) {
-        Netzke.runningRequests++;
-        scope=scope || that;
-        Netzke.providers[this.id][intp.camelize(true)].call(typeof scope != 'undefined' ? scope : that, arg, function(result, remotingEvent) {
-          if(remotingEvent.message) {
-            console.error("RPC event indicates an error: ", remotingEvent);
-            throw new Error(remotingEvent.message);
-          }
-          that.bulkExecute(result); // invoke the endpoint result on the calling component
-          if(typeof callback == "function") {
-            callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
-          }
-          Netzke.runningRequests--;
-        });
-      }
-    }, this);
-
-    Netzke.netzkeRemotingProvider.addAction(this.id, directActions);
-
-  },
 
   /*
   Detects component placeholders in the passed object (typically, "items"),
