@@ -4,11 +4,11 @@ class ServerCounter < Netzke::Base
   action :count_eight_times_special # passingm multiple arguments
   action :fail_in_the_middle # calls 3 endpoints of which the second fails
   action :do_ordered # used for test if call order is preserved
+  action :count_appending
 
   js_properties(
     :title => "Server Counter",
-    :html => "Wow",
-    :bbar => [:count_one_time.action, :count_seven_times.action, :count_eight_times_special.action, :fail_in_the_middle.action, :do_ordered.action]
+    :bbar => [:count_one_time.action, :count_seven_times.action, :count_eight_times_special.action, :fail_in_the_middle.action, :do_ordered.action, :count_appending.action]
   )
 
   js_method :on_count_one_time, <<-JS
@@ -31,7 +31,7 @@ class ServerCounter < Netzke::Base
 
   js_method :on_count_seven_times, <<-JS
     function(){
-      for(var i=0;i<7;i++)
+      for(var i=0; i<7; i++)
         this.count({how_many: 1});
     }
   JS
@@ -44,7 +44,7 @@ class ServerCounter < Netzke::Base
   JS
 
   js_method :on_fail_in_the_middle, <<-JS
-    function () {
+    function() {
       this.successingEndpoint();
       this.failingEndpoint();
       this.successingEndpoint();
@@ -57,6 +57,26 @@ class ServerCounter < Netzke::Base
       this.secondEp();
     }
   JS
+
+  js_method :update_appending, <<-JS
+    function(html){
+      if (!this.panelText) { this.panelText = ""; }
+      this.panelText += html + ",";
+      this.body.update(this.panelText);
+    }
+  JS
+
+  js_method :on_count_appending, <<-JS
+    function(){
+      for(var i=0; i<5; i++) {
+        this.countAppending();
+      }
+    }
+  JS
+
+  def before_load
+    component_session[:count] = 0
+  end
 
   endpoint :count do |params|
     component_session[:count]||=0
@@ -83,6 +103,19 @@ class ServerCounter < Netzke::Base
     component_session[:count]||=0
     component_session[:count]+=1
     {:update => "Second. "+ component_session[:count].to_s}
+  end
+
+  endpoint :count_appending do |params|
+    component_session[:count] ||= 0
+    component_session[:count] += 1
+
+    # On the 3rd request fail, but don't fail at a retry
+    if (component_session[:count] == 3 && !component_session[:is_retry])
+      component_session[:is_retry] = true
+      throw "Oops..."
+    end
+
+    {:update_appending => component_session[:count].to_s}
   end
 
 end

@@ -1,3 +1,3 @@
 Netzke::Core.setup do |config|
-  # config.icons_uri = "/images/icons"
+  config.js_direct_max_retries = 3
 end
