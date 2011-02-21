@@ -46,18 +46,23 @@ module Netzke
     mattr_accessor :external_ext_css
     @@external_ext_css = []
 
-    # Set in the Engine after_initialize callback
-    mattr_accessor :ext_location # TODO: rename to ext_path
-    mattr_accessor :touch_location # TODO: rename to touch_path
-    mattr_accessor :with_icons
-
     mattr_accessor :icons_uri
     @@icons_uri = "/images/icons"
 
     mattr_accessor :persistence_manager
     @@persistence_manager = "NetzkeComponentState"
 
+    # The amount of retries that the direct remoting provider will attempt in case of failure
+    mattr_accessor :js_direct_max_retries
+    @@js_direct_max_retries = 0
+
     # Set in the Engine after_initialize callback
+    mattr_accessor :ext_location # TODO: rename to ext_path
+
+    mattr_accessor :touch_location # TODO: rename to touch_path
+
+    mattr_accessor :with_icons
+
     mattr_accessor :persistence_manager_class
 
     def self.setup

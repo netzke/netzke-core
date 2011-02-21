@@ -109,17 +109,6 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   // },
 
   /*
-  Dynamically creates methods for api points, so that we could later call them like: this.myEndpointMethod()
-  */
-  processEndpoints: function(){
-    var endpoints = this.endpoints || [];
-    endpoints.push('deliver_component'); // all Netzke components get this endpoint
-    Ext.each(endpoints, function(intp){
-      this[intp.camelize(true)] = function(args, callback, scope){ this.callServer(intp, args, callback, scope); }
-    }, this);
-  },
-
-  /*
   Detects component placeholders in the passed object (typically, "items"),
   and merges them with the corresponding config from this.components.
   This way it becomes ready to be instantiated properly by Ext.
@@ -217,6 +206,12 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     return this.endpointUrl(endpoint);
   },
 
+  // endpointUrl: function(endpoint){
+  //   Netzke.deprecationWarning("endpointUrl() is deprecated. Use Ext.direct counterparts instead.\nFor example, specify a DirectProxy instead of HttpProxy ( proxy: new Ext.data.DirectProxy({directFn: Netzke.providers[this.id].endPoint}) ),\nor specify api instead of url config option for BasicForm ( api: { load: Netzke.providers[this.id].loadEndPoint, submit: Netzke.providers[this.id].submitEndPoint} )");
+  //   return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
+  // },
+
+  // Used by Touch components
   endpointUrl: function(endpoint){
     return Netzke.RelativeUrlRoot + "/netzke/dispatcher?address=" + this.id + "__" + endpoint;
   },
@@ -239,10 +234,10 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
             callback.apply(scope, [this.latestResult]);
           }
         }
+        Netzke.runningRequests--;
       },
       scope : this
     });
-    Netzke.runningRequests--;
   },
 
   setResult: function(result) {

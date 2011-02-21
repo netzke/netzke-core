@@ -82,5 +82,13 @@ module Netzke
         end
 
     end
+
+    def netzke_call(global_id,fun,*params)
+      fun=fun.to_s.camelize(:lower)
+      p=params.inject([]) do |r,p|
+        r << p.to_json
+      end.join(', ')
+      "Ext.getCmp('#{global_id}').#{fun}(#{p});"
+    end
   end
 end
