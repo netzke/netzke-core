@@ -1,4 +1,7 @@
-Enable Rails forgery protection after Ext.Ajax.extraParams has effect again.
+= Ext JS 4
+* Enable Rails forgery protection after Ext.Ajax.extraParams has effect again.
+* Get rid of createDelegate
+
 Make :items option understand also a hash.
 Caching for netzke_controller-provided JS and CSS.
 Caching - investigate reusing (fragment?) caching of Rails.

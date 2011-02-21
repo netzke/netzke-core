@@ -103,13 +103,11 @@ class ComponentLoader < Netzke::Base
 
   js_method :on_load_in_window, <<-JS
     function(){
-      var w = new Ext.Window({
-        width: 500, height: 400, modal: true, layout:'fit',
-        items: [{xtype: 'panel'}]
+      var w = new Ext.window.Window({
+        width: 500, height: 400, modal: false, layout:'fit', title: 'A window'
       });
-      w.show(null, function(){
-        this.loadComponent({name: 'component_loaded_in_window', container: w.items.first().getId()});
-      }, this);
+      w.show();
+      this.loadComponent({name: 'component_loaded_in_window', container: w.getId()});
     }
   JS
 

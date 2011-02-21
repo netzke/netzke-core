@@ -3,15 +3,16 @@ class ExtendedServerCaller < ServerCaller
 
   js_method :on_bug_server, <<-JS
     function(){
-      #{js_full_class_name}.superclass.onBugServer.call(this);
-      this.getBottomToolbar().addButton({text: "Added" + " by extended Server Caller"});
-      this.getBottomToolbar().doLayout();
+      this.callParent();
+      var bottomBar = this.getDockedItems()[1];
+      bottomBar.add({text: "Added" + " by extended Server Caller"});
     }
   JS
 
   def whats_up_endpoint(params)
-    orig = super
-    orig.merge(:set_title => orig[:set_title] + ", shiny weather")
+    super.tap do |s|
+      s[:set_title] = s[:set_title] + ", shiny weather"
+    end
   end
 
 end
