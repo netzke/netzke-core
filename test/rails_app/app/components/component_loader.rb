@@ -9,6 +9,8 @@ class ComponentLoader < Netzke::Base
 
   component :window_with_simple_component, {
     :class_name => "SimpleWindow",
+    :width => 400,
+    :height => 300,
     :items => [{
       :class_name => "SimpleComponent",
       :title => "Simple Component Inside Window"

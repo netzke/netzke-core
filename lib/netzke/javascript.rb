@@ -173,7 +173,7 @@ module Netzke
       # Builds this component's alias
       # E.g.: netzke.basepack.window, netzke.basepack.gridpanel
       def js_alias
-        name.gsub("::", ".").downcase
+        "widget." + name.gsub("::", ".").downcase
       end
 
       # Component's JavaScript class declaration.
@@ -295,7 +295,7 @@ module Netzke
         # res[:persistent_config] = persistence_enabled?
 
         # Include our xtype
-        res[:xtype] = self.class.js_xtype
+        # res[:xtype] = self.class.js_xtype
 
         # Include our alias
         res[:alias] = self.class.js_alias
