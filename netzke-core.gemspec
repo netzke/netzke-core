@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-02-18}
+  s.date = %q{2011-02-24}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -64,6 +64,7 @@ Gem::Specification.new do |s|
     "lib/netzke/configuration.rb",
     "lib/netzke/core.rb",
     "lib/netzke/core/masquerading.rb",
+    "lib/netzke/core/options_hash.rb",
     "lib/netzke/core/session.rb",
     "lib/netzke/core/version.rb",
     "lib/netzke/core_ext.rb",
@@ -212,7 +213,7 @@ Gem::Specification.new do |s|
 
 }
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.5.2}
   s.summary = %q{Build ExtJS/Rails components with minimum effort}
   s.test_files = [
     "spec/component/actions_spec.rb",
@@ -290,7 +291,6 @@ Gem::Specification.new do |s|
   ]
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
