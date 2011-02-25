@@ -3,6 +3,7 @@
   * Client-server communication is updated to use Ext.Direct (by @pschyska)
   * Introduced +js_translate+ class method that allows specifying i18n properties used in the JavaScript class
   * Better handling of actions i18n
+  * New `Netzke::Base.class_config_option` method to specify a class-level configuration options for a component, e.g. (in GridPanel): `class_config_option :column_filters_available, true`. This option then can be set in Rails application configuration, e.g.: `config.netzke.basepack.grid_panel.column_filters_available = false`, or directly on `Netzke::Core.config`, e.g.: `Netzke::Core.config.netzke.basepack.grid_panel.column_filters_available = false`.
 
 = v0.6.5 - 2011-01-14
 * enhancements

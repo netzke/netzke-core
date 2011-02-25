@@ -20,6 +20,10 @@ module Netzke
     extend Session
     extend Masquerading
 
+    # Configuration specified at the initialization times (set in the Engine in case of Rails)
+    mattr_accessor :config
+    @@config = {}
+
     # Ext or Touch
     mattr_accessor :platform
     @@platform = :ext

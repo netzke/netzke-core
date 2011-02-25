@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-02-24}
+  s.date = %q{2011-02-25}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -75,6 +75,7 @@ Gem::Specification.new do |s|
     "lib/netzke/core_ext/time_with_zone.rb",
     "lib/netzke/embedding.rb",
     "lib/netzke/ext_component.rb",
+    "lib/netzke/inheritance.rb",
     "lib/netzke/javascript.rb",
     "lib/netzke/javascript/scopes.rb",
     "lib/netzke/railz.rb",
@@ -82,6 +83,7 @@ Gem::Specification.new do |s|
     "lib/netzke/railz/action_view_ext/ext.rb",
     "lib/netzke/railz/action_view_ext/touch.rb",
     "lib/netzke/railz/controller_extensions.rb",
+    "lib/netzke/railz/engine.rb",
     "lib/netzke/railz/routes.rb",
     "lib/netzke/services.rb",
     "lib/netzke/session.rb",
@@ -92,6 +94,7 @@ Gem::Specification.new do |s|
     "spec/component/actions_spec.rb",
     "spec/component/base_spec.rb",
     "spec/component/composition_spec.rb",
+    "spec/component/configuration_spec.rb",
     "spec/component/javascript_spec.rb",
     "spec/component/state_spec.rb",
     "spec/core_ext_spec.rb",
@@ -219,6 +222,7 @@ Gem::Specification.new do |s|
     "spec/component/actions_spec.rb",
     "spec/component/base_spec.rb",
     "spec/component/composition_spec.rb",
+    "spec/component/configuration_spec.rb",
     "spec/component/javascript_spec.rb",
     "spec/component/state_spec.rb",
     "spec/core_ext_spec.rb",

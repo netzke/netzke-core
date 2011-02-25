@@ -256,7 +256,9 @@ module Netzke
     end
 
     module InstanceMethods
-      # Config that, after being converted to JSON, is used for instantiating the component in JavaScript.
+      # The result of this method (a hash) is converted to a JSON object and passed as the configuration parameter
+      # to the constructor of our JavaScript class. Override it when you want to pass any extra configuration
+      # to the JavaScript side.
       def js_config
         res = {}
 
