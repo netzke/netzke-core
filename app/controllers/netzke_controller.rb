@@ -5,8 +5,8 @@ class NetzkeController < ApplicationController
       format.js {
         res = initial_dynamic_javascript << "\n"
 
-        # Core JavaScript
-        res << File.new(File.expand_path("../../../javascripts/core.js", __FILE__)).read
+        include_base_js(res)
+
         # Ext-specific JavaScript
         res << File.new(File.expand_path("../../../javascripts/ext.js", __FILE__)).read
 
@@ -38,8 +38,7 @@ class NetzkeController < ApplicationController
       format.js {
         res = initial_dynamic_javascript << "\n"
 
-        # Core JavaScript
-        res << File.new(File.expand_path("../../../javascripts/core.js", __FILE__)).read
+        include_base_js(res)
         # Touch-specific JavaScript
         res << File.new(File.expand_path("../../../javascripts/touch.js", __FILE__)).read
 
@@ -149,6 +148,14 @@ class NetzkeController < ApplicationController
       res << %{Netzke.core.directMaxRetries = '#{Netzke::Core.js_direct_max_retries}';}
 
       res.join("\n")
+    end
+
+    def include_base_js(arry)
+      # JavaScript extensions
+      arry << File.new(File.expand_path("../../../javascripts/core_extensions.js", __FILE__)).read
+
+      # Base Netzke component JavaScript
+      arry << File.new(File.expand_path("../../../javascripts/base.js", __FILE__)).read
     end
 
 end

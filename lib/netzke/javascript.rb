@@ -1,6 +1,11 @@
 require "netzke/javascript/scopes"
 module Netzke
-  # == Component javascript code
+  # == Component's JavaScript class generation
+  # Each component operates on both client and server side. At the server side it's represented by a Ruby class, at the client side it's represented by a corresponding JavaScript class (extending one of the Ext JS classes, specified by Netzke::Base.js_base_class, or, in case of extending an existing Netzke component, that component's JavaScript class).
+  #
+  # The following public JavaScript methods are defined on all Netzke components
+  # *
+  #
   # Here's a brief explanation on how a javascript class for a component gets built.
   # Component gets defined as a constructor (a function) by +js_class+ class method (see "Inside component's contstructor").
   # +Ext.extend+ provides inheritance from an Ext class specified in +js_base_class+ class method.

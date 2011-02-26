@@ -9,11 +9,9 @@ At this time the following constants have been set by Rails:
 // Initial stuff
 Ext.BLANK_IMAGE_URL = Netzke.RelativeExtUrl + "/resources/images/default/s.gif";
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
-
-Netzke.isLoading=function () {
-  return Netzke.runningRequests != 0;
-}
-Netzke.runningRequests = 0;
+Ext.ns('Netzke.page'); // namespace for all component instantces on the page
+Ext.ns('Netzke.classes'); // namespace for all component classes
+Ext.ns('Netzke.classes.Core'); // namespace for Core mixins
 
 Netzke.deprecationWarning = function(msg){
   if (typeof console == 'undefined') {
@@ -23,10 +21,15 @@ Netzke.deprecationWarning = function(msg){
   }
 };
 
-Ext.ns('Netzke.page'); // namespace for all component instantces on the page
-Ext.ns('Netzke.classes'); // namespace for all component classes
-Ext.ns('Netzke.classes.Core'); // namespace for all component classes
+// Used in testing
+Netzke.runningRequests = 0;
+Netzke.isLoading=function () {
+  return Netzke.runningRequests != 0;
+}
 
+// Similar to Ext.apply, but can accept any number of parameters, e.g.
+//
+//     Netzke.chainApply(targetObject, {...}, {...}, {...});
 Netzke.chainApply = function(){
   var res = {};
   Ext.each(arguments, function(o){
@@ -35,55 +38,18 @@ Netzke.chainApply = function(){
   return res;
 };
 
-// Some Ruby-ish String extensions
-// from http://code.google.com/p/inflection-js/
-String.prototype.camelize=function(lowFirstLetter)
-{
-  var str=this; //.toLowerCase();
-  var str_path=str.split('/');
-  for(var i=0;i<str_path.length;i++)
-  {
-    var str_arr=str_path[i].split('_');
-    var initX=((lowFirstLetter&&i+1==str_path.length)?(1):(0));
-    for(var x=initX;x<str_arr.length;x++)
-      str_arr[x]=str_arr[x].charAt(0).toUpperCase()+str_arr[x].substring(1);
-    str_path[i]=str_arr.join('');
-  }
-  str=str_path.join('::');
-  return str;
-};
+/* Similar to Rails' alias_method_chain. Usefull when using mixins. E.g.:
 
-String.prototype.capitalize=function()
-{
-  var str=this.toLowerCase();
-  str=str.substring(0,1).toUpperCase()+str.substring(1);
-  return str;
-};
+    Netzke.aliasMethodChain(this, "initComponent", "netzke")
 
-String.prototype.humanize=function(lowFirstLetter)
-{
-  var str=this.toLowerCase();
-  str=str.replace(new RegExp('_id','g'),'');
-  str=str.replace(new RegExp('_','g'),' ');
-  if(!lowFirstLetter)str=str.capitalize();
-  return str;
-};
-
-// This one is borrowed from prototype.js
-String.prototype.underscore = function() {
-  return this.replace(/::/g, '/')
-             .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
-             .replace(/([a-z\d])([A-Z])/g, '$1_$2')
-             .replace(/-/g, '_')
-             .toLowerCase();
-};
-
-// Usefull when using mixins
+    will result in 2 new methods on this.initComponentWithNetzke and this.initComponentWithoutNetzke
+*/
 Netzke.aliasMethodChain = function(klass, method, feature) {
   klass[method + "Without" + feature.capitalize()] = klass[method];
   klass[method] = klass[method + "With" + feature.capitalize()];
 };
 
+// xtypes of cached Netzke classes
 Netzke.cache = [];
 
 // Registering a Netzke component
@@ -100,13 +66,6 @@ Netzke.classes.Core.Mixin = {};
 Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   isNetzke: true, // to distinguish Netzke components from regular Ext components
   latestResult: {}, // latest result returned from the server via an API call
-  /*
-  Overriding the constructor to only apply an "alias method chain" to initComponent
-  */
-  // constructor: function(config){
-    // Netzke.aliasMethodChain(this, "initComponent", "netzke");
-    // receiver.superclass.constructor.call(this, config);
-  // },
 
   /*
   Detects component placeholders in the passed object (typically, "items"),
@@ -149,7 +108,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   /*
   Gets id in the context of provided parent.
   For example, the components "properties", being a child of "books" has global id "books__properties",
-  which *is* its widegt's real id. This methods, with the instance of "books" passed as parameter,
+  which *is* its component's real id. This methods, with the instance of "books" passed as parameter,
   returns "properties".
   */
   localId : function(parent){
@@ -294,39 +253,5 @@ Ext.override(Ext.Container, {
   // Remove the child
   removeChild : function(){
     this.remove(this.getNetzkeComponent());
-  }
-});
-
-
-// Feedback Ghost
-Netzke.FeedbackGhost = function(){};
-Ext.apply(Netzke.FeedbackGhost.prototype, {
-  showFeedback: function(msg){
-    var createBox = function(s, l){
-        return ['<div class="msg">',
-                '<div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>',
-                '<div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc">', s, '</div></div></div>',
-                '<div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>',
-                '</div>'].join('');
-    }
-
-    var showBox = function(msg, lvl){
-      if (!lvl) {lvl = 'notice'};
-
-      var msgCt = Ext.get('netzke-feedback') || Ext.DomHelper.insertFirst(document.body, {id: 'netzke-feedback', 'class':'netzke-feedback'}, true);
-
-      var m = Ext.DomHelper.append(msgCt, {html:createBox(msg,lvl)}, true);
-      m.slideIn('t').pause(2).ghost("b", {remove:true});
-    }
-
-    if (typeof msg != 'string') {
-      var compoundMsg = "";
-      Ext.each(msg, function(m){
-        compoundMsg += m.msg + '<br>';
-      });
-      if (compoundMsg != "") showBox(compoundMsg, null); // the second parameter will be level
-    } else {
-      showBox(msg);
-    }
   }
 });
