@@ -40,8 +40,8 @@ module Netzke
       action :action_one, :text => "Action 1"
       action :action_five, :text => "Action Five"
 
-      action :action_two do
-        super().merge :disabled => true, :text => super()[:text] + ", extended"
+      def action_two_action
+        super.merge(:disabled => true, :text => normalize_action_config(super)[:text] + ", extended")
       end
 
       action :action_three do

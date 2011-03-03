@@ -33,6 +33,59 @@ module Netzke
         end
       end
 
+      # Used to define class-level configuration options for a component, e.g.:
+      #
+      #     class Netzke::Basepack::GridPanel < Netzke::Base
+      #       class_config_option :rows_reordering_available, true
+      #       ...
+      #     end
+      #
+      # This can later be set in the application configuration:
+      #
+      #     module RailsApp
+      #       class Application < Rails::Application
+      #         config.netzke.basepack.grid_panel.rows_reordering_available = false
+      #         ...
+      #       end
+      #     end
+      #
+      # Configuration options can be accessed as class attributes:
+      #
+      #     Netzke::Basepack::GridPanel.rows_reordering_available # => false
+      def class_config_option(name, default_value)
+        value = if app_level_config.has_key?(name.to_sym)
+          if app_level_config[name.to_sym].is_a?(Hash) && default_value.is_a?(Hash)
+            default_value.deep_merge(app_level_config[name.to_sym])
+          else
+            app_level_config[name.to_sym]
+          end
+        else
+          default_value
+        end
+
+        class_attribute(name.to_sym)
+        self.send("#{name}=", value)
+      end
+
+      protected
+
+        def app_level_config
+          @app_level_config ||= class_ancestors.inject({}) do |r,klass|
+            r.deep_merge(klass.app_level_config_excluding_parents)
+          end
+        end
+
+        def app_level_config_excluding_parents
+          path_parts = name.split("::").map(&:underscore)[1..-1]
+          if path_parts.present?
+            path_parts.inject(Netzke::Core.config) do |r,part|
+              r.send(part)
+            end
+          else
+            {}
+          end
+        end
+
     end
 
     module InstanceMethods

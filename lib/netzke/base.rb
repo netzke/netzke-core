@@ -3,6 +3,7 @@ require 'active_support/memoizable'
 require 'netzke/core_ext'
 require 'netzke/javascript'
 require 'netzke/stylesheets'
+require 'netzke/inheritance'
 require 'netzke/services'
 require 'netzke/composition'
 require 'netzke/configuration'
@@ -15,28 +16,31 @@ module Netzke
   # The base for every Netzke component
   #
   # == Class-level configuration
-  # You can configure any component's class as follows:
-  #     # e.g. in the initializers/netzke.rb
-  #     MyComponent.setup do |config|
-  #       config.default_instance_config = { :some_option => true }
-  #     end
+  # You can configure component classes in Rails Application, e.g.:
+  #
+  #     config.netzke.basepack.grid_panel.column_filters_available = false
+  #
+  # Optionally, when used outside of Rails, you can also set the values directly on Netzke::Core.config (the Engine does it for you):
+  #
+  #     Netzke::Core.config.netzke.basepack.grid_panel.column_filters_available = false
+  #
+  # If both default and overriding values are hashes, the default value gets deep-merged with the overriding value.
   #
   # Netzke::Base provides the following class-level configuration options:
-  # * default_instance_config - a hash that will be used as default configuration for this component's instances
+  # * default_instance_config - a hash that will be used as default configuration for ALL of this component's instances.
   class Base
-
-    class_attribute :default_instance_config
-    self.default_instance_config = {}
-
     include Session
     include State
     include Configuration
     include Javascript
+    include Inheritance
     include Services
     include Composition
     include Stylesheets
     include Embedding
     include Actions
+
+    class_config_option :default_instance_config, {}
 
     # Parent component
     attr_reader :parent
@@ -73,46 +77,11 @@ module Netzke
         (config[:klass] || constantize_class_name(config[:class_name])).new(config)
       end
 
-      # All ancestor classes in the Netzke class hierarchy (i.e. up to Netzke::Base)
-      def class_ancestors
-        if self == Netzke::Base
-          []
-        else
-          superclass.class_ancestors + [self]
-        end
+      # The ID used to locate this component's block in locale files
+      def i18n_id
+        name.split("::").map{|c| c.underscore}.join(".")
       end
 
-      # Same as +read_inheritable_attribute+ returning a hash, but returns empty hash when it's equal to superclass's
-      def read_clean_inheritable_hash(attr_name)
-        res = read_inheritable_attribute(attr_name) || {}
-        # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
-        res == self.superclass.read_inheritable_attribute(attr_name) ? {} : res
-      end
-
-      # Same as +read_inheritable_attribute+ returning a hash, but returns empty hash when it's equal to superclass's
-      def read_clean_inheritable_array(attr_name)
-        res = read_inheritable_attribute(attr_name) || []
-        # We don't want here any values from the superclass (which is the consequence of using inheritable attributes).
-        res == self.superclass.read_inheritable_attribute(attr_name) ? [] : res
-      end
-    end
-
-
-    def self.total_instances
-      @@instances || 0
-    end
-
-    def self.reset_total_instances
-      @@instances = 0
-    end
-
-    def self.increase_total_instances
-      @@instances ||= 0
-      @@instances += 1
-    end
-
-    def self.i18n_id
-      name.split("::").map{|c| c.underscore}.join(".")
     end
 
     # Instantiates a component instance. A parent can optionally be provided.
@@ -152,6 +121,20 @@ module Netzke
 
     def i18n_id
       self.class.i18n_id
+    end
+
+    # Used for performance measurments
+    def self.total_instances
+      @@instances || 0
+    end
+
+    def self.reset_total_instances
+      @@instances = 0
+    end
+
+    def self.increase_total_instances
+      @@instances ||= 0
+      @@instances += 1
     end
 
     private

@@ -115,9 +115,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       }
     }
 
-    // From everywhere accessible FeedbackGhost
-    this.feedbackGhost = new Netzke.FeedbackGhost();
-
     // Call the original initComponent
     this.initComponentWithoutNetzke();
   },

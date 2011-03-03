@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{netzke-core}
-  s.version = "0.6.6"
+  s.version = "0.6.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-02-22}
+  s.date = %q{2011-03-03}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -54,7 +54,8 @@ Gem::Specification.new do |s|
     "features/touch.feature",
     "init.rb",
     "install.rb",
-    "javascripts/core.js",
+    "javascripts/base.js",
+    "javascripts/core_extensions.js",
     "javascripts/ext.js",
     "javascripts/touch.js",
     "lib/netzke-core.rb",
@@ -64,6 +65,7 @@ Gem::Specification.new do |s|
     "lib/netzke/configuration.rb",
     "lib/netzke/core.rb",
     "lib/netzke/core/masquerading.rb",
+    "lib/netzke/core/options_hash.rb",
     "lib/netzke/core/session.rb",
     "lib/netzke/core/version.rb",
     "lib/netzke/core_ext.rb",
@@ -74,6 +76,7 @@ Gem::Specification.new do |s|
     "lib/netzke/core_ext/time_with_zone.rb",
     "lib/netzke/embedding.rb",
     "lib/netzke/ext_component.rb",
+    "lib/netzke/inheritance.rb",
     "lib/netzke/javascript.rb",
     "lib/netzke/javascript/scopes.rb",
     "lib/netzke/railz.rb",
@@ -81,6 +84,7 @@ Gem::Specification.new do |s|
     "lib/netzke/railz/action_view_ext/ext.rb",
     "lib/netzke/railz/action_view_ext/touch.rb",
     "lib/netzke/railz/controller_extensions.rb",
+    "lib/netzke/railz/engine.rb",
     "lib/netzke/railz/routes.rb",
     "lib/netzke/services.rb",
     "lib/netzke/session.rb",
@@ -91,6 +95,7 @@ Gem::Specification.new do |s|
     "spec/component/actions_spec.rb",
     "spec/component/base_spec.rb",
     "spec/component/composition_spec.rb",
+    "spec/component/configuration_spec.rb",
     "spec/component/javascript_spec.rb",
     "spec/component/state_spec.rb",
     "spec/core_ext_spec.rb",
@@ -212,12 +217,13 @@ Gem::Specification.new do |s|
 
 }
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.5.2}
   s.summary = %q{Build ExtJS/Rails components with minimum effort}
   s.test_files = [
     "spec/component/actions_spec.rb",
     "spec/component/base_spec.rb",
     "spec/component/composition_spec.rb",
+    "spec/component/configuration_spec.rb",
     "spec/component/javascript_spec.rb",
     "spec/component/state_spec.rb",
     "spec/core_ext_spec.rb",
@@ -290,7 +296,6 @@ Gem::Specification.new do |s|
   ]
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
