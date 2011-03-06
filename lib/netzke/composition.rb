@@ -113,7 +113,7 @@ module Netzke
 
       # All components for this instance, which includes components defined on class level, and components detected in :items
       def components
-        @components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }
+        @components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }.merge(config[:components] || {})
       end
 
       def eager_loaded_components

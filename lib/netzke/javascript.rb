@@ -284,52 +284,52 @@ module Netzke
       # to the constructor of our JavaScript class. Override it when you want to pass any extra configuration
       # to the JavaScript side.
       def js_config
-        res = {}
+        {}.tap do |res|
+          # Unique id of the component
+          res[:id] = global_id
 
-        # Unique id of the component
-        res[:id] = global_id
+          # Non-lazy-loaded components
+          comp_hash = {}
+          eager_loaded_components.each_pair do |comp_name, comp_config|
+            comp_instance = component_instance(comp_name.to_sym)
+            comp_instance.before_load
+            comp_hash[comp_name] = comp_instance.js_config
+          end
 
-        # Non-lazy-loaded components
-        comp_hash = {}
-        eager_loaded_components.each_pair do |comp_name, comp_config|
-          comp_instance = component_instance(comp_name.to_sym)
-          comp_instance.before_load
-          comp_hash[comp_name] = comp_instance.js_config
+          # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ so they get instantiated by Ext.
+          res[:netzke_components] = comp_hash unless comp_hash.empty?
+
+          # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
+          endpoints = self.class.endpoints.keys - [:deliver_component]
+          res[:endpoints] = endpoints unless endpoints.empty?
+
+          # Inform the JavaScript side if persistent_config is enabled
+          # res[:persistent_config] = persistence_enabled?
+
+          # Include our xtype
+          res[:xtype] = self.class.js_xtype
+
+          # Include our alias: Ext.createByAlias may be used to instantiate the component.
+          res[:alias] = self.class.js_alias
+
+          # Merge with the rest of config options, besides those that are only meant for the server side
+          res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
+
+          if config[:ext_config].present?
+            ::ActiveSupport::Deprecation.warn("Using ext_config option is deprecated. All config options must be specified at the same level in the hash.", caller)
+            res.merge!(config[:ext_config])
+          end
+
+          # Items (nested Ext/Netzke components)
+          res[:items] = items unless items.blank?
+
+          # So we can use getComponent(<component_name>) to retrieve a child component
+          res[:item_id] ||= name
+
+          res[:i18n] = js_translate_properties if js_translate_properties.present?
+
+          res[:netzke_plugins] = plugins.map{ |p| p.to_s.camelcase(:lower) } if plugins.present?
         end
-
-        # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ for instantiation by Ext.
-        res[:netzke_components] = comp_hash unless comp_hash.empty?
-
-        # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
-        endpoints = self.class.endpoints.keys - [:deliver_component]
-        res[:endpoints] = endpoints unless endpoints.empty?
-
-        # Inform the JavaScript side if persistent_config is enabled
-        # res[:persistent_config] = persistence_enabled?
-
-        # Include our xtype
-        res[:xtype] = self.class.js_xtype
-
-        # Include our alias: Ext.createByAlias may be used to instantiate the component.
-        res[:alias] = self.class.js_alias
-
-        # Merge with the rest of config options, besides those that are only meant for the server side
-        res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
-
-        if config[:ext_config].present?
-          ::ActiveSupport::Deprecation.warn("Using ext_config option is deprecated. All config options must be specified at the same level in the hash.", caller)
-          res.merge!(config[:ext_config])
-        end
-
-        # Items (nested Ext/Netzke components)
-        res[:items] = items unless items.blank?
-
-        # So we can use getComponent(<component_name>) to retrieve a child component
-        res[:item_id] ||= name
-
-        res[:i18n] = js_translate_properties if js_translate_properties.present?
-
-        res
       end
 
       # All the JS-code required by this instance of the component to be instantiated in the browser.

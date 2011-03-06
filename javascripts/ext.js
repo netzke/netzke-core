@@ -122,6 +122,8 @@ Ext.apply(Netzke.classes.Core.Mixin, {
 
     this.processEndpoints();
 
+    this.processPlugins();
+
     // This is where the references to different callback functions will be stored
     this.callbackHash = {};
 
@@ -485,5 +487,16 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       if (!this[methodName]) {throw "Netzke: handler for tool '"+tool+"' is undefined"}
       this[methodName]();
     }
-  }
+  },
+
+  processPlugins: function() {
+    if (this.netzkePlugins) {
+      if (!this.plugins) this.plugins = [];
+      Ext.each(this.netzkePlugins, function(p){
+        this.plugins.push(Ext.create(this.components[p]));
+      }, this);
+    }
+  },
+
+  onComponentLoad:Ext.emptyFn // gets overridden
 });

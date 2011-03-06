@@ -36,6 +36,7 @@
   * New "cache" option for `netzke_init` which gets passed to `javascript_include_tag` (no support for css caching of this type yet)
   * Netzke dynamic js and css-files such as ext.js, touch.css, now get generated at the application start, and put into "public/netzke". Solves a long standing problem with serving those files by HTTP servers in some cases. Enables caching naturally.
   * Moved features and specs to test/rails_app (tests should be run from that folder from now on)
+  * Introduced plugin functionality. We can create Netzke components that are pluggable into other components as Ext JS plugins.
 
 = v0.6.6 - 2011-02-26
 * enhancements
