@@ -1,4 +1,6 @@
 = v0.6.7 - to be released
+* enhancements
+  * No more using +method_missing+ for invoking endpoints.
 
 = v0.6.6 - 2011-02-26
 * enhancements
