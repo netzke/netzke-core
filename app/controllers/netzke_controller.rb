@@ -100,7 +100,7 @@ class NetzkeController < ApplicationController
       component_name, *sub_components = endpoint_path.split('__')
       component_instance = Netzke::Base.instance_by_config(Netzke::Core.session[:netzke_components][component_name.to_sym])
 
-      result = component_instance.invoke_endpoint([*sub_components, action].join("__"), params)
+      result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params)
 
       {
         :type => "rpc",
