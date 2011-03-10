@@ -3,8 +3,11 @@ require 'netzke/core/options_hash'
 require 'netzke/core/version'
 require 'netzke/core/session'
 require 'netzke/core/masquerading'
+require 'netzke/core/dynamic_assets'
 
 module Netzke
+  # This module implements high-level configuration for Netzke Core.
+  #
   # You can configure Netzke::Core like this:
   #
   #     Netzke::Core.setup do |config|
@@ -76,6 +79,23 @@ module Netzke
 
     def self.reset_components_in_session
       Netzke::Core.session[:netzke_components].try(:clear)
+    end
+
+    def self.ext_js
+      res = initial_dynamic_javascript << "\n"
+
+      include_base_js(res)
+
+      # Ext-specific JavaScript
+      res << File.new(File.expand_path("../../../javascripts/ext.js", __FILE__)).read
+
+      # Pluggable JavaScript (used by other Netzke-powered gems like netzke-basepack)
+      Netzke::Core.ext_javascripts.each do |path|
+        f = File.new(path)
+        res << f.read
+      end
+
+      render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
     end
   end
 end

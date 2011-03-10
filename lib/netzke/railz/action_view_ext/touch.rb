@@ -6,8 +6,8 @@ module Netzke
 
         protected
 
-          def netzke_touch_css_include(theme)
-            # theme is not used for now
+          def netzke_touch_css_include(params)
+            # Note: no themes for now
 
             res = stylesheet_link_tag("/sencha-touch/resources/css/sencha-touch")
 
@@ -17,7 +17,7 @@ module Netzke
             res
           end
 
-          def netzke_touch_js
+          def netzke_touch_js(params)
             res = []
             res << content_for(:netzke_js_classes)
             res << "\n"
@@ -32,16 +32,18 @@ module Netzke
           end
 
 
-          def netzke_touch_js_include
-            res = []
-
+          def netzke_touch_js_include(params)
             # ExtJS
-            res << (ENV['RAILS_ENV'] == 'development' ? javascript_include_tag("/sencha-touch/sencha-touch-debug.js") : javascript_include_tag("/sencha-touch/sencha-touch"))
+            res = if ENV['RAILS_ENV'] == 'development'
+              ["/sencha-touch/sencha-touch-debug.js"]
+            else
+              ["/sencha-touch/sencha-touch"]
+            end
 
-            # Netzke (dynamically generated)
-            res << javascript_include_tag("/netzke/touch")
+            # Netzke
+            res << "/netzke/touch"
 
-            res.join("\n")
+            javascript_include_tag(res, :cache => params[:cache])
           end
 
       end

@@ -1,70 +1,5 @@
 class NetzkeController < ApplicationController
 
-  def ext
-    respond_to do |format|
-      format.js {
-        res = initial_dynamic_javascript << "\n"
-
-        include_base_js(res)
-
-        # Ext-specific JavaScript
-        res << File.new(File.expand_path("../../../javascripts/ext.js", __FILE__)).read
-
-        # Pluggable JavaScript (used by other Netzke-powered gems like netzke-basepack)
-        Netzke::Core.ext_javascripts.each do |path|
-          f = File.new(path)
-          res << f.read
-        end
-
-        render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
-      }
-
-      format.css {
-        res = File.new(File.expand_path("../../../stylesheets/core.css", __FILE__)).read
-
-        # Pluggable stylesheets (may be used by other Netzke-powered gems like netzke-basepack)
-        Netzke::Core.ext_stylesheets.each do |path|
-          f = File.new(path)
-          res << f.read
-        end
-
-        render :text => res
-      }
-    end
-  end
-
-  def touch
-    respond_to do |format|
-      format.js {
-        res = initial_dynamic_javascript << "\n"
-
-        include_base_js(res)
-        # Touch-specific JavaScript
-        res << File.new(File.expand_path("../../../javascripts/touch.js", __FILE__)).read
-
-        # Pluggable JavaScript (may be used by other Netzke-powered gems like netzke-basepack)
-        Netzke::Core.touch_javascripts.each do |path|
-          f = File.new(path)
-          res << f.read
-        end
-
-        render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
-      }
-
-      format.css {
-        res = File.new(File.expand_path("../../../stylesheets/core.css", __FILE__)).read
-
-        # Pluggable stylesheets (may be used by other Netzke-powered gems like netzke-basepack)
-        Netzke::Core.touch_stylesheets.each do |path|
-          f = File.new(path)
-          res << f.read
-        end
-
-        render :text => res
-      }
-    end
-  end
-
   # Action for Ext.Direct RPC calls
   def direct
     result=""
@@ -95,8 +30,7 @@ class NetzkeController < ApplicationController
   end
 
   protected
-
-    def invoke_endpoint(endpoint_path, action, params, tid)
+    def invoke_endpoint(endpoint_path, action, params, tid) #:nodoc:
       component_name, *sub_components = endpoint_path.split('__')
       component_instance = Netzke::Base.instance_by_config(Netzke::Core.session[:netzke_components][component_name.to_sym])
 
@@ -122,28 +56,6 @@ class NetzkeController < ApplicationController
       response.headers["Content-Type"] = "text/plain; charset=utf-8"
 
       render :text => component_instance.invoke_endpoint(sub_components.join("__"), params), :layout => false
-    end
-
-    # Generates initial javascript code that is dependent on Rails environement
-    def initial_dynamic_javascript
-      res = []
-      res << %(Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection)
-      res << %{Ext.ns('Netzke');}
-      res << %{Ext.ns('Netzke.core');}
-      res << %{Netzke.RelativeUrlRoot = '#{ActionController::Base.config.relative_url_root}';}
-      res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}/extjs';}
-
-      res << %{Netzke.core.directMaxRetries = '#{Netzke::Core.js_direct_max_retries}';}
-
-      res.join("\n")
-    end
-
-    def include_base_js(arry)
-      # JavaScript extensions
-      arry << File.new(File.expand_path("../../../javascripts/core_extensions.js", __FILE__)).read
-
-      # Base Netzke component JavaScript
-      arry << File.new(File.expand_path("../../../javascripts/base.js", __FILE__)).read
     end
 
 end

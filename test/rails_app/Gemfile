@@ -7,6 +7,8 @@ gem 'rails', '3.0.4'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
 
+gem 'netzke-persistence', :path => File.expand_path('../vendor/gems/netzke-persistence', __FILE__)
+
 # Use unicorn as the web server
 # gem 'unicorn'
 
@@ -33,5 +35,4 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'spork'
   gem 'launchy'    # So you can do Then show me the page
-  gem 'netzke-persistence'
 end

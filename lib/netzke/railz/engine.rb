@@ -15,12 +15,21 @@ module Netzke
       config.after_initialize do
         Netzke::Core.with_icons = File.exists?("#{::Rails.root}/public#{Netzke::Core.icons_uri}") if Netzke::Core.with_icons.nil?
 
-        # If need to cache classes, memoize Netzke::Base.constantize_class_name for performance
         if Rails.configuration.cache_classes
+          # Memoize Netzke::Base.constantize_class_name for performance
           class << Netzke::Base
             memoize :constantize_class_name
           end
         end
+
+        # Generate dynamic assets and put them into public/netzke
+        require 'fileutils'
+        FileUtils.mkdir_p(Rails.root.join('public', 'netzke'))
+
+        File.open(Rails.root.join('public', 'netzke', 'ext.js'), 'w') {|f| f.write(Netzke::Core::DynamicAssets.ext_js) }
+        File.open(Rails.root.join('public', 'netzke', 'ext.css'), 'w') {|f| f.write(Netzke::Core::DynamicAssets.ext_css) }
+        File.open(Rails.root.join('public', 'netzke', 'touch.js'), 'w') {|f| f.write(Netzke::Core::DynamicAssets.touch_js) }
+        File.open(Rails.root.join('public', 'netzke', 'touch.css'), 'w') {|f| f.write(Netzke::Core::DynamicAssets.touch_css) }
       end
     end
   end
