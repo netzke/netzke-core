@@ -29,6 +29,32 @@ class NetzkeController < ApplicationController
     endpoint_dispatch(params[:address])
   end
 
+  # Used in development mode for on-the-fly generation of public/netzke/ext.[js|css]
+  def ext
+    respond_to do |format|
+      format.js {
+        render :text => Netzke::Core::DynamicAssets.ext_js
+      }
+
+      format.css {
+        render :text => Netzke::Core::DynamicAssets.ext_css
+      }
+    end
+  end
+
+  # Used in development mode for on-the-fly generation of public/netzke/touch.[js|css]
+  def touch
+    respond_to do |format|
+      format.js {
+        render :text => Netzke::Core::DynamicAssets.touch_js
+      }
+
+      format.css {
+        render :text => Netzke::Core::DynamicAssets.touch_css
+      }
+    end
+  end
+
   protected
     def invoke_endpoint(endpoint_path, action, params, tid) #:nodoc:
       component_name, *sub_components = endpoint_path.split('__')
