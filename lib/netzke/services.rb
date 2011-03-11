@@ -78,9 +78,9 @@ module Netzke
         # for backward compatibility
         ::ActiveSupport::Deprecation.warn("When overriding endpoints, use the '_endpoint' suffix (concerns: #{endpoint})", caller)
         send(endpoint, params)
-      elsif respond_to?(endpoint + "_endpoint")
+      elsif respond_to?("#{endpoint}_endpoint")
         # for backward compatibility
-        send(endpoint + "_endpoint", params)
+        send("#{endpoint}_endpoint", params)
       else
         # Let's try to find it recursively in a component down the hierarchy
         child_component, *action = endpoint.to_s.split('__')

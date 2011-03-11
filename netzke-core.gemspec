@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-03-10}
+  s.date = %q{2011-03-11}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -251,6 +251,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/kinda_complex_component/extra_stuff.rb",
     "test/rails_app/app/components/loader_of_component_with_custom_css.rb",
     "test/rails_app/app/components/localized_panel.rb",
+    "test/rails_app/app/components/nested_component.rb",
     "test/rails_app/app/components/scoped_components/deep_scoped_components/some_deep_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/extended_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/some_scoped_component.rb",
