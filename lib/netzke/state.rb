@@ -71,7 +71,7 @@ module Netzke
 
     # Initialized state manager class. At this moment this class has current_user, component, and session set.
     def state_manager
-      @state_manager ||= Netzke::Core.persistence_manager_class && Netzke::Core.persistence_manager_class.init({
+      Netzke::Core.persistence_manager_class && Netzke::Core.persistence_manager_class.init({
         :component => persistence_key,
         :current_user => Netzke::Core.controller.respond_to?(:current_user) && Netzke::Core.controller.current_user,
         :session => Netzke::Core.session
@@ -80,7 +80,7 @@ module Netzke
 
     # Initialized state manager class, configured for managing global (not component specific) settings. At this moment this class has current_user and session set.
     def global_state_manager
-      @global_state_manager ||= Netzke::Core.persistence_manager_class && Netzke::Core.persistence_manager_class.init({
+      Netzke::Core.persistence_manager_class && Netzke::Core.persistence_manager_class.init({
         :current_user => Netzke::Core.controller.respond_to?(:current_user) && Netzke::Core.controller.current_user,
         :session => Netzke::Core.session
       })
