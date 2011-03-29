@@ -76,7 +76,9 @@ module Netzke
 
       # Instance of component by config
       def instance_by_config(config)
-        (config[:klass] || constantize_class_name(config[:class_name])).new(config)
+        klass = config[:klass] || constantize_class_name(config[:class_name])
+        raise NameError, "Netzke: Unknown component #{config[:class_name]}" if klass.nil?
+        klass.new(config)
       end
 
       # The ID used to locate this component's block in locale files
