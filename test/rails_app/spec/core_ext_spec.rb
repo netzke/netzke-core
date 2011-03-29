@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + '/../lib/netzke/core_ext'
-
 describe "Core extensions" do
   it "should properly do deep_each_pair" do
     res = {}

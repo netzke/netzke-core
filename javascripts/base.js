@@ -65,7 +65,6 @@ Netzke.classes.Core.Mixin = {};
 // Properties/methods common to all Netzke component classes
 Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   isNetzke: true, // to distinguish Netzke components from regular Ext components
-  latestResult: {}, // latest result returned from the server via an API call
 
   /*
   Detects component placeholders in the passed object (typically, "items"),

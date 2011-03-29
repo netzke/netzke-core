@@ -12,6 +12,3 @@ Feature: Scopes
     When I go to the ScopedComponents::DeepScopedComponents::SomeDeepScopedComponent test page
     Then I should see "Some Deep Scoped Component Title"
     And I should see "Some Deep Scoped Component HTML"
-
-
-
