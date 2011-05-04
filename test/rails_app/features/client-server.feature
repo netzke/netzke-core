@@ -12,5 +12,3 @@ Scenario: Ask server to set our title
   # When I execute "Ext.getCmp('server_caller').buttons.first().fireEvent('click');"
   When I press "Call server"
   Then I should see "All quiet here on the server"
-
-

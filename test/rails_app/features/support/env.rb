@@ -6,20 +6,16 @@
 
 ENV["RAILS_ENV"] ||= "test"
 # require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
-require File.expand_path(File.dirname(__FILE__) + '/../../test/rails_app/config/environment')
+# require File.expand_path(File.dirname(__FILE__) + '/../../test/rails_app/config/environment')
 # require File.expand_path(File.dirname(__FILE__) + '/../../lib/netzke-core')
 
 
-require 'cucumber/formatter/unicode' # Remove this line if you don't want Cucumber Unicode support
-require 'cucumber/rails/rspec'
-require 'cucumber/rails/world'
-require 'cucumber/rails/active_record'
-require 'cucumber/web/tableish'
+require 'cucumber/rails'
 
 require 'capybara/rails'
 require 'capybara/cucumber'
 require 'capybara/session'
-require 'cucumber/rails/capybara_javascript_emulation' # Lets you click links with onclick javascript handlers without using @culerity or @javascript
+# require 'cucumber/rails/capybara_javascript_emulation' # Lets you click links with onclick javascript handlers without using @culerity or @javascript
 
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
 # order to ease the transition to Capybara we set the default here. If you'd

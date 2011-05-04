@@ -43,5 +43,3 @@ Feature: Component loader
     Given I am on the ComponentLoader test page
     When I press "Load with params"
     Then I should see "Simple Component with changed HTML"
-
-

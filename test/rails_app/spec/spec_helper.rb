@@ -1,15 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../../test/rails_app/config/environment", __FILE__)
+require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
-
-# Each time recreate test database with migrations
-db_file = File.dirname(__FILE__) + "/../test/rails_app/db/test.sqlite3"
-File.delete(db_file) if File.exists?(db_file)
-ActiveRecord::Migrator.migrate(File.dirname(__FILE__) + "/../test/rails_app/db/migrate")
-
-# Load the factories for this plugin:
-# require File.dirname(__FILE__) + '/factories'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.

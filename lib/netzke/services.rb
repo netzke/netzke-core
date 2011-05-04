@@ -1,40 +1,40 @@
 module Netzke
+  # This module takes care of components' client-server communication.
   module Services
     extend ActiveSupport::Concern
 
     module ClassMethods
-      # Declare connection points between client side of a component and its server side. For example:
+      # Defines an endpoint - a connection point between the client side of a component and its server side. For example:
       #
-      #     api :reset_data
+      #     endpoint :do_something do |params|
+      #       # ...
+      #     end
       #
-      # will provide JavaScript side with a method <tt>resetData</tt> that will result in a call to Ruby
-      # method <tt>reset_data</tt>, e.g.:
+      # By defining the endpoint on the server, the client side automatically gets a method that is used to call the server, in this case `doSomething` (note conversion from underscore to camelcase). It can be called like this:
       #
-      #     this.resetData({hard:true});
+      #     this.doSomething(argsObject, callbackFunction, scope);
       #
-      # See netzke-basepack's GridPanel for an example.
+      # * +argsObject+ is what the server side will receive as the +params+ argument
+      # * +callbackFunction+ (optional) will be called after the server successfully processes the request
+      # * +scope+ (optional) the scope in which +callbackFunction+ will be called
       #
-      def api(*api_points)
-        ::ActiveSupport::Deprecation.warn("Using the 'api' call has no longer effect. Define endpoints instead.", caller)
-
-        # api_points.each do |apip|
-        #   register_endpoint(apip)
-        # end
-
-        # It may be needed later for security
-        # api_points.each do |apip|
-        #   module_eval <<-END, __FILE__, __LINE__
-        #   def endpoint_#{apip}(*args)
-        #     before_api_call_result = defined?(before_api_call) && before_api_call('#{apip}', *args) || {}
-        #     (before_api_call_result.empty? ? #{apip}(*args) : before_api_call_result).to_nifty_json
-        #   end
-        #   END
-        # end
-      end
-
-      # Defines an endpoint
+      # The callback function may receive an argument which will be set to the value that the server passes to the special +set_result+ key in the resulting hash:
+      #
+      #     endpoint :do_something do |params|
+      #       # ...
+      #       {:set_result => 42}
+      #     end
+      #
+      # Any other key in the resulting hash will result in a corresponding JavaScript-side function call, with the parameter set to the value of that key. For example:
+      #
+      #     endpoint :do_something do |params|
+      #       # ...
+      #       {:set_result => 42, :set_title => "New title, set by the server"}
+      #     end
+      #
+      # This will result in the call to the +setTitle+ method on the client side of the component, with "New title, set by the server" as the parameter.
       def endpoint(name, options = {}, &block)
-        register_endpoint(name)
+        register_endpoint(name, options)
         define_method("#{name}_endpoint", &block) if block # if no block is given, the method is supposed to be defined elsewhere
 
         # define_method name, &block if block # if no block is given, the method is supposed to be defined elsewhere
@@ -44,46 +44,58 @@ module Netzke
         end
       end
 
-      # Register an endpoint
-      def register_endpoint(ep)
-        current_endpoints = read_inheritable_attribute(:endpoints) || []
-        current_endpoints << ep
-        write_inheritable_attribute(:endpoints, current_endpoints.uniq)
+      # Returns all endpoints as a hash
+      def endpoints
+        read_inheritable_attribute(:endpoints) || {}
       end
 
-      # Returns registered endpoints
-      def registered_endpoints
-        read_inheritable_attribute(:endpoints) || []
+      def api(*api_points) #:nodoc:
+        ::ActiveSupport::Deprecation.warn("Using the 'api' call has no longer effect. Define endpoints instead.", caller)
       end
+
+      protected
+
+      # Registers an endpoint
+      def register_endpoint(ep, options)
+        current_endpoints = read_inheritable_attribute(:endpoints) || {}
+        current_endpoints.merge!(ep => options)
+        write_inheritable_attribute(:endpoints, current_endpoints)
+      end
+
     end
 
-    included do
+    # Invokes endpoint calls
+    # +endpoint+ may contain the path to the endpoint in a component down the hierarchy, e.g.:
+    #
+    #     invoke_endpoint(:users__center__get_data, params)
+    def invoke_endpoint(endpoint, params)
+      ep_config = self.class.endpoints[endpoint.to_sym]
 
-      # Loads a component on browser's request. Every Nettzke component gets this endpoint.
-      # <tt>params</tt> should contain:
-      # * <tt>:cache</tt> - an array of component classes cached at the browser
-      # * <tt>:id</tt> - reference to the component
-      # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
-      endpoint :deliver_component do |params|
-        cache = params[:cache].split(",") # array of cached xtypes
-        component_name = params[:name].underscore.to_sym
-        component = components[component_name] && component_instance(component_name)
+      if respond_to?("_#{endpoint}_ep_wrapper")
+        # we have this endpoint defined
+        send("_#{endpoint}_ep_wrapper", params)
+      elsif respond_to?(endpoint)
+        # for backward compatibility
+        ::ActiveSupport::Deprecation.warn("When overriding endpoints, use the '_endpoint' suffix (concerns: #{endpoint})", caller)
+        send(endpoint, params)
+      elsif respond_to?("#{endpoint}_endpoint")
+        # for backward compatibility
+        send("#{endpoint}_endpoint", params)
+      else
+        # Let's try to find it recursively in a component down the hierarchy
+        child_component, *action = endpoint.to_s.split('__')
+        child_component = child_component.to_sym
+        action = !action.empty? && action.join("__").to_sym
 
-        if component
-          # inform the component that it's being loaded
-          component.before_load
+        raise RuntimeError, "Component '#{self.class.name}' does not have endpoint '#{endpoint}'" if !action
 
-          [{
-            :eval_js => component.js_missing_code(cache),
-            :eval_css => component.css_missing_code(cache)
-          }, {
-            :component_delivered => component.js_config
-          }]
+        if components[child_component]
+          component_instance(child_component).invoke_endpoint(action, params)
         else
-          {:feedback => "Couldn't load component '#{component_name}'"}
+          # component_missing can be overridden if necessary
+          component_missing(child_component)
         end
       end
-
     end
 
   end

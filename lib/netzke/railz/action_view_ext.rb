@@ -11,6 +11,7 @@ module Netzke
       # Params:
       # * :platform - :ext or :touch, by default :ext
       # * :theme - the name of theme to apply
+      # * :cache - enable Rails caching of assets
       #
       # E.g.:
       #     <%= netzke_init :theme => :grey %>
@@ -19,8 +20,12 @@ module Netzke
       #     <%= netzke_init :platform => :touch %>
       def netzke_init(params = {})
         Netzke::Core.platform = params[:platform] || :ext
-        theme = params[:theme] || params[:ext_theme] || :default
-        raw([netzke_css_include(theme), netzke_css, netzke_js_include, netzke_js].join("\n"))
+        theme = params[:theme] || params[:ext_theme]
+
+        # Rails' forgery protection
+        content_for :netzke_js_classes, %Q(\n\nExt.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'};)
+
+        raw([netzke_css_include(params), netzke_css(params), netzke_js_include(params), netzke_js(params)].join("\n"))
       end
 
       # Use this helper in your views to embed Netzke components. E.g.:
@@ -28,7 +33,8 @@ module Netzke
       def netzke(name, config = {})
         @rendered_classes ||= []
 
-        # if we are the first netzke call on the page, reset components hash in the session
+        # If we are the first netzke call on the page, reset components hash in the session.
+        # WON'T WORK, because it breaks the browser "back" button
         # if @rendered_classes.empty?
         #   Netzke::Core.reset_components_in_session
         # end
@@ -40,31 +46,31 @@ module Netzke
         # Register the component in session
         Netzke::Core.reg_component(config)
 
-        w = Netzke::Base.instance_by_config(config)
-        w.before_load # inform the component about initial load
+        cmp = Netzke::Base.instance_by_config(config)
+        cmp.before_load # inform the component about initial load
 
-        content_for :netzke_js_classes, raw(w.js_missing_code(@rendered_classes))
+        content_for :netzke_js_classes, raw(cmp.js_missing_code(@rendered_classes))
 
-        content_for :netzke_css, raw(w.css_missing_code(@rendered_classes))
+        content_for :netzke_css, raw(cmp.css_missing_code(@rendered_classes))
 
-        content_for :netzke_on_ready, raw("#{w.js_component_instance}\n\n#{w.js_component_render}")
+        content_for :netzke_on_ready, raw("#{cmp.js_component_instance}\n\n#{cmp.js_component_render}")
 
         # Now mark this component's class as rendered (by storing it's xtype), so that we only generate it once per view
         @rendered_classes << class_name.to_s.gsub("::", "").downcase unless @rendered_classes.include?(class_name)
 
         # Return the html for this component
-        raw(w.js_component_html)
+        raw(cmp.js_component_html)
       end
 
       protected
 
         # Link tags for all the required stylsheets
-        def netzke_css_include(theme)
-          send :"netzke_#{Netzke::Core.platform}_css_include", theme
+        def netzke_css_include(params)
+          send :"netzke_#{Netzke::Core.platform}_css_include", params
         end
 
         # Inline CSS specific for the page
-        def netzke_css
+        def netzke_css(params)
           %{
     <style type="text/css" media="screen">
       #{content_for(:netzke_css)}
@@ -72,23 +78,16 @@ module Netzke
         end
 
         # Script tags for all the required JavaScript
-        def netzke_js_include
-          send :"netzke_#{Netzke::Core.platform}_js_include"
+        def netzke_js_include(params)
+          send :"netzke_#{Netzke::Core.platform}_js_include", params
         end
 
         # Inline JavaScript for all Netzke classes on the page, as well as Ext.onReady (Ext.setup in case of Touch) which renders Netzke components in this view after the page is loaded
-        def netzke_js
-          send :"netzke_#{Netzke::Core.platform}_js"
+        def netzke_js(params = {})
+          send :"netzke_#{Netzke::Core.platform}_js", params
         end
 
     end
 
-    def netzke_call(global_id,fun,*params)
-      fun=fun.to_s.camelize(:lower)
-      p=params.inject([]) do |r,p|
-        r << p.to_json
-      end.join(', ')
-      "Ext.getCmp('#{global_id}').#{fun}(#{p});"
-    end
   end
 end

@@ -1,7 +1,9 @@
 # require 'active_support/core_ext/class/inheritable_attributes'
 
 module Netzke
-  # You can define a nested components by calling the class method +component+:
+  # This module takes care of components composition.
+  #
+  # You can define a nested component by calling the +component+ class method:
   #
   #     component :users, :data_class => "GridPanel", :model => "User"
   #
@@ -166,30 +168,6 @@ module Netzke
           return global_id + "__" + ref
         else
           return parent.global_id_by_reference(substr)
-        end
-      end
-
-      # Method dispatcher - instantiates an component and calls the method on it
-      # E.g.:
-      #   users__center__get_data
-      #     instantiates component "users", and calls "center__get_data" on it
-      #   books__move_column
-      #     instantiates component "books", and calls "endpoint_move_column" on it
-      def method_missing(method_name, params = {})
-        component, *action = method_name.to_s.split('__')
-        component = component.to_sym
-        action = !action.empty? && action.join("__").to_sym
-
-        if action
-          if components[component]
-            # only actions starting with "endpoint_" are accessible
-            endpoint_action = action.to_s.index('__') ? action : "_#{action}_ep_wrapper"
-            component_instance(component).send(endpoint_action, params)
-          else
-            component_missing(component)
-          end
-        else
-          super
         end
       end
 

@@ -15,4 +15,3 @@ Feature: Persistence
     And I go to the ComponentWithSessionPersistence test page
     Then I should see "Title From Session"
     And I should see "HTML from session"
-

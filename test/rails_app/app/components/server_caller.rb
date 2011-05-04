@@ -15,7 +15,6 @@ class ServerCaller < Netzke::Base
   JS
 
   endpoint :whats_up do |params|
-    ::Rails.logger.debug "!!! params: #{params.inspect}\n"
     {:set_title => "All quiet here on the server"}
   end
 
