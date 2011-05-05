@@ -23,7 +23,7 @@ module Netzke
 
             # ExtJS
             # TODO: Introduce production versions of Ext JS 4, when ready
-            res << (ENV['RAILS_ENV'] == 'development' ? ["/extjs4/ext-all-debug"] : ["/extjs/ext-all-debug"])
+            res << (ENV['RAILS_ENV'] == 'development' ? ["/extjs4/ext-all-debug"] : ["/extjs4/ext-all-debug"])
 
             # Netzke-related dynamic JavaScript
             res << "/netzke/ext"
