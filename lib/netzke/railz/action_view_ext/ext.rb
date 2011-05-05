@@ -8,7 +8,7 @@ module Netzke
 
           def netzke_ext_css_include(params)
             # ExtJS base
-            res = stylesheet_link_tag("/extjs4/resources/css/ext")
+            res = ["/extjs4/resources/css/ext-all"]
 
             # Netzke-related dynamic css
             res << "/netzke/ext"
@@ -18,12 +18,12 @@ module Netzke
             stylesheet_link_tag(res, :cache => false && params[:cache]) # caching is not possible at this time, as the stylesheets use relative asset paths
           end
 
-          def netzke_ext_js_include
+          def netzke_ext_js_include(params)
             res = []
 
             # ExtJS
             # TODO: Introduce production versions of Ext JS 4, when ready
-            res << (ENV['RAILS_ENV'] == 'development' ? javascript_include_tag("/extjs4/ext-core-debug", "/extjs4/ext-all-debug") : javascript_include_tag("/extjs4/ext-core-debug", "/extjs/ext-all-debug"))
+            res << (ENV['RAILS_ENV'] == 'development' ? ["/extjs4/ext-all-debug"] : ["/extjs/ext-all-debug"])
 
             # Netzke-related dynamic JavaScript
             res << "/netzke/ext"

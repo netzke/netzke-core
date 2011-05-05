@@ -8,7 +8,7 @@ Ext.state.Provider.prototype.set = function(){};
 
 // Check Ext JS version
 (function(){
-  var requiredExtVersion = "4.0.0.0.dev";
+  var requiredExtVersion = "4.0.0.0.";
   var currentExtVersion = Ext.getVersion('core').toArray().join(".");
   if (requiredExtVersion !== currentExtVersion) {
     Netzke.deprecationWarning("Need Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
@@ -17,6 +17,7 @@ Ext.state.Provider.prototype.set = function(){};
 
 Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   extend: 'Ext.direct.RemotingProvider',
+
   getCallData: function(t){
     return {
       act: t.action, // rails doesn't really support having a parameter named "action"
@@ -30,9 +31,9 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   addAction: function(action, methods) {
     var cls = this.namespace[action] || (this.namespace[action] = {});
     for(var i = 0, len = methods.length; i < len; i++){
-        var m = methods[i];
-        cls[m.name] = this.createMethod(action, m);
-      }
+      method = Ext.create('Ext.direct.RemotingMethod', methods[i]);
+      cls[method.name] = this.createHandler(action, method);
+    }
   },
 
   // process response regardess of status
@@ -46,7 +47,7 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   // - client marks tid 1 as success (deletes the transaction from pending), and will retry 2 and 3 - this is the
   //   change in Ext.direct.RemotingProvider's default behaviour
   onData: function(opt, success, xhr){
-    var events=this.getEvents(xhr);
+    var events = this.createEvents(xhr);
 
     for(var i = 0, len = events.length; i < len; i++){
       var e = events[i],
@@ -126,14 +127,16 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     var endpoints = this.endpoints || [];
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
     var directActions = [];
-    var that=this;
+    var that = this;
 
     Ext.each(endpoints, function(intp){
       directActions.push({"name":intp.camelize(true), "len":1});
       this[intp.camelize(true)] = function(arg, callback, scope) {
         Netzke.runningRequests++;
-        scope=scope || that;
-        Netzke.providers[this.id][intp.camelize(true)].call(typeof scope != 'undefined' ? scope : that, arg, function(result, remotingEvent) {
+
+        scope = scope || that;
+
+        Netzke.providers[this.id][intp.camelize(true)].call(scope, arg, function(result, remotingEvent) {
           if(remotingEvent.message) {
             console.error("RPC event indicates an error: ", remotingEvent);
             throw new Error(remotingEvent.message);
