@@ -24,7 +24,7 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
       method: t.method,
       data: t.data,
       type: 'rpc',
-      tid: t.tid
+      tid: t.id
     }
   },
 
@@ -54,12 +54,12 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
       t = this.getTransaction(e);
       this.fireEvent('data', this, e);
       if(t){
-        this.doCallback(t, e, true);
+        this.runCallback(t, e, true);
         Ext.Direct.removeTransaction(t);
       }
     }
 
-    Netzke.classes.NetzkeRemotingProvider.superclass.onData.call(this, opt, success, xhr);
+    this.callParent([opt, success, xhr]);
   }
 });
 
