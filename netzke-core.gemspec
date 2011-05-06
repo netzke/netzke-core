@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-05-06}
+  s.date = %q{2011-05-07}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -187,6 +187,7 @@ Gem::Specification.new do |s|
     "test/rails_app/script/rails",
     "test/rails_app/spec/component/actions_spec.rb",
     "test/rails_app/spec/component/base_spec.rb",
+    "test/rails_app/spec/component/component_spec.rb",
     "test/rails_app/spec/component/composition_spec.rb",
     "test/rails_app/spec/component/configuration_spec.rb",
     "test/rails_app/spec/component/javascript_spec.rb",
@@ -285,6 +286,7 @@ Gem::Specification.new do |s|
     "test/rails_app/features/support/paths.rb",
     "test/rails_app/spec/component/actions_spec.rb",
     "test/rails_app/spec/component/base_spec.rb",
+    "test/rails_app/spec/component/component_spec.rb",
     "test/rails_app/spec/component/composition_spec.rb",
     "test/rails_app/spec/component/configuration_spec.rb",
     "test/rails_app/spec/component/javascript_spec.rb",

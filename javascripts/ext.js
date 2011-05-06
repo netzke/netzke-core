@@ -46,21 +46,21 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   // - in the response, server will respond with the result from tid 1
   // - client marks tid 1 as success (deletes the transaction from pending), and will retry 2 and 3 - this is the
   //   change in Ext.direct.RemotingProvider's default behaviour
-  onData: function(opt, success, xhr){
-    var events = this.createEvents(xhr);
-
-    for(var i = 0, len = events.length; i < len; i++){
-      var e = events[i],
-      t = this.getTransaction(e);
-      this.fireEvent('data', this, e);
-      if(t){
-        this.runCallback(t, e, true);
-        Ext.Direct.removeTransaction(t);
-      }
-    }
-
-    this.callParent([opt, success, xhr]);
-  }
+  // onData: function(opt, success, xhr){
+  //   var events = this.createEvents(xhr);
+  //
+  //   for(var i = 0, len = events.length; i < len; i++){
+  //     var e = events[i],
+  //     t = this.getTransaction(e);
+  //     this.fireEvent('data', this, e);
+  //     if(t){
+  //       this.runCallback(t, e, true);
+  //       Ext.Direct.removeTransaction(t);
+  //     }
+  //   }
+  //
+  //   this.callParent([opt, success, xhr]);
+  // }
 });
 
 Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
@@ -135,7 +135,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
         Netzke.runningRequests++;
 
         scope = scope || that;
-
         Netzke.providers[this.id][intp.camelize(true)].call(scope, arg, function(result, remotingEvent) {
           if(remotingEvent.message) {
             console.error("RPC event indicates an error: ", remotingEvent);
