@@ -13,6 +13,6 @@ Feature: Complex component
   @javascript
   Scenario: The last tab of the complex component is a Netzke component that just works
     Given I am on the KindaComplexComponent test page
-    When I follow "Server Caller"
+    When I press "Server Caller"
     And I press "Call server"
     Then I should see "All quiet here on the server"
