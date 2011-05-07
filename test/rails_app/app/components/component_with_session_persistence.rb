@@ -19,7 +19,8 @@ class ComponentWithSessionPersistence < Netzke::Base
   js_method :init_component, <<-JS
     function(){
       #{js_full_class_name}.superclass.initComponent.call(this);
-      this.button.on('click', this.bugServer, this);
+      // commented out because of incompatibility with ExtJS4
+      //this.button.on('click', this.bugServer, this);
     }
   JS
 

@@ -7,9 +7,10 @@ class LoaderOfComponentWithCustomCss < Netzke::Base
   js_method :init_component, <<-JS
     function(){
       #{js_full_class_name}.superclass.initComponent.call(this);
-      this.button.on('click', function(){
-        this.loadComponent({id: 'component_with_custom_css', container: this.getId()});
-      }, this);
+      // commented out because of incompatibility with ExtJS4
+      //this.button.on('click', function(){
+      //  this.loadComponent({id: 'component_with_custom_css', container: this.getId()});
+      //}, this);
     }
   JS
 end
