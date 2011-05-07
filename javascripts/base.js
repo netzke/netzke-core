@@ -209,7 +209,7 @@ Ext.override(Ext.Container, {
   // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
   // TODO: there must be a method to just instantiate a component, but not to add/show it instantly.
   instantiateChild : function(config){
-    var instance = Ext.create(config.alias, config);
+    var instance = Ext.createByAlias( config.alias, config );
     if (instance.isXType("window")) {
       instance.show();
     } else {
