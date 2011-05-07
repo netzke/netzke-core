@@ -58,6 +58,9 @@ Netzke.reg = function(xtype, klass) {
     Ext.ComponentManager.registerType(xtype, klass);
     Netzke.cache.push(xtype);
   }
+  // TODO: remove this hack ans write some nice code instead
+  Ext.ClassManager.setAlias(klass, "widget." + xtype );
+
 };
 
 Netzke.classes.Core.Mixin = {};
