@@ -305,7 +305,7 @@ module Netzke
         # res[:xtype] = self.class.js_xtype
 
         # Include our alias
-        res[:alias] = self.class.js_alias
+        res[:xtype] = self.class.js_alias.sub(/widget\./, "")
 
         # Merge with the rest of config options, besides those that are only meant for the server side
         res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
