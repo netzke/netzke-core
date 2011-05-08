@@ -93,7 +93,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   */
   evalCss : function(code){
     var head = Ext.fly(document.getElementsByTagName('head')[0]);
-    Ext.DomHelper.append(head, {
+    Ext.core.DomHelper.append(head, {
       tag: 'style',
       type: 'text/css',
       html: code

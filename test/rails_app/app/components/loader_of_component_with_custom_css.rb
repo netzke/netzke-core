@@ -2,15 +2,13 @@
 class LoaderOfComponentWithCustomCss < Netzke::Base
   component :component_with_custom_css, :class_name => "ComponentWithCustomCss", :lazy_loading => true
 
-  js_properties :title => "LoaderOfComponentWithCustomCss", :layout => 'fit', :bbar => [{:text => "Load ComponentWithCustomCss", :ref => "../button"}]
+  action :load_component_with_custom_css
 
-  js_method :init_component, <<-JS
-    function(){
-      #{js_full_class_name}.superclass.initComponent.call(this);
-      // commented out because of incompatibility with ExtJS4
-      //this.button.on('click', function(){
-      //  this.loadComponent({id: 'component_with_custom_css', container: this.getId()});
-      //}, this);
+  js_properties :title => "LoaderOfComponentWithCustomCss", :layout => 'fit', :bbar => [:load_component_with_custom_css.action]
+
+  js_method :on_load_component_with_custom_css, <<-JS
+    function(params){
+      this.loadComponent({name: 'component_with_custom_css'});
     }
   JS
 end
