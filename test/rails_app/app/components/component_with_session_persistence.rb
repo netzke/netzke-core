@@ -1,6 +1,8 @@
 class ComponentWithSessionPersistence < Netzke::Base
   js_property :title, "Default Title"
-  js_property :bbar, [{:text => "Tell server to store new title", :ref => "../button"}]
+  js_property :bbar, [:bug_server.action]
+
+  action :bug_server, :text => "Tell server to store new title"
 
   def default_config
     super.merge(:session_persistence => true)
@@ -16,13 +18,12 @@ class ComponentWithSessionPersistence < Netzke::Base
     }
   JS
 
-  js_method :init_component, <<-JS
+  js_method :on_bug_server, <<-JS
     function(){
-      #{js_full_class_name}.superclass.initComponent.call(this);
-      // commented out because of incompatibility with ExtJS4
-      //this.button.on('click', this.bugServer, this);
+      this.bugServer();
     }
   JS
+
 
   endpoint :whats_up do |params|
     update_session_options(:title => "Title From Session") # setting a value in session_options, which will get auto-merged into +config+
