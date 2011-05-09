@@ -53,14 +53,15 @@ Netzke.aliasMethodChain = function(klass, method, feature) {
 Netzke.cache = [];
 
 // Registering a Netzke component
+// TODO: MAV I think we should get rid of this piece of code someday
+// and use Ext4's ClassManager functions instead
 Netzke.reg = function(xtype, klass) {
   if (!Ext.ComponentManager.types[xtype]) {
     Ext.ComponentManager.registerType(xtype, klass);
     Netzke.cache.push(xtype);
   }
-  // TODO: remove this hack ans write some nice code instead
+  // TODO: MAV someday we are going to remove this hack and write some nice code instead
   Ext.ClassManager.setAlias(klass, "widget." + xtype );
-
 };
 
 Netzke.classes.Core.Mixin = {};

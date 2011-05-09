@@ -239,14 +239,16 @@ module Netzke
         # Generates declaration of the JS class as direct extension of a Ext component
         def js_class_declaration_new_component
           mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
-          %(Ext.define('#{js_full_class_name}', Netzke.chainApply({
-            extend: '#{js_base_class}',
-            alias: '#{js_alias}',
-            constructor: function(config) {
-              Netzke.aliasMethodChain(this, "initComponent", "netzke");
-              #{js_full_class_name}.superclass.constructor.call(this, config);
-            }
-          }, Netzke.componentMixin, #{mixins} #{js_extend_properties.to_nifty_json}));
+          %(if( !Ext.ClassManager.isCreated('#{js_full_class_name}') ){
+              Ext.define('#{js_full_class_name}', Netzke.chainApply({
+                extend: '#{js_base_class}',
+                alias: '#{js_alias}',
+                constructor: function(config) {
+                  Netzke.aliasMethodChain(this, "initComponent", "netzke");
+                  #{js_full_class_name}.superclass.constructor.call(this, config);
+                }
+                }, Netzke.componentMixin, #{mixins} #{js_extend_properties.to_nifty_json})
+              )}
           )
         end
 
@@ -255,10 +257,11 @@ module Netzke
           base_class = superclass.js_full_class_name
 
           mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
-          %(Ext.define('#{js_full_class_name}', Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}, {
-            extend: '#{base_class}',
-            alias: '#{js_alias}'
-          }));
+          %(if( !Ext.ClassManager.isCreated('#{js_full_class_name}') ){
+              Ext.define('#{js_full_class_name}', Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}, {
+                extend: '#{base_class}',
+                alias: '#{js_alias}'
+              }))}
           )
         end
 
