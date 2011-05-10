@@ -57,11 +57,10 @@ Netzke.cache = [];
 // and use Ext4's ClassManager functions instead
 Netzke.reg = function(xtype, klass) {
   if (!Ext.ComponentManager.types[xtype]) {
-    Ext.ComponentManager.registerType(xtype, klass);
+    // MAV not needed in v4, I guess
+    // Ext.ComponentManager.registerType(xtype, klass);
     Netzke.cache.push(xtype);
   }
-  // TODO: MAV someday we are going to remove this hack and write some nice code instead
-  Ext.ClassManager.setAlias(klass, "widget." + xtype );
 };
 
 Netzke.classes.Core.Mixin = {};

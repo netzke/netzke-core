@@ -177,8 +177,11 @@ module Netzke
 
       # Builds this component's alias
       # E.g.: netzke.basepack.window, netzke.basepack.gridpanel
+      #
+      # MAV from http://stackoverflow.com/questions/5380770/replacing-ext-reg-xtype-in-extjs4
+      # "When you use an xtype in Ext JS 4 it looks for a class with an alias of 'widget.[xtype]'"
       def js_alias
-        "widget." + name.gsub("::", ".").downcase
+        "widget." + js_xtype
       end
 
       # Component's JavaScript class declaration.
