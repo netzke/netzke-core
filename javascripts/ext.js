@@ -36,41 +36,24 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
     }
   },
 
-  // process response regardess of status
-  // i.e. in a batch request,
-  // - we request tids 1,2,3.
-  // - server is able to process 1 but not 2
-  // - server will stop and *not* process 3, because it could be dependant on 2 (this best possible approach to this
-  //   situation, as we don't have transactions)
-  // - server will respond with status 500, indicating a fault
-  // - in the response, server will respond with the result from tid 1
-  // - client marks tid 1 as success (deletes the transaction from pending), and will retry 2 and 3 - this is the
-  //   change in Ext.direct.RemotingProvider's default behaviour
-  // onData: function(opt, success, xhr){
-  //   var events = this.createEvents(xhr);
-  //
-  //   for(var i = 0, len = events.length; i < len; i++){
-  //     var e = events[i],
-  //     t = this.getTransaction(e);
-  //     this.fireEvent('data', this, e);
-  //     if(t){
-  //       this.runCallback(t, e, true);
-  //       Ext.Direct.removeTransaction(t);
-  //     }
-  //   }
-  //
-  //   this.callParent([opt, success, xhr]);
-  // }
+  // Hacking Ext JS 4.0.0. Their retry mechanism is broken.
+  getTransaction: function(opt) {
+    if (opt.$className == "Ext.direct.Transaction") {
+      return opt;
+    } else {
+      return this.callParent([opt]);
+    }
+  }
 });
 
 Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
-  "type": "remoting",       // create a Ext.direct.RemotingProvider
-  "url": Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
-  "namespace": "Netzke.providers", // namespace to create the Remoting Provider in
-  "actions": {},
-  "maxRetries": Netzke.core.directMaxRetries,
-  "enableBuffer": true, // buffer/batch requests within 10ms timeframe
-  "timeout": 30000 // 30s timeout per request
+  type: "remoting",       // create a Ext.direct.RemotingProvider
+  url: Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
+  namespace: "Netzke.providers", // namespace to create the Remoting Provider in
+  actions: {},
+  maxRetries: 3,
+  enableBuffer: true, // buffer/batch requests within 10ms timeframe
+  timeout: 30000 // 30s timeout per request
 });
 
 Ext.Direct.addProvider(Netzke.directProvider);
