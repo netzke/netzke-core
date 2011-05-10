@@ -159,8 +159,8 @@ Ext.apply(Netzke.classes.Core.Mixin, {
         // Create an event for each action (so that higher-level components could interfere)
         this.addEvents(tool.id+'click');
 
-        var handler = this.toolActionHandler.createDelegate(this, [tool]);
-        normTools.push({id : tool, handler : handler, scope : this});
+        var handler = Ext.Function.bind(this.toolActionHandler, this, [tool]);
+        normTools.push({type : tool, handler : handler, scope : this});
       }, this);
       this.tools = normTools;
     }

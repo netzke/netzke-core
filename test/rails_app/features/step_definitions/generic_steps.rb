@@ -26,6 +26,21 @@ When /^total requests made should be (\d+)$/ do |count|
   JS
 end
 
+When /^I press tool "([^"]*)"$/ do |tool|
+  id = page.driver.browser.execute_script(<<-JS)
+    var toolCmp;
+    Ext.ComponentManager.all.each(function(k,v){
+      if (v.type == '#{tool}') {
+        toolCmp = v;
+        return false;
+      }
+    });
+    return toolCmp.getId();
+  JS
+
+  find("##{id} img").click
+end
+
 When /I sleep (\d+) seconds?/ do |arg1|
   sleep arg1.to_i
 end

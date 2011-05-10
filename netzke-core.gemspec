@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-05-09}
+  s.date = %q{2011-05-10}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -106,6 +106,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/kinda_complex_component/extra_stuff.rb",
     "test/rails_app/app/components/loader_of_component_with_custom_css.rb",
     "test/rails_app/app/components/localized_panel.rb",
+    "test/rails_app/app/components/panel_with_tools.rb",
     "test/rails_app/app/components/scoped_components/deep_scoped_components/some_deep_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/extended_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/some_scoped_component.rb",
@@ -154,7 +155,7 @@ Gem::Specification.new do |s|
     "test/rails_app/db/migrate/20110110132720_create_netzke_component_states.rb",
     "test/rails_app/db/schema.rb",
     "test/rails_app/db/seeds.rb",
-    "test/rails_app/features/actions.feature",
+    "test/rails_app/features/actions_and_tools.feature",
     "test/rails_app/features/basic.feature",
     "test/rails_app/features/client-server.feature",
     "test/rails_app/features/complex_component.feature",
@@ -241,6 +242,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/kinda_complex_component/extra_stuff.rb",
     "test/rails_app/app/components/loader_of_component_with_custom_css.rb",
     "test/rails_app/app/components/localized_panel.rb",
+    "test/rails_app/app/components/panel_with_tools.rb",
     "test/rails_app/app/components/scoped_components/deep_scoped_components/some_deep_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/extended_scoped_component.rb",
     "test/rails_app/app/components/scoped_components/some_scoped_component.rb",
