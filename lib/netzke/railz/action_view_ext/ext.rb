@@ -25,6 +25,10 @@ module Netzke
             # TODO: Introduce production versions of Ext JS 4, when ready
             res << (ENV['RAILS_ENV'] == 'development' ? ["/extjs4/ext-all-debug"] : ["/extjs4/ext-all-debug"])
 
+            # ExtJS 3 compatibility layer
+            res << "/extjs4/compatibility/ext3-core-compat"
+            res << "/extjs4/compatibility/ext3-compat"
+
             # Netzke-related dynamic JavaScript
             res << "/netzke/ext"
 
