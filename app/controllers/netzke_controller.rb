@@ -78,7 +78,7 @@ class NetzkeController < ApplicationController
       res << %{Ext.ns('Netzke');}
       res << %{Ext.ns('Netzke.core');}
       res << %{Netzke.RelativeUrlRoot = '#{ActionController::Base.config.relative_url_root}';}
-      res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}/extjs4';}
+      res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}#{Netzke::Core.ext_uri}';}
 
       # TODO: this will needs some DRYing
       res << %{Netzke.core.directMaxRetries = '#{Netzke::Core.js_direct_max_retries}';}

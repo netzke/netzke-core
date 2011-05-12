@@ -1,3 +1,8 @@
+= v0.7.0
+* Ext JS 4 compatibility
+* API changes
+  * New +ext_uri+ config option (defaults to "extjs") - relative URI to the Ext JS library on the server.
+
 = v0.6.7 - to be released
 * enhancements
   * No more using +method_missing+ for invoking endpoints.

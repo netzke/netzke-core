@@ -8,7 +8,7 @@ module Netzke
 
           def netzke_ext_css_include(params)
             # ExtJS base
-            res = ["/extjs4/resources/css/ext-all"]
+            res = ["#{Netzke::Core.ext_uri}/resources/css/ext-all"]
 
             # Netzke-related dynamic css
             res << "/netzke/ext"
@@ -22,12 +22,11 @@ module Netzke
             res = []
 
             # ExtJS
-            # TODO: Introduce production versions of Ext JS 4, when ready
-            res << (ENV['RAILS_ENV'] == 'development' ? ["/extjs4/ext-all-debug"] : ["/extjs4/ext-all-debug"])
+            res << (ENV['RAILS_ENV'] == 'development' ? ["#{Netzke::Core.ext_uri}/ext-all-debug"] : ["#{Netzke::Core.ext_uri}/ext-all"])
 
             # ExtJS 3 compatibility layer
-            res << "/extjs4/compatibility/ext3-core-compat"
-            res << "/extjs4/compatibility/ext3-compat"
+            res << "#{Netzke::Core.ext_uri}/compatibility/ext3-core-compat"
+            res << "#{Netzke::Core.ext_uri}/compatibility/ext3-compat"
 
             # Netzke-related dynamic JavaScript
             res << "/netzke/ext"

@@ -27,7 +27,7 @@ module Netzke
     mattr_accessor :config
     @@config = {}
 
-    # Ext or Touch
+    # :ext or :touch
     mattr_accessor :platform
     @@platform = :ext
 
@@ -44,18 +44,15 @@ module Netzke
     mattr_accessor :ext_stylesheets
     @@ext_stylesheets = []
 
-    mattr_accessor :touch_javascripts
-    @@touch_javascripts = []
-
-    mattr_accessor :touch_stylesheets
-    @@touch_stylesheets = []
-
     # Stylesheets that cannot be loaded dynamically along with the rest of the component, e.g. due to that relative paths are used in them
     mattr_accessor :external_ext_css
     @@external_ext_css = []
 
     mattr_accessor :icons_uri
     @@icons_uri = "/images/icons"
+
+    mattr_accessor :ext_uri
+    @@ext_uri = "/extjs"
 
     mattr_accessor :persistence_manager
     @@persistence_manager = "NetzkeComponentState"
@@ -64,14 +61,19 @@ module Netzke
     mattr_accessor :js_direct_max_retries
     @@js_direct_max_retries = 0
 
-    # Set in the Engine after_initialize callback
-    mattr_accessor :ext_location # TODO: rename to ext_path
-
-    mattr_accessor :touch_location # TODO: rename to touch_path
-
     mattr_accessor :with_icons
 
     mattr_accessor :persistence_manager_class
+
+    # Sencha Touch specific
+    mattr_accessor :touch_javascripts
+    @@touch_javascripts = []
+
+    mattr_accessor :touch_stylesheets
+    @@touch_stylesheets = []
+
+    mattr_accessor :touch_uri
+    @@touch_uri = "/sencha-touch"
 
     def self.setup
       yield self
@@ -79,23 +81,6 @@ module Netzke
 
     def self.reset_components_in_session
       Netzke::Core.session[:netzke_components].try(:clear)
-    end
-
-    def self.ext_js
-      res = initial_dynamic_javascript << "\n"
-
-      include_base_js(res)
-
-      # Ext-specific JavaScript
-      res << File.new(File.expand_path("../../../javascripts/ext.js", __FILE__)).read
-
-      # Pluggable JavaScript (used by other Netzke-powered gems like netzke-basepack)
-      Netzke::Core.ext_javascripts.each do |path|
-        f = File.new(path)
-        res << f.read
-      end
-
-      render :text => defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
     end
   end
 end

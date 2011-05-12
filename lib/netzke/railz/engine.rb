@@ -6,8 +6,6 @@ module Netzke
       # before loading initializers and classes (in app/**)
       config.before_initialize do
         Netzke::Core.config = config.netzke
-        Netzke::Core.ext_location = Rails.root.join("public", "extjs")
-        Netzke::Core.touch_location = Rails.root.join("public", "sencha-touch")
         Netzke::Core.persistence_manager_class = Netzke::Core.persistence_manager.constantize rescue nil
       end
 
@@ -28,6 +26,7 @@ module Netzke
           FileUtils.mkdir_p(Rails.root.join('public', 'netzke'))
 
           dynamic_assets.each do |asset|
+            ::Rails.logger.debug "!!! asset: #{asset.inspect}\n"
             File.open(Rails.root.join('public', 'netzke', asset), 'w') {|f| f.write(Netzke::Core::DynamicAssets.send(asset.sub(".", "_"))) }
           end
         else
