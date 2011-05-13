@@ -12,6 +12,7 @@ module Netzke
       # after loading initializers and classes
       config.after_initialize do
         Netzke::Core.with_icons = File.exists?("#{::Rails.root}/public#{Netzke::Core.icons_uri}") if Netzke::Core.with_icons.nil?
+        Netzke::Core.ext_path = Rails.root.join('public', Netzke::Core.ext_uri[1..-1])
 
         dynamic_assets = %w[ext.js ext.css touch.js touch.css]
 
@@ -26,7 +27,6 @@ module Netzke
           FileUtils.mkdir_p(Rails.root.join('public', 'netzke'))
 
           dynamic_assets.each do |asset|
-            ::Rails.logger.debug "!!! asset: #{asset.inspect}\n"
             File.open(Rails.root.join('public', 'netzke', asset), 'w') {|f| f.write(Netzke::Core::DynamicAssets.send(asset.sub(".", "_"))) }
           end
         else

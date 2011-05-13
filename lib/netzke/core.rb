@@ -54,6 +54,8 @@ module Netzke
     mattr_accessor :ext_uri
     @@ext_uri = "/extjs"
 
+    mattr_accessor :ext_path
+
     mattr_accessor :persistence_manager
     @@persistence_manager = "NetzkeComponentState"
 

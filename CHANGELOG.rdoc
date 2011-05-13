@@ -2,6 +2,7 @@
 * Ext JS 4 compatibility
 * API changes
   * New +ext_uri+ config option (defaults to "extjs") - relative URI to the Ext JS library on the server.
+  * +ext_location+ renamed to +ext_path+
 
 = v0.6.7 - to be released
 * enhancements
