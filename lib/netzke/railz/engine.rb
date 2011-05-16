@@ -7,12 +7,12 @@ module Netzke
       config.before_initialize do
         Netzke::Core.config = config.netzke
         Netzke::Core.persistence_manager_class = Netzke::Core.persistence_manager.constantize rescue nil
+        Netzke::Core.ext_path = Rails.root.join('public', Netzke::Core.ext_uri[1..-1])
       end
 
       # after loading initializers and classes
       config.after_initialize do
         Netzke::Core.with_icons = File.exists?("#{::Rails.root}/public#{Netzke::Core.icons_uri}") if Netzke::Core.with_icons.nil?
-        Netzke::Core.ext_path = Rails.root.join('public', Netzke::Core.ext_uri[1..-1])
 
         dynamic_assets = %w[ext.js ext.css touch.js touch.css]
 
