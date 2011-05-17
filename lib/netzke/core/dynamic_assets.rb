@@ -30,8 +30,8 @@ module Netzke
           res
         end
 
-        def ext_js
-          res = initial_dynamic_javascript << "\n"
+        def ext_js(form_authenticity_token)
+          res = initial_dynamic_javascript(form_authenticity_token) << "\n"
 
           include_base_js(res)
 
@@ -61,14 +61,14 @@ module Netzke
 
         protected
 
-          # Generates initial javascript code that is dependent on Rails environement
-          def initial_dynamic_javascript
+          # Generates initial javascript code that is dependent on Rails settings
+          def initial_dynamic_javascript(form_authenticity_token)
             res = []
-            # res << %(Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection)
+            res << %(Ext.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'}; // Rails' forgery protection)
             res << %{Ext.ns('Netzke');}
             res << %{Ext.ns('Netzke.core');}
             res << %{Netzke.RelativeUrlRoot = '#{ActionController::Base.config.relative_url_root}';}
-            res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}/extjs';}
+            res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}#{Netzke::Core.ext_uri}';}
 
             res << %{Netzke.core.directMaxRetries = '#{Netzke::Core.js_direct_max_retries}';}
 

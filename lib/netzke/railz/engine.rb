@@ -14,28 +14,29 @@ module Netzke
       config.after_initialize do
         Netzke::Core.with_icons = File.exists?("#{::Rails.root}/public#{Netzke::Core.icons_uri}") if Netzke::Core.with_icons.nil?
 
-        dynamic_assets = %w[ext.js ext.css touch.js touch.css]
-
-        if Rails.configuration.cache_classes
-          # Memoize Netzke::Base.constantize_class_name for performance
-          class << Netzke::Base
-            memoize :constantize_class_name
-          end
-
-          # Generate dynamic assets and put them into public/netzke
-          require 'fileutils'
-          FileUtils.mkdir_p(Rails.root.join('public', 'netzke'))
-
-          dynamic_assets.each do |asset|
-            File.open(Rails.root.join('public', 'netzke', asset), 'w') {|f| f.write(Netzke::Core::DynamicAssets.send(asset.sub(".", "_"))) }
-          end
-        else
-          dynamic_assets.each do |asset|
-            file_path = Rails.root.join('public', 'netzke', asset)
-            File.delete(file_path) if File.exists?(file_path)
-          end
-        end
-
+        # Dynamic generation of Netzke js and css.
+        # WIP: the problem with this is that on Heroku, for example, you don't have write access to 'public'.
+        # dynamic_assets = %w[ext.js ext.css touch.js touch.css]
+        #
+        # if Rails.configuration.cache_classes
+        #   # Memoize Netzke::Base.constantize_class_name for performance
+        #   class << Netzke::Base
+        #     memoize :constantize_class_name
+        #   end
+        #
+        #   # Generate dynamic assets and put them into public/netzke
+        #   require 'fileutils'
+        #   FileUtils.mkdir_p(Rails.root.join('public', 'netzke'))
+        #
+        #   dynamic_assets.each do |asset|
+        #     File.open(Rails.root.join('public', 'netzke', asset), 'w') {|f| f.write(Netzke::Core::DynamicAssets.send(asset.sub(".", "_"))) }
+        #   end
+        # else
+        #   dynamic_assets.each do |asset|
+        #     file_path = Rails.root.join('public', 'netzke', asset)
+        #     File.delete(file_path) if File.exists?(file_path)
+        #   end
+        # end
       end
     end
   end
