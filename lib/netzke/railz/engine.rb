@@ -1,11 +1,16 @@
 module Netzke
   module Railz
     class Engine < Rails::Engine
-      config.netzke = Netzke::Core::OptionsHash.new
+      # config.netzke = Netzke::Core::OptionsHash.new
+
+      initializer "netzke.core" do |app|
+        app.config.eager_load_paths -= ["#{app.config.root}/app/components"]
+        app.config.autoload_paths += ["#{app.config.root}/app/components"]
+      end
 
       # before loading initializers
-      config.before_initialize do
-        Netzke::Core.config = config.netzke
+      config.before_initialize do |app|
+        # Netzke::Core.config = config.netzke # passing app-level config to Netzke::Core
         Netzke::Core.persistence_manager_class = Netzke::Core.persistence_manager.constantize rescue nil
       end
 
