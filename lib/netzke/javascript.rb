@@ -242,7 +242,7 @@ module Netzke
         # Generates declaration of the JS class as direct extension of a Ext component
         def js_class_declaration_new_component
           mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
-          %(if( !Ext.ClassManager.isCreated('#{js_full_class_name}') ){
+          %(
               Ext.define('#{js_full_class_name}', Netzke.chainApply({
                 extend: '#{js_base_class}',
                 alias: '#{js_alias}',
@@ -250,8 +250,7 @@ module Netzke
                   Netzke.aliasMethodChain(this, "initComponent", "netzke");
                   #{js_full_class_name}.superclass.constructor.call(this, config);
                 }
-                }, Netzke.componentMixin, #{mixins} #{js_extend_properties.to_nifty_json})
-              )}
+              }, Netzke.componentMixin, #{mixins} #{js_extend_properties.to_nifty_json}));
           )
         end
 
@@ -260,11 +259,11 @@ module Netzke
           base_class = superclass.js_full_class_name
 
           mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
-          %(if( !Ext.ClassManager.isCreated('#{js_full_class_name}') ){
+          %(
               Ext.define('#{js_full_class_name}', Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}, {
                 extend: '#{base_class}',
                 alias: '#{js_alias}'
-              }))}
+              }));
           )
         end
 
@@ -310,7 +309,7 @@ module Netzke
         # Include our xtype
         res[:xtype] = self.class.js_xtype
 
-        # Include our alias
+        # Include our alias: Ext.createByAlias may be used to instantiate the component.
         res[:alias] = self.class.js_alias
 
         # Merge with the rest of config options, besides those that are only meant for the server side
