@@ -21,6 +21,15 @@ Netzke.deprecationWarning = function(msg){
 };
 
 // Used in testing
+if( Netzke.nLoadingFixRequests == undefined ){
+  Netzke.nLoadingFixRequests=0;
+  Ext.Ajax.on('beforerequest',    function(conn,opt) { Netzke.nLoadingFixRequests+=1; });
+  Ext.Ajax.on('requestcomplete',  function(conn,opt) { Netzke.nLoadingFixRequests-=1; });
+  Ext.Ajax.on('requestexception', function(conn,opt) { Netzke.nLoadingFixRequests-=1; });
+  Netzke.ajaxIsLoading = function() { return Netzke.nLoadingFixRequests > 0; };
+}
+
+// Used in testing, too
 Netzke.runningRequests = 0;
 Netzke.isLoading=function () {
   return Netzke.runningRequests != 0;
