@@ -2,7 +2,8 @@
 * Ext JS 4 compatibility
 * API changes
   * New +ext_uri+ config option (defaults to "extjs") - relative URI to the Ext JS library on the server.
-  * +ext_location+ renamed to +ext_path+
+  * The +ext_location+ config option renamed to +ext_path+
+  * New +ext3_compat_uri+ config option (defaults to +nil+) - relative URI to the Ext 3 compatibility layer. When nil, no compatibility layer is loaded.
 
 = v0.6.7 - to be released
 * enhancements

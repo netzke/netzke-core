@@ -1,5 +1,5 @@
-// Enable Ext4 migration errors traceback display
-Ext.Compat.showErrors = true;
+// Enable Ext 4 migration errors traceback display
+if (Ext.Compat) Ext.Compat.showErrors = true;
 
 // Because of Netzke's double-underscore notation, Ext.TabPanel should have a different id-delimiter (yes, this should be in netzke-core)
 Ext.TabPanel.prototype.idDelimiter = "___";

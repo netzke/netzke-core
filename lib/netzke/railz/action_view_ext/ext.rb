@@ -24,9 +24,11 @@ module Netzke
             # ExtJS
             res << (ENV['RAILS_ENV'] == 'development' ? ["#{Netzke::Core.ext_uri}/ext-all-debug"] : ["#{Netzke::Core.ext_uri}/ext-all"])
 
-            # ExtJS 3 compatibility layer (temp)
-            res << "/extjs-compatibility/ext3-core-compat"
-            res << "/extjs-compatibility/ext3-compat"
+            # ExtJS 3 compatibility layer
+            if compat_uri = Netzke::Core.ext3_compat_uri
+              res << "#{compat_uri}/ext3-core-compat"
+              res << "#{compat_uri}/ext3-compat"
+            end
 
             # Netzke-related dynamic JavaScript
             res << "/netzke/ext"
