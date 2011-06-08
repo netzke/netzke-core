@@ -59,6 +59,9 @@ module Netzke
 
     mattr_accessor :ext_path
 
+    mattr_accessor :current_user_method
+    @@current_user_method = :current_user
+
     mattr_accessor :persistence_manager
     @@persistence_manager = "NetzkeComponentState"
 
