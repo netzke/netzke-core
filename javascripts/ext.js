@@ -18,6 +18,34 @@ Ext.state.Provider.prototype.set = function(){};
   }
 })();
 
+// FeedbackGhost is a little class that displays unified feedback from Netzke components.
+Ext.define('Netzke.FeedbackGhost', {
+  showFeedback: function(msg){
+    this.msg(null, msg); // no header for now
+  },
+
+  msg: function(title, format){
+      if(!this.msgCt){
+          this.msgCt = Ext.core.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
+      }
+      var s = Ext.String.format.apply(String, Array.prototype.slice.call(arguments, 1));
+      var m = Ext.core.DomHelper.append(this.msgCt, this.createBox(title, s), true);
+      m.hide();
+      m.slideIn('t').ghost("t", { delay: 1000, remove: true});
+  },
+
+  createBox: function(t, s){
+    if (t) {
+      return '<div class="msg"><h3>' + t + '</h3><p>' + s + '</p></div>';
+    } else {
+      return '<div class="msg"><p>' + s + '</p></div>';
+    }
+  }
+});
+
+// Mix it into every Netzke component as feedbackGhost
+Netzke.componentMixin.feedbackGhost = Ext.create("Netzke.FeedbackGhost");
+
 Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   extend: 'Ext.direct.RemotingProvider',
 
@@ -357,28 +385,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     }
   },
 
-  // At this moment component is fully initializied
-  commonAfterConstructor : function(config){
-
-    // Add the menus
-    if (this.initialConfig.menu) {this.addMenu(this.initialConfig.menu, this);}
-
-    // generic events
-    this.addEvents(
-      'componentload' // fired when a child is dynamically loaded
-    );
-
-    // Cleaning up on destroy
-    this.on('beforedestroy', function(){
-      this.cleanUpMenu();
-    }, this);
-
-    this.callbackHash = {};
-
-    if (this.afterConstructor) this.afterConstructor(config);
-  },
-
-  feedback:function(msg){
+  feedback: function(msg){
     if (this.initialConfig && this.initialConfig.quiet) {
       return false;
     }
