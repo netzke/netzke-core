@@ -11,7 +11,7 @@ Ext.state.Provider.prototype.set = function(){};
 
 // Check Ext JS version
 (function(){
-  var requiredExtVersion = "4.0.1";
+  var requiredExtVersion = "4.0.2";
   var currentExtVersion = Ext.getVersion('extjs').toString();
   if (requiredExtVersion !== currentExtVersion) {
     Netzke.deprecationWarning("Warning: require Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
