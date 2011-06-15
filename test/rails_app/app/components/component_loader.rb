@@ -73,10 +73,12 @@ class ComponentLoader < Netzke::Base
 
   action :load_with_params
 
+  action :non_existing_component, :text => "Non-existing component"
+
   js_properties(
     :title => "Component Loader",
     :layout => "fit",
-    :bbar => [:load_component.action, :load_in_window.action, :load_with_feedback.action, :load_window_with_simple_component.action, :load_composite.action, :load_with_params.action, :load_with_generic_callback.action, :load_with_generic_callback_and_scope.action]
+    :bbar => [:load_component.action, :load_in_window.action, :load_with_feedback.action, :load_window_with_simple_component.action, :load_composite.action, :load_with_params.action, :load_with_generic_callback.action, :load_with_generic_callback_and_scope.action, :non_existing_component.action]
   )
 
   js_method :on_load_window_with_simple_component, <<-JS
@@ -100,6 +102,12 @@ class ComponentLoader < Netzke::Base
   js_method :on_load_component, <<-JS
     function(){
       this.loadComponent({name: 'simple_component', container: this.getId()});
+    }
+  JS
+
+  js_method :on_non_existing_component, <<-JS
+    function(){
+      this.loadComponent({name: 'non_existing_component', container: this.getId()});
     }
   JS
 

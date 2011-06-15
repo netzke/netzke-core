@@ -43,3 +43,9 @@ Feature: Component loader
     Given I am on the ComponentLoader test page
     When I press "Load with params"
     Then I should see "Simple Component with changed HTML"
+
+  @javascript
+  Scenario: Component loader should report that it can't load a component
+    Given I am on the ComponentLoader test page
+    When I press "Non-existing component"
+    Then I should see "Couldn't load component 'non_existing_component'"
