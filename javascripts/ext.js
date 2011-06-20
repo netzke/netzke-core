@@ -82,7 +82,7 @@ Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
   url: Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
   namespace: "Netzke.providers", // namespace to create the Remoting Provider in
   actions: {},
-  maxRetries: 3,
+  maxRetries: Netzke.core.jsDirectMaxRetries,
   enableBuffer: true, // buffer/batch requests within 10ms timeframe
   timeout: 30000 // 30s timeout per request
 });
