@@ -22,9 +22,6 @@ module Netzke
         Netzke::Core.platform = params[:platform] || :ext
         theme = params[:theme] || params[:ext_theme]
 
-        # Rails' forgery protection
-        content_for :netzke_js_classes, %Q(\n\nExt.Ajax.extraParams = {authenticity_token: '#{form_authenticity_token}'};)
-
         raw([netzke_css_include(params), netzke_css(params), netzke_js_include(params), netzke_js(params)].join("\n"))
       end
 
