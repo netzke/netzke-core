@@ -21,7 +21,11 @@ Ext.state.Provider.prototype.set = function(){};
 // FeedbackGhost is a little class that displays unified feedback from Netzke components.
 Ext.define('Netzke.FeedbackGhost', {
   showFeedback: function(msg){
-    this.msg(null, msg); // no header for now
+    if (Ext.isObject(msg)) {
+      this.msg(msg.level.camelize(), msg.msg);
+    } else {
+      this.msg(null, msg); // no header for now
+    }
   },
 
   msg: function(title, format){
@@ -82,7 +86,7 @@ Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
   url: Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
   namespace: "Netzke.providers", // namespace to create the Remoting Provider in
   actions: {},
-  maxRetries: Netzke.core.jsDirectMaxRetries,
+  maxRetries: Netzke.core.directMaxRetries,
   enableBuffer: true, // buffer/batch requests within 10ms timeframe
   timeout: 30000 // 30s timeout per request
 });

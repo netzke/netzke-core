@@ -43,6 +43,7 @@ class ServerCounter < Netzke::Base
     }
   JS
 
+  # TODO: is it actually meant to succeed and display "Something succeeded"?..
   js_method :on_fail_in_the_middle, <<-JS
     function() {
       this.successingEndpoint();

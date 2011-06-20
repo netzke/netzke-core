@@ -70,7 +70,7 @@ module Netzke
             res << %{Netzke.RelativeUrlRoot = '#{ActionController::Base.config.relative_url_root}';}
             res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}#{Netzke::Core.ext_uri}';}
 
-            res << %{Netzke.core.directMaxRetries = '#{Netzke::Core.js_direct_max_retries}';}
+            res << %{Netzke.core.directMaxRetries = #{Netzke::Core.js_direct_max_retries};}
 
             res.join("\n")
           end
