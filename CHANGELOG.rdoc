@@ -1,4 +1,4 @@
-= v0.7.0
+= v0.7.0 - to be released
 * Ext JS 4 compatibility
 * API changes
   * New +ext_uri+ config option (defaults to "extjs") - relative URI to the Ext JS library on the server.
@@ -6,6 +6,8 @@
   * New +ext3_compat_uri+ config option (defaults to +nil+) - relative URI to the Ext 3 compatibility layer. When nil, no compatibility layer is loaded.
   * New +current_user_method+ config option (defaults to :current_user) to let Netzke::Core know which method to call on Rails controller to retrieve the current user.
   * New +Netzke::Core.current_user+ method to retrieve the current user.
+* Enhancements
+  * +js_mixin+ without parameters will assume :component_class_name_underscored
 
 = v0.6.7 - to be released
 * enhancements

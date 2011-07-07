@@ -10,6 +10,8 @@ Feature: JsMixins
     Then I should see "Action One triggered!"
     When I press "Action two"
     Then I should see "Action Two triggered!"
+    When I press "Action three"
+    Then I should see "Action Three triggered!"
 
   @javascript
   Scenario: ExtendedComponentWithJsMixin should behave, too

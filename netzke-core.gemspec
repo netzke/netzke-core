@@ -84,6 +84,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_custom_css/stylesheets/custom.css",
     "test/rails_app/app/components/component_with_included_js.rb",
     "test/rails_app/app/components/component_with_js_mixin.rb",
+    "test/rails_app/app/components/component_with_js_mixin/javascripts/component_with_js_mixin.js",
     "test/rails_app/app/components/component_with_js_mixin/javascripts/extra_one.js",
     "test/rails_app/app/components/component_with_js_mixin/javascripts/extra_two.js",
     "test/rails_app/app/components/component_with_js_mixin/javascripts/method_set_one.js",

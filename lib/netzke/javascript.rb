@@ -157,7 +157,9 @@ module Netzke
       #     }
       #
       # Also accepts a string, which will be interpreted as a full path to the file (useful for sharing mixins between classes).
+      # With no parameters, will assume :component_class_name_underscored.
       def js_mixin(*args)
+        args << name.underscore.to_sym if args.empty? # if no args provided, component_class_underscored_name is assumed
         current_mixins = read_clean_inheritable_array(:js_mixins) || []
         callr = caller.first
         args.each{ |a| current_mixins << (a.is_a?(Symbol) ? File.read(expand_js_include_path(a, callr)) : File.read(a))}
