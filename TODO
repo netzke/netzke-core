@@ -1,14 +1,9 @@
-= Ext JS 4
-* Enable Rails forgery protection after Ext.Ajax.extraParams has effect again.
-* Get rid of createDelegate
-
+= ToDo
+Make it possible to pass a constant (not a string) to the `class_name` option
 Make :lazy_loading "true" by default when defining a child component
-Make :items option understand also a hash.
+Make :items option also accept a hash.
 Caching for netzke_controller-provided JS and CSS.
 Caching - investigate reusing (fragment?) caching of Rails.
-Use Ext.Direct in the Netzke controller.
-Let specify per API point if it will use a GET or a POST request.
-
 
 
 = Ideas that didn't work out
