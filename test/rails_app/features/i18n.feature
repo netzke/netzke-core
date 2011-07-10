@@ -17,6 +17,9 @@ Scenario: LocalizedPanel should be available in 2 languages
   And I should see "Primera acción"
   And I should see "Segunda acción"
 
+  When I press "Tercera acción"
+  Then I should see "Cargando..."
+
   When I go to the "es" version of the ExtendedLocalizedPanel page
   Then I should see "Panel Localizada"
   And I should see "Primera propriedad, Segunda propriedad"

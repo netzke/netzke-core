@@ -30,6 +30,9 @@ module Netzke
               res << "#{compat_uri}/ext3-compat"
             end
 
+            # Ext I18n
+            res << "#{Netzke::Core.ext_uri}/locale/ext-lang-#{I18n.locale}" if I18n.locale != :en
+
             # Netzke-related dynamic JavaScript
             res << "/netzke/ext"
 

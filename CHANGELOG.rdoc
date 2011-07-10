@@ -8,6 +8,7 @@
   * New +Netzke::Core.current_user+ method to retrieve the current user.
 * Enhancements
   * +js_mixin+ without parameters will assume :component_class_name_underscored
+  * Ext locale file is automatically included when I18n.locale is not :en
 
 = v0.6.7 - to be released
 * enhancements

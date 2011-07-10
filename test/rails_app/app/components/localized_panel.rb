@@ -7,9 +7,11 @@ class LocalizedPanel < Netzke::Base
     {:text => I18n.t('localized_panel.action_two')}
   end
 
+  action :action_three
+
   js_translate :property_one, :property_two
 
-  js_property :bbar, [:action_one.action, :action_two.action]
+  js_property :bbar, [:action_one.action, :action_two.action, :action_three.action]
 
   def configuration
     super.tap do |c|
@@ -22,6 +24,13 @@ class LocalizedPanel < Netzke::Base
       Netzke.classes.LocalizedPanel.superclass.onRender.call(this, ct);
 
       this.body.update(this.i18n.propertyOne + ", " + this.i18n.propertyTwo);
+    }
+  JS
+
+  js_method :on_action_three, <<-JS
+    function(){
+      var mask = new Ext.LoadMask(this.body);
+      mask.show();
     }
   JS
 
