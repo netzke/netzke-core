@@ -9,6 +9,7 @@
 * Enhancements
   * +js_mixin+ without parameters will assume :component_class_name_underscored
   * Ext locale file is automatically included when I18n.locale is not :en
+  * Child components now have +itemId+ set to component's name, so that +getComponent(component_name)+ can be used to retrieve child components
 
 = v0.6.7 - to be released
 * enhancements

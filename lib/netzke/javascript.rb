@@ -325,6 +325,9 @@ module Netzke
         # Items (nested Ext/Netzke components)
         res[:items] = items unless items.blank?
 
+        # So we can use getComponent(<component_name>) to retrieve a child component
+        res[:item_id] ||= name
+
         res[:i18n] = js_translate_properties if js_translate_properties.present?
 
         res
