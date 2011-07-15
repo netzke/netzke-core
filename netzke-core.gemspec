@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-07-15}
+  s.date = %q{2011-07-16}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -91,6 +91,8 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_js_mixin/javascripts/method_set_two.js",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/deprecated/server_caller.rb",
+    "test/rails_app/app/components/dynamic_tab_panel.rb",
+    "test/rails_app/app/components/dynamic_tab_panel/javascripts/dynamic_tab_panel.js",
     "test/rails_app/app/components/ext_direct/composite.rb",
     "test/rails_app/app/components/ext_direct/details.rb",
     "test/rails_app/app/components/ext_direct/selector.rb",
@@ -229,6 +231,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_js_mixin.rb",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/deprecated/server_caller.rb",
+    "test/rails_app/app/components/dynamic_tab_panel.rb",
     "test/rails_app/app/components/ext_direct/composite.rb",
     "test/rails_app/app/components/ext_direct/details.rb",
     "test/rails_app/app/components/ext_direct/selector.rb",

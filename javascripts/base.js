@@ -169,17 +169,6 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     }
   },
 
-  // Returns API url based on provided API point
-  buildApiUrl: function(endpoint){
-    Netzke.deprecationWarning("buildApiUrl() is deprecated. Use endpointUrl() instead.");
-    return this.endpointUrl(endpoint);
-  },
-
-  // endpointUrl: function(endpoint){
-  //   Netzke.deprecationWarning("endpointUrl() is deprecated. Use Ext.direct counterparts instead.\nFor example, specify a DirectProxy instead of HttpProxy ( proxy: new Ext.data.DirectProxy({directFn: Netzke.providers[this.id].endPoint}) ),\nor specify api instead of url config option for BasicForm ( api: { load: Netzke.providers[this.id].loadEndPoint, submit: Netzke.providers[this.id].submitEndPoint} )");
-  //   return Netzke.RelativeUrlRoot + "/netzke/" + this.id + "__" + endpoint;
-  // },
-
   // Used by Touch components
   endpointUrl: function(endpoint){
     return Netzke.RelativeUrlRoot + "/netzke/dispatcher?address=" + this.id + "__" + endpoint;
@@ -215,27 +204,26 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
 });
 
 
-// Netzke extensions for Ext.Container
+// DEPRECATED: Netzke extensions for Ext.Container
 Ext.override(Ext.Container, {
   // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
-  // TODO: there must be a method to just instantiate a component, but not to add/show it instantly.
-  instantiateChild : function(config){
+  instantiateChild: function(config){
+    Netzke.deprecationWarning("instantiateChild is deprecated");
     var instance = Ext.createByAlias( config.alias, config );
-    if (instance.isXType("window")) {
-      instance.show();
-    } else {
-      this.removeChild(); // first delete previous component
-      this.add(instance);
-
-      // Sometimes a child is getting loaded into a hidden container...
-      if (this.isVisible()) {
-        this.doLayout();
-      } else {
-        this.on('show', function(cmp){cmp.doLayout();}, {single: true});
-      }
-
-    }
+    this.insertNetzkeComponent(instance);
     return instance;
+  },
+
+  insertNetzkeComponent: function(cmp) {
+    this.removeChild(); // first delete previous component
+    this.add(cmp);
+
+    // Sometimes a child is getting loaded into a hidden container...
+    if (this.isVisible()) {
+      this.doLayout();
+    } else {
+      this.on('show', function(cmp){cmp.doLayout();}, {single: true});
+    }
   },
 
   /**
@@ -243,25 +231,28 @@ Ext.override(Ext.Container, {
     It searches up the Ext.Container hierarchy until it finds a Container that has isNetzke property set to true
     (or until it reaches the top).
   */
-  getOwnerComponent : function(){
+  getOwnerComponent: function(){
+    Netzke.deprecationWarning("getOwnerComponent is deprecated");
     if (this.initialConfig.isNetzke) {
       return this;
     } else {
       if (this.ownerCt){
-        return this.ownerCt.getOwnerComponent()
+        return this.ownerCt.getOwnerComponent();
       } else {
-        return null
+        return null;
       }
     }
   },
 
   // Get the component that we are hosting
   getNetzkeComponent: function(){
+    Netzke.deprecationWarning("getNetzkeComponent is deprecated");
     return this.items ? this.items.first() : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
   },
 
   // Remove the child
-  removeChild : function(){
+  removeChild: function(){
+    Netzke.deprecationWarning("removeChild is deprecated");
     var currentChild = this.getNetzkeComponent();
     if (currentChild) {this.remove(currentChild);}
   }

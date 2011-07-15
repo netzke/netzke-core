@@ -71,7 +71,7 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
     }
   },
 
-  // Hacking Ext JS 4.0.0. Their retry mechanism is broken.
+  // HACK: Ext JS 4.0.0 retry mechanism is broken
   getTransaction: function(opt) {
     if (opt.$className == "Ext.direct.Transaction") {
       return opt;
@@ -93,9 +93,10 @@ Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
 
 Ext.Direct.addProvider(Netzke.directProvider);
 
+// Methods/properties that each and every Netzke component will have
 Ext.apply(Netzke.classes.Core.Mixin, {
   height: 400,
-  border: false,
+  border: false, // questionable
 
   /*
   Mask shown during loading of a component. Set to false to not mask. Pass config for Ext.LoadMask for configuring msg/cls, etc.
@@ -139,7 +140,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   },
 
   /*
-  Dynamically creates methods for endpoints, so that we could later call them like: this.myEndpointMethod() (using Ext.Direct)
+  Dynamically creates methods for endpoints, so that we could later call them like: this.myEndpointMethod()
   */
   processEndpoints: function(){
     var endpoints = this.endpoints || [];
@@ -240,13 +241,14 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   },
 
   /*
-  Loads a component. Config options:
+  Dynamically loads a Netzke component.
+  Config options:
   'name' (required) - the name of the child component to load
-  'container' - the id of a panel with the 'fit' layout where the loaded component will be instantiated
-  'callback' - function that gets called after the component is loaded. It receives the component's instance as parameter.
-  'scope' - scope for the callback.
+  'container' - if specified, the id (or instance) of a panel with the 'fit' layout where the loaded component will be added to; the previously existing component will be destroyed
+  'callback' - function that gets called after the component is loaded; it receives the component's instance as parameter
+  'scope' - scope for the callback
   */
-  loadComponent: function(params){
+  loadNetzkeComponent: function(params){
     if (params.id) {
       params.name = params.id;
       Netzke.deprecationWarning("Using 'id' in loadComponent is deprecated. Use 'name' instead.");
@@ -292,10 +294,17 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     this.deliverComponent(serverParams);
   },
 
+  // DEPRECATED in favor or loadNetzkeComponent
+  loadComponent: function(params) {
+    Netzke.deprecationWarning("loadComponent is deprecated in favor of loadNetzkeComponent");
+    params.container = params.container || this.getId(); // for backward compatibility
+    this.loadNetzkeComponent(params);
+  },
+
   /*
   Called by the server after we ask him to load a component
   */
-  componentDelivered : function(config){
+  componentDelivered: function(config){
     // retrieve the loading config for this component
     var storedConfig = this.componentsBeingLoaded[config.name] || {};
     delete this.componentsBeingLoaded[config.name];
@@ -305,8 +314,21 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       storedConfig.loadMaskCmp.destroy();
     }
 
-    // instantiate and render it
-    var componentInstance = this.instantiateAndRenderComponent(config, storedConfig.container);
+    var componentInstance = Ext.createByAlias(config.alias, config);
+
+    if (storedConfig.container) {
+      var containerCmp = Ext.isString(storedConfig.container) ? Ext.getCmp(storedConfig.container) : storedConfig.container;
+      // containerCmp.insertNetzkeComponent(componentInstance);
+      containerCmp.removeAll();
+      containerCmp.add(componentInstance);
+
+      if (containerCmp.isVisible()) {
+        containerCmp.doLayout();
+      } else {
+        // if loaded into a hidden container, we need a little trick
+        containerCmp.on('show', function(cmp){ cmp.doLayout(); }, {single: true});
+      }
+    }
 
     if (storedConfig.callback) {
       storedConfig.callback.call(storedConfig.scope || this, componentInstance);
@@ -316,9 +338,9 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   },
 
   /*
-  Instantiates and renders a component with given config and container
+  DEPRECATED. Instantiates and renders a component with given config and container.
   */
-  instantiateAndRenderComponent : function(config, containerId){
+  instantiateAndRenderComponent: function(config, containerId){
     var componentInstance;
     if (containerId) {
       var container = Ext.getCmp(containerId);
@@ -330,24 +352,9 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   },
 
   /*
-  Instantiates and inserts a component into a container with layout 'fit'.
-  Arg: an JS object with the following keys:
-    - id: id of the receiving container
-    - config: configuration of the component to be instantiated and inserted into the container
+  Returns parent Netzke component
   */
-  // renderComponentInContainer : function(params){
-  //   var cont = Ext.getCmp(params.container);
-  //   if (cont) {
-  //     cont.instantiateChild(params.config);
-  //   } else {
-  //     this.instantiateChild(params.config);
-  //   }
-  // },
-
-  /*
-  Returns the parent component
-  */
-  getParent: function(){
+  getParentNetzkeComponent: function(){
     // simply cutting the last part of the id: some_parent__a_kid__a_great_kid => some_parent__a_kid
     var idSplit = this.id.split("__");
     idSplit.pop();
@@ -356,40 +363,57 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     return parentId === "" ? null : Ext.getCmp(parentId);
   },
 
+  // DEPRECATED
+  getParent: function() {
+    Netzke.deprecationWarning("getParent is deprecated in favor of getParentNetzkeComponent");
+    return this.getParentNetzkeComponent();
+  },
+
   /*
-  Reloads current component (calls the parent to reload it as its component)
+  Reloads current component (calls the parent to reload us as its component)
   */
-  reload : function(){
-    var parent = this.getParent();
+  reload: function(){
+    var parent = this.getParentNetzkeComponent();
     if (parent) {
-      parent.loadComponent({id:this.localId(parent), container:this.ownerCt.id});
+      parent.loadNetzkeComponent({id:this.localId(parent), container:this.ownerCt.id});
     } else {
       window.location.reload();
     }
   },
 
   /*
-  Reconfigures the component
+  DEPRECATED: Reconfigures the component
   */
   reconfigure: function(config){
     this.ownerCt.instantiateChild(config)
   },
 
-  // Get the child component
-  getChildComponent : function(id){
+  /*
+  Get the child component by its relative id, which may contain the 'parent' part to walk _up_ the hierarchy
+  */
+  getChildNetzkeComponent: function(id){
     if (id === "") {return this};
     id = id.underscore();
     var split = id.split("__");
     if (split[0] === 'parent') {
       split.shift();
       var childInParentScope = split.join("__");
-      return this.getParent().getChildComponent(childInParentScope);
+      return this.getParentNetzkeComponent().getChildComponent(childInParentScope);
     } else {
       return Ext.getCmp(this.id+"__"+id);
     }
   },
 
-  feedback: function(msg){
+  // DEPRECATED
+  getChildComponent: function(id) {
+    Netzke.deprecationWarning("getChildComponent is deprecated in favor of getChildNetzkeComponent");
+    return this.getChildNetzkeComponent(id);
+  },
+
+  /*
+  Provides a visual feedback. TODO: refactor
+  */
+  netzkeFeedback: function(msg){
     if (this.initialConfig && this.initialConfig.quiet) {
       return false;
     }
@@ -412,8 +436,16 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     }
   },
 
-  // Common handler for all component's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
-  actionHandler : function(comp){
+  // DEPRECATED in favor of netzkeFeedback
+  feedback: function(msg) {
+    Netzke.deprecationWarning("feedback is deprecated in favor of netzkeFeedback");
+    this.netzkeFeedback(msg);
+  },
+
+  /*
+  Common handler for all netzke's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
+  */
+  actionHandler: function(comp){
     var actionName = comp.name;
     // If firing corresponding event doesn't return false, call the handler
     if (this.fireEvent(actionName+'click', comp)) {
@@ -428,14 +460,12 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   },
 
   // Common handler for tools
-  toolActionHandler : function(tool){
+  toolActionHandler: function(tool){
     // If firing corresponding event doesn't return false, call the handler
     if (this.fireEvent(tool.id+'click')) {
       var methodName = "on"+tool.camelize();
       if (!this[methodName]) {throw "Netzke: handler for tool '"+tool+"' is undefined"}
       this[methodName]();
     }
-  },
-
-  onComponentLoad:Ext.emptyFn // gets overridden
+  }
 });

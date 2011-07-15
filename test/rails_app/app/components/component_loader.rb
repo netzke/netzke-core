@@ -20,10 +20,10 @@ class ComponentLoader < Netzke::Base
 
   component :some_composite, :lazy_loading => true
 
-  # this action is using loadComponent "special" callback
+  # this action is using loadNetzkeComponent "special" callback
   js_method :on_load_with_feedback, <<-JS
     function(){
-      this.loadComponent({name: 'simple_component', callback: function(){
+      this.loadNetzkeComponent({name: 'simple_component', callback: function(){
         this.setTitle("Callback" + " invoked!");
       }, scope: this});
     }
@@ -83,31 +83,33 @@ class ComponentLoader < Netzke::Base
 
   js_method :on_load_window_with_simple_component, <<-JS
     function(params){
-      this.loadComponent({name: "window_with_simple_component"});
+      this.loadNetzkeComponent({name: "window_with_simple_component", callback: function(w){
+        w.show();
+      }});
     }
   JS
 
   js_method :on_load_composite, <<-JS
     function(params){
-      this.loadComponent({name: "some_composite"});
+      this.loadNetzkeComponent({name: "some_composite", container: this});
     }
   JS
 
   js_method :on_load_with_params, <<-JS
     function(params){
-      this.loadComponent({name: "simple_component", params: {html: "Simple Component with changed HTML"}});
+      this.loadNetzkeComponent({name: "simple_component", params: {html: "Simple Component with changed HTML"}});
     }
   JS
 
   js_method :on_load_component, <<-JS
     function(){
-      this.loadComponent({name: 'simple_component', container: this.getId()});
+      this.loadNetzkeComponent({name: 'simple_component', container: this});
     }
   JS
 
   js_method :on_non_existing_component, <<-JS
     function(){
-      this.loadComponent({name: 'non_existing_component', container: this.getId()});
+      this.loadNetzkeComponent({name: 'non_existing_component', container: this});
     }
   JS
 
@@ -117,7 +119,7 @@ class ComponentLoader < Netzke::Base
         width: 500, height: 400, modal: false, layout:'fit', title: 'A window'
       });
       w.show();
-      this.loadComponent({name: 'component_loaded_in_window', container: w.getId()});
+      this.loadNetzkeComponent({name: 'component_loaded_in_window', container: w});
     }
   JS
 

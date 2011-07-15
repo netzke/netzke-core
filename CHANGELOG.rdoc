@@ -1,17 +1,32 @@
 = v0.7.0 - to be released
 * Ext JS 4 compatibility
+
 * API changes
   * New +ext_uri+ config option (defaults to "extjs") - relative URI to the Ext JS library on the server.
-  * The +ext_location+ config option renamed to +ext_path+
   * New +ext3_compat_uri+ config option (defaults to +nil+) - relative URI to the Ext 3 compatibility layer. When nil, no compatibility layer is loaded.
   * New +current_user_method+ config option (defaults to :current_user) to let Netzke::Core know which method to call on Rails controller to retrieve the current user.
   * New +Netzke::Core.current_user+ method to retrieve the current user.
-* Enhancements
+
+* broken API
+  * The +ext_location+ config option renamed to +ext_path+
+  * loadNetzkeComponent (ex loadComponent) won't automatically show a component with xtype 'window' any longer; use the callback to do  that manually
+
+* enhancements
   * +js_mixin+ without parameters will assume :component_class_name_underscored
   * Ext locale file is automatically included when I18n.locale is not :en
-  * Child components now have +itemId+ set to component's name, so that +getComponent(component_name)+ can be used to retrieve child components
+  * Child components now have +itemId+ set to component's name, so that +getComponent(component_name)+ can be used to retrieve immediate child components
+  * loadNetzkeComponent that should be used instead of loadComponent won't render the loaded component unless the container is specified (which can be an id or an instance)
+
 * bug fix
   * Tolerate relative_url_root when calculating the URI to icons in actions
+
+* deprecations
+  * instantiateAndRenderComponent
+  * getParent in favor of getParentNetzkeComponent
+  * getChildComponent in favor of getChildNetzkeComponent
+  * loadComponent in favor of loadNetzkeComponent
+  * feedback in favor of netzkeFeedback
+  * Ext.container.Container#instantiateChild should not be used
 
 = v0.6.7 - to be released
 * enhancements
