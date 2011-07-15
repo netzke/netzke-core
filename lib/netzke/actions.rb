@@ -103,7 +103,8 @@ module Netzke
       end
 
       def uri_to_icon(icon)
-        Netzke::Core.with_icons ? Netzke::Core.icons_uri + "/" + icon.to_s + ".png" : nil
+        Netzke::Core.with_icons ? [Netzke::Core.controller.config.relative_url_root, Netzke::Core.icons_uri, '/', icon.to_s, ".png"].join : nil
       end
+
   end
 end
