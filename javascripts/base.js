@@ -71,6 +71,10 @@ Netzke.reg = function(xtype, klass) {
   }
 };
 
+Netzke.componentNotInSessionHandler = function() {
+  throw "Netzke: component not in Rails session. Define Netzke.componentNotInSessionHandler to handle this.";
+};
+
 Netzke.classes.Core.Mixin = {};
 
 // Properties/methods common to all Netzke component classes
@@ -200,6 +204,11 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
 
   setResult: function(result) {
     this.latestResult = result;
+  },
+
+  // When an endpoint call is issued while the session has expired, this method is called. Override it to do whatever is appropriate.
+  componentNotInSession: function() {
+    Netzke.componentNotInSessionHandler();
   }
 });
 
