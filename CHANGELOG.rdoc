@@ -6,6 +6,7 @@
   * New +ext3_compat_uri+ config option (defaults to +nil+) - relative URI to the Ext 3 compatibility layer. When nil, no compatibility layer is loaded.
   * New +current_user_method+ config option (defaults to :current_user) to let Netzke::Core know which method to call on Rails controller to retrieve the current user.
   * New +Netzke::Core.current_user+ method to retrieve the current user.
+  * Passing instructions from server back to the client now is only meant for single-argument methods on client; arrays are not expanded into arguments any longer.
 
 * broken API
   * The +ext_location+ config option renamed to +ext_path+

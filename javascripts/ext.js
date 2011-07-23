@@ -24,6 +24,8 @@ Ext.define('Netzke.FeedbackGhost', {
     if (!msg) Netzke.exception("Netzke.FeedbackGhost#showFeedback: wrong number of arguments (0 for 1)");
     if (Ext.isObject(msg)) {
       this.msg(msg.level.camelize(), msg.msg);
+    } else if (Ext.isArray(msg)) {
+      Ext.each(msg, function(m) { this.showFeedback(m); }, this);
     } else {
       this.msg(null, msg); // no header for now
     }

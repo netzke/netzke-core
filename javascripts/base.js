@@ -139,25 +139,21 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   Executes a bunch of methods. This method is called almost every time a communication to the server takes place.
   Thus the server side of a component can provide any set of commands to its client side.
   Args:
-    - instructions: array of methods, in the order of execution.
-      Each item is an object in one of the following 2 formats:
-        1) {method1:args1, method2:args2}, where methodN is a name of a public method of this component; these methods are called in no particular order
-        2) {component:component_id, methods:arrayOfMethods}, used for recursive call to bulkExecute on some child component
+    - instructions: can be
+      1) a hash of instructions, where the key is the method name, and value - the argument that method will be called with (thus, these methods are expected to *only* receive 1 argument). In this case, the methods will be executed in no particular order.
+      2) an array of hashes of instructions. They will be executed in order.
+      Arrays and hashes may be nested at will.
+      If the key in the instructions hash refers to a child Netzke component, bulkExecute will be called on that component with the value passed as the argument.
 
-  Example:
-    - [
-        // the same as this.feedback("Your order is accepted")
-        {feedback: "You order is accepted"},
+  Examples of the arguments:
+      // same as this.feedback("Your order is accepted");
+      {feedback: "You order is accepted"}
 
-        // the same as this.getChildComponent('users').bulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}])
-        {component:'users', methods:[{setTitle:'Suprise!'}, {setDisabled:true}] },
+      // same as: this.setTitle('Suprise!'); this.setDisabled(true);
+      [{setTitle:'Suprise!'}, {setDisabled:true}]
 
-        // ... etc:
-        {updateStore:{records:[[1, 'Name1'],[2, 'Name2']], total:10}},
-        {setColums:[{},{}]},
-        {setMenus:[{},{}]},
-        ...
-      ]
+      // the same as this.getChildNetzkeComponent('users').bulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}]);
+      {users: [{setTitle:'Suprise!'}, {setDisabled:true}] }
   */
   bulkExecute : function(instructions){
     if (Ext.isArray(instructions)) {
@@ -165,10 +161,10 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     } else {
       for (var instr in instructions) {
         if (Ext.isFunction(this[instr])) {
-          // Executing the method. If arguments are an array, expand that into arguments.
-          this[instr].apply(this, Ext.isArray(instructions[instr]) ? instructions[instr] : [instructions[instr]]);
+          // Executing the method.
+          this[instr].apply(this, [instructions[instr]]);
         } else {
-          var childComponent = this.getChildComponent(instr);
+          var childComponent = this.getChildNetzkeComponent(instr);
           if (childComponent) {
             childComponent.bulkExecute(instructions[instr]);
           } else {
