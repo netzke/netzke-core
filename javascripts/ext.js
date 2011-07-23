@@ -21,6 +21,7 @@ Ext.state.Provider.prototype.set = function(){};
 // FeedbackGhost is a little class that displays unified feedback from Netzke components.
 Ext.define('Netzke.FeedbackGhost', {
   showFeedback: function(msg){
+    if (!msg) Netzke.exception("Netzke.FeedbackGhost#showFeedback: wrong number of arguments (0 for 1)");
     if (Ext.isObject(msg)) {
       this.msg(msg.level.camelize(), msg.msg);
     } else {

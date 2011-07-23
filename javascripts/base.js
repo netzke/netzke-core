@@ -20,6 +20,12 @@ Netzke.deprecationWarning = function(msg){
   }
 };
 
+Netzke.warning = Netzke.deprecationWarning;
+
+Netzke.exception = function(msg) {
+  throw("Netzke: " + msg);
+};
+
 // Used in testing
 if( Netzke.nLoadingFixRequests == undefined ){
   Netzke.nLoadingFixRequests=0;
