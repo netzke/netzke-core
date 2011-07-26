@@ -16,7 +16,8 @@
   * +js_mixin+ without parameters will assume :component_class_name_underscored
   * Ext locale file is automatically included when I18n.locale is not :en
   * Child components now have +itemId+ set to component's name, so that +getComponent(component_name)+ can be used to retrieve immediate child components
-  * loadNetzkeComponent that should be used instead of loadComponent won't render the loaded component unless the container is specified (which can be an id or an instance)
+  * +loadNetzkeComponent+ that should be used instead of loadComponent won't render the loaded component unless the container is specified (which can be an id or an instance)
+  * JS: +componentDeliveryFailed+ method added that is called by the +deliver_component+ endpoint
 
 * bug fix
   * Tolerate relative_url_root when calculating the URI to icons in actions

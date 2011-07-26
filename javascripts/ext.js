@@ -340,6 +340,18 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     this.fireEvent('componentload', componentInstance);
   },
 
+  componentDeliveryFailed: function(params) {
+    var storedConfig = this.componentsBeingLoaded[params.componentName] || {};
+    delete this.componentsBeingLoaded[params.componentName];
+
+    if (storedConfig.loadMaskCmp) {
+      storedConfig.loadMaskCmp.hide();
+      storedConfig.loadMaskCmp.destroy();
+    }
+
+    this.netzkeFeedback({msg: params.msg, level: "Error"});
+  },
+
   /*
   DEPRECATED. Instantiates and renders a component with given config and container.
   */

@@ -46,7 +46,7 @@ module Netzke
             :component_delivered => component.js_config
           }]
         else
-          {:feedback => "Couldn't load component '#{component_name}'"}
+          {:component_delivery_failed => {:component_name => component_name, :msg => "Couldn't load component '#{component_name}'"}}
         end
       end
 

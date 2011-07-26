@@ -49,3 +49,4 @@ Feature: Component loader
     Given I am on the ComponentLoader test page
     When I press "Non-existing component"
     Then I should see "Couldn't load component 'non_existing_component'"
+    And I should not see "Loading"

@@ -1,3 +1,4 @@
+# TODO: some functionality (one that is calling doNothing) does not belong here, as it loads no componens, but rather to ServerCaller. Move it there.
 class ComponentLoader < Netzke::Base
   component :simple_component, :title => "Simple Component", :lazy_loading => true
 
@@ -60,7 +61,6 @@ class ComponentLoader < Netzke::Base
 #    {}
   end
 
-
   action :load_component
 
   action :load_in_window
@@ -97,7 +97,7 @@ class ComponentLoader < Netzke::Base
 
   js_method :on_load_with_params, <<-JS
     function(params){
-      this.loadNetzkeComponent({name: "simple_component", params: {html: "Simple Component with changed HTML"}});
+      this.loadNetzkeComponent({name: "simple_component", params: {html: "Simple Component" + " with changed HTML"}, container: this});
     }
   JS
 
