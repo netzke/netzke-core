@@ -215,7 +215,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
 });
 
 
-// DEPRECATED: Netzke extensions for Ext.Container
+// DEPRECATED as whole. Netzke extensions for Ext.Container.
 Ext.override(Ext.Container, {
   // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
   instantiateChild: function(config){

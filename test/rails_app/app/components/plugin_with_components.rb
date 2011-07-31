@@ -4,7 +4,7 @@ class PluginWithComponents < Netzke::Plugin
       this.cmp = cmp;
       this.cmp.tools = this.cmp.tools || [];
       this.cmp.tools.push({type: 'help', handler: function(){
-        var w = Ext.createByAlias(this.components.simpleWindow.alias, this.components.simpleWindow);
+        var w = this.instantiateChildNetzkeComponent('simple_window');
         w.show();
       }, scope: this});
     }

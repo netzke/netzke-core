@@ -409,7 +409,15 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   },
 
   /*
-  Get *instantiated* child component by its relative id, which may contain the 'parent' part to walk _up_ the hierarchy
+  Instantiates and returns a Netzke component by its name.
+  */
+  instantiateChildNetzkeComponent: function(name) {
+    name = name.camelize(true);
+    return Ext.createByAlias(this.netzkeComponents[name].alias, this.netzkeComponents[name])
+  },
+
+  /*
+  Returns *instantiated* child component by its relative id, which may contain the 'parent' part to walk _up_ the hierarchy
   */
   getChildNetzkeComponent: function(id){
     if (id === "") {return this};
@@ -418,7 +426,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     if (split[0] === 'parent') {
       split.shift();
       var childInParentScope = split.join("__");
-      return this.getParentNetzkeComponent().getChildComponent(childInParentScope);
+      return this.getParentNetzkeComponent().getChildNetzkeComponent(childInParentScope);
     } else {
       return Ext.getCmp(this.id+"__"+id);
     }
@@ -493,7 +501,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     if (this.netzkePlugins) {
       if (!this.plugins) this.plugins = [];
       Ext.each(this.netzkePlugins, function(p){
-        this.plugins.push(Ext.createByAlias(this.components[p].alias, this.components[p]));
+        this.plugins.push(this.instantiateChildNetzkeComponent(p));
       }, this);
     }
   },
