@@ -25,7 +25,6 @@ class ServerCounter < Netzke::Base
         Netzke.connectionCount++;
         Netzke.lastOptions=options;
       });
-
     }
   JS
 

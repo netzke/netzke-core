@@ -2,6 +2,7 @@ $LOAD_PATH << File.dirname(__FILE__)
 
 require 'netzke/core'
 require 'netzke/base'
+require 'netzke/plugin'
 
 module Netzke
   autoload :Core, 'netzke/core'

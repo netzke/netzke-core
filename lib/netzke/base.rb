@@ -6,7 +6,7 @@ require 'netzke/stylesheets'
 require 'netzke/inheritance'
 require 'netzke/services'
 require 'netzke/composition'
-require 'netzke/plugin'
+require 'netzke/plugins'
 require 'netzke/configuration'
 require 'netzke/state'
 require 'netzke/embedding'
@@ -37,7 +37,7 @@ module Netzke
     include Inheritance
     include Services
     include Composition
-    include Plugin
+    include Plugins
     include Stylesheets
     include Embedding
     include Actions

@@ -493,7 +493,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     if (this.netzkePlugins) {
       if (!this.plugins) this.plugins = [];
       Ext.each(this.netzkePlugins, function(p){
-        this.plugins.push(Ext.create(this.components[p]));
+        this.plugins.push(Ext.createByAlias(this.components[p].alias, this.components[p]));
       }, this);
     }
   },

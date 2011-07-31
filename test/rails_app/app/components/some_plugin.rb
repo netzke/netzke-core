@@ -1,13 +1,22 @@
-class SomePlugin < Netzke::Base
-  js_base_class "Ext.Component"
-
-  endpoint :process_gear do |params|
-    {:process_gear_callback => true}
-  end
+class SomePlugin < Netzke::Plugin
+  action :action_one
 
   js_method :init, <<-JS
-    function(cmp){
-      cmp.tools = [{id: 'gear', handler: this.onGear, scope: this}];
+    function(){
+      this.callParent(arguments);
+      this.cmp.tools = [{id: 'gear', handler: this.onGear, scope: this}];
+
+      this.cmp.addDocked({
+        dock: 'bottom',
+        xtype: 'toolbar',
+        items: [this.actions.actionOne]
+      });
+    }
+  JS
+
+  js_method :on_action_one, <<-JS
+    function(){
+      this.cmp.setTitle('Action one ' + 'triggered');
     }
   JS
 
@@ -18,8 +27,13 @@ class SomePlugin < Netzke::Base
   JS
 
   js_method :process_gear_callback, <<-JS
-    function(){
-      this.getParent().setTitle("Server response");
+    function(newTitle){
+      this.cmp.setTitle(newTitle);
     }
   JS
+
+  endpoint :process_gear do |params|
+    {:process_gear_callback => "Server response"}
+  end
+
 end
