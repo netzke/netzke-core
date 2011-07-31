@@ -113,6 +113,9 @@ Ext.apply(Netzke.classes.Core.Mixin, {
 
     this.detectActions(this);
 
+    // Detects component placeholders in the passed object (typically, "items"),
+    // and merges them with the corresponding config from this.netzkeComponents.
+    // This way it becomes ready to be instantiated properly by Ext.
     this.detectComponents(this.items);
 
     this.normalizeTools();
@@ -404,7 +407,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   },
 
   /*
-  Get the child component by its relative id, which may contain the 'parent' part to walk _up_ the hierarchy
+  Get *instantiated* child component by its relative id, which may contain the 'parent' part to walk _up_ the hierarchy
   */
   getChildNetzkeComponent: function(id){
     if (id === "") {return this};

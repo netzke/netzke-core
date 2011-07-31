@@ -12,6 +12,6 @@ class Symbol
   end
 
   def component(config = {})
-    config.merge(:component => self)
+    config.merge(:netzke_component => self)
   end
 end

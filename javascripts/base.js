@@ -89,7 +89,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
 
   /*
   Detects component placeholders in the passed object (typically, "items"),
-  and merges them with the corresponding config from this.components.
+  and merges them with the corresponding config from this.netzkeComponents.
   This way it becomes ready to be instantiated properly by Ext.
   */
   detectComponents: function(o){
@@ -97,11 +97,11 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       if (o.items) this.detectComponents(o.items);
     } else if (Ext.isArray(o)) {
       var a = o;
-      Ext.each(a, function(el, i){
-        if (el.component) {
-          a[i] = Ext.apply(this.components[el.component.camelize(true)], el);
+      Ext.each(a, function(c, i){
+        if (c.netzkeComponent) {
+          a[i] = Ext.apply(this.netzkeComponents[c.netzkeComponent.camelize(true)], c);
           delete a[i].component;
-        } else if (el.items) this.detectComponents(el.items);
+        } else if (c.items) this.detectComponents(c.items);
       }, this);
     }
   },

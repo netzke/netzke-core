@@ -280,7 +280,7 @@ module Netzke
     end
 
     module InstanceMethods
-      # The result of this method (a hash) is converted to a JSON object and passed as the configuration parameter
+      # The result of this method (a hash) is converted to a JSON object and passed as options
       # to the constructor of our JavaScript class. Override it when you want to pass any extra configuration
       # to the JavaScript side.
       def js_config
@@ -297,9 +297,8 @@ module Netzke
           comp_hash[comp_name] = comp_instance.js_config
         end
 
-        # All our non-lazy-loaded children are specified here, while in +items+ we barely reference them, because
-        # +items+, generally, only contain a subset of all non-lazy-loaded children.
-        res[:components] = comp_hash unless comp_hash.empty?
+        # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ for instantiation by Ext.
+        res[:netzke_components] = comp_hash unless comp_hash.empty?
 
         # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
         endpoints = self.class.endpoints.keys - [:deliver_component]
