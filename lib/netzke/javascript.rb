@@ -200,8 +200,10 @@ module Netzke
 
         res << (extends_netzke_component? ? js_class_declaration_extending_component : js_class_declaration_new_component)
 
-        res << %(Netzke.reg("#{js_xtype}", #{js_full_class_name});)
-        res << ""
+        # Store created class xtype in the cache
+        res << %(
+Netzke.cache.push('#{js_xtype}');
+)
 
         res.join("\n")
       end
@@ -249,16 +251,16 @@ module Netzke
         # Generates declaration of the JS class as direct extension of a Ext component
         def js_class_declaration_new_component
           mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
-          %(
-              Ext.define('#{js_full_class_name}', Netzke.chainApply({
-                extend: '#{js_base_class}',
-                alias: '#{js_alias}',
-                constructor: function(config) {
-                  Netzke.aliasMethodChain(this, "initComponent", "netzke");
-                  #{js_full_class_name}.superclass.constructor.call(this, config);
-                }
-              }, Netzke.componentMixin, #{mixins} #{js_extend_properties.to_nifty_json}));
-          )
+
+          # Resulting JS:
+%(Ext.define('#{js_full_class_name}', Netzke.chainApply({
+  extend: '#{js_base_class}',
+  alias: '#{js_alias}',
+  constructor: function(config) {
+    Netzke.aliasMethodChain(this, "initComponent", "netzke");
+    #{js_full_class_name}.superclass.constructor.call(this, config);
+  }
+}, Netzke.componentMixin,\n#{mixins} #{js_extend_properties.to_nifty_json}));)
         end
 
         # Generates declaration of the JS class as extension of another Netzke component
@@ -266,12 +268,12 @@ module Netzke
           base_class = superclass.js_full_class_name
 
           mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
-          %(
-              Ext.define('#{js_full_class_name}', Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}, {
-                extend: '#{base_class}',
-                alias: '#{js_alias}'
-              }));
-          )
+
+          # Resulting JS:
+%(Ext.define('#{js_full_class_name}', Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}, {
+  extend: '#{base_class}',
+  alias: '#{js_alias}'
+}));)
         end
 
         def expand_js_include_path(sym, callr) # :nodoc:

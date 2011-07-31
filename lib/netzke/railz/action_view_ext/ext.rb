@@ -42,7 +42,6 @@ module Netzke
           def netzke_ext_js(params)
             res = []
             res << content_for(:netzke_js_classes)
-            res << "\n"
 
             res << "Ext.onReady(function(){"
             res << content_for(:netzke_on_ready)

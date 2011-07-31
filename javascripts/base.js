@@ -66,17 +66,6 @@ Netzke.aliasMethodChain = function(klass, method, feature) {
 // xtypes of cached Netzke classes
 Netzke.cache = [];
 
-// Registering a Netzke component
-// TODO: MAV I think we should get rid of this piece of code someday
-// and use Ext4's ClassManager functions instead
-Netzke.reg = function(xtype, klass) {
-  if (!Ext.ComponentManager.types[xtype]) {
-    // MAV not needed in v4, I guess
-    // Ext.ComponentManager.registerType(xtype, klass);
-    Netzke.cache.push(xtype);
-  }
-};
-
 Netzke.componentNotInSessionHandler = function() {
   throw "Netzke: component not in Rails session. Define Netzke.componentNotInSessionHandler to handle this.";
 };
