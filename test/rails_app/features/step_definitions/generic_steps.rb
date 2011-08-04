@@ -41,6 +41,10 @@ When /^I press tool "([^"]*)"$/ do |tool|
   find("##{id} img").click
 end
 
+When /^I wait for response from server$/ do
+  page.wait_until{ page.driver.browser.execute_script("return !Netzke.ajaxIsLoading()") }
+end
+
 When /I sleep (\d+) seconds?/ do |arg1|
   sleep arg1.to_i
 end
