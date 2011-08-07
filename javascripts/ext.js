@@ -224,7 +224,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
         o.handler = this[o.handler.camelize(true)].createDelegate(this);
       }
       // TODO: this should be configurable!
-      Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu", "buttons"], function(key){
+      Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu", "buttons", "dockedItems"], function(key){
         if (o[key]) {
           var items = [].concat(o[key]); // we need to do it in order to esure that this instance has a separate bbar/tbar/etc, NOT shared via class' prototype
           delete(o[key]);

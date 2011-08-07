@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-08-04}
+  s.date = %q{2011-08-07}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -235,6 +235,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_custom_css.rb",
     "test/rails_app/app/components/component_with_included_js.rb",
     "test/rails_app/app/components/component_with_js_mixin.rb",
+    "test/rails_app/app/components/component_with_nested_through.rb",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/deprecated/server_caller.rb",
     "test/rails_app/app/components/dynamic_tab_panel.rb",

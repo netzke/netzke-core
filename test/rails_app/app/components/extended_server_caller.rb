@@ -4,7 +4,7 @@ class ExtendedServerCaller < ServerCaller
   js_method :on_bug_server, <<-JS
     function(){
       this.callParent();
-      var bottomBar = this.getDockedItems()[1];
+      var bottomBar = this.getDockedItems()[1] || this.getDockedItems()[0]; // Hacky-hacky... better way to surely get the bottom bar?
       bottomBar.add({text: "Added" + " by extended Server Caller"});
     }
   JS
