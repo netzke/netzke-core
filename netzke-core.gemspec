@@ -90,6 +90,7 @@ Gem::Specification.new do |s|
     "test/rails_app/app/components/component_with_js_mixin/javascripts/extra_two.js",
     "test/rails_app/app/components/component_with_js_mixin/javascripts/method_set_one.js",
     "test/rails_app/app/components/component_with_js_mixin/javascripts/method_set_two.js",
+    "test/rails_app/app/components/component_with_nested_through.rb",
     "test/rails_app/app/components/component_with_session_persistence.rb",
     "test/rails_app/app/components/deprecated/server_caller.rb",
     "test/rails_app/app/components/dynamic_tab_panel.rb",
