@@ -8,6 +8,7 @@
   * New +Netzke::Core.current_user+ method to retrieve the current user.
   * Passing instructions from server back to the client now is only meant for single-argument methods on client; arrays are not expanded into arguments any longer.
   * New +instantiateChildNetzkeComponent+ method to instantiate a Netzke component by name.
+  * Default component height (400) and border (false) are no longer set.
 
 * broken API
   * The +ext_location+ config option renamed to +ext_path+

@@ -1,5 +1,6 @@
 class SomeComposite < Netzke::Base
   js_properties :title => "Static Composite",
+                :height => 400,
                 :layout => 'border',
                 :bbar => [
                   :update_west_panel.action,
@@ -26,9 +27,9 @@ class SomeComposite < Netzke::Base
 
   component :center_panel, :class_name => "ServerCaller"
 
-  component :east_center_panel, :class_name => "SimpleComponent", :title => "A panel"
+  component :east_center_panel, :class_name => "SimpleComponent", :title => "A panel", :border => false
 
-  component :east_south_panel, :class_name => "SimpleComponent", :title => "Another panel"
+  component :east_south_panel, :class_name => "SimpleComponent", :title => "Another panel", :border => false
 
   endpoint :update_east_south do |params|
     {:east_south_panel => {:set_title => "Here's an update for south panel in east panel"}}

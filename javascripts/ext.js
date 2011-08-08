@@ -98,9 +98,6 @@ Ext.Direct.addProvider(Netzke.directProvider);
 
 // Methods/properties that each and every Netzke component will have
 Ext.apply(Netzke.classes.Core.Mixin, {
-  height: 400,
-  border: false, // questionable
-
   /*
   Mask shown during loading of a component. Set to false to not mask. Pass config for Ext.LoadMask for configuring msg/cls, etc.
   Set msg to null if mask without any msg is desirable.
