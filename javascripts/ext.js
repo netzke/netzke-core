@@ -7,14 +7,20 @@ Ext.TabPanel.prototype.idDelimiter = "___";
 Ext.QuickTips.init();
 
 // We don't want no state managment by default, thank you!
-Ext.state.Provider.prototype.set = function(){};
+Ext.state.Provider.prototype.set = Ext.emptyFn;
 
-// Check Ext JS version
+// Checking Ext JS version: both major and minor versions must be the same
 (function(){
-  var requiredExtVersion = "4.0.2";
-  var currentExtVersion = Ext.getVersion('extjs').toString();
-  if (requiredExtVersion !== currentExtVersion) {
-    Netzke.deprecationWarning("Warning: require Ext " + requiredExtVersion + ". You have " + currentExtVersion + ".");
+  var requiredVersionMajor = 4,
+      requiredVersionMinor = 0,
+      extVersion = Ext.getVersion('extjs'),
+      currentVersionMajor = extVersion.getMajor(),
+      currentVersionMinor = extVersion.getMinor(),
+      requiredString = "" + requiredVersionMajor + "." + requiredVersionMinor + ".x",
+      currentString = "" + currentVersionMajor + "." + currentVersionMinor + ".x";
+
+  if (requiredVersionMajor != currentVersionMajor || requiredVersionMinor != currentVersionMinor) {
+    Netzke.warning("Ext " + requiredString + " required. You have " + currentString + ".");
   }
 })();
 
