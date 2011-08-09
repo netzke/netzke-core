@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
     "LICENSE",
-    "README.markdown",
+    "README.md",
     "TODO"
   ]
   s.files = [
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
     "CHANGELOG.rdoc",
     "LICENSE",
     "Manifest",
-    "README.markdown",
+    "README.md",
     "Rakefile",
     "TODO",
     "app/controllers/netzke_controller.rb",
