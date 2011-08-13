@@ -2,8 +2,6 @@
 
 Netzke Core is the bare bones of the [Netzke framework](https://github.com/skozlov/netzke). For pre-built full-featured components (like grids, forms, tab/accordion panels, applications, etc), see [netzke-basepack](http://github.com/skozlov/netzke-basepack) (Ext JS).
 
-<a href='http://www.pledgie.com/campaigns/15846'><img alt='Click here to lend your support to: Netzke and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/15846.png?skin_name=chrome' border='0' /></a>
-
 Netzke Core takes the burden of implementing the following key aspects of the framework:
 
 * JavaScript class generation
