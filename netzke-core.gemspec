@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sergei Kozlov"]
-  s.date = %q{2011-07-11}
+  s.date = %q{2011-08-16}
   s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
   s.email = %q{sergei@playcode.nl}
   s.extra_rdoc_files = [
@@ -217,85 +217,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{Build ExtJS/Rails components with minimum effort}
-  s.test_files = [
-    "test/rails_app/app/components/border_layout_panel.rb",
-    "test/rails_app/app/components/component_loader.rb",
-    "test/rails_app/app/components/component_with_actions.rb",
-    "test/rails_app/app/components/component_with_custom_css.rb",
-    "test/rails_app/app/components/component_with_included_js.rb",
-    "test/rails_app/app/components/component_with_js_mixin.rb",
-    "test/rails_app/app/components/component_with_session_persistence.rb",
-    "test/rails_app/app/components/deprecated/server_caller.rb",
-    "test/rails_app/app/components/ext_direct/composite.rb",
-    "test/rails_app/app/components/ext_direct/details.rb",
-    "test/rails_app/app/components/ext_direct/selector.rb",
-    "test/rails_app/app/components/ext_direct/statistics.rb",
-    "test/rails_app/app/components/extended_component_with_actions.rb",
-    "test/rails_app/app/components/extended_component_with_js_mixin.rb",
-    "test/rails_app/app/components/extended_localized_panel.rb",
-    "test/rails_app/app/components/extended_server_caller.rb",
-    "test/rails_app/app/components/hello_world_component.rb",
-    "test/rails_app/app/components/kinda_complex_component.rb",
-    "test/rails_app/app/components/kinda_complex_component/basic_stuff.rb",
-    "test/rails_app/app/components/kinda_complex_component/extra_stuff.rb",
-    "test/rails_app/app/components/loader_of_component_with_custom_css.rb",
-    "test/rails_app/app/components/localized_panel.rb",
-    "test/rails_app/app/components/scoped_components/deep_scoped_components/some_deep_scoped_component.rb",
-    "test/rails_app/app/components/scoped_components/extended_scoped_component.rb",
-    "test/rails_app/app/components/scoped_components/some_scoped_component.rb",
-    "test/rails_app/app/components/server_caller.rb",
-    "test/rails_app/app/components/server_counter.rb",
-    "test/rails_app/app/components/simple_component.rb",
-    "test/rails_app/app/components/simple_panel.rb",
-    "test/rails_app/app/components/simple_tab_panel.rb",
-    "test/rails_app/app/components/simple_window.rb",
-    "test/rails_app/app/components/some_composite.rb",
-    "test/rails_app/app/components/some_ext_component.rb",
-    "test/rails_app/app/components/touch/hello_world_component.rb",
-    "test/rails_app/app/components/touch/server_caller.rb",
-    "test/rails_app/app/components/touch/simple_carousel.rb",
-    "test/rails_app/app/controllers/application_controller.rb",
-    "test/rails_app/app/controllers/components_controller.rb",
-    "test/rails_app/app/controllers/multiple_components_controller.rb",
-    "test/rails_app/app/controllers/touch_controller.rb",
-    "test/rails_app/app/controllers/welcome_controller.rb",
-    "test/rails_app/app/helpers/application_helper.rb",
-    "test/rails_app/app/helpers/touch_helper.rb",
-    "test/rails_app/config/application.rb",
-    "test/rails_app/config/boot.rb",
-    "test/rails_app/config/environment.rb",
-    "test/rails_app/config/environments/development.rb",
-    "test/rails_app/config/environments/production.rb",
-    "test/rails_app/config/environments/test.rb",
-    "test/rails_app/config/initializers/backtrace_silencers.rb",
-    "test/rails_app/config/initializers/inflections.rb",
-    "test/rails_app/config/initializers/mime_types.rb",
-    "test/rails_app/config/initializers/netzke.rb",
-    "test/rails_app/config/initializers/secret_token.rb",
-    "test/rails_app/config/initializers/session_store.rb",
-    "test/rails_app/config/routes.rb",
-    "test/rails_app/db/migrate/20110110132720_create_netzke_component_states.rb",
-    "test/rails_app/db/schema.rb",
-    "test/rails_app/db/seeds.rb",
-    "test/rails_app/features/step_definitions/custom_css_steps.rb",
-    "test/rails_app/features/step_definitions/generic_steps.rb",
-    "test/rails_app/features/step_definitions/touch_steps.rb",
-    "test/rails_app/features/step_definitions/web_steps.rb",
-    "test/rails_app/features/support/env.rb",
-    "test/rails_app/features/support/paths.rb",
-    "test/rails_app/spec/component/actions_spec.rb",
-    "test/rails_app/spec/component/base_spec.rb",
-    "test/rails_app/spec/component/composition_spec.rb",
-    "test/rails_app/spec/component/configuration_spec.rb",
-    "test/rails_app/spec/component/javascript_spec.rb",
-    "test/rails_app/spec/component/state_spec.rb",
-    "test/rails_app/spec/core_ext_spec.rb",
-    "test/rails_app/spec/spec_helper.rb",
-    "test/test_helper.rb",
-    "test/unit/core_ext_test.rb",
-    "test/unit/netzke_core_test.rb",
-    "test/unit/netzke_preference_test.rb"
-  ]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3

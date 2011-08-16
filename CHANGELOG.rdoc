@@ -1,4 +1,4 @@
-= v0.6.7 - to be released
+= v0.6.7 - 2011-08-16
 * enhancements
   * No more using +method_missing+ for invoking endpoints.
   * New "cache" option for `netzke_init` which gets passed to `javascript_include_tag` (no support for css caching of this type yet)
