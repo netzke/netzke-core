@@ -52,8 +52,8 @@ module Netzke
 
         content_for :netzke_on_ready, raw("#{cmp.js_component_instance}\n\n#{cmp.js_component_render}")
 
-        # Now mark this component's class as rendered (by storing it's xtype), so that we only generate it once per view
-        @rendered_classes << class_name.to_s.gsub("::", "").downcase unless @rendered_classes.include?(class_name)
+        # Now mark all this component's dependency classes (including self) as rendered (by storing their xtypes), so that we only generate a class once per view
+        @rendered_classes = (@rendered_classes + cmp.dependency_classes.map(&:js_xtype)).uniq
 
         # Return the html for this component
         raw(cmp.js_component_html)

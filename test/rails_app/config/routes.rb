@@ -59,7 +59,7 @@ RailsApp::Application.routes.draw do
   match 'components/:component' => 'components#index', :as => "components"
 
   # Components configured in Rails views
-  match 'components/embedded/:action' => 'components', :as => "embedded_components"
+  match 'simple_rails/:action' => 'simple_rails', :as => 'simple_rails_views'
 
   # Touch components
   match 'components/touch/:component' => 'touch#index', :as => "touch_components"

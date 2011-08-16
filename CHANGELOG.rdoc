@@ -1,3 +1,7 @@
+= v0.7.1 - to be released
+* bug fix
+  * Multiple compound Netzke components in the same Rails view were causing JS errors
+
 = v0.7.0 - 2011-08-09
 * Ext JS 4 compatibility
 

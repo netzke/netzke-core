@@ -17,17 +17,8 @@ module NavigationHelpers
     #   when /^(.*)'s profile page$/i
     #     user_profile_path(User.find_by_login($1))
 
-    when /the simple panel page/
-      '/panel/simple'
-
-    when /the server caller page/
-      '/panel/server_caller'
-
-    when /the component loader page/
-      '/panel/component_loader'
-
     when /the "(.*)" view/
-      embedded_components_path(:action => $1.gsub(" ", "_"))
+      simple_rails_views_path(:action => $1.gsub(" ", "_"))
 
     when /the (.*) test page/
       components_path(:component => $1)
