@@ -142,6 +142,8 @@ Gem::Specification.new do |s|
     "test/rails_app/app/views/layouts/application.html.erb",
     "test/rails_app/app/views/layouts/nested.html.erb",
     "test/rails_app/app/views/layouts/touch.html.erb",
+    "test/rails_app/app/views/multiple_components/of_different_class.html.erb",
+    "test/rails_app/app/views/multiple_components/of_same_class.html.erb",
     "test/rails_app/config.ru",
     "test/rails_app/config/application.rb",
     "test/rails_app/config/boot.rb",
