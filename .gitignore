@@ -8,8 +8,6 @@ test/rails_app/tmp/
 test/rails_app/public/extjs*
 test/rails_app/public/images/icons
 test/rails_app/vendor/gems/netzke-persistence
-test/rails_app/public/netzke/*.js
-test/rails_app/public/netzke/*.css
 test/rails_app/public/javascripts
 test/rails_app/public/stylesheets
 *.gem
