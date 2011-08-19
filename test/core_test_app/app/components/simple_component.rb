@@ -4,4 +4,3 @@ class SimpleComponent < Netzke::Base
 
   # component :one, :class_name => "SimplePanel", :title => "One"
 end
-

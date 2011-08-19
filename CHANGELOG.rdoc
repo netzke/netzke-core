@@ -41,7 +41,7 @@
   * No more using +method_missing+ for invoking endpoints.
   * New "cache" option for `netzke_init` which gets passed to `javascript_include_tag` (no support for css caching of this type yet)
   * Netzke dynamic js and css-files such as ext.js, touch.css, now get generated at the application start, and put into "public/netzke". Solves a long standing problem with serving those files by HTTP servers in some cases. Enables caching naturally.
-  * Moved features and specs to test/rails_app (tests should be run from that folder from now on)
+  * Moved features and specs to test/core_test_app (tests should be run from that folder from now on)
   * Introduced plugin functionality. We can create Netzke components that are pluggable into other components as Ext JS plugins.
 
 = v0.6.6 - 2011-02-26
@@ -103,7 +103,7 @@
   * +widgets+ are now +components+, too
   * +api+ is now +endpoint+
   * +persistent_config_enabled?+ is now +persistence_enabled?+
-  * Using the +js_extend_properties+ class method in your components in deprecated (and maybe even broken). Use +js_property+ (or +js_properties+) and +js_method+ instead (see multiple examples in test/rails_app)
+  * Using the +js_extend_properties+ class method in your components in deprecated (and maybe even broken). Use +js_property+ (or +js_properties+) and +js_method+ instead (see multiple examples in test/core_test_app)
   * the +load_component_with_cache+ endpoint renamed to +deliver_component+
 
 * New
