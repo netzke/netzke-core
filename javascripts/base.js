@@ -1,4 +1,4 @@
-/*
+/**
 This file gets loaded along with the rest of Ext library at the initial load
 At this time the following constants have been set by Rails:
 

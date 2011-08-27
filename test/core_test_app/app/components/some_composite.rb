@@ -1,6 +1,5 @@
 class SomeComposite < Netzke::Base
-  js_properties :title => "Static Composite",
-                :height => 400,
+  js_properties :height => 400,
                 :layout => 'border',
                 :bbar => [
                   :update_west_panel.action,
