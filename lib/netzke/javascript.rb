@@ -32,7 +32,7 @@ module Netzke
       #
       # If called without parameters, returns the JS base class declared for the component.
       def js_base_class(class_name = nil)
-        class_name.nil? ? (read_inheritable_attribute(:js_base_class) || "Ext.Panel") : write_inheritable_attribute(:js_base_class, class_name)
+        class_name.nil? ? (read_inheritable_attribute(:js_base_class) || "Ext.panel.Panel") : write_inheritable_attribute(:js_base_class, class_name)
       end
 
       # Use it to define a public method of the component's JavaScript class, e.g.:

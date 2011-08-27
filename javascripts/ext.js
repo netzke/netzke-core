@@ -277,8 +277,9 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     var storedConfig = this.componentsBeingLoaded[params.name] = {};
 
     // Remember where the loaded component should be inserted into
+    var containerCmp = Ext.isString(params.container) ? Ext.getCmp(params.container) : params.container;
     if (params.container) {
-      storedConfig.container = params.container;
+      storedConfig.container = containerCmp;
     }
 
     // remember the passed callback for the future (per loaded component, as there may be simultaneous ongoing calls)
@@ -288,14 +289,13 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       // this.callbackHash[params.name.underscore()] = params.callback;
     }
 
-    var container = params.container && Ext.getCmp(params.container);
-    if (container) {
+    if (containerCmp) {
       // remove the old component if the container is specified
-      container.removeChild();
+      containerCmp.removeAll();
     }
 
     // Show loading mask if possible
-    var containerEl = (container || this).getEl();
+    var containerEl = (containerCmp || this).getEl();
     if (this.componentLoadMask && containerEl){
       storedConfig.loadMaskCmp = new Ext.LoadMask(containerEl, this.componentLoadMask);
       storedConfig.loadMaskCmp.show();
@@ -328,8 +328,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     var componentInstance = Ext.createByAlias(config.alias, config);
 
     if (storedConfig.container) {
-      var containerCmp = Ext.isString(storedConfig.container) ? Ext.getCmp(storedConfig.container) : storedConfig.container;
-      // containerCmp.insertNetzkeComponent(componentInstance);
+      var containerCmp = storedConfig.container;
       containerCmp.removeAll();
       containerCmp.add(componentInstance);
 

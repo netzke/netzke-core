@@ -1,3 +1,7 @@
+= v0.7.2
+* bug fix
+  * When a component is dynamically loaded in a container, the load mask is now limited to that container
+
 = v0.7.1 - 2011-08-17
 * bug fix
   * Multiple compound Netzke components in the same Rails view were causing JS errors

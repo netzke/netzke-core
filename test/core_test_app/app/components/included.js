@@ -1,4 +1,4 @@
-Netzke.ComponentWithIncludedJs = Ext.extend(Ext.Panel, {
+Netzke.ComponentWithIncludedJs = Ext.extend(Ext.panel.Panel, {
   updateBodyWithMessage: function(message) {
     this.body.update(message);
   }

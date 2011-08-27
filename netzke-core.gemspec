@@ -110,6 +110,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/kinda_complex_component/extra_stuff.rb",
     "test/core_test_app/app/components/loader_of_component_with_custom_css.rb",
     "test/core_test_app/app/components/localized_panel.rb",
+    "test/core_test_app/app/components/multipane_component_loader.rb",
     "test/core_test_app/app/components/nested_component.rb",
     "test/core_test_app/app/components/panel_with_plugin.rb",
     "test/core_test_app/app/components/panel_with_tools.rb",
