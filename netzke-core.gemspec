@@ -78,6 +78,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/README",
     "test/core_test_app/Rakefile",
     "test/core_test_app/app/components/border_layout_panel.rb",
+    "test/core_test_app/app/components/card_component_loader.rb",
     "test/core_test_app/app/components/component_loader.rb",
     "test/core_test_app/app/components/component_with_actions.rb",
     "test/core_test_app/app/components/component_with_custom_css.rb",

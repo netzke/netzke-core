@@ -1,6 +1,8 @@
-= v0.7.2
+= -edge-
 * bug fix
   * When a component is dynamically loaded in a container, the load mask is now limited to that container
+* enhancements
+  * New +append+ config option for loadNetzkeComponent, which prevents emptying the container when inserting the newly loaded component; can be used for loading components into layouts different from 'fit'
 
 = v0.7.1 - 2011-08-17
 * bug fix
