@@ -9,7 +9,7 @@ begin
     gemspec.email = "sergei@playcode.nl"
     gemspec.homepage = "http://netzke.org"
     gemspec.authors = ["Sergei Kozlov"]
-    gemspec.add_dependency("activesupport", "~>3.0.0")
+    gemspec.add_dependency("activesupport", ">=3.0.0")
     gemspec.post_install_message = <<-MESSAGE
 
 ========================================================================
