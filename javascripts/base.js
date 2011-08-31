@@ -88,8 +88,11 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       var a = o;
       Ext.each(a, function(c, i){
         if (c.netzkeComponent) {
-          a[i] = Ext.apply(this.netzkeComponents[c.netzkeComponent.camelize(true)], c);
-          delete a[i].component;
+          var cmpName = c.netzkeComponent,
+              cmpCfg = this.netzkeComponents[cmpName.camelize(true)];
+          if (!cmpCfg) throw "Netzke: unknown component reference " + cmpName;
+          a[i] = Ext.apply(cmpCfg, c);
+          delete a[i].netzkeComponent; // not needed any longer
         } else if (c.items) this.detectComponents(c.items);
       }, this);
     }
