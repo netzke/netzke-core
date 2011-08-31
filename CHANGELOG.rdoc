@@ -1,4 +1,5 @@
-= -edge-
+= v0.7.2 - 2011-08-31
+* Rails 3.1
 * bug fix
   * When a component is dynamically loaded in a container, the load mask is now limited to that container
 * enhancements

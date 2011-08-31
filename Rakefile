@@ -5,22 +5,23 @@ begin
     gemspec.version = Netzke::Core::Version::STRING
     gemspec.name = "netzke-core"
     gemspec.summary = "Build ExtJS/Rails components with minimum effort"
-    gemspec.description = "Allows building ExtJS/Rails reusable code in a DRY way"
-    gemspec.email = "sergei@playcode.nl"
+    gemspec.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
+    gemspec.email = "nmcoder@gmail.com"
     gemspec.homepage = "http://netzke.org"
-    gemspec.authors = ["Sergei Kozlov"]
+    gemspec.authors = ["NomadCoder"]
     gemspec.add_dependency("activesupport", ">=3.0.0")
     gemspec.post_install_message = <<-MESSAGE
 
-========================================================================
+==========================================================
 
            Thanks for installing netzke-core!
 
-  Netzke home page:     http://netzke.org
-  Netzke Google Groups: http://groups.google.com/group/netzke
-  Netzke tutorials:     http://blog.writelesscode.com
+  Home page:     http://netzke.org
+  Google Groups: http://groups.google.com/group/netzke
+  News:          http://twitter.com/netzke
+  Tutorials:     http://blog.writelesscode.com
 
-========================================================================
+==========================================================
 
 MESSAGE
 

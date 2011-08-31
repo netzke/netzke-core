@@ -5,13 +5,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{netzke-core}
-  s.version = "0.7.1"
+  s.version = "0.7.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Sergei Kozlov}]
+  s.authors = [%q{NomadCoder}]
   s.date = %q{2011-08-31}
-  s.description = %q{Allows building ExtJS/Rails reusable code in a DRY way}
-  s.email = %q{sergei@playcode.nl}
+  s.description = %q{Allows building DRY ExtJS/Rails applications by enabling modular development}
+  s.email = %q{nmcoder@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
     "README.md",
@@ -223,15 +223,16 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://netzke.org}
   s.post_install_message = %q{
-========================================================================
+==========================================================
 
            Thanks for installing netzke-core!
 
-  Netzke home page:     http://netzke.org
-  Netzke Google Groups: http://groups.google.com/group/netzke
-  Netzke tutorials:     http://blog.writelesscode.com
+  Home page:     http://netzke.org
+  Google Groups: http://groups.google.com/group/netzke
+  News:          http://twitter.com/netzke
+  Tutorials:     http://blog.writelesscode.com
 
-========================================================================
+==========================================================
 
 }
   s.require_paths = [%q{lib}]
