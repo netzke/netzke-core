@@ -1,13 +1,8 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~>3.0.10'
+gem 'rails', '3.1.0'
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
-
-gem 'sqlite3-ruby', :require => 'sqlite3'
-
-gem 'netzke-persistence', :path => File.expand_path('../vendor/gems/netzke-persistence', __FILE__)
+gem 'sqlite3'
 
 # Use unicorn as the web server
 # gem 'unicorn'

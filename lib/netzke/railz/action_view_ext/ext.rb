@@ -15,7 +15,7 @@ module Netzke
 
             res += Netzke::Core.external_ext_css
 
-            stylesheet_link_tag(res, :cache => false && params[:cache]) # caching is not possible at this time, as the stylesheets use relative asset paths
+            stylesheet_link_tag(*res)
           end
 
           def netzke_ext_js_include(params)
@@ -36,7 +36,7 @@ module Netzke
             # Netzke-related dynamic JavaScript
             res << "/netzke/ext"
 
-            javascript_include_tag(res, :cache => params[:cache])
+            javascript_include_tag(*res)
           end
 
           def netzke_ext_js(params)
