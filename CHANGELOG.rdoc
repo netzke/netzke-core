@@ -1,3 +1,6 @@
+= v0.7.3 - 2011-09-04
+* Rails 3.1 compatibility. Really. Hopefully.
+
 = v0.7.2 - 2011-08-31
 * Rails 3.1
 * bug fix
