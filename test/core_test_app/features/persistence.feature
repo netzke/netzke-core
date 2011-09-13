@@ -12,6 +12,7 @@ Feature: Persistence
     And I should not see "HTML from session"
 
     When I press "Tell server to store new title"
+    And I wait for response from server
     And I go to the ComponentWithSessionPersistence test page
     Then I should see "Title From Session"
     And I should see "HTML from session"

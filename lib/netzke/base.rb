@@ -67,11 +67,7 @@ module Netzke
       def constantize_class_name(class_name)
         "#{class_name}".constantize
       rescue NameError
-        begin
-          "Netzke::#{class_name}".constantize
-        rescue NameError
-          nil
-        end
+        "Netzke::#{class_name}".constantize
       end
 
       # Instance of component by config
