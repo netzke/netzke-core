@@ -9,13 +9,12 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{NomadCoder}]
-  s.date = %q{2011-09-13}
+  s.date = %q{2011-09-24}
   s.description = %q{Allows building DRY ExtJS/Rails applications by enabling modular development}
   s.email = %q{nmcoder@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
-    "README.md",
-    "TODO"
+    "README.md"
   ]
   s.files = [
     ".autotest",
@@ -24,7 +23,7 @@ Gem::Specification.new do |s|
     "Manifest",
     "README.md",
     "Rakefile",
-    "TODO",
+    "TODO.md",
     "app/controllers/netzke_controller.rb",
     "init.rb",
     "install.rb",
