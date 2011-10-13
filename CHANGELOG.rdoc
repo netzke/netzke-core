@@ -1,6 +1,7 @@
 = ???
 * enhancements
   * Less aggressive rescuing at constantizing a string, to let more descriptive exceptions get through.
+  * A little "title" helper DSL method replacing js_property :title, <...>
 
 = v0.7.3 - 2011-09-04
 * Rails 3.1 compatibility. Really. Hopefully.

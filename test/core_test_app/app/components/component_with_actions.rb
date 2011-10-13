@@ -1,4 +1,6 @@
 class ComponentWithActions < Netzke::Base
+  title "Panel that has actions"
+
   # Define actions as a hash
   action :another_action, :disabled => true, :text => "Disabled action", :icon => :accept
 
@@ -12,7 +14,6 @@ class ComponentWithActions < Netzke::Base
     {:text => "Not used"}
   end
 
-  js_property :title, "Panel that has actions"
 
   js_property :bbar, [:some_action.action, :another_action.action]
 

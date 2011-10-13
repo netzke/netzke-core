@@ -67,6 +67,11 @@ module Netzke
         self.send("#{name}=", value)
       end
 
+      # Little helper
+      def title(value)
+        js_property :title, value
+      end
+
       protected
 
         def app_level_config
