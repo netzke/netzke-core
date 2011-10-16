@@ -1,4 +1,6 @@
 module Netzke
+  # Handles all the intricate matters of component configuration.
+  # TODO: simplify!
   module Configuration
     extend ActiveSupport::Concern
 
@@ -67,11 +69,6 @@ module Netzke
         self.send("#{name}=", value)
       end
 
-      # Little helper
-      def title(value)
-        js_property :title, value
-      end
-
       protected
 
         def app_level_config
@@ -96,7 +93,7 @@ module Netzke
     module InstanceMethods
       # Default config - before applying any passed configuration
       def default_config
-        @default_config ||= {}.merge(weak_default_options).merge(self.class.default_instance_config)
+        @default_config ||= {}.merge(weak_default_options).merge(self.class.default_instance_config).merge(self.class.read_inheritable_attribute(:default_config) || {})
       end
 
       # Static, hardcoded config. Consists of default values merged with config that was passed during instantiation

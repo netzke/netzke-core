@@ -12,6 +12,7 @@ require 'netzke/state'
 require 'netzke/embedding'
 require 'netzke/actions'
 require 'netzke/session'
+require 'netzke/config_to_dsl_delegator'
 
 module Netzke
   # The base for every Netzke component
@@ -41,6 +42,9 @@ module Netzke
     include Stylesheets
     include Embedding
     include Actions
+    include ConfigToDslDelegator
+
+    delegates_to_dsl :title
 
     class_config_option :default_instance_config, {}
 

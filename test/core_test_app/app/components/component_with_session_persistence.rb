@@ -1,5 +1,6 @@
 class ComponentWithSessionPersistence < Netzke::Base
-  js_property :title, "Default Title"
+  title "Default Title"
+
   js_property :bbar, [:bug_server.action]
 
   action :bug_server, :text => "Tell server to store new title"

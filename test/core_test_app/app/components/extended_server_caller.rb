@@ -1,5 +1,5 @@
 class ExtendedServerCaller < ServerCaller
-  js_properties :title => "Extended Server Caller"
+  title "Extended Server Caller"
 
   js_method :on_bug_server, <<-JS
     function(){
@@ -9,6 +9,7 @@ class ExtendedServerCaller < ServerCaller
     }
   JS
 
+  # Overriding the :whats_up endpoint from ServerCaller
   def whats_up_endpoint(params)
     super.tap do |s|
       s[:set_title] = s[:set_title] + ", shiny weather"
