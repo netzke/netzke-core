@@ -44,7 +44,7 @@ module Netzke
     include Actions
     include ConfigToDslDelegator
 
-    delegates_to_dsl :title
+    delegates_to_dsl :title, :items
 
     class_config_option :default_instance_config, {}
 
