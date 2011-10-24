@@ -43,3 +43,4 @@ With Rails 2 (and Ext 3 only), use versions 0.5.x (*not maintained*)
 
 ---
 Copyright (c) 2008-2011 NomadCoder, released under the MIT license
+Note, that Ext JS itself is licensed [differently](http://www.sencha.com/products/extjs/license/)
