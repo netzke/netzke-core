@@ -4,11 +4,11 @@ doc
 Manifest
 .DS_Store
 rdoc
-test/rails_app/tmp/
-test/rails_app/public/extjs*
-test/rails_app/public/images/icons
-test/rails_app/vendor/gems/netzke-persistence
-test/rails_app/public/javascripts
-test/rails_app/public/stylesheets
+test/core_test_app/tmp/
+test/core_test_app/public/extjs*
+test/core_test_app/public/images/icons
+test/core_test_app/vendor/gems/netzke-persistence
+test/core_test_app/public/javascripts
+test/core_test_app/public/stylesheets
 *.gem
 .vimrc
