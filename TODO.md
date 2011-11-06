@@ -9,6 +9,8 @@ Caching for netzke_controller-provided JS and CSS.
 
 Caching - investigate reusing (fragment?) caching of Rails.
 
+Move JS classes out of the main page to a cachable includes (moffff)
+
 
 ## Roadmap
 
