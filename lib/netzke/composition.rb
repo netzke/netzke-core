@@ -206,7 +206,7 @@ module Netzke
           @component_index ||= 0
           @items_with_normalized_components = items.each_with_index.map do |item, i|
             if is_component_config?(item)
-              component_name = item[:name] || :"#{item[:class_name].underscore.split("/").last}#{@component_index}"
+              component_name = item[:name] || :"netzke_#{@component_index}" # default name/item_id for child components
               @component_index += 1
               self.class.component(component_name.to_sym, item)
               component_name.to_sym.component # replace current item with a reference to component

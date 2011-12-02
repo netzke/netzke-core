@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{NomadCoder}]
-  s.date = %q{2011-11-12}
+  s.date = %q{2011-12-02}
   s.description = %q{Allows building DRY ExtJS/Rails applications by enabling modular development}
   s.email = %q{nmcoder@gmail.com}
   s.extra_rdoc_files = [
@@ -105,6 +105,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/extended_server_caller.rb",
     "test/core_test_app/app/components/hello_world_component.rb",
     "test/core_test_app/app/components/included.js",
+    "test/core_test_app/app/components/inline_composite.rb",
     "test/core_test_app/app/components/kinda_complex_component.rb",
     "test/core_test_app/app/components/kinda_complex_component/basic_stuff.rb",
     "test/core_test_app/app/components/kinda_complex_component/extra_stuff.rb",
