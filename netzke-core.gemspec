@@ -199,7 +199,6 @@ Gem::Specification.new do |s|
     "test/core_test_app/public/favicon.ico",
     "test/core_test_app/public/images/rails.png",
     "test/core_test_app/public/robots.txt",
-    "test/core_test_app/public/stylesheets/all.css",
     "test/core_test_app/script/rails",
     "test/core_test_app/spec/component/actions_spec.rb",
     "test/core_test_app/spec/component/base_spec.rb",
