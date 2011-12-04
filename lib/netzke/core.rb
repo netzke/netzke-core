@@ -67,7 +67,7 @@ module Netzke
 
     # The amount of retries that the direct remoting provider will attempt in case of failure
     mattr_accessor :js_direct_max_retries
-    @@js_direct_max_retries = 2
+    @@js_direct_max_retries = 0
 
     mattr_accessor :with_icons
 

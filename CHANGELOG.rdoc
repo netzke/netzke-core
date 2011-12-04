@@ -2,6 +2,9 @@
 * API changes
   * The :class_name option must *always* include the full class name now. So, "Basepack::GridPanel" won't work, instead do "Netzke::Basepack::GridPanel"
 
+* enhancements
+  * Set default Ext.Direct retry attempts to 0, as more than 0 may only be needed in special cases.
+
 = v0.7.4 - 2011-10-20
 * enhancements
   * Less aggressive rescuing at constantizing a string, to let more descriptive exceptions get through.
