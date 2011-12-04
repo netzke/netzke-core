@@ -69,9 +69,7 @@ module Netzke
       # Component's class, given its name.
       # Note: this method will be memoized if Rails.configuration.cache_classes is true.
       def constantize_class_name(class_name)
-        "#{class_name}".constantize
-      rescue NameError
-        "Netzke::#{class_name}".constantize
+        class_name.constantize # used to be more complex than this, but appeared to be difficult to debug
       end
 
       # Instance of component by config

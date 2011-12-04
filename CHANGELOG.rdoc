@@ -1,3 +1,7 @@
+= v0.7.5 - ?
+* API changes
+  * The :class_name option must *always* include the full class name now. So, "Basepack::GridPanel" won't work, instead do "Netzke::Basepack::GridPanel"
+
 = v0.7.4 - 2011-10-20
 * enhancements
   * Less aggressive rescuing at constantizing a string, to let more descriptive exceptions get through.
