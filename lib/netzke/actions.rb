@@ -86,8 +86,12 @@ module Netzke
 
       def normalize_action_config(config)
         config.tap do |c|
-          if c[:icon].is_a?(Symbol)
-            c[:icon] = uri_to_icon(c[:icon])
+          case c[:icon]
+          when Symbol then c[:icon] = uri_to_icon(c[:icon])
+          when String
+            if c[:icon] !~ /\.png/
+              c[:icon] = uri_to_icon(c[:icon])
+            end
           end
 
           # Default text and tooltip
