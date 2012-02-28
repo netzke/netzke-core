@@ -89,7 +89,7 @@ module Netzke
           case c[:icon]
           when Symbol then c[:icon] = uri_to_icon(c[:icon])
           when String
-            if c[:icon] !~ /\.png/
+            if c[:icon] !~ /^\//
               c[:icon] = uri_to_icon(c[:icon])
             end
           end
