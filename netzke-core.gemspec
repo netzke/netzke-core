@@ -4,14 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{netzke-core}
-  s.version = "0.7.4"
+  s.name = "netzke-core"
+  s.version = "0.7.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{NomadCoder}]
-  s.date = %q{2011-12-04}
-  s.description = %q{Allows building DRY ExtJS/Rails applications by enabling modular development}
-  s.email = %q{nmcoder@gmail.com}
+  s.authors = ["NomadCoder"]
+  s.date = "2012-03-05"
+  s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
+  s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE",
     "README.md"
@@ -220,23 +220,11 @@ Gem::Specification.new do |s|
     "test/unit/netzke_preference_test.rb",
     "uninstall.rb"
   ]
-  s.homepage = %q{http://netzke.org}
-  s.post_install_message = %q{
-==========================================================
-
-           Thanks for installing netzke-core!
-
-  Home page:     http://netzke.org
-  Google Groups: http://groups.google.com/group/netzke
-  News:          http://twitter.com/netzke
-  Tutorials:     http://blog.writelesscode.com
-
-==========================================================
-
-}
-  s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.6}
-  s.summary = %q{Build ExtJS/Rails components with minimum effort}
+  s.homepage = "http://netzke.org"
+  s.post_install_message = "\n==========================================================\n\n           Thanks for installing netzke-core!\n\n  Home page:     http://netzke.org\n  Google Groups: http://groups.google.com/group/netzke\n  News:          http://twitter.com/netzke\n  Tutorials:     http://blog.writelesscode.com\n\n==========================================================\n\n"
+  s.require_paths = ["lib"]
+  s.rubygems_version = "1.8.10"
+  s.summary = "Build ExtJS/Rails components with minimum effort"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
