@@ -15,6 +15,12 @@ Netzke Core takes the burden of implementing the following key aspects of the fr
 
 All this provides for fast, low-traffic, robust, highly maintainable applications.
 
+## Requirements
+
+* Ruby >= 1.9.2 (1.8.7 may work, too)
+* Rails ~> 3.1.0
+* Ext JS = 4.0.2a
+
 ## Getting started
 
 * Follow the simple [installation](https://github.com/skozlov/netzke-core/wiki/Installation) steps.
