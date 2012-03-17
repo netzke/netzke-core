@@ -6,11 +6,10 @@ module ExtDirect
 
     action :update
 
-    def configuration
-      super.merge({
-        :items => [{:name => "user", :field_label => "User", :xtype => :textfield}],
-        :bbar => [:update.action]
-      })
+    def configure!
+      super
+      @config[:items] = [{:name => "user", :field_label => "User", :xtype => :textfield}]
+      @config[:bbar] = [:update.action]
     end
 
     js_method :init_component, <<-JS

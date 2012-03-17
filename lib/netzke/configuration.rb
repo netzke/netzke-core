@@ -6,11 +6,11 @@ module Netzke
 
     CONFIGURATION_LEVELS = [:default, :initial, :independent, :session, :final]
 
-    included do
-      CONFIGURATION_LEVELS.each do |level|
-        define_method("weak_#{level}_options"){ {} }
-      end
-    end
+    #included do
+      #CONFIGURATION_LEVELS.each do |level|
+        #define_method("weak_#{level}_options"){ {} }
+      #end
+    #end
 
     module ClassMethods
       def setup
@@ -91,19 +91,26 @@ module Netzke
     end
 
     module InstanceMethods
+      # WIP: renaming old config methods to merge_*
+
+
       # Default config - before applying any passed configuration
-      def default_config
-        @default_config ||= {}.merge(weak_default_options).merge(self.class.default_instance_config).merge(self.class.read_inheritable_attribute(:default_config) || {})
+      def merge_default_config
+        @config.merge!(self.class.default_instance_config)
+        @config.merge!(self.class.read_inheritable_attribute(:default_config) || {})
+        #@default_config ||= {}.merge(weak_default_options).merge(self.class.default_instance_config).merge(self.class.read_inheritable_attribute(:default_config) || {})
       end
 
       # Static, hardcoded config. Consists of default values merged with config that was passed during instantiation
-      def initial_config
-        @initial_config ||= default_config.merge(weak_initial_options).merge(@passed_config)
+      def merge_initial_config
+        @config.merge!(@passed_config)
+        #@initial_config ||= default_config.merge(weak_initial_options).merge(@passed_config)
       end
 
       # Config that is not overridden by parents and sessions
-      def independent_config
-        @independent_config ||= initial_config.merge(weak_independent_options).merge(initial_config[:persistence] ? persistent_options : {})
+      def merge_independent_config
+        @config.merge!(persistent_options)
+        #@independent_config ||= initial_config.merge(weak_independent_options).merge(initial_config[:persistence] ? persistent_options : {})
       end
 
       def session_config
@@ -119,6 +126,24 @@ module Netzke
         final_config
       end
 
+      def configure!
+        # default config
+        @config.merge!(self.class.default_instance_config)
+        @config.merge!(self.class.read_inheritable_attribute(:default_config) || {})
+
+        # passed config
+        @config.merge!(@passed_config)
+
+        # persistent config
+        @config.merge!(persistent_options) if @config[:persistence]
+
+        # session options
+        @config.merge!(session_options) # if @config[:session_persistence]
+
+        # parent config
+        @config.merge!(parent.strong_children_config) unless parent.nil?
+      end
+
       # Resulting config that takes into account all possible ways to configure a component. *Read only*.
       # Translates into something like this:
       #
@@ -131,7 +156,7 @@ module Netzke
       # Moved out to a separate method in order to provide for easy caching.
       # *Do not override this method*, use +Base.config+ instead.
       def config
-        @config ||= configuration
+        @config #||= configuration
       end
 
       def flat_config(key = nil)

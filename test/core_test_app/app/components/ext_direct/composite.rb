@@ -19,13 +19,13 @@ module ExtDirect
       }
     end
 
-    def configuration
-      super.merge({
-        :items => [:selector.component(:region => :north, :height => 100),
-          :details.component(:region => :center),
-          :statistics.component(:region => :east, :width => 300, :split => true)
-        ]
-      })
+    def configure!
+      super
+      @config[:items] = [
+        :selector.component(:region => :north, :height => 100),
+        :details.component(:region => :center),
+        :statistics.component(:region => :east, :width => 300, :split => true)
+      ]
     end
 
     endpoint :set_user do |params|
@@ -34,12 +34,12 @@ module ExtDirect
 
     js_method :init_component, <<-JS
       function(){
-        Netzke.classes.ExtDirect.Composite.superclass.initComponent.call(this);
+        this.callParent();
 
-        this.getChildComponent('selector').on('userupdate', function(user){
+        this.getChildNetzkeComponent('selector').on('userupdate', function(user){
           this.setUser(user);
-          this.getChildComponent('details').update();
-          this.getChildComponent('statistics').update();
+          this.getChildNetzkeComponent('details').update();
+          this.getChildNetzkeComponent('statistics').update();
         }, this);
       }
     JS

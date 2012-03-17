@@ -5,12 +5,18 @@ class ComponentWithSessionPersistence < Netzke::Base
 
   action :bug_server, :text => "Tell server to store new title"
 
-  def default_config
-    super.merge(:session_persistence => true)
-  end
+  #def default_config
+    #super.merge(:session_persistence => true)
+  #end
 
-  def configuration
-    super.merge(:html => component_session[:html_content] || "Default HTML")
+  #def configuration
+    #super.merge(:html => component_session[:html_content] || "Default HTML")
+  #end
+
+  def configure!
+    @config[:session_persistence] = true
+    super
+    @config[:html] = component_session[:html_content] || "Default HTML"
   end
 
   js_method :bug_server, <<-JS

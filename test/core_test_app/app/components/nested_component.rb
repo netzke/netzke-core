@@ -1,10 +1,8 @@
 class NestedComponent < Netzke::Base
   js_property :layout, :fit
 
-  def configuration
-    super.tap do |c|
-      c[:items] = [:child.component]
-    end
+  def configure!
+    @config[:items] = [:child.component]
   end
 
   component :child,

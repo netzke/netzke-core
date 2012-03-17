@@ -1,6 +1,9 @@
 class SimpleComponent < Netzke::Base
-  js_properties :title => "SimpleComponent",
-                :html  => "Inner text"
+  title "SimpleComponent!"
+  js_properties :html  => "Inner text"
 
-  # component :one, :class_name => "SimplePanel", :title => "One"
+  def configure!
+    super
+    @config[:bbar] = ["Hello"]
+  end
 end
