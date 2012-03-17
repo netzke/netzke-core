@@ -128,20 +128,20 @@ module Netzke
 
       def configure!
         # default config
-        @config.merge!(self.class.default_instance_config)
-        @config.merge!(self.class.read_inheritable_attribute(:default_config) || {})
+        config.merge!(self.class.default_instance_config)
+        config.merge!(self.class.read_inheritable_attribute(:default_config) || {})
 
         # passed config
-        @config.merge!(@passed_config)
+        config.merge!(@passed_config)
 
         # persistent config
-        @config.merge!(persistent_options) if @config[:persistence]
+        config.merge!(persistent_options) if config[:persistence]
 
         # session options
-        @config.merge!(session_options) # if @config[:session_persistence]
+        config.merge!(session_options) # if @config[:session_persistence]
 
         # parent config
-        @config.merge!(parent.strong_children_config) unless parent.nil?
+        config.merge!(parent.strong_children_config) unless parent.nil?
       end
 
       # Resulting config that takes into account all possible ways to configure a component. *Read only*.
@@ -156,7 +156,8 @@ module Netzke
       # Moved out to a separate method in order to provide for easy caching.
       # *Do not override this method*, use +Base.config+ instead.
       def config
-        @config #||= configuration
+        #@config #||= configuration
+        @config ||= Netzke::Core::OptionsHash.new
       end
 
       def flat_config(key = nil)

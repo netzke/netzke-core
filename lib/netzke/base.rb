@@ -95,8 +95,6 @@ module Netzke
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
 
-      @config = {}
-
       configure!
 
       # initialize @components and @items

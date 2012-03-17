@@ -14,9 +14,9 @@ class ComponentWithSessionPersistence < Netzke::Base
   #end
 
   def configure!
-    @config[:session_persistence] = true
+    config.session_persistence = true
     super
-    @config[:html] = component_session[:html_content] || "Default HTML"
+    config.html = component_session[:html_content] || "Default HTML"
   end
 
   js_method :bug_server, <<-JS
