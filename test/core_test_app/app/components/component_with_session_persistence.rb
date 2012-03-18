@@ -13,7 +13,7 @@ class ComponentWithSessionPersistence < Netzke::Base
     #super.merge(:html => component_session[:html_content] || "Default HTML")
   #end
 
-  def configure!
+  def configure
     config.session_persistence = true
     super
     config.html = component_session[:html_content] || "Default HTML"

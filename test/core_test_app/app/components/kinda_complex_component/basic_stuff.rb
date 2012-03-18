@@ -27,7 +27,7 @@ class KindaComplexComponent < Netzke::Base
       # config
     end
 
-    def configure!
+    def configure
       super
       @config.merge!(:items => [{:title => "Panel One"}, {:title => "Panel Two"}])
     end

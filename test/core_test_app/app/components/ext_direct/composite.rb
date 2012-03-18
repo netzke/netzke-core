@@ -19,7 +19,7 @@ module ExtDirect
       }
     end
 
-    def configure!
+    def configure
       super
       @config[:items] = [
         :selector.component(:region => :north, :height => 100),

@@ -1,5 +1,5 @@
 class SimpleComposite < Netzke::Base
-  def configure!
+  def configure
     super
     config.items = [:child.component]
   end

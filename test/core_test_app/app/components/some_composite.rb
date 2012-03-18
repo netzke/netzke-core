@@ -13,7 +13,7 @@ class SomeComposite < Netzke::Base
   action :update_west_from_server
   action :update_east_south_from_server
 
-  def configure!
+  def configure
     super
     @config[:items] = [
       :center_panel.component(:region => 'center'),

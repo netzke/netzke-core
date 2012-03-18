@@ -6,7 +6,7 @@ module ExtDirect
 
     action :update
 
-    def configure!
+    def configure
       super
       @config[:items] = [{:name => "user", :field_label => "User", :xtype => :textfield}]
       @config[:bbar] = [:update.action]

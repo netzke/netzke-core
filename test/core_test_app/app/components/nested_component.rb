@@ -1,7 +1,7 @@
 class NestedComponent < Netzke::Base
   js_property :layout, :fit
 
-  def configure!
+  def configure
     @config[:items] = [:child.component]
   end
 

@@ -2,7 +2,7 @@ class SimpleComponent < Netzke::Base
   title "SimpleComponent!"
   js_properties :html  => "Inner text"
 
-  def configure!
+  def configure
     super
     @config[:bbar] = ["Hello"]
   end

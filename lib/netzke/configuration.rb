@@ -91,42 +91,7 @@ module Netzke
     end
 
     module InstanceMethods
-      # WIP: renaming old config methods to merge_*
-
-
-      # Default config - before applying any passed configuration
-      def merge_default_config
-        @config.merge!(self.class.default_instance_config)
-        @config.merge!(self.class.read_inheritable_attribute(:default_config) || {})
-        #@default_config ||= {}.merge(weak_default_options).merge(self.class.default_instance_config).merge(self.class.read_inheritable_attribute(:default_config) || {})
-      end
-
-      # Static, hardcoded config. Consists of default values merged with config that was passed during instantiation
-      def merge_initial_config
-        @config.merge!(@passed_config)
-        #@initial_config ||= default_config.merge(weak_initial_options).merge(@passed_config)
-      end
-
-      # Config that is not overridden by parents and sessions
-      def merge_independent_config
-        @config.merge!(persistent_options)
-        #@independent_config ||= initial_config.merge(weak_independent_options).merge(initial_config[:persistence] ? persistent_options : {})
-      end
-
-      def session_config
-        @session_config ||= independent_config.merge(weak_session_options).merge(session_options)
-      end
-
-      # Last level config, overridden only by ineritance
-      def final_config
-        @strong_config ||= session_config.merge(weak_final_options).merge(strong_parent_config)
-      end
-
-      def configuration
-        final_config
-      end
-
-      def configure!
+      def configure
         # default config
         config.merge!(self.class.default_instance_config)
         config.merge!(self.class.read_inheritable_attribute(:default_config) || {})
@@ -156,7 +121,6 @@ module Netzke
       # Moved out to a separate method in order to provide for easy caching.
       # *Do not override this method*, use +Base.config+ instead.
       def config
-        #@config #||= configuration
         @config ||= Netzke::Core::OptionsHash.new
       end
 

@@ -95,7 +95,8 @@ module Netzke
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
 
-      configure!
+      # Build complete component configuration. To be overridden.
+      configure
 
       # initialize @components and @items
       normalize_components_in_items
