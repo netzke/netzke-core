@@ -54,14 +54,12 @@ module Netzke
 
     end
 
-    module InstanceMethods
-      def css_missing_code(cached = [])
-        code = dependency_classes.inject("") do |r,k|
-          cached.include?(k.js_xtype) ? r : r + k.css_code(cached)
-        end
-        code.blank? ? nil : code
+    def css_missing_code(cached = [])
+      code = dependency_classes.inject("") do |r,k|
+        cached.include?(k.js_xtype) ? r : r + k.css_code(cached)
       end
-
+      code.blank? ? nil : code
     end
+
   end
 end

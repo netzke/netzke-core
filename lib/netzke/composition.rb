@@ -99,133 +99,131 @@ module Netzke
 
     end
 
-    module InstanceMethods
-      def items #:nodoc:
-        @items_with_normalized_components
-      end
-
-      # DEPRECATED in favor of Base.component
-      def initial_components
-        {}
-      end
-
-      # All components for this instance, which includes components defined on class level, and components detected in :items
-      def components
-        @components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }.merge(config[:components] || {})
-      end
-
-      def eager_loaded_components
-        components.reject{|k,v| v[:lazy_loading]}
-      end
-
-      # DEPRECATED
-      def add_component(aggr)
-        components.merge!(aggr)
-      end
-
-      # DEPRECATED
-      def remove_component(aggr)
-        if config[:persistent_config]
-          persistence_manager_class.delete_all_for_component("#{global_id}__#{aggr}")
-        end
-        components[aggr] = nil
-      end
-
-      # Called when the method_missing tries to processes a non-existing component
-      def component_missing(aggr)
-        flash :error => "Unknown component #{aggr} for component #{name}"
-        {:feedback => @flash}.to_nifty_json
-      end
-
-      # Recursively instantiates a component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
-      # TODO: strong_config should probably be thrown away, and is not taken into account when caching the results
-      def component_instance(name, strong_config = {})
-        @component_instance_cache ||= {}
-        @component_instance_cache[name] ||= begin
-          composite = self
-          name.to_s.split('__').each do |cmp|
-            cmp = cmp.to_sym
-
-            component_config = composite.components[cmp]
-            raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.global_id}'" if component_config.nil?
-
-            component_class_name = component_config[:class_name]
-            raise ArgumentError, "No class_name specified for component #{cmp} of #{composite.global_id}" if component_class_name.nil?
-
-            component_class = constantize_class_name(component_class_name)
-            raise ArgumentError, "Unknown constant #{component_class_name}" if component_class.nil?
-
-            instance_config = weak_children_config.merge(component_config).merge(strong_config).merge(:name => cmp)
-
-            composite = component_class.new(instance_config, composite) # params: config, parent
-          end
-          composite
-        end
-      end
-
-      # All components that we depend on (used to render all necessary JavaScript and stylesheets)
-      def dependency_classes
-        res = []
-
-        eager_loaded_components.keys.each do |aggr|
-          res += component_instance(aggr).dependency_classes
-        end
-
-        res += self.class.class_ancestors
-
-        res << self.class
-        res.uniq
-      end
-
-      # DEPRECATED
-      def js_component(*args)
-        self.class.js_component(*args)
-      end
-
-      # Returns global id of a component in the hierarchy, based on passed reference that follows
-      # the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will
-      # result in <tt>nil</tt>, while referring to a non-existent component will simply provide an erroneous ID.
-      # Example:
-      # <tt>parent__parent__child__subchild</tt> will traverse the hierarchy 2 levels up, then going down to "child",
-      # and further to "subchild". If such a component exists in the hierarchy, its global id will be returned, otherwise
-      # <tt>nil</tt> will be returned.
-      def global_id_by_reference(ref)
-        ref = ref.to_s
-        return parent && parent.global_id if ref == "parent"
-        substr = ref.sub(/^parent__/, "")
-        if substr == ref # there's no "parent__" in the beginning
-          return global_id + "__" + ref
-        else
-          return parent.global_id_by_reference(substr)
-        end
-      end
-
-      protected
-
-        def normalize_components(items) #:nodoc:
-          @component_index ||= 0
-          @items_with_normalized_components = items.each_with_index.map do |item, i|
-            if is_component_config?(item)
-              component_name = item[:name] || :"netzke_#{@component_index}" # default name/item_id for child components
-              @component_index += 1
-              self.class.component(component_name.to_sym, item)
-              component_name.to_sym.component # replace current item with a reference to component
-            elsif item.is_a?(Hash)
-              item[:items].is_a?(Array) ? item.merge(:items => normalize_components(item[:items])) : item
-            else
-              item
-            end
-          end
-        end
-
-        def normalize_components_in_items #:nodoc:
-          normalize_components(config[:items]) if config[:items]
-        end
-
-        def is_component_config?(c) #:nodoc:
-          !!(c.is_a?(Hash) && c[:class_name])
-        end
+    def items #:nodoc:
+      @items_with_normalized_components
     end
+
+    # DEPRECATED in favor of Base.component
+    def initial_components
+      {}
+    end
+
+    # All components for this instance, which includes components defined on class level, and components detected in :items
+    def components
+      @components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }.merge(config[:components] || {})
+    end
+
+    def eager_loaded_components
+      components.reject{|k,v| v[:lazy_loading]}
+    end
+
+    # DEPRECATED
+    def add_component(aggr)
+      components.merge!(aggr)
+    end
+
+    # DEPRECATED
+    def remove_component(aggr)
+      if config[:persistent_config]
+        persistence_manager_class.delete_all_for_component("#{global_id}__#{aggr}")
+      end
+      components[aggr] = nil
+    end
+
+    # Called when the method_missing tries to processes a non-existing component
+    def component_missing(aggr)
+      flash :error => "Unknown component #{aggr} for component #{name}"
+      {:feedback => @flash}.to_nifty_json
+    end
+
+    # Recursively instantiates a component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
+    # TODO: strong_config should probably be thrown away, and is not taken into account when caching the results
+    def component_instance(name, strong_config = {})
+      @component_instance_cache ||= {}
+      @component_instance_cache[name] ||= begin
+        composite = self
+        name.to_s.split('__').each do |cmp|
+          cmp = cmp.to_sym
+
+          component_config = composite.components[cmp]
+          raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.global_id}'" if component_config.nil?
+
+          component_class_name = component_config[:class_name]
+          raise ArgumentError, "No class_name specified for component #{cmp} of #{composite.global_id}" if component_class_name.nil?
+
+          component_class = constantize_class_name(component_class_name)
+          raise ArgumentError, "Unknown constant #{component_class_name}" if component_class.nil?
+
+          instance_config = weak_children_config.merge(component_config).merge(strong_config).merge(:name => cmp)
+
+          composite = component_class.new(instance_config, composite) # params: config, parent
+        end
+        composite
+      end
+    end
+
+    # All components that we depend on (used to render all necessary JavaScript and stylesheets)
+    def dependency_classes
+      res = []
+
+      eager_loaded_components.keys.each do |aggr|
+        res += component_instance(aggr).dependency_classes
+      end
+
+      res += self.class.class_ancestors
+
+      res << self.class
+      res.uniq
+    end
+
+    # DEPRECATED
+    def js_component(*args)
+      self.class.js_component(*args)
+    end
+
+    # Returns global id of a component in the hierarchy, based on passed reference that follows
+    # the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will
+    # result in <tt>nil</tt>, while referring to a non-existent component will simply provide an erroneous ID.
+    # Example:
+    # <tt>parent__parent__child__subchild</tt> will traverse the hierarchy 2 levels up, then going down to "child",
+    # and further to "subchild". If such a component exists in the hierarchy, its global id will be returned, otherwise
+    # <tt>nil</tt> will be returned.
+    def global_id_by_reference(ref)
+      ref = ref.to_s
+      return parent && parent.global_id if ref == "parent"
+      substr = ref.sub(/^parent__/, "")
+      if substr == ref # there's no "parent__" in the beginning
+        return global_id + "__" + ref
+      else
+        return parent.global_id_by_reference(substr)
+      end
+    end
+
+    protected
+
+      def normalize_components(items) #:nodoc:
+        @component_index ||= 0
+        @items_with_normalized_components = items.each_with_index.map do |item, i|
+          if is_component_config?(item)
+            component_name = item[:name] || :"netzke_#{@component_index}" # default name/item_id for child components
+            @component_index += 1
+            self.class.component(component_name.to_sym, item)
+            component_name.to_sym.component # replace current item with a reference to component
+          elsif item.is_a?(Hash)
+            item[:items].is_a?(Array) ? item.merge(:items => normalize_components(item[:items])) : item
+          else
+            item
+          end
+        end
+      end
+
+      def normalize_components_in_items #:nodoc:
+        normalize_components(config[:items]) if config[:items]
+      end
+
+      def is_component_config?(c) #:nodoc:
+        !!(c.is_a?(Hash) && c[:class_name])
+      end
 
   end
 end
