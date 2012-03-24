@@ -1,0 +1,6 @@
+rvm:
+  - 1.9.2
+
+bundler_args: "--without development production profiling"
+before_script: "./config/ci/before-travis.sh"
+script: "cd test/core_test_app ; bundle exec rake travis"
