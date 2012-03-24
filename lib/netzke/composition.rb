@@ -100,8 +100,6 @@ module Netzke
     end
 
     module InstanceMethods
-      extend ActiveSupport::Memoizable
-
       def items #:nodoc:
         @items_with_normalized_components
       end
@@ -140,28 +138,30 @@ module Netzke
       end
 
       # Recursively instantiates a component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
+      # TODO: strong_config should probably be thrown away, and is not taken into account when caching the results
       def component_instance(name, strong_config = {})
-        composite = self
-        name.to_s.split('__').each do |cmp|
-          cmp = cmp.to_sym
+        @component_instance_cache ||= {}
+        @component_instance_cache[name] ||= begin
+          composite = self
+          name.to_s.split('__').each do |cmp|
+            cmp = cmp.to_sym
 
-          component_config = composite.components[cmp]
-          raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.global_id}'" if component_config.nil?
+            component_config = composite.components[cmp]
+            raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.global_id}'" if component_config.nil?
 
-          component_class_name = component_config[:class_name]
-          raise ArgumentError, "No class_name specified for component #{cmp} of #{composite.global_id}" if component_class_name.nil?
+            component_class_name = component_config[:class_name]
+            raise ArgumentError, "No class_name specified for component #{cmp} of #{composite.global_id}" if component_class_name.nil?
 
-          component_class = constantize_class_name(component_class_name)
-          raise ArgumentError, "Unknown constant #{component_class_name}" if component_class.nil?
+            component_class = constantize_class_name(component_class_name)
+            raise ArgumentError, "Unknown constant #{component_class_name}" if component_class.nil?
 
-          instance_config = weak_children_config.merge(component_config).merge(strong_config).merge(:name => cmp)
+            instance_config = weak_children_config.merge(component_config).merge(strong_config).merge(:name => cmp)
 
-          composite = component_class.new(instance_config, composite) # params: config, parent
+            composite = component_class.new(instance_config, composite) # params: config, parent
+          end
+          composite
         end
-        composite
       end
-
-      memoize :component_instance # for performance
 
       # All components that we depend on (used to render all necessary JavaScript and stylesheets)
       def dependency_classes
