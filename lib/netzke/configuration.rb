@@ -109,21 +109,12 @@ module Netzke
         config.merge!(parent.strong_children_config) unless parent.nil?
       end
 
-      # Resulting config that takes into account all possible ways to configure a component. *Read only*.
-      # Translates into something like this:
-      #
-      #     default_config.
-      #     deep_merge(@passed_config).
-      #     deep_merge(persistent_options).
-      #     deep_merge(strong_parent_config).
-      #     deep_merge(strong_session_config)
-      #
-      # Moved out to a separate method in order to provide for easy caching.
-      # *Do not override this method*, use +Base.config+ instead.
+      # Component's config
       def config
-        @config ||= Netzke::Core::OptionsHash.new
+        @config ||= ActiveSupport::OrderedOptions.new
       end
 
+      # TODO: get rid of these; probably were once needed for persistence
       def flat_config(key = nil)
         fc = config.flatten_with_type
         key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
