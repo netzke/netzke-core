@@ -4,6 +4,6 @@ class SimpleComponent < Netzke::Base
 
   def configure
     super
-    @config[:bbar] = ["Hello"]
+    config.bbar = ["Hello"]
   end
 end

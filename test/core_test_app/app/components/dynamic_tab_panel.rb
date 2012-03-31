@@ -4,16 +4,14 @@ class DynamicTabPanel < Netzke::Base
 
   action :add_tab
 
-  def default_config
-    super.tap do |c|
-      c[:items] = [{
-        :title => "Tab One"
-      }]
+  def configure
+    super
+    config.items = [{
+      :title => "Tab One"
+    }]
 
-      c[:bbar] = [:add_tab.action]
-    end
+    config.bbar = [:add_tab.action]
   end
 
   component :tab_two, :class_name => "SimplePanel", :title => "Tab Two (dynamic)", :lazy_loading => true
-
 end

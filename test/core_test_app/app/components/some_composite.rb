@@ -15,7 +15,7 @@ class SomeComposite < Netzke::Base
 
   def configure
     super
-    @config[:items] = [
+    config.items = [
       :center_panel.component(:region => 'center'),
       :west_panel.component(:region => 'west', :width => 300, :split => true),
       {:layout => 'border', :region => :east, :width => 500, :split => true, :items => [
