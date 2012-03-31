@@ -90,85 +90,88 @@ module Netzke
 
     end
 
-    module InstanceMethods
-      def configure
-        # default config
-        config.merge!(self.class.default_instance_config)
-        config.merge!(self.class.read_inheritable_attribute(:default_config) || {})
+    def configure
+      # default config
+      config.merge!(self.class.default_instance_config)
+      config.merge!(self.class.read_inheritable_attribute(:default_config) || {})
 
-        # passed config
-        config.merge!(@passed_config)
+      # passed config
+      config.merge!(@passed_config)
 
-        # persistent config
-        config.merge!(persistent_options) if config[:persistence]
+      # persistent config
+      config.merge!(persistent_options) if config[:persistence]
 
-        # session options
-        config.merge!(session_options) # if @config[:session_persistence]
+      # session options
+      config.merge!(session_options) # if @config[:session_persistence]
 
-        # parent config
-        config.merge!(parent.strong_children_config) unless parent.nil?
-      end
-
-      # Component's config
-      def config
-        @config ||= ActiveSupport::OrderedOptions.new
-      end
-
-      # TODO: get rid of these; probably were once needed for persistence
-      def flat_config(key = nil)
-        fc = config.flatten_with_type
-        key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
-      end
-
-      def strong_parent_config
-        @strong_parent_config ||= parent.nil? ? {} : parent.strong_children_config
-      end
-
-      def flat_independent_config(key = nil)
-        fc = independent_config.flatten_with_type
-        key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
-      end
-
-      def flat_default_config(key = nil)
-        fc = default_config.flatten_with_type
-        key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
-      end
-
-      def flat_initial_config(key = nil)
-        fc = initial_config.flatten_with_type
-        key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
-      end
-
-      # Like normal config, but stored in session
-      # def weak_session_config
-      #   component_session[:weak_session_config] ||= {}
-      # end
-      #
-      # def strong_session_config
-      #   component_session[:strong_session_config] ||= {}
-      # end
-
-
-
-      # configuration of all children will get deep_merge'd with strong_children_config
-      # def strong_children_config= (c)
-      #   @strong_children_config = c
-      # end
-
-      # This config will be picked up by all the descendants
-      def strong_children_config
-        @strong_children_config ||= parent.nil? ? {} : parent.strong_children_config
-      end
-
-      # configuration of all children will get reverse_deep_merge'd with weak_children_config
-      # def weak_children_config= (c)
-      #   @weak_children_config = c
-      # end
-
-      def weak_children_config
-        @weak_children_config ||= {}
-      end
-
+      # parent config
+      config.merge!(parent.strong_children_config) unless parent.nil?
     end
+
+    # Component's config
+    def config
+      @config ||= ActiveSupport::OrderedOptions.new
+    end
+
+    # TODO: get rid of these; probably were once needed for persistence
+    def flat_config(key = nil)
+      fc = config.flatten_with_type
+      key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
+    end
+
+    def flat_config(key = nil)
+      fc = config.flatten_with_type
+      key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
+    end
+
+    def strong_parent_config
+      @strong_parent_config ||= parent.nil? ? {} : parent.strong_children_config
+    end
+
+    def flat_independent_config(key = nil)
+      fc = independent_config.flatten_with_type
+      key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
+    end
+
+    def flat_default_config(key = nil)
+      fc = default_config.flatten_with_type
+      key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
+    end
+
+    def flat_initial_config(key = nil)
+      fc = initial_config.flatten_with_type
+      key.nil? ? fc : fc.select{ |c| c[:name] == key.to_sym }.first.try(:value)
+    end
+
+    # Like normal config, but stored in session
+    # def weak_session_config
+    #   component_session[:weak_session_config] ||= {}
+    # end
+    #
+    # def strong_session_config
+    #   component_session[:strong_session_config] ||= {}
+    # end
+
+
+
+    # configuration of all children will get deep_merge'd with strong_children_config
+    # def strong_children_config= (c)
+    #   @strong_children_config = c
+    # end
+
+    # This config will be picked up by all the descendants
+    def strong_children_config
+      @strong_children_config ||= parent.nil? ? {} : parent.strong_children_config
+    end
+
+    # configuration of all children will get reverse_deep_merge'd with weak_children_config
+    # def weak_children_config= (c)
+    #   @weak_children_config = c
+    # end
+
+    def weak_children_config
+      @weak_children_config ||= {}
+    end
+
   end
 end

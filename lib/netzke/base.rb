@@ -1,5 +1,4 @@
 require 'active_support/core_ext'
-require 'active_support/memoizable'
 require 'netzke/core_ext'
 require 'netzke/javascript'
 require 'netzke/stylesheets'
@@ -58,8 +57,6 @@ module Netzke
     attr_reader :global_id
 
     class << self
-      extend ActiveSupport::Memoizable
-
       # Component's short class name, e.g.:
       # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
       def short_component_class_name
@@ -67,7 +64,6 @@ module Netzke
       end
 
       # Component's class, given its name.
-      # Note: this method will be memoized if Rails.configuration.cache_classes is true.
       def constantize_class_name(class_name)
         class_name.constantize # used to be more complex than this, but appeared to be difficult to debug
       end

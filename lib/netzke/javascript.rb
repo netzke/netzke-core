@@ -286,84 +286,82 @@ Netzke.cache.push('#{js_xtype}');
 
     end
 
-    module InstanceMethods
-      # The result of this method (a hash) is converted to a JSON object and passed as options
-      # to the constructor of our JavaScript class. Override it when you want to pass any extra configuration
-      # to the JavaScript side.
-      def js_config
-        {}.tap do |res|
-          # Unique id of the component
-          res[:id] = global_id
+    # The result of this method (a hash) is converted to a JSON object and passed as options
+    # to the constructor of our JavaScript class. Override it when you want to pass any extra configuration
+    # to the JavaScript side.
+    def js_config
+      {}.tap do |res|
+        # Unique id of the component
+        res[:id] = global_id
 
-          # Non-lazy-loaded components
-          comp_hash = {}
-          eager_loaded_components.each_pair do |comp_name, comp_config|
-            comp_instance = component_instance(comp_name.to_sym)
-            comp_instance.before_load
-            comp_hash[comp_name] = comp_instance.js_config
-          end
-
-          # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ so they get instantiated by Ext.
-          res[:netzke_components] = comp_hash unless comp_hash.empty?
-
-          # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
-          endpoints = self.class.endpoints.keys - [:deliver_component]
-          res[:endpoints] = endpoints unless endpoints.empty?
-
-          # Inform the JavaScript side if persistent_config is enabled
-          # res[:persistent_config] = persistence_enabled?
-
-          # Include our xtype
-          res[:xtype] = self.class.js_xtype
-
-          # Include our alias: Ext.createByAlias may be used to instantiate the component.
-          res[:alias] = self.class.js_alias
-
-          # Merge with the rest of config options, besides those that are only meant for the server side
-          res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
-
-          if config[:ext_config].present?
-            ::ActiveSupport::Deprecation.warn("Using ext_config option is deprecated. All config options must be specified at the same level in the hash.", caller)
-            res.merge!(config[:ext_config])
-          end
-
-          # Items (nested Ext/Netzke components)
-          res[:items] = items unless items.blank?
-
-          # So we can use getComponent(<component_name>) to retrieve a child component
-          res[:item_id] ||= name
-
-          res[:i18n] = js_translate_properties if js_translate_properties.present?
-
-          res[:netzke_plugins] = plugins.map{ |p| p.to_s.camelcase(:lower) } if plugins.present?
-        end
-      end
-
-      # All the JS-code required by this instance of the component to be instantiated in the browser.
-      # It includes JS-classes for the parents, non-lazy-loaded child components, and itself.
-      def js_missing_code(cached = [])
-        code = dependency_classes.inject("") do |r,k|
-          cached.include?(k.js_xtype) ? r : r + k.js_code#.strip_js_comments
-        end
-        code.blank? ? nil : code
-      end
-
-      # DEPRECATED. Helper to access config[:ext_config].
-      def ext_config
-        ::ActiveSupport::Deprecation.warn("Using ext_config is deprecated. All config options must be specified at the same level in the hash.", caller)
-        config[:ext_config] || {}
-      end
-
-      private
-
-        # Merges all the translations in the class hierarchy
-        def js_translate_properties
-          @js_translate_properties ||= self.class.class_ancestors.inject({}) do |r,klass|
-            hsh = klass.js_translate.keys.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }
-            r.merge(hsh)
-          end
+        # Non-lazy-loaded components
+        comp_hash = {}
+        eager_loaded_components.each_pair do |comp_name, comp_config|
+          comp_instance = component_instance(comp_name.to_sym)
+          comp_instance.before_load
+          comp_hash[comp_name] = comp_instance.js_config
         end
 
+        # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ so they get instantiated by Ext.
+        res[:netzke_components] = comp_hash unless comp_hash.empty?
+
+        # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
+        endpoints = self.class.endpoints.keys - [:deliver_component]
+        res[:endpoints] = endpoints unless endpoints.empty?
+
+        # Inform the JavaScript side if persistent_config is enabled
+        # res[:persistent_config] = persistence_enabled?
+
+        # Include our xtype
+        res[:xtype] = self.class.js_xtype
+
+        # Include our alias: Ext.createByAlias may be used to instantiate the component.
+        res[:alias] = self.class.js_alias
+
+        # Merge with the rest of config options, besides those that are only meant for the server side
+        res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
+
+        if config[:ext_config].present?
+          ::ActiveSupport::Deprecation.warn("Using ext_config option is deprecated. All config options must be specified at the same level in the hash.", caller)
+          res.merge!(config[:ext_config])
+        end
+
+        # Items (nested Ext/Netzke components)
+        res[:items] = items unless items.blank?
+
+        # So we can use getComponent(<component_name>) to retrieve a child component
+        res[:item_id] ||= name
+
+        res[:i18n] = js_translate_properties if js_translate_properties.present?
+
+        res[:netzke_plugins] = plugins.map{ |p| p.to_s.camelcase(:lower) } if plugins.present?
+      end
     end
+
+    # All the JS-code required by this instance of the component to be instantiated in the browser.
+    # It includes JS-classes for the parents, non-lazy-loaded child components, and itself.
+    def js_missing_code(cached = [])
+      code = dependency_classes.inject("") do |r,k|
+        cached.include?(k.js_xtype) ? r : r + k.js_code#.strip_js_comments
+      end
+      code.blank? ? nil : code
+    end
+
+    # DEPRECATED. Helper to access config[:ext_config].
+    def ext_config
+      ::ActiveSupport::Deprecation.warn("Using ext_config is deprecated. All config options must be specified at the same level in the hash.", caller)
+      config[:ext_config] || {}
+    end
+
+    private
+
+      # Merges all the translations in the class hierarchy
+      def js_translate_properties
+        @js_translate_properties ||= self.class.class_ancestors.inject({}) do |r,klass|
+          hsh = klass.js_translate.keys.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }
+          r.merge(hsh)
+        end
+      end
+
   end
 end

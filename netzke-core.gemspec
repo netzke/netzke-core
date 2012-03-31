@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".autotest",
+    ".travisrc",
     "CHANGELOG.rdoc",
     "LICENSE",
     "Manifest",
@@ -25,6 +26,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "TODO.md",
     "app/controllers/netzke_controller.rb",
+    "config/ci/before-travis.sh",
     "init.rb",
     "install.rb",
     "javascripts/base.js",
@@ -45,6 +47,7 @@ Gem::Specification.new do |s|
     "lib/netzke/core/version.rb",
     "lib/netzke/core_ext.rb",
     "lib/netzke/core_ext/array.rb",
+    "lib/netzke/core_ext/class.rb",
     "lib/netzke/core_ext/hash.rb",
     "lib/netzke/core_ext/string.rb",
     "lib/netzke/core_ext/symbol.rb",
@@ -151,6 +154,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/config/application.rb",
     "test/core_test_app/config/boot.rb",
     "test/core_test_app/config/database.yml",
+    "test/core_test_app/config/database.yml.travis",
     "test/core_test_app/config/environment.rb",
     "test/core_test_app/config/environments/development.rb",
     "test/core_test_app/config/environments/production.rb",
