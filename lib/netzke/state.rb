@@ -26,22 +26,17 @@ module Netzke
       initial_config[:persistence_key] ? initial_config[:persistence_key] : global_id
     end
 
-    # Component's persistent state.
+    # Component's persistent state. Can be overridden by plugins.
+    # Default implementation uses component's session
     def state
-      @state ||= (state_manager.try(:state) || {}).symbolize_keys
+      component_session[:state] ||= {}
     end
 
-    # Merges passed hash into component's state.
-    # Can also accept 2 arguments which will be treated as a hash pair. E.g.:
+    # Accepts 2 arguments which will be treated as a hash pair. E.g.:
     #
-    #     update_state(:peoples_most_feared_number, 13)
-    #
-    # is equivalent to:
-    #
-    #     update_state(:peoples_most_feared_number => 13)
+    #     update_state :request_counter, 3
     def update_state(*args)
-      state_manager.try(:update_state!, args.first.is_a?(Hash) ? args.first : {args.first => args.last})
-      @state = nil # reset cache
+      state[args.first.to_sym] = args.last
     end
 
     # Component's persistent state.
@@ -70,13 +65,13 @@ module Netzke
     protected
 
     # Initialized state manager class. At this moment this class has current_user, component, and session set.
-    def state_manager
-      Netzke::Core.persistence_manager_class && Netzke::Core.persistence_manager_class.init({
-        :component => persistence_key,
-        :current_user => Netzke::Core.controller.respond_to?(:current_user) && Netzke::Core.controller.current_user,
-        :session => Netzke::Core.session
-      })
-    end
+    #def state_manager
+      #Netzke::Core.persistence_manager_class && Netzke::Core.persistence_manager_class.init({
+        #:component => persistence_key,
+        #:current_user => Netzke::Core.controller.respond_to?(:current_user) && Netzke::Core.controller.current_user,
+        #:session => Netzke::Core.session
+      #})
+    #end
 
     # Initialized state manager class, configured for managing global (not component specific) settings. At this moment this class has current_user and session set.
     def global_state_manager
@@ -85,7 +80,6 @@ module Netzke
         :session => Netzke::Core.session
       })
     end
-
 
   end
 end
