@@ -2,6 +2,12 @@ module Netzke
   module Plugins
     extend ActiveSupport::Concern
 
+    included do
+      # Returns registered plugins
+      class_attribute :registered_plugins
+      self.registered_plugins = []
+    end
+
     module ClassMethods
       # Defines a plugin
       def plugin(name, config = {}, &block)
@@ -11,15 +17,9 @@ module Netzke
 
       # Register a plugin
       def register_plugin(name)
-        current_plugins = read_inheritable_attribute(:plugins) || []
-        current_plugins << name
-        write_inheritable_attribute(:plugins, current_plugins.uniq)
+        self.registered_plugins |= [name]
       end
 
-      # Returns registered plugins
-      def registered_plugins
-        read_inheritable_attribute(:plugins) || []
-      end
     end
 
     def plugins
