@@ -10,6 +10,10 @@ module Netzke
       CONFIGURATION_LEVELS.each do |level|
         define_method("weak_#{level}_options"){ {} }
       end
+
+      class_attribute :default_config_attr
+      self.default_config_attr = {}
+
     end
 
     module ClassMethods
@@ -92,7 +96,7 @@ module Netzke
 
     # Default config - before applying any passed configuration
     def default_config
-      @default_config ||= {}.merge(weak_default_options).merge(self.class.default_instance_config).merge(self.class.read_inheritable_attribute(:default_config) || {})
+      @default_config ||= {}.merge(weak_default_options).merge(self.class.default_instance_config).merge(self.default_config_attr)
     end
 
     # Static, hardcoded config. Consists of default values merged with config that was passed during instantiation

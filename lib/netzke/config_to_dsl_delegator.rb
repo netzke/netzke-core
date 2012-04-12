@@ -16,23 +16,25 @@ module Netzke
   module ConfigToDslDelegator
     extend ActiveSupport::Concern
 
+    included do
+      class_attribute :delegated_options
+      self.delegated_options = []
+    end
+
     module ClassMethods
       # Delegates specified configuration options to the class level. See ConfigToDslDelegator.
       def delegates_to_dsl(*option_names)
-        delegated_options = read_inheritable_attribute(:delegated_options) || []
-        delegated_options += option_names
-        write_inheritable_attribute(:delegated_options, delegated_options)
+        self.delegated_options |= option_names
       end
 
       def inherited(inherited_class) # :nodoc:
         super
 
-        properties = read_inheritable_attribute(:delegated_options) || []
-        properties.size.times do |i|
-          inherited_class.class.send(:define_method, properties[i], lambda { |value|
-            default_config = read_inheritable_attribute(:default_config) || {}
-            default_config.merge!(properties[i].to_sym => value)
-            write_inheritable_attribute(:default_config, default_config)
+        properties = self.delegated_options
+        properties.each do |property|
+          inherited_class.class.send(:define_method, property, lambda { |value|
+            default_config = self.default_config_attr.dup
+            self.default_config_attr = default_config.merge(property.to_sym => value)
           })
         end
       end
