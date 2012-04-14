@@ -160,7 +160,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     var that = this;
 
     Ext.each(endpoints, function(intp){
-      console.log("intp:", intp);
       directActions.push({"name":intp.camelize(true), "len":1});
       this[intp.camelize(true)] = function(arg, callback, scope) {
         Netzke.runningRequests++;
