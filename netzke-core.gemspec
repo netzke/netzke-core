@@ -71,6 +71,7 @@ Gem::Specification.new do |s|
     "lib/netzke/state.rb",
     "lib/netzke/stylesheets.rb",
     "lib/tasks/netzke_core_tasks.rake",
+    "migrating-to-0-8.md",
     "netzke-core.gemspec",
     "stylesheets/core.css",
     "test/core_test_app/.gitignore",
