@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
     "javascripts/ext.js",
     "javascripts/touch.js",
     "lib/netzke-core.rb",
+    "lib/netzke/action_config.rb",
     "lib/netzke/actions.rb",
     "lib/netzke/base.rb",
     "lib/netzke/composition.rb",

@@ -1,4 +1,7 @@
 = v0.8.0 - WIP
+* API changes
+  * actions now get defined with a block (see example components)
+
 * upcoming
   * Ext JS 4.1 support
   * Drop Ruby 1.8.7

@@ -1,10 +1,9 @@
 class LocalizedPanel < Netzke::Base
-  # This action will be translated per-class basis if the translation is available, and fall back to the default when it's not.
+  # This action will be translated per-class basis if the translation is available, falling back to the default
   action :action_one
 
-  # If you want action's text to be inheritable, this is what you shold do:
-  action :action_two do
-    {:text => I18n.t('localized_panel.action_two')}
+  action :action_two do |a|
+    a.text = I18n.t('localized_panel.action_two')
   end
 
   action :action_three
@@ -31,5 +30,4 @@ class LocalizedPanel < Netzke::Base
       mask.show();
     }
   JS
-
 end

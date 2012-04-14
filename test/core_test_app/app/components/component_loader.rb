@@ -73,7 +73,9 @@ class ComponentLoader < Netzke::Base
 
   action :load_with_params
 
-  action :non_existing_component, :text => "Non-existing component"
+  action :non_existing_component do |a|
+    a.text = "Non-existing component"
+  end
 
   js_properties(
     :title => "Component Loader",

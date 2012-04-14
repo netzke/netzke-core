@@ -1,19 +1,16 @@
 class ComponentWithActions < Netzke::Base
   title "Panel that has actions"
 
-  # Define actions as a hash
-  action :another_action, :disabled => true, :text => "Disabled action", :icon => :accept
-
-  # ... or as a block returning hash
-  action :some_action do
-    {:text => "Some Cool Action", :icon => Netzke::Core.icons_uri + "/delete.png"}
+  action :some_action do |a|
+    a.text = "Some Cool Action"
+    a.icon = Netzke::Core.icons_uri + "/delete.png" # specify full icon path
   end
 
-  # ... or directly as a method
-  def _my_action_action
-    {:text => "Not used"}
+  action :another_action do |a|
+    a.disabled = true
+    a.text = "Disabled action"
+    a.icon = :accept # the accept.png icon will be looked for in Netzke::Core.icons_uri
   end
-
 
   js_property :bbar, [:some_action.action, :another_action.action]
 

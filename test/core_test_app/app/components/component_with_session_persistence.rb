@@ -3,15 +3,9 @@ class ComponentWithSessionPersistence < Netzke::Base
 
   js_property :bbar, [:bug_server.action]
 
-  action :bug_server, :text => "Tell server to store new title"
-
-  #def default_config
-    #super.merge(:session_persistence => true)
-  #end
-
-  #def configuration
-    #super.merge(:html => component_session[:html_content] || "Default HTML")
-  #end
+  action :bug_server do |a|
+    a.text = "Tell server to store new title"
+  end
 
   def configure
     config.session_persistence = true
@@ -30,7 +24,6 @@ class ComponentWithSessionPersistence < Netzke::Base
       this.bugServer();
     }
   JS
-
 
   endpoint :whats_up do |params|
     update_session_options(:title => "Title From Session") # setting a value in session_options, which will get auto-merged into +config+

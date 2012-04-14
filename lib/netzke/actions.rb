@@ -43,7 +43,7 @@ module Netzke
     end
 
     module ClassMethods
-      def action(name, config = {}, &block)
+      def action_DELETEME(name, config = {}, &block)
         register_action(name)
         config[:name] = name.to_s
         method_name = ACTION_METHOD_NAME % name
@@ -63,6 +63,19 @@ module Netzke
         end
       end
 
+      def action(name, &block)
+        register_action(name)
+
+        method_name = ACTION_METHOD_NAME % name
+        if block_given?
+          define_method(method_name, &block)
+        else
+          define_method(method_name) do |action_config|
+            action_config
+          end
+        end
+      end
+
       # Register an action
       def register_action(name)
         self.registered_actions |= [name]
@@ -72,36 +85,16 @@ module Netzke
 
     # All actions for this instance
     def actions
-      @actions ||= self.class.registered_actions.inject({}){ |res, name| res.merge(name.to_sym => normalize_action_config(send(ACTION_METHOD_NAME % name).merge(:name => name.to_s))) }
+      #@actions ||= self.class.registered_actions.inject({}){ |res, name| res.merge(name.to_sym => normalize_action_config(send(ACTION_METHOD_NAME % name).merge(:name => name.to_s))) }
+      @actions ||= self.class.registered_actions.inject({}) do |res, name|
+        action_config = Netzke::ActionConfig.new(name, self)
+        send(ACTION_METHOD_NAME % name, action_config)
+        res.merge(name.to_sym => action_config)
+      end
     end
 
     def js_config_with_actions #:nodoc
       actions.empty? ? js_config_without_actions : js_config_without_actions.merge(:actions => actions)
     end
-
-    private
-
-      def normalize_action_config(config)
-        config.tap do |c|
-          if c[:icon].is_a?(Symbol)
-            c[:icon] = uri_to_icon(c[:icon])
-          end
-
-          # Default text and tooltip
-          c[:text] ||= c[:name].humanize
-          c[:tooltip] ||= c[:name].humanize
-
-          # If we have an I18n for it, use it
-          default_text = I18n.t(i18n_id + ".actions." + c[:name], :default => "")
-          c[:text] = default_text if default_text.present?
-          default_tooltip = I18n.t(i18n_id + ".actions." + c[:name] + "_tooltip", :default => default_text)
-          c[:tooltip] = default_tooltip if default_tooltip.present?
-        end
-      end
-
-      def uri_to_icon(icon)
-        Netzke::Core.with_icons ? [Netzke::Core.controller.config.relative_url_root, Netzke::Core.icons_uri, '/', icon.to_s, ".png"].join : nil
-      end
-
   end
 end
