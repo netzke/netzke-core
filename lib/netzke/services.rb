@@ -3,6 +3,12 @@ module Netzke
   module Services
     extend ActiveSupport::Concern
 
+    included do
+       # Returns all endpoints as a hash
+      class_attribute :endpoints
+      self.endpoints = {}
+    end
+
     module ClassMethods
       # Defines an endpoint - a connection point between the client side of a component and its server side. For example:
       #
@@ -44,11 +50,6 @@ module Netzke
         end
       end
 
-      # Returns all endpoints as a hash
-      def endpoints
-        read_inheritable_attribute(:endpoints) || {}
-      end
-
       def api(*api_points) #:nodoc:
         ::ActiveSupport::Deprecation.warn("Using the 'api' call has no longer effect. Define endpoints instead.", caller)
       end
@@ -57,9 +58,7 @@ module Netzke
 
       # Registers an endpoint
       def register_endpoint(ep, options)
-        current_endpoints = read_inheritable_attribute(:endpoints) || {}
-        current_endpoints.merge!(ep => options)
-        write_inheritable_attribute(:endpoints, current_endpoints)
+        self.endpoints = self.endpoints.dup.merge(ep => options)
       end
 
     end

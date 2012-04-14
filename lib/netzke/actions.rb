@@ -36,6 +36,10 @@ module Netzke
 
     included do
       alias_method_chain :js_config, :actions
+
+      # Returns registered actions
+      class_attribute :registered_actions
+      self.registered_actions = []
     end
 
     module ClassMethods
@@ -61,14 +65,7 @@ module Netzke
 
       # Register an action
       def register_action(name)
-        current_actions = read_inheritable_attribute(:actions) || []
-        current_actions << name
-        write_inheritable_attribute(:actions, current_actions.uniq)
-      end
-
-      # Returns registered actions
-      def registered_actions
-        read_inheritable_attribute(:actions) || []
+        self.registered_actions |= [name]
       end
 
     end

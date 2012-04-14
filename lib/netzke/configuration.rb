@@ -6,11 +6,14 @@ module Netzke
 
     CONFIGURATION_LEVELS = [:default, :initial, :independent, :session, :final]
 
-    #included do
+    included do
       #CONFIGURATION_LEVELS.each do |level|
         #define_method("weak_#{level}_options"){ {} }
       #end
-    #end
+
+      class_attribute :default_config_attr
+      self.default_config_attr = {}
+    end
 
     module ClassMethods
       def setup
@@ -93,7 +96,7 @@ module Netzke
     def configure
       # default config
       config.merge!(self.class.default_instance_config)
-      config.merge!(self.class.read_inheritable_attribute(:default_config) || {})
+      config.merge!(self.class.default_config_attr)
 
       # passed config
       config.merge!(@passed_config)

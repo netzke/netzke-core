@@ -1,5 +1,3 @@
-# require 'active_support/core_ext/class/inheritable_attributes'
-
 module Netzke
   # This module takes care of components composition.
   #
@@ -25,7 +23,11 @@ module Netzke
 
     included do
 
-      # Loads a component on browser's request. Every Nettzke component gets this endpoint.
+      # Returns registered components
+      class_attribute :registered_components
+      self.registered_components = []
+
+      # Loads a component on browser's request. Every Netzke component gets this endpoint.
       # <tt>params</tt> should contain:
       # * <tt>:cache</tt> - an array of component classes cached at the browser
       # * <tt>:id</tt> - reference to the component
@@ -87,14 +89,7 @@ module Netzke
 
       # Register a component
       def register_component(name)
-        current_components = read_inheritable_attribute(:components) || []
-        current_components << name
-        write_inheritable_attribute(:components, current_components.uniq)
-      end
-
-      # Returns registered components
-      def registered_components
-        read_inheritable_attribute(:components) || []
+        self.registered_components |= [name]
       end
 
     end
