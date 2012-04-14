@@ -2,10 +2,10 @@ class SomeComposite < Netzke::Base
   js_properties :height => 400,
                 :layout => 'border',
                 :bbar => [
-                  :update_west_panel.action,
-                  :update_center_panel.action,
-                  :update_west_from_server.action,
-                  :update_east_south_from_server.action
+                  :update_west_panel,
+                  :update_center_panel,
+                  :update_west_from_server,
+                  :update_east_south_from_server
                 ]
 
   action :update_center_panel

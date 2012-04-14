@@ -9,7 +9,7 @@ module ExtDirect
     def configure
       super
       @config[:items] = [{:name => "user", :field_label => "User", :xtype => :textfield}]
-      @config[:bbar] = [:update.action]
+      @config[:bbar] = [:update]
     end
 
     js_method :init_component, <<-JS

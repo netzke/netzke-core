@@ -322,7 +322,9 @@ Netzke.cache.push('#{js_xtype}');
 
         # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
         endpoints = self.class.endpoints.keys - [:deliver_component]
-        res[:endpoints] = endpoints unless endpoints.empty?
+
+        # pass them as strings, not as symbols
+        res[:endpoints] = endpoints.map(&:to_s) unless endpoints.empty?
 
         # Inform the JavaScript side if persistent_config is enabled
         # res[:persistent_config] = persistence_enabled?
@@ -350,6 +352,9 @@ Netzke.cache.push('#{js_xtype}');
         res[:i18n] = js_translate_properties if js_translate_properties.present?
 
         res[:netzke_plugins] = plugins.map{ |p| p.to_s.camelcase(:lower) } if plugins.present?
+
+        # we need to pass them as strigs, not as symbols
+        res[:tools] = res[:tools].map(&:to_s) if res[:tools].present?
       end
     end
 

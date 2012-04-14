@@ -8,7 +8,7 @@ class ServerCounter < Netzke::Base
 
   js_properties(
     :title => "Server Counter",
-    :bbar => [:count_one_time.action, :count_seven_times.action, :count_eight_times_special.action, :fail_in_the_middle.action, :do_ordered.action, :fail_two_out_of_five.action]
+    :bbar => [:count_one_time, :count_seven_times, :count_eight_times_special, :fail_in_the_middle, :do_ordered, :fail_two_out_of_five]
   )
 
   js_method :on_count_one_time, <<-JS

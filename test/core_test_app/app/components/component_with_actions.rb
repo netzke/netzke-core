@@ -12,7 +12,7 @@ class ComponentWithActions < Netzke::Base
     a.icon = :accept # the accept.png icon will be looked for in Netzke::Core.icons_uri
   end
 
-  js_property :bbar, [:some_action.action, :another_action.action]
+  js_property :bbar, [:some_action, :another_action]
 
   js_property :tbar, [{
     :xtype =>  'buttongroup',
@@ -32,12 +32,12 @@ class ComponentWithActions < Netzke::Base
         :iconCls => 'add',
         :iconAlign => 'top',
         :arrowAlign => 'bottom',
-        :menu => [:some_action.action]
+        :menu => [:some_action]
     },{
-        :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action.action]
-    }, :another_action.action,
+        :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action]
+    }, :another_action,
     {
-        :menu => [:some_action.action], :text => 'Format'
+        :menu => [:some_action], :text => 'Format'
     }]
   }]
 

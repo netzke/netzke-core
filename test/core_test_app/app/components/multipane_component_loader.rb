@@ -13,7 +13,7 @@ class MultipaneComponentLoader < Netzke::Base
       :height => 200,
       :flex => 1,
       :border => true,
-      :bbar => [:load_server_caller.action, :load_component_loader.action],
+      :bbar => [:load_server_caller, :load_component_loader],
       :layout => :fit
     },{
       :title => "Container Two",

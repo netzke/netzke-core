@@ -3,5 +3,5 @@ class ExtendedComponentWithJsMixin < ComponentWithJsMixin
   action :action_three
 
   js_property :title, "ExtendedComponentWithJsMixin"
-  js_property :bbar, superclass.js_properties[:bbar] + [:action_three.action]
+  js_property :bbar, superclass.js_properties[:bbar] + [:action_three]
 end

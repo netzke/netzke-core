@@ -6,7 +6,7 @@ class ServerCaller < Netzke::Base
   js_properties(
     :title => "Server Caller",
     :html => "Wow",
-    :tbar => [:bug_server.action] # NOTE: used to be bbar, but Ext >= 4.0.2 has problems with rendering it!
+    :tbar => [:bug_server] # NOTE: used to be bbar, but Ext >= 4.0.2 has problems with rendering it!
   )
 
   js_method :on_bug_server, <<-JS

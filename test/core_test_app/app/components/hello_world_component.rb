@@ -3,7 +3,7 @@ class HelloWorldComponent < Netzke::Base
   title "My Hello World Component"
 
   # Bottom bar with an automatically created action
-  js_property :bbar, [:bug_server.action]
+  js_property :bbar, [:bug_server]
 
   # Action to be placed on the bottom bar
   action :bug_server, :text => 'Greet the World', :icon => :accept

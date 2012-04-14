@@ -1,6 +1,6 @@
 class Array
   def jsonify
-    self.map{ |el| el.instance_of?(Array) || el.instance_of?(Hash) ? el.jsonify : el }
+    self.map{ |el| el.instance_of?(Array) || el.instance_of?(Hash) ? el.jsonify : el.is_a?(Symbol) ? {symbol: el.jsonify} : el }
   end
 
   # Camelizes the keys of hashes and converts them to JSON

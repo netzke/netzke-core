@@ -1,5 +1,5 @@
 class ExtendedComponentWithActions < ComponentWithActions
-  js_property :bbar, [:another_action.action]
+  js_property :bbar, [:another_action]
 
   # Override actions like this
   def some_action_action(a)

@@ -14,11 +14,11 @@ module Netzke
         {:text => "Action three"}
       end
 
-      js_property :bbar, [:action_one.action, :action_two.action]
+      js_property :bbar, [:action_one, :action_two]
 
       def config
         {
-          :tbar => [:action_three.action]
+          :tbar => [:action_three]
         }
       end
 
@@ -32,8 +32,8 @@ module Netzke
     end
 
     class ExtendedComponent < SomeComponent
-      js_property :bbar, [:action_one.action, :action_two.action, :action_three.action, :action_four.action, :action_five.action]
-      js_property :tbar, [:action_one.action, :action_two.action, :action_three.action, :action_four.action, :action_five.action]
+      js_property :bbar, [:action_one, :action_two, :action_three, :action_four, :action_five]
+      js_property :tbar, [:action_one, :action_two, :action_three, :action_four, :action_five]
     end
 
     class AnotherExtendedComponent < ExtendedComponent

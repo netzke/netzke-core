@@ -7,5 +7,5 @@ class ComponentWithJsMixin < Netzke::Base
   action :action_one
   action :action_two
   action :action_three
-  js_property :bbar, [:action_one.action, :action_two.action, :action_three.action]
+  js_property :bbar, [:action_one, :action_two, :action_three]
 end

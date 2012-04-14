@@ -160,6 +160,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     var that = this;
 
     Ext.each(endpoints, function(intp){
+      console.log("intp:", intp);
       directActions.push({"name":intp.camelize(true), "len":1});
       this[intp.camelize(true)] = function(arg, callback, scope) {
         Netzke.runningRequests++;
@@ -239,9 +240,9 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       var a = o;
       Ext.each(a, function(el, i){
         if (Ext.isObject(el)) {
-          if (el.action) {
-            if (!this.actions[el.action.camelize(true)]) throw "Netzke: action '"+el.action+"' not defined";
-            a[i] = this.actions[el.action.camelize(true)];
+          if (el.symbol) {
+            if (!this.actions[el.symbol.camelize(true)]) throw "Netzke: action '"+el.symbol+"' not defined";
+            a[i] = this.actions[el.symbol.camelize(true)];
             delete(el);
           } else {
             this.detectActions(el);

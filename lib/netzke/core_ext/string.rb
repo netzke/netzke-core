@@ -22,5 +22,4 @@ class String
   def to_b
     self != "false"
   end
-
 end

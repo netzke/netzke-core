@@ -10,7 +10,7 @@ class LocalizedPanel < Netzke::Base
 
   js_translate :property_one, :property_two
 
-  js_property :bbar, [:action_one.action, :action_two.action, :action_three.action]
+  js_property :bbar, [:action_one, :action_two, :action_three]
 
   def configure
     config.title = I18n.t('localized_panel.title')
