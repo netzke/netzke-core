@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.1'
+gem 'rails', '3.2.3'
+gem 'netzke-persistence'
 
 gem 'sqlite3'
 
@@ -25,7 +26,7 @@ gem 'sqlite3'
 group :test do
   gem 'capybara'
   gem 'database_cleaner'
-  gem 'cucumber-rails'
+  gem 'cucumber-rails', :require => false
   gem 'cucumber'
   gem 'rspec-rails'
   gem 'spork'

@@ -16,8 +16,8 @@ module Netzke
 
       def components
         {
-          :nested_one => {:class_name => 'NestedComponentOne'},
-          :nested_two => {:class_name => 'NestedComponentTwo'}
+          :nested_one => {:class_name => 'Netzke::NestedComponentOne'},
+          :nested_two => {:class_name => 'Netzke::NestedComponentTwo'}
         }
       end
 
@@ -39,7 +39,7 @@ module Netzke
     class NestedComponentTwo < Base
       def components
         {
-          :nested => {:class_name => 'DeepNestedComponent'}
+          :nested => {:class_name => 'Netzke::DeepNestedComponent'}
         }
       end
     end
@@ -47,7 +47,7 @@ module Netzke
     class DeepNestedComponent < Base
       def components
         {
-          :nested => {:class_name => "VeryDeepNestedComponent"}
+          :nested => {:class_name => "Netzke::VeryDeepNestedComponent"}
         }
       end
     end
@@ -64,7 +64,7 @@ module Netzke
     class SomeComposite < Base
       component :component_one do
         {
-          :class_name => "ComponentOne",
+          :class_name => "Netzke::ComponentOne",
           :title => "My Cool Component"
         }
       end
@@ -72,8 +72,8 @@ module Netzke
       def config
         {
           :items => [
-            {:class_name => "ComponentTwo", :name => "my_component_two"},
-            {:class_name => "ComponentTwo"} # name omitted, will be "component_two1"
+            {:class_name => "Netzke::ComponentTwo", :name => "my_component_two"},
+            {:class_name => "Netzke::ComponentTwo"} # name omitted, will be "netzke_1"
           ]
         }.deep_merge super
       end
@@ -102,9 +102,9 @@ module Netzke
       components = composite.components
 
       components.keys.size.should == 3
-      components[:component_one][:class_name].should == "ComponentOne"
-      components[:my_component_two][:class_name].should == "ComponentTwo"
-      components[:component_two1][:class_name].should == "ComponentTwo"
+      components[:component_one][:class_name].should == "Netzke::ComponentOne"
+      components[:my_component_two][:class_name].should == "Netzke::ComponentTwo"
+      components[:netzke_1][:class_name].should == "Netzke::ComponentTwo"
 
     end
 
