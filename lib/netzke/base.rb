@@ -94,7 +94,7 @@ module Netzke
       # Build complete component configuration
       configure
 
-      normalize_components(items)
+      normalize_components(config.items || items)
 
       self.class.increase_total_instances
     end

@@ -214,7 +214,7 @@ module Netzke
     protected
 
       # Recursively make components referred in items eagerly loaded
-      def normalize_components(items) #:nodoc:
+      def normalize_components(items)
         items.each do |item|
           if is_component_config?(item)
             components[item[:netzke_component]].delete(:lazy_loading)
