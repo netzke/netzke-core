@@ -7,5 +7,7 @@ class WindowWithSimpleComponent < SimpleWindow
     ]
   end
 
-  component :simple_component
+  component :simple_component do |c|
+    c.title = "Simple Component Inside Window"
+  end
 end
