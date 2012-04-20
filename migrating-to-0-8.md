@@ -87,3 +87,18 @@ Previously there was a way to specify a component class directly in items, which
 ### Specifying items in config
 
 It is possible to specify the items in the config in the same format as it is done in the "items" method. If config.items is provided, it takes precedence over the `items` method. This can be useful for modifying the default layout of a child component by means of configuring it.
+
+It's advised to override the `items` method when a component needs to define it's layout, and not use the `configure` method for that (see the **Self-configuration** section).
+
+## Self-configuration
+
+### The `configure` method
+
+In case when a newly created component needs to change configuration values for its instance, it should define the `configure` method and make use of the component's global `config` method (which is an instance of ActiveSupport::OrderedOptions):
+
+    def configure
+      super # let the base class do its work, e.g. set the `config` instance with the config values passed by this component's user
+      config.title = config.title + "(read-only)" if config.mode == :read_only
+    end
+
+There's no more need for `default_config` or any other `*_config` methods, and they should be replaced with `configure`. In general, the need for using this method is greatly reduced.
