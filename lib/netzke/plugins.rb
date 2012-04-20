@@ -10,9 +10,14 @@ module Netzke
 
     module ClassMethods
       # Defines a plugin
-      def plugin(name, config = {}, &block)
-        component(name, config, &block)
+      def plugin(name, &block)
         register_plugin(name)
+        component name do |c|
+          block.call(c) if block_given?
+
+          # plugins are *always* eagerly loaded
+          c.lazy_loading = false
+        end
       end
 
       # Register a plugin

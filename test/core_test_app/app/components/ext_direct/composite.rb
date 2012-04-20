@@ -3,28 +3,25 @@ module ExtDirect
     js_property :layout, :border
     js_property :border, true
 
-    component :selector, :class_name => "ExtDirect::Selector" # a form that will allow us to select a user
-
-    component :details do
-      {
-        :class_name => "ExtDirect::Details", # a panel that will display details for the user
-        :user => component_session[:user]
-      }
+    component :selector do |c|
+      c.klass = ExtDirect::Selector # a form that will allow us to select a user
     end
 
-    component :statistics do
-      {
-        :class_name => "ExtDirect::Statistics", # a panel that will display details for the user
-        :user => component_session[:user]
-      }
+    component :details do |c|
+      c.klass = ExtDirect::Details # a panel that will display details for the user
+      c.user = component_session[:user]
     end
 
-    def configure
-      super
-      @config[:items] = [
-        :selector.component(:region => :north, :height => 100),
-        :details.component(:region => :center),
-        :statistics.component(:region => :east, :width => 300, :split => true)
+    component :statistics do |c|
+      c.klass = ExtDirect::Statistics # a panel that will display statistics for the user
+      c.user = component_session[:user]
+    end
+
+    def items
+      [
+        {:region => :north, :height => 100, netzke_component: :selector},
+        {:region => :center, netzke_component: :details},
+        {:region => :east, :width => 300, :split => true, netzke_component: :statistics}
       ]
     end
 
@@ -43,6 +40,5 @@ module ExtDirect
         }, this);
       }
     JS
-
   end
 end

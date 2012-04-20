@@ -1,6 +1,8 @@
 # Loads a component with custom CSS, to make sure that also dynamically loaded components get the correct CSS applied
 class LoaderOfComponentWithCustomCss < Netzke::Base
-  component :component_with_custom_css, :class_name => "ComponentWithCustomCss", :lazy_loading => true
+  component :component_with_custom_css do |c|
+    c.klass = ComponentWithCustomCss
+  end
 
   action :load_component_with_custom_css
 
