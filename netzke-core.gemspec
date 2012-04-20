@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["NomadCoder"]
-  s.date = "2012-04-14"
+  s.date = "2012-04-20"
   s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
     "lib/netzke/action_config.rb",
     "lib/netzke/actions.rb",
     "lib/netzke/base.rb",
+    "lib/netzke/component_config.rb",
     "lib/netzke/composition.rb",
     "lib/netzke/config_to_dsl_delegator.rb",
     "lib/netzke/configuration.rb",
@@ -136,6 +137,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/touch/hello_world_component.rb",
     "test/core_test_app/app/components/touch/server_caller.rb",
     "test/core_test_app/app/components/touch/simple_carousel.rb",
+    "test/core_test_app/app/components/window_with_simple_component.rb",
     "test/core_test_app/app/controllers/application_controller.rb",
     "test/core_test_app/app/controllers/components_controller.rb",
     "test/core_test_app/app/controllers/simple_rails_controller.rb",

@@ -13,25 +13,36 @@ class SomeComposite < Netzke::Base
   action :update_west_from_server
   action :update_east_south_from_server
 
-  def configure
-    super
-    config.items = [
-      :center_panel.component(:region => 'center'),
-      :west_panel.component(:region => 'west', :width => 300, :split => true),
-      {:layout => 'border', :region => :east, :width => 500, :split => true, :items => [
-        :east_center_panel.component(:region => :center),
-        :east_south_panel.component(:region => :south, :height => 200, :split => true)
-      ]},
+  def items
+    [
+      { region: :center, netzke_component: :center_panel },
+      { region: :west, width: 300, split: true, netzke_component: :west_panel },
+      { layout: :border, region: :east, width: 500, split: true, items: [
+        { region: :center, netzke_component: :east_center_panel },
+        { region: :south, height: 200, split: true, netzke_component: :east_south_panel }
+      ] }
     ]
   end
 
-  component :west_panel, :class_name => "ExtendedServerCaller"
+  component :center_panel do |c|
+    c.klass = ServerCaller
+  end
 
-  component :center_panel, :class_name => "ServerCaller"
+  component :west_panel do |c|
+    c.klass = ExtendedServerCaller
+  end
 
-  component :east_center_panel, :class_name => "SimpleComponent", :title => "A panel", :border => false
+  component :east_center_panel do |c|
+    c.klass = SimpleComponent
+    c.title = "A panel"
+    c.border = false
+  end
 
-  component :east_south_panel, :class_name => "SimpleComponent", :title => "Another panel", :border => false
+  component :east_south_panel do |c|
+    c.klass = SimpleComponent
+    c.title = "Another panel"
+    c.border = false
+  end
 
   endpoint :update_east_south do |params|
     {:east_south_panel => {:set_title => "Here's an update for south panel in east panel"}}

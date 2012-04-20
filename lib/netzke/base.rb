@@ -63,7 +63,7 @@ module Netzke
         self.name.sub(/^Netzke::/, "")
       end
 
-      # Component's class, given its name.
+      # DELETE Component's class, given its name.
       def constantize_class_name(class_name)
         class_name.constantize # used to be more complex than this, but appeared to be difficult to debug
       end
@@ -91,12 +91,10 @@ module Netzke
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
 
-      # Build complete component configuration. To be overridden.
+      # Build complete component configuration
       configure
 
-      # initialize @components and @items
-      normalize_components_in_items
-      # auto_collect_actions_from_config_and_js_properties
+      normalize_components(items)
 
       self.class.increase_total_instances
     end

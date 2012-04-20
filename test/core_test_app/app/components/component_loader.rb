@@ -1,25 +1,18 @@
 # TODO: some functionality (one that is calling doNothing) does not belong here, as it loads no componens, but rather to ServerCaller. Move it there.
 class ComponentLoader < Netzke::Base
-  component :simple_component, :title => "Simple Component", :lazy_loading => true
+  component :simple_component
 
-  component :component_loaded_in_window, {
-    :class_name => "SimpleComponent",
-    :title => "Component loaded in window",
-    :lazy_loading => true
-  }
+  component :component_loaded_in_window do |c|
+    c.klass = SimpleComponent
+    c.title = "Component loaded in window"
+  end
 
-  component :window_with_simple_component, {
-    :class_name => "SimpleWindow",
-    :width => 400,
-    :height => 300,
-    :items => [{
-      :class_name => "SimpleComponent",
-      :title => "Simple Component Inside Window"
-    }],
-    :lazy_loading => true
-  }
+  component :window_with_simple_component do |c|
+    c.width = 400
+    c.height = 300
+  end
 
-  component :some_composite, :lazy_loading => true
+  component :some_composite
 
   # this action is using loadNetzkeComponent "special" callback
   js_method :on_load_with_feedback, <<-JS

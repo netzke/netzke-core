@@ -301,6 +301,12 @@ Netzke.cache.push('#{js_xtype}');
 
     end
 
+    #def js_items
+      #items.map do |item|
+        #item.is_a?(Symbol) ? { netzke_component: item } : item
+      #end
+    #end
+
     # The result of this method (a hash) is converted to a JSON object and passed as options
     # to the constructor of our JavaScript class. Override it when you want to pass any extra configuration
     # to the JavaScript side.

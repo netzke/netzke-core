@@ -57,7 +57,7 @@ module Netzke
     module ClassMethods
 
       # Defines a nested component.
-      def component(name, config = {}, &block)
+      def component_DELETEME(name, config = {}, &block)
         register_component(name)
         config = config.dup
         config[:class_name] ||= name.to_s.camelize
@@ -79,6 +79,19 @@ module Netzke
         end
       end
 
+      def component(name, &block)
+        register_component(name)
+
+        method_name = COMPONENT_METHOD_NAME % name
+        if block_given?
+          define_method(method_name, &block)
+        else
+          define_method(method_name) do |component_config|
+            component_config
+          end
+        end
+      end
+
       # DEPRECATED in favor of Symbol#component
       # Component's js config used when embedding components as Container's items
       # (see some_composite.rb for an example)
@@ -94,8 +107,10 @@ module Netzke
 
     end
 
-    def items #:nodoc:
-      @items_with_normalized_components
+    # Override this to specify the layout of the component
+    def items
+      #@items_with_normalized_components
+      []
     end
 
     # DEPRECATED in favor of Base.component
@@ -105,7 +120,12 @@ module Netzke
 
     # All components for this instance, which includes components defined on class level, and components detected in :items
     def components
-      @components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }.merge(config[:components] || {})
+      #@components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }.merge(config[:components] || {})
+      @components ||= self.class.registered_components.inject({}) do |res, name|
+        component_config = Netzke::ComponentConfig.new(name, self)
+        send(COMPONENT_METHOD_NAME % name, component_config)
+        res.merge(name.to_sym => component_config)
+      end
     end
 
     def eager_loaded_components
@@ -143,15 +163,12 @@ module Netzke
           component_config = composite.components[cmp]
           raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.global_id}'" if component_config.nil?
 
-          component_class_name = component_config[:class_name]
-          raise ArgumentError, "No class_name specified for component #{cmp} of #{composite.global_id}" if component_class_name.nil?
-
-          component_class = constantize_class_name(component_class_name)
-          raise ArgumentError, "Unknown constant #{component_class_name}" if component_class.nil?
+          klass = component_config[:klass]
+          raise ArgumentError, "No class specified for component #{cmp} of #{composite.global_id}" if klass.nil?
 
           instance_config = weak_children_config.merge(component_config).merge(strong_config).merge(:name => cmp)
 
-          composite = component_class.new(instance_config, composite) # params: config, parent
+          composite = klass.new(instance_config, composite) # params: config, parent
         end
         composite
       end
@@ -196,28 +213,24 @@ module Netzke
 
     protected
 
+      # Recursively make components referred in items eagerly loaded
       def normalize_components(items) #:nodoc:
-        @component_index ||= 0
-        @items_with_normalized_components = items.each_with_index.map do |item, i|
+        items.each do |item|
           if is_component_config?(item)
-            component_name = item[:name] || :"netzke_#{@component_index}" # default name/item_id for child components
-            @component_index += 1
-            self.class.component(component_name.to_sym, item)
-            component_name.to_sym.component # replace current item with a reference to component
-          elsif item.is_a?(Hash)
-            item[:items].is_a?(Array) ? item.merge(:items => normalize_components(item[:items])) : item
-          else
-            item
+            components[item[:netzke_component]].delete(:lazy_loading)
+          elsif item.is_a?(Hash) && item[:items].is_a?(Array)
+            normalize_components(item[:items])
           end
         end
       end
 
       def normalize_components_in_items #:nodoc:
-        normalize_components(config[:items]) if config[:items]
+        normalize_components(items)
       end
 
       def is_component_config?(c) #:nodoc:
-        !!(c.is_a?(Hash) && c[:class_name])
+        c.is_a?(Symbol) || c.is_a?(Hash) && c[:netzke_component]
+        #!!(c.is_a?(Hash) && c[:klass])
       end
 
   end
