@@ -6,6 +6,7 @@ module Netzke
       # TODO: optimize
       self.klass = name.camelize.constantize rescue nil
 
+      self.item_id = name
       self.lazy_loading = true
     end
   end
