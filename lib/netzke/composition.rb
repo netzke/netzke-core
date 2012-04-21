@@ -124,12 +124,20 @@ module Netzke
       @components ||= self.class.registered_components.inject({}) do |res, name|
         component_config = Netzke::ComponentConfig.new(name, self)
         send(COMPONENT_METHOD_NAME % name, component_config)
+        component_config.delete(:lazy_loading) if component_config.lazy_loading == true && eagerly_loaded_components_referred_in_items.include?(name)
         res.merge(name.to_sym => component_config)
       end
     end
 
     def eager_loaded_components
       components.reject{|k,v| v[:lazy_loading]}
+    end
+
+    # An array of component's names that are being referred in items and should be eagerly loaded
+    def eagerly_loaded_components_referred_in_items
+      @eagerly_loaded_components_referred_in_items ||= [].tap do |r|
+        traverse_components_in_items(config.items || items){ |c| r << c[:netzke_component] if c[:lazy_loading] != true }
+      end
     end
 
     # DEPRECATED
@@ -211,27 +219,19 @@ module Netzke
       end
     end
 
-    protected
+  protected
 
-      # Recursively make components referred in items eagerly loaded
-      def normalize_components(items)
-        items.each do |item|
-          if is_component_config?(item)
-            components[item[:netzke_component]].delete(:lazy_loading)
-          elsif item.is_a?(Hash) && item[:items].is_a?(Array)
-            normalize_components(item[:items])
-          end
-        end
+    # Yields each Netzke component config found in items (recursively)
+    def traverse_components_in_items(items, &block)
+      items.each do |item|
+        yield(item) if is_component_config?(item)
+        traverse_components_in_items(item[:items], &block) if item[:items]
       end
+    end
 
-      def normalize_components_in_items #:nodoc:
-        normalize_components(items)
-      end
-
-      def is_component_config?(c) #:nodoc:
-        c.is_a?(Symbol) || c.is_a?(Hash) && c[:netzke_component]
-        #!!(c.is_a?(Hash) && c[:klass])
-      end
+    def is_component_config?(c) #:nodoc:
+      c.is_a?(Symbol) || c.is_a?(Hash) && c[:netzke_component]
+    end
 
   end
 end
