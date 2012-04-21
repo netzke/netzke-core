@@ -114,7 +114,9 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   initComponentWithNetzke: function(){
     this.normalizeActions();
 
-    this.detectActions(this);
+    Ext.each(["items", "bbar", "tbar", "fbar", "menu", "contextMenu", "buttons", "dockedItems"], function(key){
+      if (this[key]) this.detectActions(this[key]);
+    }, this);
 
     // Detects component placeholders in the passed object (typically, "items"),
     // and merges them with the corresponding config from this.netzkeComponents.
@@ -221,13 +223,15 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
   */
   detectActions: function(o){
+    if (o.netzkeComponent) return; // Netzke components will take care of themselves
+
     if (Ext.isObject(o)) {
       if ((typeof o.handler === 'string') && Ext.isFunction(this[o.handler.camelize(true)])) {
          // This button config has a handler specified as string - replace it with reference to a real function if it exists
         o.handler = this[o.handler.camelize(true)].createDelegate(this);
       }
-      // TODO: this should be configurable!
-      Ext.each(["bbar", "tbar", "fbar", "menu", "items", "contextMenu", "buttons", "dockedItems"], function(key){
+
+      Ext.each(["bbar", "tbar", "fbar", "menu", "items", "buttons", "dockedItems"], function(key){
         if (o[key]) {
           var items = [].concat(o[key]); // we need to do it in order to esure that this instance has a separate bbar/tbar/etc, NOT shared via class' prototype
           delete(o[key]);
@@ -236,12 +240,15 @@ Ext.apply(Netzke.classes.Core.Mixin, {
         }
       }, this);
     } else if (Ext.isArray(o)) {
-      var a = o;
-      Ext.each(a, function(el, i){
+      var array = o;
+      Ext.each(array, function(el, i){
         if (Ext.isObject(el)) {
           if (el.symbol) {
-            if (!this.actions[el.symbol.camelize(true)]) throw "Netzke: action '"+el.symbol+"' not defined";
-            a[i] = this.actions[el.symbol.camelize(true)];
+            var actionName = el.symbol.camelize(true);
+
+            if (!this.actions[actionName]) throw "Netzke: action '"+el.symbol+"' not defined";
+
+            array[i] = this.actions[actionName];
             delete(el);
           } else {
             this.detectActions(el);
