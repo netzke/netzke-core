@@ -224,13 +224,11 @@ module Netzke
     # Yields each Netzke component config found in items (recursively)
     def traverse_components_in_items(items, &block)
       items.each do |item|
-        yield(item) if is_component_config?(item)
-        traverse_components_in_items(item[:items], &block) if item[:items]
-      end
-    end
+        yield(:netzke_component => item) if item.is_a?(Symbol)
+        yield(item) if item.is_a?(Hash) && item[:netzke_component]
 
-    def is_component_config?(c) #:nodoc:
-      c.is_a?(Symbol) || c.is_a?(Hash) && c[:netzke_component]
+        traverse_components_in_items(item[:items], &block) if item.is_a?(Hash) && item[:items]
+      end
     end
 
   end
