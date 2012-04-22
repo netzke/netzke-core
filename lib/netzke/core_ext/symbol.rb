@@ -7,10 +7,6 @@ class Symbol
     ActiveSupport::JSON::Variable.new(self.to_s)
   end
 
-  def component(config = {})
-    config.merge(:netzke_component => self)
-  end
-
   def to_cls_attr
     "__#{self}__".to_sym
   end
