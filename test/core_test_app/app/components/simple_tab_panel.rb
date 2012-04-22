@@ -6,9 +6,6 @@ class SimpleTabPanel < Netzke::Base
   component :extended_server_caller
 
   def items
-    [{netzke_component: :server_caller}, {netzke_component: :extended_server_caller}]
-
-    # TODO: make this reality:
-    #[:server_caller, :extended_server_caller]
+    [:server_caller, :extended_server_caller]
   end
 end

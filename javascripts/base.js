@@ -87,6 +87,9 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     } else if (Ext.isArray(o)) {
       var a = o;
       Ext.each(a, function(c, i){
+        // a reference to a component can be a string, normalize
+        if (Ext.isString(c) && this.netzkeComponents[c.camelize(true)]) c = {netzkeComponent: c};
+
         if (c.netzkeComponent) {
           var cmpName = c.netzkeComponent,
               cmpCfg = this.netzkeComponents[cmpName.camelize(true)];

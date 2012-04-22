@@ -118,6 +118,8 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       if (this[key]) this.detectActions(this[key]);
     }, this);
 
+    //this.detectActions(this);
+
     // Detects component placeholders in the passed object (typically, "items"),
     // and merges them with the corresponding config from this.netzkeComponents.
     // This way it becomes ready to be instantiated properly by Ext.
@@ -223,6 +225,9 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
   */
   detectActions: function(o){
+    //Ext.tmp = Ext.tmp || 0;
+    //Ext.tmp += 1;
+    //console.log("Ext.tmp:", Ext.tmp);
     if (o.netzkeComponent) return; // Netzke components will take care of themselves
 
     if (Ext.isObject(o)) {
@@ -242,11 +247,13 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     } else if (Ext.isArray(o)) {
       var array = o;
       Ext.each(array, function(el, i){
-        if (Ext.isObject(el)) {
-          if (el.symbol) {
-            var actionName = el.symbol.camelize(true);
+        if (Ext.isString(el) && this.actions[el.camelize(true)]) el = {netzkeAction: el};
 
-            if (!this.actions[actionName]) throw "Netzke: action '"+el.symbol+"' not defined";
+        if (Ext.isObject(el)) {
+          if (el.netzkeAction) {
+            var actionName = el.netzkeAction.camelize(true);
+
+            if (!this.actions[actionName]) throw "Netzke: action '"+el.netzkeAction+"' not defined";
 
             array[i] = this.actions[actionName];
             delete(el);
