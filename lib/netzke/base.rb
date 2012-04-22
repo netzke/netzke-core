@@ -45,6 +45,7 @@ module Netzke
 
     delegates_to_dsl :title, :items
 
+    # FIXME: this is supposed to have effect through all the child classes, but it doesn't
     class_config_option :default_instance_config, {}
 
     # Parent component
@@ -63,15 +64,9 @@ module Netzke
         self.name.sub(/^Netzke::/, "")
       end
 
-      # DELETE Component's class, given its name.
-      def constantize_class_name(class_name)
-        class_name.constantize # used to be more complex than this, but appeared to be difficult to debug
-      end
-
       # Instance of component by config
       def instance_by_config(config)
-        klass = config[:klass] || constantize_class_name(config[:class_name])
-        raise NameError, "Netzke: Unknown component #{config[:class_name]}" if klass.nil?
+        klass = config[:klass] || config[:class_name].constantize
         klass.new(config)
       end
 
@@ -95,11 +90,6 @@ module Netzke
       configure
 
       self.class.increase_total_instances
-    end
-
-    # Proxy to the equally named class method
-    def constantize_class_name(class_name)
-      self.class.constantize_class_name(class_name)
     end
 
     # Proxy to the equally named class method

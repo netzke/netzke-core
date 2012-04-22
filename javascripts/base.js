@@ -181,61 +181,6 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   // When an endpoint call is issued while the session has expired, this method is called. Override it to do whatever is appropriate.
   componentNotInSession: function() {
     Netzke.componentNotInSessionHandler();
-  }
-});
-
-
-// DEPRECATED as whole. Netzke extensions for Ext.Container.
-Ext.override(Ext.Container, {
-  // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
-  instantiateChild: function(config){
-    Netzke.deprecationWarning("instantiateChild is deprecated");
-    var instance = Ext.createByAlias( config.alias, config );
-    this.insertNetzkeComponent(instance);
-    return instance;
-  },
-
-  insertNetzkeComponent: function(cmp) {
-    this.removeChild(); // first delete previous component
-    this.add(cmp);
-
-    // Sometimes a child is getting loaded into a hidden container...
-    if (this.isVisible()) {
-      this.doLayout();
-    } else {
-      this.on('show', function(cmp){cmp.doLayout();}, {single: true});
-    }
-  },
-
-  /**
-    Get Netzke component that this Ext.Container is part of (*not* the parent component, for which call getParent)
-    It searches up the Ext.Container hierarchy until it finds a Container that has isNetzke property set to true
-    (or until it reaches the top).
-  */
-  getOwnerComponent: function(){
-    Netzke.deprecationWarning("getOwnerComponent is deprecated");
-    if (this.initialConfig.isNetzke) {
-      return this;
-    } else {
-      if (this.ownerCt){
-        return this.ownerCt.getOwnerComponent();
-      } else {
-        return null;
-      }
-    }
-  },
-
-  // Get the component that we are hosting
-  getNetzkeComponent: function(){
-    Netzke.deprecationWarning("getNetzkeComponent is deprecated");
-    return this.items ? this.items.first() : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
-  },
-
-  // Remove the child
-  removeChild: function(){
-    Netzke.deprecationWarning("removeChild is deprecated");
-    var currentChild = this.getNetzkeComponent();
-    if (currentChild) {this.remove(currentChild);}
   },
 
   // private
@@ -272,5 +217,4 @@ Ext.override(Ext.Container, {
       }
     }, this);
   },
-
 });

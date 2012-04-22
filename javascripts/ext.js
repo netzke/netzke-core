@@ -239,11 +239,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   'scope' - scope for the callback
   */
   loadNetzkeComponent: function(params){
-    if (params.id) {
-      params.name = params.id;
-      Netzke.deprecationWarning("Using 'id' in loadComponent is deprecated. Use 'name' instead.");
-    }
-
     params.name = params.name.underscore();
 
     // params that will be provided for the server API call (deliver_component); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
@@ -268,13 +263,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
 
     // do the remote API call
     this.deliverComponent(serverParams);
-  },
-
-  // DEPRECATED in favor or loadNetzkeComponent
-  loadComponent: function(params) {
-    Netzke.deprecationWarning("loadComponent is deprecated in favor of loadNetzkeComponent");
-    params.container = params.container || this.getId(); // for backward compatibility
-    this.loadNetzkeComponent(params);
   },
 
   /*
@@ -325,20 +313,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   },
 
   /*
-  DEPRECATED. Instantiates and renders a component with given config and container.
-  */
-  instantiateAndRenderComponent: function(config, containerId){
-    var componentInstance;
-    if (containerId) {
-      var container = Ext.getCmp(containerId);
-      componentInstance = container.instantiateChild(config);
-    } else {
-      componentInstance = this.instantiateChild(config);
-    }
-    return componentInstance;
-  },
-
-  /*
   Returns parent Netzke component
   */
   getParentNetzkeComponent: function(){
@@ -348,12 +322,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     var parentId = idSplit.join("__");
 
     return parentId === "" ? null : Ext.getCmp(parentId);
-  },
-
-  // DEPRECATED
-  getParent: function() {
-    Netzke.deprecationWarning("getParent is deprecated in favor of getParentNetzkeComponent");
-    return this.getParentNetzkeComponent();
   },
 
   /*
@@ -366,13 +334,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     } else {
       window.location.reload();
     }
-  },
-
-  /*
-  DEPRECATED: Reconfigures the component
-  */
-  reconfigure: function(config){
-    this.ownerCt.instantiateChild(config)
   },
 
   /*
@@ -399,12 +360,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     }
   },
 
-  // DEPRECATED
-  getChildComponent: function(id) {
-    Netzke.deprecationWarning("getChildComponent is deprecated in favor of getChildNetzkeComponent");
-    return this.getChildNetzkeComponent(id);
-  },
-
   /*
   Provides a visual feedback. TODO: refactor
   */
@@ -429,12 +384,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
         }
       }
     }
-  },
-
-  // DEPRECATED in favor of netzkeFeedback
-  feedback: function(msg) {
-    Netzke.deprecationWarning("feedback is deprecated in favor of netzkeFeedback");
-    this.netzkeFeedback(msg);
   },
 
   /*

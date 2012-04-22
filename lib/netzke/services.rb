@@ -50,11 +50,7 @@ module Netzke
         end
       end
 
-      def api(*api_points) #:nodoc:
-        ::ActiveSupport::Deprecation.warn("Using the 'api' call has no longer effect. Define endpoints instead.", caller)
-      end
-
-      protected
+    protected
 
       # Registers an endpoint
       def register_endpoint(ep, options)
@@ -73,10 +69,6 @@ module Netzke
       if respond_to?("_#{endpoint}_ep_wrapper")
         # we have this endpoint defined
         send("_#{endpoint}_ep_wrapper", params)
-      elsif respond_to?(endpoint)
-        # for backward compatibility
-        ::ActiveSupport::Deprecation.warn("When overriding endpoints, use the '_endpoint' suffix (concerns: #{endpoint})", caller)
-        send(endpoint, params)
       elsif respond_to?("#{endpoint}_endpoint")
         # for backward compatibility
         send("#{endpoint}_endpoint", params)

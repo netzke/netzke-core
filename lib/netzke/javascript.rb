@@ -250,14 +250,6 @@ Netzke.cache.push('#{js_xtype}');
 
       protected
 
-        # Little helper
-        def this; "this".l; end
-
-        # Little helper. E.g.:
-        #
-        #     js_property :load_mask, null
-        def null; "null".l; end
-
         # JS properties and methods merged together
         def js_extend_properties
           @js_extend_properties ||= js_properties.merge(js_methods)
@@ -302,11 +294,6 @@ Netzke.cache.push('#{js_xtype}');
     end
 
     def js_items
-      # TODO: recursively replace symbols with minimal component configs
-      #items.map do |item|
-        #item.is_a?(Symbol) ? { netzke_component: item } : item
-      #end
-
       config.items || items
     end
 
@@ -347,11 +334,6 @@ Netzke.cache.push('#{js_xtype}');
         # Merge with the rest of config options, besides those that are only meant for the server side
         res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
 
-        if config[:ext_config].present?
-          ::ActiveSupport::Deprecation.warn("Using ext_config option is deprecated. All config options must be specified at the same level in the hash.", caller)
-          res.merge!(config[:ext_config])
-        end
-
         # Items (nested Ext/Netzke components)
         res[:items] = js_items unless js_items.blank?
 
@@ -376,21 +358,15 @@ Netzke.cache.push('#{js_xtype}');
       code.blank? ? nil : code
     end
 
-    # DEPRECATED. Helper to access config[:ext_config].
-    def ext_config
-      ::ActiveSupport::Deprecation.warn("Using ext_config is deprecated. All config options must be specified at the same level in the hash.", caller)
-      config[:ext_config] || {}
-    end
+  private
 
-    private
-
-      # Merges all the translations in the class hierarchy
-      def js_translate_properties
-        @js_translate_properties ||= self.class.class_ancestors.inject({}) do |r,klass|
-          hsh = klass.js_translate.keys.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }
-          r.merge(hsh)
-        end
+    # Merges all the translations in the class hierarchy
+    def js_translate_properties
+      @js_translate_properties ||= self.class.class_ancestors.inject({}) do |r,klass|
+        hsh = klass.js_translate.keys.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }
+        r.merge(hsh)
       end
+    end
 
   end
 end

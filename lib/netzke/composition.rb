@@ -56,29 +56,6 @@ module Netzke
 
     module ClassMethods
 
-      # Defines a nested component.
-      def component_DELETEME(name, config = {}, &block)
-        register_component(name)
-        config = config.dup
-        config[:class_name] ||= name.to_s.camelize
-        config[:name] = name.to_s
-        method_name = COMPONENT_METHOD_NAME % name
-
-        if block_given?
-          define_method(method_name, &block)
-        else
-          if superclass.instance_methods.map(&:to_s).include?(method_name)
-            define_method(method_name) do
-              super().merge(config)
-            end
-          else
-            define_method(method_name) do
-              config
-            end
-          end
-        end
-      end
-
       def component(name, &block)
         register_component(name)
 
@@ -92,14 +69,6 @@ module Netzke
         end
       end
 
-      # DEPRECATED in favor of Symbol#component
-      # Component's js config used when embedding components as Container's items
-      # (see some_composite.rb for an example)
-      def js_component(name, config = {})
-        ::ActiveSupport::Deprecation.warn("Using js_component is deprecated. Use Symbol#component instead", caller)
-        config.merge(:component => name)
-      end
-
       # Register a component
       def register_component(name)
         self.registered_components |= [name]
@@ -109,18 +78,11 @@ module Netzke
 
     # Override this to specify the layout of the component
     def items
-      #@items_with_normalized_components
       []
-    end
-
-    # DEPRECATED in favor of Base.component
-    def initial_components
-      {}
     end
 
     # All components for this instance, which includes components defined on class level, and components detected in :items
     def components
-      #@components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }.merge(config[:components] || {})
       @components ||= self.class.registered_components.inject({}) do |res, name|
         component_config = Netzke::ComponentConfig.new(name, self)
         send(COMPONENT_METHOD_NAME % name, component_config)
@@ -140,20 +102,7 @@ module Netzke
       end
     end
 
-    # DEPRECATED
-    def add_component(aggr)
-      components.merge!(aggr)
-    end
-
-    # DEPRECATED
-    def remove_component(aggr)
-      if config[:persistent_config]
-        persistence_manager_class.delete_all_for_component("#{global_id}__#{aggr}")
-      end
-      components[aggr] = nil
-    end
-
-    # Called when the method_missing tries to processes a non-existing component
+    # Called when the method_missing tries to processes a non-existing component. Override when needed.
     def component_missing(aggr)
       flash :error => "Unknown component #{aggr} for component #{name}"
       {:feedback => @flash}.to_nifty_json
@@ -194,11 +143,6 @@ module Netzke
 
       res << self.class
       res.uniq
-    end
-
-    # DEPRECATED
-    def js_component(*args)
-      self.class.js_component(*args)
     end
 
     # Returns global id of a component in the hierarchy, based on passed reference that follows
