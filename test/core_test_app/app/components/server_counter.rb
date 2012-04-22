@@ -6,10 +6,12 @@ class ServerCounter < Netzke::Base
   action :do_ordered # used for test if call order is preserved
   action :fail_two_out_of_five # sends 5 requests, 2 will fail, but the request should be processed in order
 
-  js_properties(
-    :title => "Server Counter",
-    :bbar => [:count_one_time, :count_seven_times, :count_eight_times_special, :fail_in_the_middle, :do_ordered, :fail_two_out_of_five]
-  )
+  title "Server Counter"
+
+  def configure
+    super
+    config.bbar = [:count_one_time, :count_seven_times, :count_eight_times_special, :fail_in_the_middle, :do_ordered, :fail_two_out_of_five]
+  end
 
   js_method :on_count_one_time, <<-JS
     function(){

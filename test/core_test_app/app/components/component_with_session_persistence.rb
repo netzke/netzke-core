@@ -1,8 +1,6 @@
 class ComponentWithSessionPersistence < Netzke::Base
   title "Default Title"
 
-  js_property :bbar, [:bug_server]
-
   action :bug_server do |a|
     a.text = "Tell server to store new title"
   end
@@ -11,6 +9,7 @@ class ComponentWithSessionPersistence < Netzke::Base
     config.session_persistence = true
     super
     config.html = component_session[:html_content] || "Default HTML"
+    config.bbar = [:bug_server]
   end
 
   js_method :bug_server, <<-JS
@@ -30,5 +29,4 @@ class ComponentWithSessionPersistence < Netzke::Base
     component_session[:html_content] = "HTML from session" # setting some custom session key/value, which we use manually in +configuration+
     {}
   end
-
 end

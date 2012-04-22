@@ -112,24 +112,22 @@ Ext.apply(Netzke.classes.Core.Mixin, {
 
   /* initComponent common for all Netzke components */
   initComponentWithNetzke: function(){
+
+    // process and get rid of endpoints config
+    this.processEndpoints();
+    delete(this.endpoints);
+
+    // process and get rid of plugins config
+    this.processPlugins();
+    delete(this.netzkePlugins);
+
     this.normalizeActions();
 
-    Ext.each(["items", "bbar", "tbar", "fbar", "menu", "contextMenu", "buttons", "dockedItems"], function(key){
-      if (this[key]) this.detectActions(this[key]);
-    }, this);
+    this.normalizeConfig();
 
-    //this.detectActions(this);
-
-    // Detects component placeholders in the passed object (typically, "items"),
-    // and merges them with the corresponding config from this.netzkeComponents.
-    // This way it becomes ready to be instantiated properly by Ext.
-    this.detectComponents(this.items);
+    // We may also want to take care of the following: ["items", "bbar", "tbar", "fbar", "menu", "contextMenu", "buttons", "dockedItems"]
 
     this.normalizeTools();
-
-    this.processEndpoints();
-
-    this.processPlugins();
 
     // This is where the references to different callback functions will be stored
     this.callbackHash = {};
@@ -152,6 +150,18 @@ Ext.apply(Netzke.classes.Core.Mixin, {
 
     // Call the original initComponent
     this.initComponentWithoutNetzke();
+  },
+
+  /*
+   * Runs through initial config options and does the following:
+   *
+   * * detects component placeholders and replaces them with full component config found in netzkeComponents
+   * * detects action placeholders and replaces them with instances of Ext actions found in this.actions
+   */
+  normalizeConfig: function() {
+    for (key in this.initialConfig) {
+      if (Ext.isArray(this[key])) this.normalizeConfigArray(this[key]);
+    }
   },
 
   /*
@@ -218,51 +228,6 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     }
     delete(this.actions);
     this.actions = normActions;
-  },
-
-  /*
-  Detects action configs in the passed object, and replaces them with instances of Ext.Action created by normalizeActions().
-  This detects action in arbitrary level of nesting, which means you can put any other components in your toolbar, and inside of them specify menus/items or even toolbars.
-  */
-  detectActions: function(o){
-    //Ext.tmp = Ext.tmp || 0;
-    //Ext.tmp += 1;
-    //console.log("Ext.tmp:", Ext.tmp);
-    if (o.netzkeComponent) return; // Netzke components will take care of themselves
-
-    if (Ext.isObject(o)) {
-      if ((typeof o.handler === 'string') && Ext.isFunction(this[o.handler.camelize(true)])) {
-         // This button config has a handler specified as string - replace it with reference to a real function if it exists
-        o.handler = this[o.handler.camelize(true)].createDelegate(this);
-      }
-
-      Ext.each(["bbar", "tbar", "fbar", "menu", "items", "buttons", "dockedItems"], function(key){
-        if (o[key]) {
-          var items = [].concat(o[key]); // we need to do it in order to esure that this instance has a separate bbar/tbar/etc, NOT shared via class' prototype
-          delete(o[key]);
-          o[key] = items;
-          this.detectActions(o[key]);
-        }
-      }, this);
-    } else if (Ext.isArray(o)) {
-      var array = o;
-      Ext.each(array, function(el, i){
-        if (Ext.isString(el) && this.actions[el.camelize(true)]) el = {netzkeAction: el};
-
-        if (Ext.isObject(el)) {
-          if (el.netzkeAction) {
-            var actionName = el.netzkeAction.camelize(true);
-
-            if (!this.actions[actionName]) throw "Netzke: action '"+el.netzkeAction+"' not defined";
-
-            array[i] = this.actions[actionName];
-            delete(el);
-          } else {
-            this.detectActions(el);
-          }
-        }
-      }, this);
-    }
   },
 
   /*

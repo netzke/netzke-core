@@ -12,34 +12,36 @@ class ComponentWithActions < Netzke::Base
     a.icon = :accept # the accept.png icon will be looked for in Netzke::Core.icons_uri
   end
 
-  js_property :bbar, [:some_action, :another_action]
-
-  js_property :tbar, [{
-    :xtype =>  'buttongroup',
-    :columns => 3,
-    :title => 'A group',
-    :items => [{
-        :text => 'Paste',
-        :scale => 'large',
-        :rowspan => 3, :iconCls => 'add',
-        :iconAlign => 'top',
-        :cls => 'x-btn-as-arrow'
-    },{
-        :xtype => 'splitbutton',
-        :text => 'Menu Button',
-        :scale => 'large',
-        :rowspan => 3,
-        :iconCls => 'add',
-        :iconAlign => 'top',
-        :arrowAlign => 'bottom',
-        :menu => [:some_action]
-    },{
-        :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action]
-    }, :another_action,
-    {
-        :menu => [:some_action], :text => 'Format'
+  def configure
+    super
+    config.bbar = [:some_action, :another_action]
+    config.tbar = [{
+      :xtype =>  'buttongroup',
+      :columns => 3,
+      :title => 'A group',
+      :items => [{
+          :text => 'Paste',
+          :scale => 'large',
+          :rowspan => 3, :iconCls => 'add',
+          :iconAlign => 'top',
+          :cls => 'x-btn-as-arrow'
+      },{
+          :xtype => 'splitbutton',
+          :text => 'Menu Button',
+          :scale => 'large',
+          :rowspan => 3,
+          :iconCls => 'add',
+          :iconAlign => 'top',
+          :arrowAlign => 'bottom',
+          :menu => [:some_action]
+      },{
+          :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action]
+      }, :another_action,
+      {
+          :menu => [:some_action], :text => 'Format'
+      }]
     }]
-  }]
+  end
 
   js_method :on_some_action, <<-JS
     function(){

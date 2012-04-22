@@ -5,12 +5,14 @@ class ComponentWithIncludedJs < Netzke::Base
 
   action :print_message
 
-  js_property :bbar, [:print_message]
+  def configure
+    super
+    config.bbar = [:print_message]
+  end
 
   js_method :on_print_message, <<-JS
     function(){
       this.updateBodyWithMessage("Some message " + "shown in the body");
     }
   JS
-
 end

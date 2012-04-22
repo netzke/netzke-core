@@ -77,31 +77,6 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   isNetzke: true, // to distinguish Netzke components from regular Ext components
 
   /*
-  Detects component placeholders in the passed object (typically, "items"),
-  and merges them with the corresponding config from this.netzkeComponents.
-  This way it becomes ready to be instantiated properly by Ext.
-  */
-  detectComponents: function(o){
-    if (Ext.isObject(o)) {
-      if (o.items) this.detectComponents(o.items);
-    } else if (Ext.isArray(o)) {
-      var a = o;
-      Ext.each(a, function(c, i){
-        // a reference to a component can be a string, normalize
-        if (Ext.isString(c) && this.netzkeComponents[c.camelize(true)]) c = {netzkeComponent: c};
-
-        if (c.netzkeComponent) {
-          var cmpName = c.netzkeComponent,
-              cmpCfg = this.netzkeComponents[cmpName.camelize(true)];
-          if (!cmpCfg) throw "Netzke: unknown component reference " + cmpName;
-          a[i] = Ext.apply(cmpCfg, c);
-          delete a[i].netzkeComponent; // not needed any longer
-        } else if (c.items) this.detectComponents(c.items);
-      }, this);
-    }
-  },
-
-  /*
   Evaluates CSS
   */
   evalCss : function(code){
@@ -261,5 +236,41 @@ Ext.override(Ext.Container, {
     Netzke.deprecationWarning("removeChild is deprecated");
     var currentChild = this.getNetzkeComponent();
     if (currentChild) {this.remove(currentChild);}
-  }
+  },
+
+  // private
+  normalizeConfigArray: function(items){
+    var cfg, ref, cmpName, cmpCfg, actName, actCfg;
+
+    Ext.each(items, function(item, i){
+      cfg = item;
+
+      // potentially, referencing a component or action with a string
+      if (Ext.isString(item)) {
+        ref = item.camelize(true);
+        if ((this.netzkeComponents || {})[ref]) cfg = {netzkeComponent: ref};
+        else if ((this.actions || {})[ref]) cfg = {netzkeAction: ref};
+      }
+
+      if (cfg.netzkeAction) {
+        actName = cfg.netzkeAction.camelize(true);
+        if (!this.actions[actName]) throw "Netzke: unknown action " + cfg.netzkeAction;
+
+        items[i] = this.actions[actName];
+        delete(item);
+      } else if (cfg.netzkeComponent) {
+        cmpName = cfg.netzkeComponent;
+        cmpCfg = this.netzkeComponents[cmpName.camelize(true)];
+        if (!cmpCfg) throw "Netzke: unknown component " + cmpName;
+        items[i] = Ext.apply(cmpCfg, cfg);
+      } else {
+        for (key in cfg) {
+          if (Ext.isArray(cfg[key])) {
+            this.normalizeConfigArray(cfg[key]);
+          }
+        }
+      }
+    }, this);
+  },
+
 });
