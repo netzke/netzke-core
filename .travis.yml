@@ -14,4 +14,6 @@ script:
   - bundle exec rake db:create db:migrate RAILS_ENV=test
   - bundle exec rspec spec
   - bundle exec cucumber features
-  
+branches:
+  only:
+    - master
