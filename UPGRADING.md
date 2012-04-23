@@ -1,4 +1,4 @@
-# v0.7 to v0.8 migration guide
+# v0.7 to v0.8 upgrade guide
 
 ## Actions
 
