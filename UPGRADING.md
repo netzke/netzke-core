@@ -27,7 +27,12 @@ In order to override an action, you should define a method called `<action_name>
 
 Symbol#action is no longer defined. Refer to actions in toolbars/menus by simply using symbols:
 
-    js_propety :bbar, [:my_action, :destroy]
+    def configure
+      super
+      config.bbar = [:my_action, :destroy]
+    end
+
+Referring to actions on the class level with `js_property` or `js_properties` will no longer work. Define the toolbars inside the `configure` method.
 
 ## Child components
 
@@ -82,7 +87,16 @@ You should define the component's layout in the items method that should return 
 
 In this case, the component `some_child_component` should be defined with the `component` method.
 
-Previously there was a way to specify a component class directly in items, which would implicitly create a child component. This is no longer possible. The layout can now only refer to explicitly defined components.
+Previously there was a way to specify a component class directly in items (by using the `class_name` option), which would implicitly define a child component. This is no longer possible. The layout can now only refer to explicitly defined components.
+
+When no additional layout configuration is needed for a component, you can refer to them simply as symbols:
+
+    component :tab_one
+    component :tab_two
+
+    def items
+      [ :tab_one, :tab_two ]
+    end
 
 ### Specifying items in config
 
@@ -101,4 +115,6 @@ In case when a newly created component needs to change configuration values for 
       config.title = config.title + "(read-only)" if config.mode == :read_only
     end
 
-There's no more need for `default_config` or any other `*_config` methods, and they should be replaced with `configure`. In general, the need for using this method is greatly reduced.
+There's no more need for `default_config` or any other `*_config` methods, and they should be replaced with `configure`.
+
+The `configure` method is useful for defining (default) toolbars, titles, and other properties of a component.
