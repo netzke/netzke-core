@@ -3,33 +3,13 @@ require 'netzke-core'
 
 module Netzke
   describe Composition do
-    class SomeComponent < Base
-      endpoint :method_one
-      endpoint :method_two
-
-      def self.config
-        super.merge({
-          :pref_one => 1,
-          :pref_two => 2
-        })
+    class SomeComposite < Base
+      component :nested_one do |c|
+        c.klass = NestedComponentOne
       end
 
-      def components
-        {
-          :nested_one => {:class_name => 'Netzke::NestedComponentOne'},
-          :nested_two => {:class_name => 'Netzke::NestedComponentTwo'}
-        }
-      end
-
-      def available_permissions
-        %w(read update)
-      end
-
-      def default_config
-        {
-          :config_uno => true,
-          :config_dos => false
-        }
+      component :nested_two do |c|
+        c.klass = NestedComponentTwo
       end
     end
 
@@ -37,18 +17,14 @@ module Netzke
     end
 
     class NestedComponentTwo < Base
-      def components
-        {
-          :nested => {:class_name => 'Netzke::DeepNestedComponent'}
-        }
+      component :nested do |c|
+        c.klass = DeepNestedComponent
       end
     end
 
     class DeepNestedComponent < Base
-      def components
-        {
-          :nested => {:class_name => "Netzke::VeryDeepNestedComponent"}
-        }
+      component :nested do |c|
+        c.klass = VeryDeepNestedComponent
       end
     end
 
@@ -61,26 +37,38 @@ module Netzke
     class ComponentTwo < Base
     end
 
-    class SomeComposite < Base
-      component :component_one do
-        {
-          :class_name => "Netzke::ComponentOne",
-          :title => "My Cool Component"
-        }
+    class BaseComposite < Base
+      component :component_one do |c|
+        c.klass = ComponentOne
+        c.title = "My Cool Component"
       end
 
-      def config
-        {
-          :items => [
-            {:class_name => "Netzke::ComponentTwo", :name => "my_component_two"},
-            {:class_name => "Netzke::ComponentTwo"} # name omitted, will be "netzke_1"
-          ]
-        }.deep_merge super
+      component :first_component_two do |c|
+        c.klass = ComponentTwo
+      end
+
+      component :second_component_two do |c|
+        c.klass = ComponentTwo
+      end
+
+      def items
+        [ :first_component_two, :second_component_two ]
+      end
+    end
+
+    class ExtendedComposite < BaseComposite
+      def component_one_component(c)
+        super
+        c.title = c.title + ", extended"
+      end
+
+      component :component_two do |c|
+        c.title = "Another Nested Component"
       end
     end
 
     it "should be possible to create (nested) component instances" do
-      component = SomeComponent.new(:name => 'some_component')
+      component = SomeComposite.new(:name => 'some_composite')
 
       # instantiate components
       nested_component_one = component.component_instance(:nested_one)
@@ -91,42 +79,20 @@ module Netzke
       nested_component_two.class.should == NestedComponentTwo
       deep_nested_component.class.should == DeepNestedComponent
 
-      component.global_id.should == 'some_component'
-      nested_component_one.global_id.should == 'some_component__nested_one'
-      nested_component_two.global_id.should == 'some_component__nested_two'
-      deep_nested_component.global_id.should == 'some_component__nested_two__nested'
+      component.global_id.should == 'some_composite'
+      nested_component_one.global_id.should == 'some_composite__nested_one'
+      nested_component_two.global_id.should == 'some_composite__nested_two'
+      deep_nested_component.global_id.should == 'some_composite__nested_two__nested'
     end
 
-    it "should be possible to define nested components in different ways" do
-      composite = SomeComposite.new
-      components = composite.components
+     it "should be possible to override the superclass's declaration of a component" do
+       composite = BaseComposite.new
+       composite.components[:component_one][:title].should == "My Cool Component"
 
-      components.keys.size.should == 3
-      components[:component_one][:class_name].should == "Netzke::ComponentOne"
-      components[:my_component_two][:class_name].should == "Netzke::ComponentTwo"
-      components[:netzke_1][:class_name].should == "Netzke::ComponentTwo"
-
-    end
-
-    # DIDN'T WORK OUT till now
-    # it "should be possible to override the superclass's declaration of a component" do
-    #   composite = SomeComposite.new
-    #   composite.components[:component_one][:title].should == "My Cool Component"
-    #
-    #   class ExtendedComposite < SomeComposite
-    #     component :component_one do |orig|
-    #       orig.merge(:title => orig[:title] + ", extended")
-    #     end
-    #
-    #     component :component_two do
-    #       {:title => "Another Nested Component"}
-    #     end
-    #   end
-    #
-    #   extended_composite = ExtendedComposite.new
-    #   extended_composite.components[:component_one][:title].should == "My Cool Component, extended"
-    #   extended_composite.components[:component_one][:class_name].should == "ComponentOne"
-    #   extended_composite.components[:component_two][:title].should == "Another Nested Component"
-    # end
+       extended_composite = ExtendedComposite.new
+       extended_composite.components[:component_one][:title].should == "My Cool Component, extended"
+       extended_composite.components[:component_one][:klass].should == ComponentOne
+       extended_composite.components[:component_two][:title].should == "Another Nested Component"
+     end
   end
 end

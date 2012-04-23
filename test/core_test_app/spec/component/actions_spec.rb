@@ -10,8 +10,8 @@ module Netzke
     class SomeComponent < Base
       action :action_one
       action :action_two
-      action :action_three do
-        {:text => "Action three"}
+      action :action_three do |a|
+        a.text = "Action three"
       end
 
       js_property :bbar, [:action_one, :action_two]
@@ -28,7 +28,9 @@ module Netzke
         })
       end
 
-      action :action_five, :text => "Action 5"
+      action :action_five do |a|
+        a.text = "Action 5"
+      end
     end
 
     class ExtendedComponent < SomeComponent
@@ -37,20 +39,30 @@ module Netzke
     end
 
     class AnotherExtendedComponent < ExtendedComponent
-      action :action_one, :text => "Action 1"
-      action :action_five, :text => "Action Five"
-
-      def action_two_action
-        super.merge(:disabled => true, :text => normalize_action_config(super)[:text] + ", extended")
+      action :action_one do |a|
+        a.text = "Action 1"
       end
 
-      action :action_three do
-        {:text => "Action 3"}
+      action :action_five do |a|
+        a.text = "Action Five"
+      end
+
+      def action_two_action(a)
+        super
+        a.disabled = true
+        a.text = a.text + ", extended"
+      end
+
+      action :action_three do |a|
+        a.text = "Action 3"
       end
     end
 
     class YetAnotherExtendedComponent < AnotherExtendedComponent
-      action :action_two, :disabled => false
+      def action_two_action(a)
+        super
+        a.disabled = false
+      end
     end
 
     # it "should auto collect actions from both js_methods and config" do
