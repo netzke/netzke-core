@@ -1,12 +1,12 @@
 # v0.8.0 - WIP
-* API changes
-  * actions now get defined with a block (see example components)
+* enhancements
+  * many API changes, see UPGRADING.md
+  * major code clean-up and refactor
+
+* drop Ruby 1.8.7
 
 * upcoming
   * Ext JS 4.1 support
-  * Drop Ruby 1.8.7
-  * Configuration rethought
-  * Major code clean-up
 
 # v0.7.6 - WIP
 * Using Travis CI
@@ -14,7 +14,7 @@
 
 # v0.7.5 - 2012-03-05
 * API changes
-  * The :class_name option must *always* include the full class name now. So, "Basepack::GridPanel" won't work, instead do "Netzke::Basepack::GridPanel"
+  * The `:class_name` option must *always* include the full class name now. So, `Basepack::GridPanel` won't work, instead do `Netzke::Basepack::GridPanel`
 
 * enhancements
   * Set default Ext.Direct retry attempts to 0, as more than 0 may only be needed in special cases.
@@ -22,7 +22,7 @@
 # v0.7.4 - 2011-10-20
 * enhancements
   * Less aggressive rescuing at constantizing a string, to let more descriptive exceptions get through.
-  * New `delegates_to_dsl` class method to degelate default config options to class level. See the ``ConfigToDslDelegator`` module.
+  * New `delegates_to_dsl` class method to degelate default config options to class level. See the `ConfigToDslDelegator` module.
 
 # v0.7.3 - 2011-09-04
 * Rails 3.1 compatibility. Really. Hopefully.
