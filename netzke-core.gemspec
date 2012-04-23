@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".autotest",
     ".travis.yml",
-    "CHANGELOG.rdoc",
+    "CHANGELOG.md",
     "LICENSE",
     "Manifest",
     "README.md",

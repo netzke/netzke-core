@@ -1,4 +1,4 @@
-= v0.8.0 - WIP
+# v0.8.0 - WIP
 * API changes
   * actions now get defined with a block (see example components)
 
@@ -8,58 +8,58 @@
   * Configuration rethought
   * Major code clean-up
 
-= v0.7.6 - WIP
+# v0.7.6 - WIP
 * Using Travis CI
 * Rails 3.2
 
-= v0.7.5 - 2012-03-05
+# v0.7.5 - 2012-03-05
 * API changes
   * The :class_name option must *always* include the full class name now. So, "Basepack::GridPanel" won't work, instead do "Netzke::Basepack::GridPanel"
 
 * enhancements
   * Set default Ext.Direct retry attempts to 0, as more than 0 may only be needed in special cases.
 
-= v0.7.4 - 2011-10-20
+# v0.7.4 - 2011-10-20
 * enhancements
   * Less aggressive rescuing at constantizing a string, to let more descriptive exceptions get through.
-  * New +delegates_to_dsl+ class method to degelate default config options to class level. See the +ConfigToDslDelegator+ module.
+  * New `delegates_to_dsl` class method to degelate default config options to class level. See the ``ConfigToDslDelegator`` module.
 
-= v0.7.3 - 2011-09-04
+# v0.7.3 - 2011-09-04
 * Rails 3.1 compatibility. Really. Hopefully.
 
-= v0.7.2 - 2011-08-31
+# v0.7.2 - 2011-08-31
 * Rails 3.1
 * bug fix
   * When a component is dynamically loaded in a container, the load mask is now limited to that container
 * enhancements
-  * New +append+ config option for loadNetzkeComponent, which prevents emptying the container when inserting the newly loaded component; can be used for loading components into layouts different from 'fit'
+  * New u config option for loadNetzkeComponent, which prevents emptying the container when inserting the newly loaded component; can be used for loading components into layouts different from 'fit'
 
-= v0.7.1 - 2011-08-17
+# v0.7.1 - 2011-08-17
 * bug fix
   * Multiple compound Netzke components in the same Rails view were causing JS errors
 
-= v0.7.0 - 2011-08-09
+# v0.7.0 - 2011-08-09
 * Ext JS 4 compatibility
 
 * API changes
-  * New +ext_uri+ config option (defaults to "extjs") - relative URI to the Ext JS library on the server.
-  * New +ext3_compat_uri+ config option (defaults to +nil+) - relative URI to the Ext 3 compatibility layer. When nil, no compatibility layer is loaded.
-  * New +current_user_method+ config option (defaults to :current_user) to let Netzke::Core know which method to call on Rails controller to retrieve the current user.
-  * New +Netzke::Core.current_user+ method to retrieve the current user.
+  * New `ext_uri` config option (defaults to "extjs") - relative URI to the Ext JS library on the server.
+  * New `ext3_compat_uri` config option (defaults to `nil`) - relative URI to the Ext 3 compatibility layer. When nil, no compatibility layer is loaded.
+  * New `current_user_method` config option (defaults to :current_user) to let Netzke::Core know which method to call on Rails controller to retrieve the current user.
+  * New `Netzke::Core.current_user` method to retrieve the current user.
   * Passing instructions from server back to the client now is only meant for single-argument methods on client; arrays are not expanded into arguments any longer.
-  * New +instantiateChildNetzkeComponent+ method to instantiate a Netzke component by name.
+  * New `instantiateChildNetzkeComponent` method to instantiate a Netzke component by name.
   * Default component height (400) and border (false) are no longer set.
 
 * broken API
-  * The +ext_location+ config option renamed to +ext_path+
+  * The `ext_location` config option renamed to `ext_path`
   * loadNetzkeComponent (ex loadComponent) won't automatically show a component with xtype 'window' any longer; use the callback to do  that manually
 
 * enhancements
-  * +js_mixin+ without parameters will assume :component_class_name_underscored
+  * `js_mixin` without parameters will assume :component_class_name_underscored
   * Ext locale file is automatically included when I18n.locale is not :en
-  * Child components now have +itemId+ set to component's name, so that +getComponent(component_name)+ can be used to retrieve immediate child components
-  * +loadNetzkeComponent+ that should be used instead of loadComponent won't render the loaded component unless the container is specified (which can be an id or an instance)
-  * JS: +componentDeliveryFailed+ method added that is called by the +deliver_component+ endpoint
+  * Child components now have `itemId` set to component's name, so that `getComponent(component_name)` can be used to retrieve immediate child components
+  * `loadNetzkeComponent` that should be used instead of loadComponent won't render the loaded component unless the container is specified (which can be an id or an instance)
+  * JS: `componentDeliveryFailed` method added that is called by the `deliver_component` endpoint
 
 * bug fix
   * Tolerate relative_url_root when calculating the URI to icons in actions
@@ -72,33 +72,33 @@
   * feedback in favor of netzkeFeedback
   * Ext.container.Container#instantiateChild should not be used
 
-= v0.6.7 - 2011-08-16
+# v0.6.7 - 2011-08-16
 * enhancements
-  * No more using +method_missing+ for invoking endpoints.
-  * New "cache" option for +netzke_init+ which gets passed to +javascript_include_tag+ (no support for css caching of this type yet)
+  * No more using `method_missing` for invoking endpoints.
+  * New "cache" option for `netzke_init` which gets passed to `javascript_include_tag` (no support for css caching of this type yet)
   * Netzke dynamic js and css-files such as ext.js, touch.css, now get generated at the application start, and put into "public/netzke". Solves a long standing problem with serving those files by HTTP servers in some cases. Enables caching naturally.
   * Moved features and specs to test/core_test_app (tests should be run from that folder from now on)
   * Introduced plugin functionality. We can create Netzke components that are pluggable into other components as Ext JS plugins.
 
-= v0.6.6 - 2011-02-26
+# v0.6.6 - 2011-02-26
 * enhancements
   * Client-server communication is updated to use Ext.Direct (many thanks to @pschyska)
-  * Introduced +js_translate+ class method that allows specifying i18n properties used in the JavaScript class
+  * Introduced `js_translate` class method that allows specifying i18n properties used in the JavaScript class
   * Better handling of actions i18n
-  * New +Netzke::Base.class_config_option+ method to specify a class-level configuration options for a component, e.g. (in GridPanel): +class_config_option :column_filters_available, true+. This option then can be set in Rails application configuration, e.g.: `config.netzke.basepack.grid_panel.column_filters_available = false`, or directly on `Netzke::Core.config`, e.g.: `Netzke::Core.config.netzke.basepack.grid_panel.column_filters_available = false`.
+  * New `Netzke::Base.class_config_option` method to specify a class-level configuration options for a component, e.g. (in GridPanel): `class_config_option :column_filters_available, true`. This option then can be set in Rails application configuration, e.g.: `config.netzke.basepack.grid_panel.column_filters_available = false`, or directly on `Netzke::Core.config`, e.g.: `Netzke::Core.config.netzke.basepack.grid_panel.column_filters_available = false`.
 
-= v0.6.5 - 2011-01-14
+# v0.6.5 - 2011-01-14
 * enhancements
   * Various fixes for IE
   * Support for Sencha Touch
   * An endpoint can now "call" JavaScript functions that accept multiple parameters, by specifying an array, e.g.:
       {:some_js_function => [arg1, arg2]}
-  * New API: +js_mixin+ method to "mixin" JavaScript objects from external files (see RDocs).
-  * New JS class +componentLoadMask+ property to configure a mask when a component gets dynamically loaded with +loadComponent+. Accepts the same configuration as Ext.LoadMask.
-  * +js_include+ and +css_include+ accept both symbols and strings, where strings would contain full paths to the included file, whereas symbols get expanded to full paths following simple conventions (see RDocs for details).
-  * Make some of +Netzke::Core+ setup happen earlier in the loading process, so that we can safely use it while defining components.
-  * Performance improvements by memoizing +Base.constantize_class_name+.
-  * I18n for actions, see +Netzke::Actions+.
+  * New API: `js_mixin` method to "mixin" JavaScript objects from external files (see RDocs).
+  * New JS class `componentLoadMask` property to configure a mask when a component gets dynamically loaded with `loadComponent`. Accepts the same configuration as Ext.LoadMask.
+  * `js_include` and `css_include` accept both symbols and strings, where strings would contain full paths to the included file, whereas symbols get expanded to full paths following simple conventions (see RDocs for details).
+  * Make some of `Netzke::Core` setup happen earlier in the loading process, so that we can safely use it while defining components.
+  * Performance improvements by memoizing `Base.constantize_class_name`.
+  * I18n for actions, see `Netzke::Actions`.
 
 * bug fix
   * The "componentload" event now gets fired after a component is dynamically loaded. The handler receives the instance of the loaded component.
@@ -106,57 +106,57 @@
   * JS class caching was broken for name-scoped classes
   * When a component was dynamically loaded into a hidden container, it wasn't shown when the container got shown next time
 
-= v0.6.4 - 2010-11-05
+# v0.6.4 - 2010-11-05
 * enhancements
   * Implemented Netzke.isLoading(), useful for testing
   * Persistence support
 
 * API change
-  * +endpoint+ DSL call now results in a method called <endpoint_name>_endpoint, _not_ just <endpoint_name> (beware when overriding endpoint definitions, or calling endpoint methods on child components)
-  * Using +api+ for endpoint declaration is gone
+  * `endpoint` DSL call now results in a method called <endpoint_name>_endpoint, _not_ just <endpoint_name> (beware when overriding endpoint definitions, or calling endpoint methods on child components)
+  * Using `api` for endpoint declaration is gone
 
-= v0.6.3 - 2010-11-02
-* The +ext_config+ option is back, deprecated.
+# v0.6.3 - 2010-11-02
+* The `ext_config` option is back, deprecated.
 
-= v0.6.2 - 2010-10-27
+# v0.6.2 - 2010-10-27
 * Introduced the Symbol#component method to declare components in the config (instead of now deprecated js_component).
 
-= v0.6.1 - 2010-10-26
+# v0.6.1 - 2010-10-26
 * Disabled buggy implementation of rendering on-page JS classes in netzke.js instead of main page.
 
-= v0.6.0 - 2010-10-24
+# v0.6.0 - 2010-10-24
 * Rails3 compatibility, thorough rewrite
 * Much more thorough testing
 
 * API backward incompatibility
-  * +ext_config+ config level is removed; put all that configuration in the top level
-  * mentioning actions in the +bbar+, +tbar+, etc, should be explicit, e.g.:
+  * `ext_config` config level is removed; put all that configuration in the top level
+  * mentioning actions in the `bbar`, `tbar`, etc, should be explicit, e.g.:
 
       :bbar => [:apply.action, :delete.action]
 
-  * +late_aggregatee+ is now +lazy_loading+
-  * +aggregatees+ are now +components+
-  * +widgets+ are now +components+, too
-  * +api+ is now +endpoint+
-  * +persistent_config_enabled?+ is now +persistence_enabled?+
-  * Using the +js_extend_properties+ class method in your components in deprecated (and maybe even broken). Use +js_property+ (or +js_properties+) and +js_method+ instead (see multiple examples in test/core_test_app)
-  * the +load_component_with_cache+ endpoint renamed to +deliver_component+
+  * `late_aggregatee` is now `lazy_loading`
+  * `aggregatees` are now `components`
+  * `widgets` are now `components`, too
+  * `api` is now `endpoint`
+  * `persistent_config_enabled?` is now `persistence_enabled?`
+  * Using the `js_extend_properties` class method in your components in deprecated (and maybe even broken). Use `js_property` (or `js_properties`) and `js_method` instead (see multiple examples in test/core_test_app)
+  * the `load_component_with_cache` endpoint renamed to `deliver_component`
 
 * New
-  * +ext+ helper in the views to embed any (pure) Ext component into a view
-  * +component+ DSL method to declare child components
-  * +config+ DSL method to set the configuration of an instance
-  * +action+ DSL method to configure actions
-  * +js_method+ DSL method to define (public) methods in JS class
-  * +js_property+ DSL method to define (public) properties in JS class
-  * +endpoint+ DSL method to define server endpoints
+  * `ext` helper in the views to embed any (pure) Ext component into a view
+  * `component` DSL method to declare child components
+  * `config` DSL method to set the configuration of an instance
+  * `action` DSL method to configure actions
+  * `js_method` DSL method to define (public) methods in JS class
+  * `js_property` DSL method to define (public) properties in JS class
+  * `endpoint` DSL method to define server endpoints
 
 * Different deprecations throughout the code
 
-= v0.5.3 - 2010-06-14
+# v0.5.3 - 2010-06-14
 * Fix: Getting rid of deprecation warnings about tasks not sitting in lib.
 
-= v0.5.2 - 2010-06-11
+# v0.5.2 - 2010-06-11
 * Ext 3.2.1
 * Fix: Netzke::Base.before_load is now also called for the widgets embedded directly into a view.
 * New: support for external stylesheets.
@@ -165,12 +165,12 @@
 * New: any widget can now implement <tt>before_api_call</tt> interceptor. If it returns anything but empty hash, it'll be used as the result of *any* API call to this widget. The interceptor receives as parameter the name of the API call issued and the arguments. Use it to implement authorization.
 * Fix: got the Ext's state provider out of the way (thank you for all the confusion)
 
-= v0.5.1 - 2010-02-26
+# v0.5.1 - 2010-02-26
 * Compatibility with Ext 3.1.1
 * New: <tt>Netzke.page</tt> object now contains all the widgets declared on the page
 * Code: replaced (references to) deprecated function names
 
-= v0.5.0 - 2010-01-10
+# v0.5.0 - 2010-01-10
 * Compatibility with Ext 3.1.0
 * API change: Netzke widget's now should be declared directly in the views instead of controllers.
 * API change: all ExtJS and Netzke JavaScript and styles are now loaded with the help of <tt>netzke_init</tt> helper.
@@ -182,14 +182,14 @@
 * Impr: each generated JS class now has its unique xtype, e.g. "netzkegridpanel".
 * Fix: FeedbackGhost moved over from netzke-basepack.
 
-= v0.4.5.2 - 2009-11-09
+# v0.4.5.2 - 2009-11-09
 * Fix: Hash#convert_keys and Array#convert_keys in core extensions are now renamed into deep_convert_keys, and now always plainly do what they're expected to do: recursively convert keys according to given block.
 
-= v0.4.5.1 - 2009-11-09
+# v0.4.5.1 - 2009-11-09
 * Regression: fixing inheritance and caching.
 * FeedbackGhost is too simple to be a Netzke widget (having no server part), so, moved to static JavaScript.
 
-= v0.4.5 - 2009-11-08
+# v0.4.5 - 2009-11-08
 * API change: Netzke::Base: <tt>id_name</tt> accessor renamed to <tt>global_id</tt>
 * Code: several internal code changes
 * Code: lightly better test coverage
@@ -203,36 +203,36 @@
 * Impr: allows name spaced creation of Netzke widgets, e.g. widgets can now be defined under any module under Netzke, not only *directly* under Netzke.
 * New: support for Ext.Window-based widgets (it'll call show() on them when the "*_widget_render" helper is used).
 
-= v0.4.4 - 2009-10-12
+# v0.4.4 - 2009-10-12
 * API change: default handlers for actions and tools are now supposed to be prefixed with "on". E.g.: if you declare an action named <tt>clear_table</tt>, the handler must be called (in Ruby) <tt>on_clear_table</tt> (mapped to <tt>onClearTable</tt> in JavaScript).
 * Internal: the JavaScript instance now knows if persistent config is enabled (by checking this.persistentConfig).
 * Fix: solving the "Node cannot be inserted at the specified point in the hierarchy" problem by being more strict with duplicated IDs for elements on the same page.
 * Fix: Ext 3.0 compatibility.
 * Impr: <tt>getChildComponent</tt> now allows referring to a widget like this: "parent__parent__some_widget__some_nested_widget"
 
-= v0.4.3
+# v0.4.3
 * Fix: reworking loadComponent()-related code, closing a security flaw when a malicious browser could send any configuration options to instantiate the widget being loaded.
 
-= v0.4.2 - 2009-09-11
+# v0.4.2 - 2009-09-11
 * Fix: the API call (at the JavaScript side) was ignoring the callback parameter.
 * Impr: if the array of API points is empty, it's not added into js_config anymore.
 * New: new testing widgets in netzke_controller.
 * Fix: extra CSS includes now take effect.
 * New: Support for masquerading as "World". In this mode all the "touched" persistent preferences will be overwritten for all roles and users.
 
-= v0.4.1 - 2009-09-06
+# v0.4.1 - 2009-09-06
 * Version bumb to force github rebuild the gem (Manifest is now included)
 
-= v0.4.0 - 2009-09-05
+# v0.4.0 - 2009-09-05
 * Major refactoring.
 
-= v0.3.2 - 2009-06-05
+# v0.3.2 - 2009-06-05
 * Netzke doesn't overwrite session[:user] anymore to not cause authentication-related problems.
 
-= v0.3.1 - 2009-05-07
+# v0.3.1 - 2009-05-07
 * Fix: persistent_config_manager can now be set to nil, and it will work fine
 
-= v0.3.0 - 2009-05-07
+# v0.3.0 - 2009-05-07
 * Refactor: got rid of NetzkeLayout model, now all layouts are stored in netzke_preferences
 * New: persistent_config now has a method for_widget that accepts a block
 * autotest compatibility
@@ -242,27 +242,27 @@
 * Fix: (degradation) flash message is now shown again in case of erroneous attempt to load a widge
 * New: widgets now can check session[:netzke_just_logged_in] and session[:netzke_just_logged_out] automatically set by Netzke after login/logout
 
-= v0.2.11
+# v0.2.11
 * Introduction of getOwnerComponent()-method to Ext.Component. It provides the Netzke widget this Component belongs to.
 
-= v0.2.10
+# v0.2.10
 * Removed dependency on 'json' gem.
 * Rails v2.3.2 compatibility.
 
-= v0.2.9
+# v0.2.9
 * Actions, toolbars and tools reworked for easier configuration.
 * Menus introduced (based on actions).
 * Significant code clean-up.
 * Bug fix (nasty one): Ext.widgetMixIn was getting messed up along with dynamic widget loading.
 * Must work in IE now.
 
-= v0.2.8
+# v0.2.8
 * Support for extra javascripts and stylesheets per widget.
 
-= v0.2.7
+# v0.2.7
 * QuickTips get initialized now, as otherwise Ext 2.2.1 doesn't properly destroy() BoxComponents for me.
 
-= v0.2.6
+# v0.2.6
 * FeedackGhost is now capable of displaying multiple flash messages.
 * Dependencies slightly refactored.
 * An informative exception added to Base#component_instance.
@@ -272,28 +272,28 @@
 * component_missing method added to Netzke::Base - called when a non-existing aggregate of a widget is tried to be invoked
 * Code readability improvements.
 
-= v0.2.5
+# v0.2.5
 * Minor code restructuring.
 
-= v0.2.4
+# v0.2.4
 * Some minor improvements.
 
-= v0.2.3
+# v0.2.3
 * FeedbackGhost will show the feedback on the top of the screen independent of the page scrolling.
 * Ext.Panel#loadComponent will accept null as url to delete the currently loaded widget
 * Bug fix: persistent_config works again
 
-= v0.2.2
+# v0.2.2
 * js_ext_config instance method added for overwriting
 * Multiuser support
 * Using Rails.logger for logging
 * "config"-class method for every class inheriting Netzke::Base - for class-level configurations
 
-= v0.2.1
+# v0.2.1
 * Fixed the path to ext-base-min.js for production mode.
 * Also works in Safari now.
 
-= v0.2.0
+# v0.2.0
 * Some re-factoring and redesign. Now simple compound widgets can be created on the fly in the controller
 * Added ext_widget[:quiet] configuration option to suppress widget's feedback
 * Support for extra CSS sources, similar to JS
@@ -304,30 +304,30 @@
 * Permissions joined js_config
 * Bug fixes
 
-= v0.1.4
+# v0.1.4
 * Helpers added to facilitate ExtJS/netzke.js inclusion
 * The route defined for netzke_controller
 * netzke.html.erb-layout is not needed anymore, so not produced by the generator
 * Now compliant with Rails' forgery protection
 
-= v0.1.3
+# v0.1.3
 * Generators fixed
 
-= v0.1.2
+# v0.1.2
 * Fixed the bug with <widget>_class_definition returning empty string on sequential loading.
 
-= v0.1.1.1
+# v0.1.1.1
 * Meta: moving from GitHub to RubyForge
 
-= v0.1.1
+# v0.1.1
 * Inter-widget dependencies code reworked
 * JS-class code generation code slightly reworked
 
-= v0.1.0.2
+# v0.1.0.2
 * Meta: fix outdated Manifest
 
-= v0.1.0.1
+# v0.1.0.1
 * Meta work: replacing underscore with dash in the name
 
-= v0.1.0 - 2008-12-11
+# v0.1.0 - 2008-12-11
 * Initial release
