@@ -2,34 +2,6 @@ module Netzke
   module Core
     module DynamicAssets
       class << self
-        def touch_js
-          res = initial_dynamic_javascript << "\n"
-
-          include_base_js(res)
-          # Touch-specific JavaScript
-          res << File.new(File.expand_path("../../../../javascripts/touch.js", __FILE__)).read
-
-          # Pluggable JavaScript (may be used by other Netzke-powered gems like netzke-basepack)
-          Netzke::Core.touch_javascripts.each do |path|
-            f = File.new(path)
-            res << f.read
-          end
-
-          defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
-        end
-
-        def touch_css
-          res = File.new(File.expand_path("../../../../stylesheets/core.css", __FILE__)).read
-
-          # Pluggable stylesheets (may be used by other Netzke-powered gems like netzke-basepack)
-          Netzke::Core.touch_stylesheets.each do |path|
-            f = File.new(path)
-            res << f.read
-          end
-
-          res
-        end
-
         def ext_js(form_authenticity_token)
           res = initial_dynamic_javascript(form_authenticity_token) << "\n"
 

@@ -1,23 +1,18 @@
 require 'netzke/railz/action_view_ext/ext'
-require 'netzke/railz/action_view_ext/touch'
 module Netzke
   module Railz
     module ActionViewExt
       include Ext
-      include Touch
 
       # A helper to initialize Netzke. Usually used in the layout.
       #
       # Params:
-      # * :platform - :ext or :touch, by default :ext
+      # * :platform - defaults to :ext
       # * :theme - the name of theme to apply
       # * :cache - enable Rails caching of assets
       #
       # E.g.:
       #     <%= netzke_init :theme => :grey %>
-      #
-      # For Sencha Touch:
-      #     <%= netzke_init :platform => :touch %>
       def netzke_init(params = {})
         Netzke::Core.platform = params[:platform] || :ext
         theme = params[:theme] || params[:ext_theme]
@@ -79,7 +74,7 @@ module Netzke
           send :"netzke_#{Netzke::Core.platform}_js_include", params
         end
 
-        # Inline JavaScript for all Netzke classes on the page, as well as Ext.onReady (Ext.setup in case of Touch) which renders Netzke components in this view after the page is loaded
+        # Inline JavaScript for all Netzke classes on the page, as well as Ext.onReady, which renders Netzke components in this view after the page is loaded
         def netzke_js(params = {})
           send :"netzke_#{Netzke::Core.platform}_js", params
         end

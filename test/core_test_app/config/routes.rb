@@ -61,9 +61,6 @@ RailsApp::Application.routes.draw do
   # Components configured in Rails views
   match 'simple_rails/:action' => 'simple_rails', :as => 'simple_rails_views'
 
-  # Touch components
-  match 'components/touch/:component' => 'touch#index', :as => "touch_components"
-
   # Non-Netzke Ext components
   match 'ext/:component' => 'components#ext', :as => "ext"
 

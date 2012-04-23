@@ -30,7 +30,7 @@ module Netzke
     mattr_accessor :config
     @@config = {}
 
-    # :ext or :touch
+    # :ext (or :touch - when and if ever implemented)
     mattr_accessor :platform
     @@platform = :ext
 
@@ -72,16 +72,6 @@ module Netzke
     mattr_accessor :with_icons
 
     mattr_accessor :persistence_manager_class
-
-    # Sencha Touch specific
-    mattr_accessor :touch_javascripts
-    @@touch_javascripts = []
-
-    mattr_accessor :touch_stylesheets
-    @@touch_stylesheets = []
-
-    mattr_accessor :touch_uri
-    @@touch_uri = "/sencha-touch"
 
     def self.setup
       yield self

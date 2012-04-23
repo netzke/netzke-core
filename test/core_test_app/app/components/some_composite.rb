@@ -9,8 +9,7 @@ class SomeComposite < Netzke::Base
 
   def configure
     super
-    config.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server
-    ]
+    config.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server ]
   end
 
   def items

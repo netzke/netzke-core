@@ -145,11 +145,6 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     }
   },
 
-  // Used by Touch components
-  endpointUrl: function(endpoint){
-    return Netzke.RelativeUrlRoot + "/netzke/dispatcher?address=" + this.id + "__" + endpoint;
-  },
-
   // Does the call to the server and processes the response
   callServer : function(intp, params, callback, scope){
     Netzke.runningRequests++;
