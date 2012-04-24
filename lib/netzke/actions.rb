@@ -60,7 +60,6 @@ module Netzke
       def register_action(name)
         self.registered_actions |= [name]
       end
-
     end
 
     # All actions for this instance
@@ -74,6 +73,12 @@ module Netzke
 
     def js_config_with_actions #:nodoc
       actions.empty? ? js_config_without_actions : js_config_without_actions.merge(:actions => actions)
+    end
+
+  protected
+
+    def uri_to_icon(icon)
+      Netzke::Core.uri_to_icon(icon)
     end
   end
 end

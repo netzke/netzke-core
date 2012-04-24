@@ -80,5 +80,10 @@ module Netzke
     def self.reset_components_in_session
       Netzke::Core.session[:netzke_components].try(:clear)
     end
+
+    # returns a full URI to an icon file by its name
+    def self.uri_to_icon(icon)
+      with_icons ? [(controller && controller.config.relative_url_root), icons_uri, '/', icon.to_s, ".png"].join : nil
+    end
   end
 end
