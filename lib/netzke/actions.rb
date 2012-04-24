@@ -43,26 +43,6 @@ module Netzke
     end
 
     module ClassMethods
-      def action_DELETEME(name, config = {}, &block)
-        register_action(name)
-        config[:name] = name.to_s
-        method_name = ACTION_METHOD_NAME % name
-
-        if block_given?
-          define_method(method_name, &block)
-        else
-          if superclass.instance_methods.map(&:to_s).include?(method_name)
-            define_method(method_name) do
-              super().merge(config)
-            end
-          else
-            define_method(method_name) do
-              config
-            end
-          end
-        end
-      end
-
       def action(name, &block)
         register_action(name)
 
@@ -85,7 +65,6 @@ module Netzke
 
     # All actions for this instance
     def actions
-      #@actions ||= self.class.registered_actions.inject({}){ |res, name| res.merge(name.to_sym => normalize_action_config(send(ACTION_METHOD_NAME % name).merge(:name => name.to_s))) }
       @actions ||= self.class.registered_actions.inject({}) do |res, name|
         action_config = Netzke::ActionConfig.new(name, self)
         send(ACTION_METHOD_NAME % name, action_config)
