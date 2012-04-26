@@ -6,21 +6,21 @@
 
 Here are the current 2 ways of defining actions:
 
-    action :destroy do |a|
-      a.text = "Destroy!"
-      a.tooltip = "Destroying it all"
-      a.icon = :delete
+    action :destroy do |c|
+      c.text = "Destroy!"
+      c.tooltip = "Destroying it all"
+      c.icon = :delete
     end
 
     action :my_action # it will use the default (eventually localized) values for text and tooltip
 
 ### Overriding actions in inherited classes
 
-In order to override an action, you should define a method called `<action_name>_action`:
+Overriding an action, you should make use of the `super` method, passing to it the action config:
 
-    def destroy_action(a)
-      super # to get what was defined in the super class
-      a.text = "Destroy if you dare" # overriding the text
+    action :destroy do |c|
+      super(c) # do the super class` config
+      c.text = "Destroy if you dare" # overriding the text
     end
 
 ### Referring to actions in toolbars/menus
@@ -61,10 +61,10 @@ Defining a component in a class gives an advantage of accessing the `config` met
 
 ### Overriding child components
 
-In order to override a component, you should define a method called `<components_name>_component`:
+Overriding a component, you should make use of the `super` method, passing to it the component config:
 
-    def simple_component_component(c)
-      super # to get superclass' config
+    component :simple_component do |c|
+      super(c) # do the super class` config
       c.klass = LessSimpleComponent # use a different class
     end
 
@@ -100,7 +100,7 @@ When no additional layout configuration is needed for a component, you can refer
 
 ### Specifying items in config
 
-It is possible to specify the items in the config in the same format as it is done in the "items" method. If config.items is provided, it takes precedence over the `items` method. This can be useful for modifying the default layout of a child component by means of configuring it.
+It is possible to specify the items in the config in the same format as it is done in the `items` method. If `config.items` is provided, it takes precedence over the `items` method. This can be useful for modifying the default layout of a child component by means of configuring it.
 
 It's advised to override the `items` method when a component needs to define it's layout, and not use the `configure` method for that (see the **Self-configuration** section).
 
@@ -108,7 +108,7 @@ It's advised to override the `items` method when a component needs to define it'
 
 ### The `configure` method
 
-In case when a newly created component needs to change configuration values for its instance, it should define the `configure` method and make use of the component's global `config` method (which is an instance of ActiveSupport::OrderedOptions):
+In case when a newly created component needs to change configuration values for its instance, it should define the `configure` method and make use of the component's global `config` method (which is an instance of `ActiveSupport::OrderedOptions`):
 
     def configure
       super # let the base class do its work, e.g. set the `config` instance with the config values passed by this component's user
@@ -117,4 +117,4 @@ In case when a newly created component needs to change configuration values for 
 
 There's no more need for `default_config` or any other `*_config` methods, and they should be replaced with `configure`.
 
-The `configure` method is useful for defining (default) toolbars, titles, and other properties of a component.
+The `configure` method is useful for (dynamically) defining toolbars, titles, and other properties of a component's instance.
