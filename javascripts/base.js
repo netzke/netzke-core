@@ -178,6 +178,11 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     Netzke.componentNotInSessionHandler();
   },
 
+  // Returns a URL for old-fashion requests (used at multi-part form non-AJAX submissions)
+  endpointUrl: function(endpoint){
+    return Netzke.RelativeUrlRoot + "/netzke/dispatcher?address=" + this.id + "__" + endpoint;
+  },
+
   // private
   normalizeConfigArray: function(items){
     var cfg, ref, cmpName, cmpCfg, actName, actCfg;

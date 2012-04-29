@@ -1,5 +1,4 @@
 class NetzkeController < ApplicationController
-
   # Action for Ext.Direct RPC calls
   def direct
     result=""
@@ -24,7 +23,7 @@ class NetzkeController < ApplicationController
     render :text => result, :layout => false, :status => error ? 500 : 200
   end
 
-  # Used in development mode for on-the-fly generation of public/netzke/ext.[js|css]
+  # On-the-fly generation of public/netzke/ext.[js|css]
   def ext
     respond_to do |format|
       format.js {
@@ -35,6 +34,11 @@ class NetzkeController < ApplicationController
         render :text => Netzke::Core::DynamicAssets.ext_css
       }
     end
+  end
+
+  # Old-way action used at multi-part form submission (endpointUrl)
+  def dispatcher
+    endpoint_dispatch(params[:address])
   end
 
 protected
@@ -57,6 +61,19 @@ protected
       :method => action,
       :result => result.present? && result.l || {}
     }.to_json
+  end
+
+  # The dispatcher for the old-style requests (used for multi-part form submission). The URL contains the name of the component,
+  # as well as the method of this component to be called, according to the double underscore notation.
+  # E.g.: some_grid__post_grid_data.
+  def endpoint_dispatch(endpoint_path)
+    component_name, *sub_components = endpoint_path.split('__')
+    component_instance = Netzke::Base.instance_by_config(Netzke::Core.session[:netzke_components][component_name.to_sym])
+
+    # We render text/plain, so that the browser never modifies our response
+    response.headers["Content-Type"] = "text/plain; charset=utf-8"
+
+    render :text => component_instance.invoke_endpoint(sub_components.join("__"), params), :layout => false
   end
 
 end
