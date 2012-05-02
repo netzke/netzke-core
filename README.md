@@ -1,5 +1,7 @@
 # Netzke Core
 
+[![Build Status](https://secure.travis-ci.org/skozlov/netzke-core.png?branch=master)](http://travis-ci.org/skozlov/netzke-core)
+
 Netzke Core is the bare bones of the [Netzke framework](https://github.com/skozlov/netzke). For pre-built full-featured components (like grids, forms, tab/accordion panels, applications, etc), see [netzke-basepack](http://github.com/skozlov/netzke-basepack) (Ext JS).
 
 Netzke Core takes the burden of implementing the following key aspects of the framework:
