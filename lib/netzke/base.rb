@@ -14,7 +14,13 @@ require 'netzke/session'
 require 'netzke/config_to_dsl_delegator'
 
 module Netzke
-  # The base for every Netzke component
+  # The base class for every Netzke component. Its main responsibilities include:
+  # * JavaScript class generation and inheritance (using Ext JS class system) which reflects the Ruby class inheritance (see {Netzke::Javascript})
+  # * Nesting and dynamic loading of child components (see {Netzke::Composition})
+  # * Ruby-side action declaration (see {Netzke::Actions})
+  # * I18n
+  # * Client-server communication (see {Netzke::Services})
+  # * Session-based persistence (see {Netzke::State})
   #
   # == Class-level configuration
   # You can configure component classes in Rails Application, e.g.:

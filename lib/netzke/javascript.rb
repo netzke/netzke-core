@@ -1,17 +1,38 @@
 require "netzke/javascript/scopes"
 module Netzke
-  # == Component's JavaScript class generation
-  # Each component operates on both client and server side. At the server side it's represented by a Ruby class, at the client side it's represented by a corresponding JavaScript class (extending one of the Ext JS classes, specified by Netzke::Base.js_base_class, or, in case of extending an existing Netzke component, that component's JavaScript class).
+  # == JavaScript class generation
   #
-  # The following public JavaScript methods are defined on all Netzke components
-  # *
+  # (For class-level DSL methods mentioned here see {ClassMethods})
   #
-  # Here's a brief explanation on how a javascript class for a component gets built.
-  # Component gets defined as a constructor (a function) by +js_class+ class method (see "Inside component's contstructor").
-  # +Ext.extend+ provides inheritance from an Ext class specified in +js_base_class+ class method.
+  # Each component operates on both client and server side. At the server side it's represented (naturally) by a Ruby class, at the client side it's represented by a corresponding JavaScript class. The JavaScript class extends the Ext JS class specified by +js_base_class+, or, in case of extending an existing Netzke component, that component's JavaScript class.
   #
-  # == Inside component's constructor
-  # * Component's constructor gets called with a parameter that is a configuration object provided by +config+ instance method. This configuration is specific for the instance of the component, and, for example, contains this component's unique id. As another example, by means of this configuration object, a grid receives the configuration array for its columns, a form - for its fields, etc.
+  # A component can "mixin" a JavaScript object from a .js file into its class by using the +js_mixin+ +method+.
+  #
+  # When the component has some extra JavaScript code as dependency, this can be included by using +js_include+ method.
+  #
+  # Defining JavaScript class-level properties (besides putting them right into a JavaScript mixin) is possible in Ruby by using the +js_property+ and +js_properties+ methods.
+  #
+  # An example of using these methods:
+  #
+  #     class MyTabPanel < Netzke::Base
+  #       js_base_class "Ext.tab.Panel"
+  #       js_mixin :extra_properties # mixin my_component/javascripts/extra_properties.js
+  #       js_include :some_javascript_dependency # include my_component/javascripts/some_javascript_dependency.js
+  #       js_property :active_tab, 0 # this could also be defined in extra_properties.js
+  #       # ...
+  #     end
+  #
+  # == JavaScript class instantiation
+  #
+  # The JavaScript class gets instantiated with the config object defined by the +js_config+ method as constructor parameter.
+  #
+  # == JavaScript instance methods
+  #
+  # The following public JavaScript methods are defined on (mixed-in into) all Netzke components (for detailed documentation on them see the inline documentation in javascript/base.js and javascript/ext.js files):
+  # * loadNetzkeComponent - dynamically loads a child Netzke component
+  # * instantiateChildNetzkeComponent - instantiates and returns a Netzke component by its item_id
+  # * netzkeFeedback - shows a feedback message
+  # * componentNotInSession - gets called when the session that the component is defined in gets expired. Override it to do whatever is appropriate.
   module Javascript
     extend ActiveSupport::Concern
 
@@ -238,58 +259,53 @@ Netzke.cache.push('#{js_xtype}');
         res
       end
 
-      # DEPRECATED. Returns an array of included files. Made to be overridden. +js_include+ is preferred way.
-      def include_js
-        []
-      end
-
       # JavaScript code needed for this particulaer class. Includes external JS code and the JS class definition for self.
       def js_code
         [js_included, js_class].join("\n")
       end
 
-      protected
+    protected
 
-        # JS properties and methods merged together
-        def js_extend_properties
-          @js_extend_properties ||= js_properties.merge(js_methods)
-        end
+      # JS properties and methods merged together
+      def js_extend_properties
+        @js_extend_properties ||= js_properties.merge(js_methods)
+      end
 
-        # Generates declaration of the JS class as direct extension of a Ext component
-        def js_class_declaration_new_component
-          mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
+      # Generates declaration of the JS class as direct extension of a Ext component
+      def js_class_declaration_new_component
+        mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
 
-          # Resulting JS:
+        # Resulting JS:
 %(Ext.define('#{js_full_class_name}', Netzke.chainApply({
-  extend: '#{js_base_class}',
-  alias: '#{js_alias}',
-  constructor: function(config) {
-    Netzke.aliasMethodChain(this, "initComponent", "netzke");
-    #{js_full_class_name}.superclass.constructor.call(this, config);
-  }
+extend: '#{js_base_class}',
+alias: '#{js_alias}',
+constructor: function(config) {
+  Netzke.aliasMethodChain(this, "initComponent", "netzke");
+  #{js_full_class_name}.superclass.constructor.call(this, config);
+}
 }, Netzke.componentMixin,\n#{mixins} #{js_extend_properties.to_nifty_json}));)
-        end
+      end
 
-        # Generates declaration of the JS class as extension of another Netzke component
-        def js_class_declaration_extending_component
-          base_class = superclass.js_full_class_name
+      # Generates declaration of the JS class as extension of another Netzke component
+      def js_class_declaration_extending_component
+        base_class = superclass.js_full_class_name
 
-          mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
+        mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
 
-          # Resulting JS:
+        # Resulting JS:
 %(Ext.define('#{js_full_class_name}', Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}, {
-  extend: '#{base_class}',
-  alias: '#{js_alias}'
+extend: '#{base_class}',
+alias: '#{js_alias}'
 }));)
-        end
+      end
 
-        def expand_js_include_path(sym, callr) # :nodoc:
-          %Q(#{callr.split(".rb:").first}/javascripts/#{sym}.js)
-        end
+      def expand_js_include_path(sym, callr) # :nodoc:
+        %Q(#{callr.split(".rb:").first}/javascripts/#{sym}.js)
+      end
 
-        def extends_netzke_component? # :nodoc:
-          superclass != Netzke::Base
-        end
+      def extends_netzke_component? # :nodoc:
+        superclass != Netzke::Base
+      end
 
     end
 
@@ -297,9 +313,7 @@ Netzke.cache.push('#{js_xtype}');
       config.items || items
     end
 
-    # The result of this method (a hash) is converted to a JSON object and passed as options
-    # to the constructor of our JavaScript class. Override it when you want to pass any extra configuration
-    # to the JavaScript side.
+    # The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class. Override it when you want to pass any extra configuration to the JavaScript side.
     def js_config
       {}.tap do |res|
         # Unique id of the component
