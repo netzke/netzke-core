@@ -1,20 +1,62 @@
 module Netzke
-  # This module takes care of components composition.
+  # Any Netzke component can define child components, which can either be statically nested in the compound layout (e.g. as different regions of the 'border' layout), or dynamically loaded at a request (as is the advanced search panel in Basepack::GridPanel, for example).
   #
-  # You can define a nested component by calling the +component+ class method:
+  # == Defining a component
   #
-  #     component :users, :data_class => "GridPanel", :model => "User"
+  # You can define a child component by calling the +component+ class method which normally requires a block:
   #
-  # The method also accepts a block in case you want access to the component's instance:
-  #
-  #     component :books do
-  #       {:data_class => "Book", :title => build_title}
+  #     component :users do |c|
+  #       c.klass = GridPanel
+  #       c.model = "User"
+  #       c.title = "Users"
   #     end
   #
-  # To override a component, define a method {component_name}_component, e.g.:
+  # If no configuration is required, and the component's class name can be derived from its name, then the block can be omitted, e.g.:
   #
-  #     def books_component
-  #       super.merge(:title => "Modified Title")
+  #     component :user_grid
+  #
+  # which is equivalent to:
+  #
+  #     component :user_grid do |c|
+  #       c.klass = UserGrid
+  #     end
+  #
+  # == Overriding a component
+  #
+  # When overriding a component, the `super` method should be called, with the configuration object passed to it as parameter:
+  #
+  #     component :users do |c|
+  #       super(c)
+  #       c.title = "Modified Title"
+  #     end
+  #
+  # == Referring to components in layouts
+  #
+  # When a child component is to be used in the layout, it can be referred by using the `netzke_component` key in the configuration hash:
+  #
+  #     def items
+  #       [
+  #         { xtype: :panel, title: "Simple Ext panel" },
+  #         { netzke_component: :users, title: "A Netzke component" }
+  #       ]
+  #     end
+  #
+  # If no extra (layout) configuration is needed, a component can be simply referred by using a symbol, e.g.:
+  #
+  #     component :tab_one # ...
+  #     component :tab_two # ...
+  #
+  #     def items
+  #       [ :tab_one, :tab_two ]
+  #     end
+  #
+  # == Lazily vs eagerly loaded components
+  #
+  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `loadNetzkeComponent` (see {Netzke::Javascript}). Referring a component in the layout automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `lazy_loading` can be set to false:
+  #
+  #     component :eagerly_loaded_window do |c|
+  #       c.klass = SomeWindowComponent
+  #       c.lazy_loading = false
   #     end
   module Composition
     extend ActiveSupport::Concern
