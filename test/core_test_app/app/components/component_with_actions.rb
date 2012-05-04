@@ -12,9 +12,14 @@ class ComponentWithActions < Netzke::Base
     a.icon = :accept # the accept.png icon will be looked for in Netzke::Core.icons_uri
   end
 
+  action :action_with_custom_handler do |c|
+    c.text = "Action with custom handler"
+    c.handler = :custom_action_handler
+  end
+
   def configure
     super
-    config.bbar = [:some_action, :another_action]
+    config.bbar = [:some_action, :another_action, :action_with_custom_handler]
     config.tbar = [{
       :xtype =>  'buttongroup',
       :columns => 3,
@@ -55,4 +60,9 @@ class ComponentWithActions < Netzke::Base
     }
   JS
 
+  js_method :custom_action_handler, <<-JS
+    function(){
+      this.update("Custom action handler was called");
+    }
+  JS
 end

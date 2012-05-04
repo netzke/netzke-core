@@ -34,6 +34,21 @@ Symbol#action is no longer defined. Refer to actions in toolbars/menus by simply
 
 Referring to actions on the class level with `js_property` or `js_properties` will no longer work. Define the toolbars inside the `configure` method.
 
+### I18n of actions
+
++text+, +tooltip+ and +icon+ for an action will be picked up from a locale file (if located there) whenever they are not specified in the config.
+E.g., an action named "some_action" and defined in the component +MyComponents::CoolComponent+, will look for its text in:
+
+    I18n.t('my_components.cool_component.actions.some_action.text')
+
+for its tooltip in:
+
+    I18n.t('my_components.cool_component.actions.some_action.tooltip')
+
+and for its icon in:
+
+    I18n.t('my_components.cool_component.actions.some_action.icon')
+
 ## Child components
 
 ### Defining child components

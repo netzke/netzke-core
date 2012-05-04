@@ -8,5 +8,7 @@ es:
     property_two: Segunda propriedad
     action_two: Segunda acción
     actions:
-      action_one: Primera acción
-      action_three: Tercera acción
+      action_one:
+        text: Primera acción
+      action_three:
+        text: Tercera acción

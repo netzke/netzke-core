@@ -23,5 +23,4 @@ class ServerCaller < Netzke::Base
   endpoint :whats_up do |params|
     {:set_title => "All quiet here on the server"}
   end
-
 end
