@@ -122,17 +122,11 @@ class ComponentLoader < Netzke::Base
     }
   JS
 
-  def deliver_component_endpoint(params)
+  endpoint :deliver_component do |params, this|
     if params[:name] == "simple_component" && params[:html]
       components[:simple_component].merge!(:html => params[:html])
     end
-    super
+    super(params, this)
   end
-
-  # For visual testing purposes
-  # def deliver_component_endpoint(params)
-  #   sleep 2
-  #   super
-  # end
 
 end

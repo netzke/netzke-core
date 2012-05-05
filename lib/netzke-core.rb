@@ -5,6 +5,7 @@ require 'netzke/base'
 require 'netzke/plugin'
 require 'netzke/action_config'
 require 'netzke/component_config'
+require 'netzke/endpoint_response'
 
 module Netzke
   autoload :Core, 'netzke/core'

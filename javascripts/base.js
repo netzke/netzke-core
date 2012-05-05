@@ -132,7 +132,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       for (var instr in instructions) {
         if (Ext.isFunction(this[instr])) {
           // Executing the method.
-          this[instr].apply(this, [instructions[instr]]);
+          this[instr].apply(this, instructions[instr]);
         } else {
           var childComponent = this.getChildNetzkeComponent(instr);
           if (childComponent) {

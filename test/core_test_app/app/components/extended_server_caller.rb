@@ -10,10 +10,9 @@ class ExtendedServerCaller < ServerCaller
   JS
 
   # Overriding the :whats_up endpoint from ServerCaller
-  def whats_up_endpoint(params)
-    super.tap do |s|
-      s[:set_title] = s[:set_title] + ", shiny weather"
-    end
-  end
+  endpoint :whats_up do |params, this|
+    super(params, this)
 
+    this.set_title(this.set_title[0] + ", shiny weather")
+  end
 end

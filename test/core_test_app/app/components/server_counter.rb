@@ -60,6 +60,12 @@ class ServerCounter < Netzke::Base
     }
   JS
 
+  js_method :update_content, <<-JS
+    function(html){
+      this.update(html);
+    }
+  JS
+
   js_method :update_appending, <<-JS
     function(html){
       if (!this.panelText) { this.panelText = ""; }
@@ -81,34 +87,33 @@ class ServerCounter < Netzke::Base
     component_session[:count] = 0
   end
 
-  endpoint :count do |params|
+  endpoint :count do |params, this|
     component_session[:count] ||= 0
     component_session[:count] += params[:how_many]
-    {:update => "I am at " + component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : '')}
+    this.update_content("I am at " + component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : ''))
   end
 
-  endpoint :successing_endpoint do |params|
-    {:update  => "Something successed "}
+  endpoint :successing_endpoint do |params, this|
+    this.update_content("Something successed ")
   end
 
-  endpoint :failing_endpoint do |params|
+  endpoint :failing_endpoint do |params, this|
     throw "something happened"
-    {:update => "This will never get returned"}
   end
 
-  endpoint :first_ep do |params|
+  endpoint :first_ep do |params, this|
     component_session[:count]||=0
     component_session[:count]+=1
-    {:update => "First. "+ component_session[:count].to_s}
+    this.update_content("First. "+ component_session[:count].to_s)
   end
 
-  endpoint :second_ep do |params|
+  endpoint :second_ep do |params, this|
     component_session[:count]||=0
     component_session[:count]+=1
-    {:update => "Second. "+ component_session[:count].to_s}
+    this.update_content("Second. "+ component_session[:count].to_s)
   end
 
-  endpoint :fail_two_out_of_five do |count|
+  endpoint :fail_two_out_of_five do |count, this|
     component_session[:count] ||= 0
     component_session[:count] += 1
 
@@ -119,7 +124,7 @@ class ServerCounter < Netzke::Base
     end
 
     component_session[:is_retry] = false
-    {:update_appending => count}
+    this.update_appending(count)
   end
 
 end

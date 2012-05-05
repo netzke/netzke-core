@@ -49,7 +49,7 @@ protected
 
     if components_in_session
       component_instance = Netzke::Base.instance_by_config(components_in_session[component_name.to_sym])
-      result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params)
+      result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params).to_nifty_json
     else
       result = {:component_not_in_session => true}.to_nifty_json
     end
@@ -73,7 +73,7 @@ protected
     # We render text/plain, so that the browser never modifies our response
     response.headers["Content-Type"] = "text/plain; charset=utf-8"
 
-    render :text => component_instance.invoke_endpoint(sub_components.join("__"), params), :layout => false
+    render :text => component_instance.invoke_endpoint(sub_components.join("__"), params).to_nifty_json, :layout => false
   end
 
 end

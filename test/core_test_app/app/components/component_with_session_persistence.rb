@@ -24,9 +24,8 @@ class ComponentWithSessionPersistence < Netzke::Base
     }
   JS
 
-  endpoint :whats_up do |params|
+  endpoint :whats_up do |params, this|
     update_session_options(:title => "Title From Session") # setting a value in session_options, which will get auto-merged into +config+
     component_session[:html_content] = "HTML from session" # setting some custom session key/value, which we use manually in +configuration+
-    {}
   end
 end

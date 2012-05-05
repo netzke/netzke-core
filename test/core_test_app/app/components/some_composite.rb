@@ -43,12 +43,12 @@ class SomeComposite < Netzke::Base
     c.border = false
   end
 
-  endpoint :update_east_south do |params|
-    {:east_south_panel => {:set_title => "Here's an update for south panel in east panel"}}
+  endpoint :update_east_south do |params, this|
+    this.east_south_panel.set_title("Here's an update for south panel in east panel")
   end
 
-  endpoint :update_west do |params|
-    {:west_panel => {:set_title => "Here's an update for west panel"}}
+  endpoint :update_west do |params, this|
+    this.west_panel.set_title("Here's an update for west panel")
   end
 
   js_method :on_update_west_panel, <<-JS
@@ -74,5 +74,4 @@ class SomeComposite < Netzke::Base
       this.updateWest();
     }
   JS
-
 end

@@ -2,8 +2,8 @@ module ExtDirect
   class Details < Netzke::Base
     js_property :padding, 5
 
-    endpoint :update do |params|
-      {:set_title => title}
+    endpoint :update do |params, this|
+      this.set_title title
     end
 
     def title

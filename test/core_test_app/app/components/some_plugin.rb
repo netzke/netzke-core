@@ -32,8 +32,8 @@ class SomePlugin < Netzke::Plugin
     }
   JS
 
-  endpoint :process_gear do |params|
-    {:process_gear_callback => "Server response"}
+  endpoint :process_gear do |params, this|
+    this.process_gear_callback("Server response")
   end
 
 end

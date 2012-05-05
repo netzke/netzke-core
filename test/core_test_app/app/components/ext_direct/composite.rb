@@ -25,7 +25,7 @@ module ExtDirect
       ]
     end
 
-    endpoint :set_user do |params|
+    endpoint :set_user do |params, this|
       component_session[:user] = params
     end
 

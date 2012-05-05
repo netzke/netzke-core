@@ -40,38 +40,30 @@ module Netzke
       #
       # This will result in the call to the +setTitle+ method on the client side of the component, with "New title, set by the server" as the parameter.
       def endpoint(name, options = {}, &block)
-        register_endpoint(name, options)
-        define_method("#{name}_endpoint", &block) if block # if no block is given, the method is supposed to be defined elsewhere
-
-        # define_method name, &block if block # if no block is given, the method is supposed to be defined elsewhere
-        define_method :"_#{name}_ep_wrapper" do |*args|
-          res = send("#{name}_endpoint", *args)
-          res.respond_to?(:to_nifty_json) && res.to_nifty_json || ""
-        end
+        register_endpoint(name)
+        define_method("#{name}_endpoint", &block)
       end
 
     protected
 
       # Registers an endpoint
-      def register_endpoint(ep, options)
-        self.endpoints = self.endpoints.dup.merge(ep => options)
+      def register_endpoint(ep)
+        self.endpoints = self.endpoints.dup if self.superclass.respond_to?(:endpoints) && self.endpoints == self.superclass.endpoints #  only dup for the first endpoint declaration
+        self.endpoints[ep.to_sym] = true
       end
 
     end
 
-    # Invokes endpoint calls
+    # Invokes an endpoint call
     # +endpoint+ may contain the path to the endpoint in a component down the hierarchy, e.g.:
     #
     #     invoke_endpoint(:users__center__get_data, params)
     def invoke_endpoint(endpoint, params)
-      ep_config = self.class.endpoints[endpoint.to_sym]
+      if self.class.endpoints[endpoint.to_sym]
+        endpoint_response = Netzke::EndpointResponse.new
+        send("#{endpoint}_endpoint", params, endpoint_response)
 
-      if respond_to?("_#{endpoint}_ep_wrapper")
-        # we have this endpoint defined
-        send("_#{endpoint}_ep_wrapper", params)
-      elsif respond_to?("#{endpoint}_endpoint")
-        # for backward compatibility
-        send("#{endpoint}_endpoint", params)
+        endpoint_response
       else
         # Let's try to find it recursively in a component down the hierarchy
         child_component, *action = endpoint.to_s.split('__')

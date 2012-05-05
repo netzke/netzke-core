@@ -74,7 +74,7 @@ module Netzke
       # * <tt>:cache</tt> - an array of component classes cached at the browser
       # * <tt>:id</tt> - reference to the component
       # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
-      endpoint :deliver_component do |params|
+      endpoint :deliver_component do |params, this|
         cache = params[:cache].split(",") # array of cached xtypes
         component_name = params[:name].underscore.to_sym
         component = components[component_name] && component_instance(component_name)
@@ -83,14 +83,13 @@ module Netzke
           # inform the component that it's being loaded
           component.before_load
 
-          [{
-            :eval_js => component.js_missing_code(cache),
-            :eval_css => component.css_missing_code(cache)
-          }, {
-            :component_delivered => component.js_config
-          }]
+          js, css = component.js_missing_code(cache), component.css_missing_code(cache)
+          this.eval_js(js) if js.present?
+          this.eval_css(css) if css.present?
+
+          this.component_delivered(component.js_config);
         else
-          {:component_delivery_failed => {:component_name => component_name, :msg => "Couldn't load component '#{component_name}'"}}
+          this.component_delivery_failed(component_name: component_name, msg: "Couldn't load component '#{component_name}'")
         end
       end
 
