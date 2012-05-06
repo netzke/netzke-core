@@ -26,10 +26,10 @@ class ServerCaller < Netzke::Base
   end
 
   endpoint :multiple_arguments do |params, this|
-    this.take_two_arguments("First argument", "Second argument");
+    this.take_two_arguments("First argument", "Second argument")
   end
 
   endpoint :array_as_argument do |params, this|
-    this.take_array_as_argument(['Element 1', 'Element 2']);
+    this.take_array_as_argument(['Element 1', 'Element 2'])
   end
 end
