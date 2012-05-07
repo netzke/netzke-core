@@ -32,10 +32,12 @@ module Netzke
       # * <tt>:cache</tt> - an array of component classes cached at the browser
       # * <tt>:id</tt> - reference to the component
       # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
+      # <tt>params</tt> my contain:
+      # * <tt>:config</tt> - config to be used on component instantiation
       endpoint :deliver_component do |params|
         cache = params[:cache].split(",") # array of cached xtypes
         component_name = params[:name].underscore.to_sym
-        component = components[component_name] && component_instance(component_name)
+        component = components[component_name] && component_instance(component_name, params[:config].symbolize_keys)
 
         if component
           # inform the component that it's being loaded
