@@ -1,5 +1,8 @@
 class ExtendedServerCaller < ServerCaller
-  title "Extended Server Caller"
+  def configure
+    super
+    config.title = "Extended Server Caller"
+  end
 
   js_method :on_bug_server, <<-JS
     function(){

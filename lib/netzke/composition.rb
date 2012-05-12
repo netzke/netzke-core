@@ -164,7 +164,7 @@ module Netzke
           klass = component_config[:klass]
           raise ArgumentError, "No class specified for component #{cmp} of #{composite.global_id}" if klass.nil?
 
-          instance_config = weak_children_config.merge(component_config).merge(strong_config).merge(:name => cmp)
+          instance_config = {}.merge(component_config).merge(strong_config).merge(:name => cmp)
 
           composite = klass.new(instance_config, composite) # params: config, parent
         end

@@ -1,6 +1,4 @@
 class ComponentWithActions < Netzke::Base
-  title "Panel that has actions"
-
   action :some_action do |a|
     a.text = "Some Cool Action"
     a.icon = Netzke::Core.icons_uri + "/delete.png" # specify full icon path
@@ -19,6 +17,7 @@ class ComponentWithActions < Netzke::Base
 
   def configure
     super
+    config.title = "Panel that has actions"
     config.bbar = [:some_action, :another_action, :action_with_custom_handler]
     config.tbar = [{
       :xtype =>  'buttongroup',

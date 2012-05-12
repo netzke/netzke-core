@@ -1,12 +1,11 @@
 class ComponentWithSessionPersistence < Netzke::Base
-  title "Default Title"
-
   action :bug_server do |a|
     a.text = "Tell server to store new title"
   end
 
   def configure
     config.session_persistence = true
+    config.title = "Default Title"
     super
     config.html = component_session[:html_content] || "Default HTML"
     config.bbar = [:bug_server]

@@ -1,6 +1,9 @@
 class HelloWorldComponent < Netzke::Base
-  # Ext.Panel's config option "title"
-  title "My Hello World Component"
+  def configure
+    super
+    # Ext.Panel's config option "title"
+    config.title = "My Hello World Component"
+  end
 
   # Bottom bar with an automatically created action
   js_property :bbar, [:bug_server]

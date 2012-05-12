@@ -1,6 +1,4 @@
 class ServerCaller < Netzke::Base
-  title "Server Caller!"
-
   action :bug_server # Actual action's text is set in en.yml
   action :no_response
   action :multiple_arguments
@@ -16,6 +14,7 @@ class ServerCaller < Netzke::Base
   def configure
     super
     config.tbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
+    config.title = "Server Caller!"
   end
 
   endpoint :whats_up do |params, this|

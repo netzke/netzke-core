@@ -37,7 +37,7 @@ Referring to actions on the class level with `js_property` or `js_properties` wi
 ### I18n of actions
 
 +text+, +tooltip+ and +icon+ for an action will be picked up from a locale file (if located there) whenever they are not specified in the config.
-E.g., an action named "some_action" and defined in the component +MyComponents::CoolComponent+, will look for its text in:
+E.g., an action `some_action` defined in the component +MyComponents::CoolComponent+, will look for its text in:
 
     I18n.t('my_components.cool_component.actions.some_action.text')
 
@@ -133,3 +133,8 @@ In case when a newly created component needs to change configuration values for 
 There's no more need for `default_config` or any other `*_config` methods, and they should be replaced with `configure`.
 
 The `configure` method is useful for (dynamically) defining toolbars, titles, and other properties of a component's instance.
+
+### DSL-delegated methods are gone
+
+No more `title` and `items` are defined as DSL methods. Include `Netzke::ConfigToDslDelegator` and use `delegate_to_dsl` method if you need that functionality in a component.
+Thus, `Netzke::ConfigToDslDelegator` is not included in Netzke::Base anymore.

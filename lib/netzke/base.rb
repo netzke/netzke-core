@@ -47,12 +47,9 @@ module Netzke
     include Stylesheets
     include Embedding
     include Actions
-    include ConfigToDslDelegator
 
-    delegates_to_dsl :title, :items
-
-    # FIXME: this is supposed to have effect through all the child classes, but it doesn't
-    class_config_option :default_instance_config, {}
+    class_attribute :default_instance_config
+    self.default_instance_config = {}
 
     # Parent component
     attr_reader :parent
@@ -81,6 +78,14 @@ module Netzke
         name.split("::").map{|c| c.underscore}.join(".")
       end
 
+      # Do class-level config of a component, e.g.:
+      #
+      #   Netzke::Basepack::GridPanel.setup do |c|
+      #     c.rows_reordering_available = false
+      #   end
+      def self.setup
+        yield self
+      end
     end
 
     # Instantiates a component instance. A parent can optionally be provided.
@@ -130,22 +135,22 @@ module Netzke
       @@instances += 1
     end
 
-    private
+  private
 
-      def logger #:nodoc:
-        if defined?(::Rails)
-          ::Rails.logger
-        else
-          require 'logger'
-          Logger.new(STDOUT)
-        end
+    def logger #:nodoc:
+      if defined?(::Rails)
+        ::Rails.logger
+      else
+        require 'logger'
+        Logger.new(STDOUT)
       end
+    end
 
-      def flash(flash_hash) #:nodoc:
-        level = flash_hash.keys.first
-        raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)
-        @flash << {:level => level, :msg => flash_hash[level]}
-      end
+    def flash(flash_hash) #:nodoc:
+      level = flash_hash.keys.first
+      raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)
+      @flash << {:level => level, :msg => flash_hash[level]}
+    end
 
   end
 end
