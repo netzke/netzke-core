@@ -4,6 +4,7 @@ require 'netzke/core/version'
 require 'netzke/core/session'
 require 'netzke/core/masquerading'
 require 'netzke/core/dynamic_assets'
+require 'netzke/core/javascript_class_config'
 
 module Netzke
   # This module implements high-level configuration for Netzke Core.

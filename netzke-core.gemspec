@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["NomadCoder"]
-  s.date = "2012-05-12"
+  s.date = "2012-05-22"
   s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -43,6 +43,7 @@ Gem::Specification.new do |s|
     "lib/netzke/configuration.rb",
     "lib/netzke/core.rb",
     "lib/netzke/core/dynamic_assets.rb",
+    "lib/netzke/core/javascript_class_config.rb",
     "lib/netzke/core/masquerading.rb",
     "lib/netzke/core/options_hash.rb",
     "lib/netzke/core/session.rb",

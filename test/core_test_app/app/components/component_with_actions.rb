@@ -1,7 +1,7 @@
 class ComponentWithActions < Netzke::Base
   action :some_action do |a|
     a.text = "Some Cool Action"
-    a.icon = Netzke::Core.icons_uri + "/delete.png" # specify full icon path
+    a.icon = Netzke::Core.icons_uri + "/tick.png" # specify full icon path
   end
 
   action :another_action do |a|
@@ -47,7 +47,7 @@ class ComponentWithActions < Netzke::Base
     }]
   end
 
-  js_method :on_some_action, <<-JS
+  js_property :on_some_action, <<-JS.l
     function(){
       this.update("Some action was triggered");
     }

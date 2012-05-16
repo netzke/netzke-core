@@ -61,6 +61,13 @@ module Netzke
     end
 
     module ClassMethods
+      def javascript &block
+        @_javascript_block = block
+      end
+
+      def javascript_config
+        @_javascript_config ||= Netzke::Core::JavascriptClassConfig.new.tap{|c| c.instance_eval(&@_javascript_block)}
+      end
 
       # Used it to specify what JavaScript class this component's JavaScript class will be extending, e.g.:
       #
