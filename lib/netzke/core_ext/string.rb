@@ -4,6 +4,7 @@ class String
   end
 
   # Converts self to "literal JSON"-string - one that doesn't get quotes appended when being sent "to_json" method
+  # TODO: get rid of it
   def l
     ActiveSupport::JSON::Variable.new(self)
   end

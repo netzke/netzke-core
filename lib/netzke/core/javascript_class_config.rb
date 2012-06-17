@@ -1,20 +1,22 @@
 module Netzke
   module Core
+    # TODO: rename to JsClassConfig
+    # TODO: specs
     class JavascriptClassConfig
       attr_accessor :included_files, :base_class, :properties
 
       def initialize
         @included_files = []
-        @base_class = "Ext.panel.Panel"
-        @properties = {}
+        @properties = {extend: "Ext.panel.Panel"}
       end
 
-      def base_class base_class
-        @base_class = base_class
-      end
+      # def property name, value
+      #   @properties[name.to_sym] = value
+      # end
 
-      def property name, value
-        @properties[name.to_sym] = value
+      def method_missing(name, value)
+        return super unless name =~ /(.+)=$/
+        @properties[$1.to_sym] = value.is_a?(String) && value =~ /^\s*function/ ? ActiveSupport::JSON::Variable.new(value) : value
       end
 
       # Use it to specify JS files to be loaded before this component's JS code. Useful when using external extensions required by this component.

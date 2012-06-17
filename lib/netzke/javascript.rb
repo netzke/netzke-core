@@ -56,17 +56,17 @@ module Netzke
       class_attribute :js_translated_properties_attr
       self.js_translated_properties_attr = {}
 
-      class_attribute :js_base_class_attr
-      self.js_base_class_attr = 'Ext.panel.Panel'
+      # class_attribute :js_base_class_attr
+      # self.js_base_class_attr = 'Ext.panel.Panel'
     end
 
     module ClassMethods
-      def javascript &block
-        @_javascript_block = block
-      end
+      # def javascript &block
+      #   @_javascript_block = block
+      # end
 
-      def javascript_config
-        @_javascript_config ||= Netzke::Core::JavascriptClassConfig.new.tap{|c| c.instance_eval(&@_javascript_block)}
+      def js_config
+        @_js_config ||= Netzke::Core::JavascriptClassConfig.new.tap{|c| js_configure(c)}
       end
 
       # Used it to specify what JavaScript class this component's JavaScript class will be extending, e.g.:
@@ -76,9 +76,9 @@ module Netzke
       # By default, "Ext.Panel" is assumed.
       #
       # If called without parameters, returns the JS base class declared for the component.
-      def js_base_class(class_name = nil)
-        class_name.nil? ? self.js_base_class_attr : self.js_base_class_attr = class_name
-      end
+      # def js_base_class(class_name = nil)
+      #   class_name.nil? ? self.js_base_class_attr : self.js_base_class_attr = class_name
+      # end
 
       # Use it to define a public method of the component's JavaScript class, e.g.:
       #
@@ -258,7 +258,7 @@ Netzke.cache.push('#{js_xtype}');
 
         # Prevent re-including code that was already included by the parent
         # (thus, only include those JS files when include_js was defined in the current class, not in its ancestors)
-        ((singleton_methods(false).map(&:to_sym).include?(:include_js) ? include_js : []) + js_included_files).each do |path|
+        ((singleton_methods(false).map(&:to_sym).include?(:include_js) ? include_js : []) + js_config.included_files).each do |path|
           f = File.new(path)
           res << f.read << "\n"
         end
@@ -275,7 +275,8 @@ Netzke.cache.push('#{js_xtype}');
 
       # JS properties and methods merged together
       def js_extend_properties
-        @js_extend_properties ||= js_properties.merge(js_methods)
+        # @js_extend_properties ||= js_properties.merge(js_methods)
+        js_config.properties
       end
 
       # Generates declaration of the JS class as direct extension of a Ext component
@@ -284,7 +285,6 @@ Netzke.cache.push('#{js_xtype}');
 
         # Resulting JS:
 %(Ext.define('#{js_full_class_name}', Netzke.chainApply({
-extend: '#{js_base_class}',
 alias: '#{js_alias}',
 constructor: function(config) {
   Netzke.aliasMethodChain(this, "initComponent", "netzke");

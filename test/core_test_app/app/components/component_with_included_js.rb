@@ -1,29 +1,54 @@
 class ComponentWithIncludedJs < Netzke::Base
   class_attribute :title
+  self.title = "My title"
 
-  js_configure do |c|
+  def self.js_configure(c)
     c.include "#{File.dirname(__FILE__)}/included.js"
 
-    c.extend "Netzke.ComponentWithIncludedJs"
+    c.extend = "Netzke.ComponentWithIncludedJs"
 
-    c.method :on_print_message, <<-JS
+    # c.method :on_print_message, <<-JS
+    #   function(){
+    #     this.updateBodyWithMessage("Some message " + "shown in the body");
+    #   }
+    # JS
+
+    # c.property :active_tab, 0
+    # c.property :title, self.title
+
+    c.on_print_message = <<-JS
       function(){
         this.updateBodyWithMessage("Some message " + "shown in the body");
       }
     JS
 
-    c.property :active_tab, 0
-    c.property :title, self.title
-
-    # prototype do |c|
-    #   c.active_tab = 0
-    #   c.on_print_message = method <<-JS
-    #     function(){
-    #       this.updateBodyWithMessage("Some message " + "shown in the body");
-    #     }
-    #   JS
-    # end
+    c.active_tab = 0
+    c.title = title
   end
+
+  # js_configure do |c|
+  #   c.include "#{File.dirname(__FILE__)}/included.js"
+
+  #   c.extend "Netzke.ComponentWithIncludedJs"
+
+  #   c.method :on_print_message, <<-JS
+  #     function(){
+  #       this.updateBodyWithMessage("Some message " + "shown in the body");
+  #     }
+  #   JS
+
+  #   c.property :active_tab, 0
+  #   c.property :title, self.title
+
+  #   # prototype do |c|
+  #   #   c.active_tab = 0
+  #   #   c.on_print_message = method <<-JS
+  #   #     function(){
+  #   #       this.updateBodyWithMessage("Some message " + "shown in the body");
+  #   #     }
+  #   #   JS
+  #   # end
+  # end
 
   # js_include "#{File.dirname(__FILE__)}/included.js"
 
@@ -31,10 +56,10 @@ class ComponentWithIncludedJs < Netzke::Base
 
   action :print_message
 
-  configure do |c|
-    super(c)
-    c.bbar = [:print_message]
-  end
+  # configure do |c|
+  #   super(c)
+  #   c.bbar = [:print_message]
+  # end
 
   def configure
     super
