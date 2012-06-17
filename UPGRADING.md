@@ -1,5 +1,12 @@
 # v0.7 to v0.8 upgrade guide
 
+The main goals of the refactor were:
+
+* Make the API syntax more consistent, and such easier to remember
+* Get rid of as much Ruby "magic" as possible
+* Provide access to the component class/instance from any declaration (components, actions, endpoints, etc)
+* Generally simplify the code
+
 ## Actions
 
 ### Defining actions
