@@ -3,7 +3,7 @@ require 'netzke-core'
 
 module Netzke
   class Component < Base
-    api :method_one, :method_two
+    endpoint :method_one, :method_two
 
     def self.config
       super.merge({
