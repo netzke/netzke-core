@@ -39,7 +39,11 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-require 'rake/rdoctask'
+begin
+  require 'rdoc/task'
+rescue LoadError
+  require 'rake/rdoctask'
+end
 Rake::RDocTask.new do |rdoc|
   require './lib/netzke/core/version'
   version = Netzke::Core::Version::STRING

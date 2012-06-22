@@ -27,18 +27,6 @@ class CoreExtTest < ActiveSupport::TestCase
     ],[:a_b => 1, :c_d_d => [{:look_ma => true},{:wow_now => true}]].deep_convert_keys{|k| k.to_s.camelize(:lower).to_sym})
   end
 
-  test "javascript-like access to hash data" do
-    a = {}
-    a["b"] = 100
-    assert_equal(100, a.b)
-
-    a.b = 200
-    assert_equal(200, a["b"])
-
-    a.c = 300
-    assert_equal(300, a[:c])
-  end
-
   test "jsonify" do
     assert_equal({:aB => 1, "cD" => [[1, {:eF => "stay_same"}], {"literal_symbol" => :should_not_change, "literal_string".l => "also_should_not"}]}, {:a_b => 1, "c_d" => [[1, {:e_f => "stay_same"}], {:literal_symbol.l => :should_not_change, "literal_string".l => "also_should_not"}]}.jsonify)
   end
