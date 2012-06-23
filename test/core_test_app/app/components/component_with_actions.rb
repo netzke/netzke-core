@@ -47,21 +47,23 @@ class ComponentWithActions < Netzke::Base
     }]
   end
 
-  js_property :on_some_action, <<-JS.l
-    function(){
-      this.update("Some action was triggered");
-    }
-  JS
+  js_configure do |c|
+    c.on_some_action = <<-JS
+      function(){
+        this.update("Some action was triggered");
+      }
+    JS
 
-  js_method :on_another_action, <<-JS
-    function(){
-      this.update("Another action was triggered");
-    }
-  JS
+    c.on_another_action = <<-JS
+      function(){
+        this.update("Another action was triggered");
+      }
+    JS
 
-  js_method :custom_action_handler, <<-JS
-    function(){
-      this.update("Custom action handler was called");
-    }
-  JS
+    c.custom_action_handler = <<-JS
+      function(){
+        this.update("Custom action handler was called");
+      }
+    JS
+  end
 end
