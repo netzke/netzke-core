@@ -1,5 +1,5 @@
 {
   onActionThree: function() {
-    this.setTitle("Action " + "Three triggered!");
+    this.setTitle("Modified action " + "Three triggered!");
   }
 }

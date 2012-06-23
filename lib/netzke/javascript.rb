@@ -61,12 +61,13 @@ module Netzke
     end
 
     module ClassMethods
-      # def javascript &block
-      #   @_javascript_block = block
-      # end
+      # Configures JS class
+      def js_configure &block
+        block.call(js_config)
+      end
 
       def js_config
-        @_js_config ||= Netzke::Core::JavascriptClassConfig.new.tap{|c| js_configure(c)}
+        @_js_config ||= Netzke::Core::JavascriptClassConfig.new(self)
       end
 
       # Used it to specify what JavaScript class this component's JavaScript class will be extending, e.g.:
@@ -209,11 +210,6 @@ module Netzke
         self.js_mixins_attr = current_mixins
       end
 
-      # Returns all objects to be mixed in (as array of strings)
-      def js_mixins
-        clean_class_attribute_array(:js_mixins_attr)
-      end
-
       # Builds this component's xtype
       # E.g.: netzkebasepackwindow, netzkebasepackgridpanel
       def js_xtype
@@ -281,7 +277,7 @@ Netzke.cache.push('#{js_xtype}');
 
       # Generates declaration of the JS class as direct extension of a Ext component
       def js_class_declaration_new_component
-        mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
+        mixins = js_config.mixins.empty? ? "" : %(#{js_config.mixins.join(", \n")}, )
 
         # Resulting JS:
 %(Ext.define('#{js_full_class_name}', Netzke.chainApply({
@@ -297,7 +293,7 @@ constructor: function(config) {
       def js_class_declaration_extending_component
         base_class = superclass.js_full_class_name
 
-        mixins = js_mixins.empty? ? "" : %(#{js_mixins.join(", \n")}, )
+        mixins = js_config.mixins.empty? ? "" : %(#{js_config.mixins.join(", \n")}, )
 
         # Resulting JS:
 %(Ext.define('#{js_full_class_name}', Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}, {
