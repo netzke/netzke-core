@@ -4,12 +4,11 @@ class ServerCaller < Netzke::Base
   action :multiple_arguments
   action :array_as_argument
 
-  js_mixin
-
-  js_properties(
-    :title => "Server Caller",
-    :html => "Wow"
-  )
+  js_configure do |c|
+    c.title = "Server Caller"
+    c.html = "Wow"
+    c.mixin
+  end
 
   def configure
     super

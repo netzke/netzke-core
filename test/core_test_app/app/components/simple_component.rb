@@ -1,5 +1,7 @@
 class SimpleComponent < Netzke::Base
-  js_properties :html  => "Inner text"
+  js_configure do |c|
+    c.html = "Inner text"
+  end
 
   def configure
     super
