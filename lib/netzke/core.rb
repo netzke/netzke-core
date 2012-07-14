@@ -5,6 +5,7 @@ require 'netzke/core/session'
 require 'netzke/core/masquerading'
 require 'netzke/core/dynamic_assets'
 require 'netzke/core/javascript_class_config'
+require 'netzke/config_to_dsl_delegator'
 
 module Netzke
   # This module implements high-level configuration for Netzke Core.
