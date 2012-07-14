@@ -1,5 +1,7 @@
 class WindowWithSimpleComponent < SimpleWindow
-  js_property :layout, :fit
+  js_configure do |c|
+    c.layout = :fit
+  end
 
   def items
     [

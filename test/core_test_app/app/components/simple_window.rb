@@ -1,3 +1,5 @@
 class SimpleWindow < Netzke::Base
-  js_base_class "Ext.window.Window"
+  js_configure do |c|
+    c.extend = "Ext.window.Window"
+  end
 end
