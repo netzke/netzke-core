@@ -6,80 +6,15 @@ class ServerCounter < Netzke::Base
   action :do_ordered # used for test if call order is preserved
   action :fail_two_out_of_five # sends 5 requests, 2 will fail, but the request should be processed in order
 
+  js_configure do |c|
+    c.mixin
+  end
+
   def configure
     super
     config.bbar = [:count_one_time, :count_seven_times, :count_eight_times_special, :fail_in_the_middle, :do_ordered, :fail_two_out_of_five]
     config.title "Server Counter"
   end
-
-  js_method :on_count_one_time, <<-JS
-    function(){
-      this.count({how_many: 1});
-    }
-  JS
-
-  js_method :init_component, <<-JS
-    function () {
-      #{js_full_class_name}.superclass.initComponent.call(this);
-      Ext.Ajax.on('beforerequest',function (conn, options ) {
-        Netzke.connectionCount = Netzke.connectionCount || 0;
-        Netzke.connectionCount++;
-        Netzke.lastOptions=options;
-      });
-    }
-  JS
-
-  js_method :on_count_seven_times, <<-JS
-    function(){
-      for(var i=0; i<7; i++)
-        this.count({how_many: 1});
-    }
-  JS
-
-  js_method :on_count_eight_times_special, <<-JS
-    function(){
-      for(var i=0;i<8;i++)
-        this.count({how_many: 1, special: true});
-    }
-  JS
-
-  # TODO: is it actually meant to succeed and display "Something succeeded"?..
-  js_method :on_fail_in_the_middle, <<-JS
-    function() {
-      this.successingEndpoint();
-      this.failingEndpoint();
-      this.successingEndpoint();
-    }
-  JS
-
-  js_method :on_do_ordered, <<-JS
-    function () {
-      this.firstEp();
-      this.secondEp();
-    }
-  JS
-
-  js_method :update_content, <<-JS
-    function(html){
-      this.update(html);
-    }
-  JS
-
-  js_method :update_appending, <<-JS
-    function(html){
-      if (!this.panelText) { this.panelText = ""; }
-      this.panelText += html + ",";
-      this.body.update(this.panelText);
-    }
-  JS
-
-  js_method :on_fail_two_out_of_five, <<-JS
-    function(){
-      for(var i=1; i<=5; i++) {
-        this.failTwoOutOfFive(i);
-      }
-    }
-  JS
 
   def before_load
     component_session[:is_retry] = false

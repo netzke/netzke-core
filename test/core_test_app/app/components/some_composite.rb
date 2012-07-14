@@ -1,6 +1,32 @@
 class SomeComposite < Netzke::Base
-  js_properties :height => 400,
-                :layout => 'border'
+  js_configure do |c|
+    c.height = 400
+    c.layout = :border
+
+    c.on_update_west_panel = <<-JS
+      function(){
+        this.items.filter('name', 'west_panel').first().body.update('West Panel Body Updated');
+      }
+    JS
+
+    c.on_update_center_panel = <<-JS
+      function(){
+        this.items.filter('name', 'center_panel').first().body.update('Center Panel Body Updated');
+      }
+    JS
+
+    c.on_update_east_south_from_server = <<-JS
+      function(){
+        this.updateEastSouth();
+      }
+    JS
+
+    c.on_update_west_from_server = <<-JS
+      function(){
+        this.updateWest();
+      }
+    JS
+  end
 
   action :update_center_panel
   action :update_west_panel
@@ -50,28 +76,4 @@ class SomeComposite < Netzke::Base
   endpoint :update_west do |params, this|
     this.west_panel.set_title("Here's an update for west panel")
   end
-
-  js_method :on_update_west_panel, <<-JS
-    function(){
-      this.items.filter('name', 'west_panel').first().body.update('West Panel Body Updated');
-    }
-  JS
-
-  js_method :on_update_center_panel, <<-JS
-    function(){
-      this.items.filter('name', 'center_panel').first().body.update('Center Panel Body Updated');
-    }
-  JS
-
-  js_method :on_update_east_south_from_server, <<-JS
-    function(){
-      this.updateEastSouth();
-    }
-  JS
-
-  js_method :on_update_west_from_server, <<-JS
-    function(){
-      this.updateWest();
-    }
-  JS
 end

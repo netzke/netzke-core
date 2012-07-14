@@ -1,7 +1,20 @@
 module ExtDirect
   class Composite < Netzke::Base
-    js_property :layout, :border
-    js_property :border, true
+    js_configure do |c|
+      c.layout = :border
+      c.border = true
+      c.init_component = <<-JS
+        function(){
+          this.callParent();
+
+          this.getChildNetzkeComponent('selector').on('userupdate', function(user){
+            this.setUser(user);
+            this.getChildNetzkeComponent('details').update();
+            this.getChildNetzkeComponent('statistics').update();
+          }, this);
+        }
+      JS
+    end
 
     component :selector do |c|
       c.klass = ExtDirect::Selector # a form that will allow us to select a user
@@ -29,16 +42,5 @@ module ExtDirect
       component_session[:user] = params
     end
 
-    js_method :init_component, <<-JS
-      function(){
-        this.callParent();
-
-        this.getChildNetzkeComponent('selector').on('userupdate', function(user){
-          this.setUser(user);
-          this.getChildNetzkeComponent('details').update();
-          this.getChildNetzkeComponent('statistics').update();
-        }, this);
-      }
-    JS
   end
 end
