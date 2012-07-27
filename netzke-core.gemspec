@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.version = "0.7.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["NomadCoder"]
+  s.authors = ["Denis Gorin"]
   s.date = "2012-07-27"
   s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
@@ -224,7 +224,6 @@ Gem::Specification.new do |s|
     "uninstall.rb"
   ]
   s.homepage = "http://netzke.org"
-  s.post_install_message = "\n==========================================================\n\n           Thanks for installing netzke-core!\n\n  Home page:     http://netzke.org\n  Google Groups: http://groups.google.com/group/netzke\n  News:          http://twitter.com/netzke\n  Tutorials:     http://blog.writelesscode.com\n\n==========================================================\n\n"
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.10"
   s.summary = "Build ExtJS/Rails components with minimum effort"
