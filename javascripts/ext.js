@@ -12,15 +12,14 @@ Ext.state.Provider.prototype.set = Ext.emptyFn;
 // Checking Ext JS version: both major and minor versions must be the same
 (function(){
   var requiredVersionMajor = 4,
-      requiredVersionMinor = 0,
+      requiredVersionMinor = 1,
       extVersion = Ext.getVersion('extjs'),
       currentVersionMajor = extVersion.getMajor(),
       currentVersionMinor = extVersion.getMinor(),
-      requiredString = "" + requiredVersionMajor + "." + requiredVersionMinor + ".x",
-      currentString = "" + currentVersionMajor + "." + currentVersionMinor + ".x";
+      requiredString = "" + requiredVersionMajor + "." + requiredVersionMinor + ".x";
 
   if (requiredVersionMajor != currentVersionMajor || requiredVersionMinor != currentVersionMinor) {
-    Netzke.warning("Ext " + requiredString + " required. You have " + currentString + ".");
+    Netzke.warning("Ext JS " + requiredString + " required (you have " + extVersion.toString() + ").");
   }
 })();
 

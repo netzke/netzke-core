@@ -1,3 +1,6 @@
+= v0.7.7 - ?
+* Ext JS required version bump (4.1.x)
+
 = v0.7.6 - 2012-07-27
 * Rails 3.2
 
