@@ -5,7 +5,6 @@ class ExtendedComponentWithJsMixin < ComponentWithJsMixin
 
   def configure
     super
-    config.bbar << :action_three
     config.title = "ExtendedComponentWithJsMixin"
   end
 end

@@ -11,17 +11,19 @@ class ComponentWithSessionPersistence < Netzke::Base
     config.bbar = [:bug_server]
   end
 
-  js_method :bug_server, <<-JS
-    function(){
-      this.whatsUp();
-    }
-  JS
+  js_configure do |c|
+    c.bug_server = <<-JS
+      function(){
+        this.whatsUp();
+      }
+    JS
 
-  js_method :on_bug_server, <<-JS
-    function(){
-      this.bugServer();
-    }
-  JS
+    c.on_bug_server = <<-JS
+      function(){
+        this.bugServer();
+      }
+    JS
+  end
 
   endpoint :whats_up do |params, this|
     update_session_options(:title => "Title From Session") # setting a value in session_options, which will get auto-merged into +config+

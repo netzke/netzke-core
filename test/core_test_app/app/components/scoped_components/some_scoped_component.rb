@@ -1,5 +1,8 @@
 module ScopedComponents
   class SomeScopedComponent < Netzke::Base
-    js_properties :title => "Some Scoped Component Title", :html => "Some Scoped Component HTML"
+    js_configure do |c|
+      c.title = "Some Scoped Component Title"
+      c.html = "Some Scoped Component HTML"
+    end
   end
 end
