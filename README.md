@@ -19,9 +19,9 @@ All this provides for fast, low-traffic, robust, highly maintainable application
 
 ## Requirements
 
-* Ruby >= 1.9.2 (1.8.7 may work, too)
+* Ruby ~> 1.9.2
 * Rails ~> 3.1.0
-* Ext JS = 4.0.2a
+* Ext JS ~> 4.1.0
 
 ## Getting started
 
