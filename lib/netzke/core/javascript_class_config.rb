@@ -3,18 +3,15 @@ module Netzke
     # TODO: rename to JsClassConfig
     # TODO: specs
     class JavascriptClassConfig
-      attr_accessor :included_files, :base_class, :properties, :mixins
+      attr_accessor :included_files, :base_class, :properties, :mixins, :translated_properties
 
       def initialize(klass)
         @klass = klass
         @included_files = []
         @mixins = []
         @properties = {extend: "Ext.panel.Panel"}
+        @translated_properties = []
       end
-
-      # def property name, value
-      #   @properties[name.to_sym] = value
-      # end
 
       def method_missing(name, *args)
         return super unless name =~ /(.+)=$/
@@ -67,6 +64,10 @@ module Netzke
         args << @klass.name.split("::").last.underscore.to_sym if args.empty?
         callr = caller.first
         args.each{ |a| @mixins << (a.is_a?(Symbol) ? File.read(expand_js_include_path(a, callr)) : File.read(a))}
+      end
+
+      def translate(*args)
+        @translated_properties |= args
       end
 
     private

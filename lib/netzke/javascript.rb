@@ -33,6 +33,8 @@ module Netzke
   # * instantiateChildNetzkeComponent - instantiates and returns a Netzke component by its item_id
   # * netzkeFeedback - shows a feedback message
   # * componentNotInSession - gets called when the session that the component is defined in gets expired. Override it to do whatever is appropriate.
+  #
+  # TODO: clean-up, update rdoc
   module Javascript
     extend ActiveSupport::Concern
 
@@ -375,12 +377,16 @@ alias: '#{js_alias}'
       code.blank? ? nil : code
     end
 
+    def js_translated_properties
+      (superclass.respond_to?(:js_translated_properties) ? super : {}).merge(js_config.translated_properties.inject({}){ |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) })
+    end
+
   private
 
     # Merges all the translations in the class hierarchy
     def js_translate_properties
       @js_translate_properties ||= self.class.class_ancestors.inject({}) do |r,klass|
-        hsh = klass.js_translate.keys.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }
+        hsh = klass.js_config.translated_properties.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }
         r.merge(hsh)
       end
     end

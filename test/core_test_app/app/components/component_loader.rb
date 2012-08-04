@@ -57,5 +57,4 @@ class ComponentLoader < Netzke::Base
     end
     super(params, this)
   end
-
 end
