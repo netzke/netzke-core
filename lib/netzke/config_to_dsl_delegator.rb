@@ -16,9 +16,9 @@ module Netzke
   # ... which would be equivalent to:
   #
   #     class SomeComponent < SomeComponentBase
-  #       def configure
-  #         config.title = "Some component"
-  #         config.html = "HTML set in DSL"
+  #       def configure(c)
+  #         c.title = "Some component"
+  #         c.html = "HTML set in DSL"
   #         super
   #       end
   #     end
@@ -42,8 +42,8 @@ module Netzke
       end
     end
 
-    def configure
-      config.merge! delegated_defaults
+    def configure(c)
+      c.merge! delegated_defaults
       super
     end
 

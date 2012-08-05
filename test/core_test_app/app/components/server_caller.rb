@@ -10,10 +10,10 @@ class ServerCaller < Netzke::Base
     c.mixin
   end
 
-  def configure
+  def configure(c)
     super
-    config.tbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
-    config.title = "Server Caller!"
+    c.tbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
+    c.title = "Server Caller!"
   end
 
   endpoint :whats_up do |params, this|

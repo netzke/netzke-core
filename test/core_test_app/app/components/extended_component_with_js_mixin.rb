@@ -3,8 +3,8 @@ class ExtendedComponentWithJsMixin < ComponentWithJsMixin
     c.mixin :some_method_set
   end
 
-  def configure
+  def configure(c)
     super
-    config.title = "ExtendedComponentWithJsMixin"
+    c.title = "ExtendedComponentWithJsMixin"
   end
 end

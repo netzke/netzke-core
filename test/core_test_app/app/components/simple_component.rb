@@ -3,9 +3,9 @@ class SimpleComponent < Netzke::Base
     c.html = "Inner text"
   end
 
-  def configure
+  def configure(c)
     super
-    config.bbar = ["Hello"]
-    config.title "SimpleComponent!"
+    c.bbar = ["Hello"]
+    c.title "SimpleComponent!"
   end
 end

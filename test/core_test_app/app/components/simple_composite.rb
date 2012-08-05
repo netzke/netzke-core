@@ -1,7 +1,7 @@
 class SimpleComposite < Netzke::Base
-  def configure
+  def configure(c)
     super
-    config.items = [:child.component]
+    c.items = [:child.component]
   end
 
   component :child, :class_name => "SimpleComponent"

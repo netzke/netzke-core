@@ -34,9 +34,9 @@ Overriding an action, you should make use of the `super` method, passing to it t
 
 Symbol#action is no longer defined. Refer to actions in toolbars/menus by simply using symbols:
 
-    def configure
+    def configure(c)
       super
-      config.bbar = [:my_action, :destroy]
+      c.bbar = [:my_action, :destroy]
     end
 
 Referring to actions on the class level with `js_property` or `js_properties` will no longer work. Define the toolbars inside the `configure` method.
@@ -132,9 +132,9 @@ It's advised to override the `items` method when a component needs to define it'
 
 In case when a newly created component needs to change configuration values for its instance, it should define the `configure` method and make use of the component's global `config` method (which is an instance of `ActiveSupport::OrderedOptions`):
 
-    def configure
+    def configure(c)
       super # let the base class do its work, e.g. set the `config` instance with the config values passed by this component's user
-      config.title = config.title + "(read-only)" if config.mode == :read_only
+      c.title = c.title + "(read-only)" if c.mode == :read_only
     end
 
 There's no more need for `default_config` or any other `*_config` methods, and they should be replaced with `configure`.

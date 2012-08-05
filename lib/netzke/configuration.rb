@@ -14,18 +14,18 @@ module Netzke
       end
     end
 
-    def configure
+    def configure(c)
       # default config
-      config.merge!(self.class.default_instance_config)
+      c.merge!(self.class.default_instance_config)
 
       # passed config
-      config.merge!(@passed_config)
+      c.merge!(@passed_config)
 
       # persistent config
-      config.merge!(persistent_options) if config[:persistence]
+      c.merge!(persistent_options) if c[:persistence]
 
       # session options
-      config.merge!(session_options) # if @config[:session_persistence]
+      c.merge!(session_options) # if c[:session_persistence]
 
       # parent config
       # config.merge!(parent.strong_children_config) unless parent.nil?

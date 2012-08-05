@@ -33,9 +33,9 @@ class SomeComposite < Netzke::Base
   action :update_west_from_server
   action :update_east_south_from_server
 
-  def configure
+  def configure(c)
     super
-    config.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server ]
+    c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server ]
   end
 
   def items

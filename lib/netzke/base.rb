@@ -97,7 +97,7 @@ module Netzke
       @flash         = []
 
       # Build complete component configuration
-      configure
+      configure(config)
 
       self.class.increase_total_instances
     end

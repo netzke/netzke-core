@@ -4,8 +4,8 @@ class ComponentWithCustomCss < Netzke::Base
 
   css_include :custom
 
-  def configure
+  def configure(c)
     super
-    config.title = "ComponentWithCustomCss"
+    c.title = "ComponentWithCustomCss"
   end
 end

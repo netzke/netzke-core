@@ -9,9 +9,9 @@ class ComponentWithJsMixin < Netzke::Base
   action :action_two
   action :action_three
 
-  def configure
+  def configure(c)
     super
-    config.bbar = [:action_one, :action_two, :action_three]
-    config.title = "ComponentWithJsMixin"
+    c.bbar = [:action_one, :action_two, :action_three]
+    c.title = "ComponentWithJsMixin"
   end
 end

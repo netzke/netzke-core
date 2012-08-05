@@ -1,8 +1,8 @@
 class HelloWorldComponent < Netzke::Base
-  def configure
+  def configure(c)
     super
     # Ext.Panel's config option "title"
-    config.title = "My Hello World Component"
+    c.title = "My Hello World Component"
   end
 
   # Bottom bar with an automatically created action

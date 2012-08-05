@@ -10,10 +10,10 @@ class ServerCounter < Netzke::Base
     c.mixin
   end
 
-  def configure
+  def configure(c)
     super
-    config.bbar = [:count_one_time, :count_seven_times, :count_eight_times_special, :fail_in_the_middle, :do_ordered, :fail_two_out_of_five]
-    config.title "Server Counter"
+    c.bbar = [:count_one_time, :count_seven_times, :count_eight_times_special, :fail_in_the_middle, :do_ordered, :fail_two_out_of_five]
+    c.title "Server Counter"
   end
 
   def before_load

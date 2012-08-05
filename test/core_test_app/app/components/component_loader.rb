@@ -46,9 +46,9 @@ class ComponentLoader < Netzke::Base
     a.text = "Non-existing component"
   end
 
-  def configure
+  def configure(c)
     super
-    config.bbar = [:load_component, :load_in_window, :load_with_feedback, :load_window_with_simple_component, :load_composite, :load_with_params, :load_with_generic_callback, :load_with_generic_callback_and_scope, :non_existing_component]
+    c.bbar = [:load_component, :load_in_window, :load_with_feedback, :load_window_with_simple_component, :load_composite, :load_with_params, :load_with_generic_callback, :load_with_generic_callback_and_scope, :non_existing_component]
   end
 
   endpoint :deliver_component do |params, this|

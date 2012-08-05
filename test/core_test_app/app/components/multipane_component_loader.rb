@@ -5,9 +5,9 @@ class MultipaneComponentLoader < Netzke::Base
   action :load_server_caller, :handler => :load_handler
   action :load_component_loader, :handler => :load_handler
 
-  def configure
+  def configure(c)
     super
-    config.items = [{
+    c.items = [{
       :title => "Container One",
       :xtype => :panel,
       :height => 200,

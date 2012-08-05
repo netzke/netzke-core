@@ -6,11 +6,11 @@ class LoaderOfComponentWithCustomCss < Netzke::Base
 
   action :load_component_with_custom_css
 
-  def configure
+  def configure(c)
     super
-    config.title = "LoaderOfComponentWithCustomCss"
-    config.layout = :fit
-    config.bbar = [:load_component_with_custom_css]
+    c.title = "LoaderOfComponentWithCustomCss"
+    c.layout = :fit
+    c.bbar = [:load_component_with_custom_css]
   end
 
   js_configure do |c|

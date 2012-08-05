@@ -19,8 +19,8 @@ class ComponentWithIncludedJs < Netzke::Base
 
   action :print_message
 
-  def configure
+  def configure(c)
     super
-    config.bbar = [:print_message]
+    c.bbar = [:print_message]
   end
 end

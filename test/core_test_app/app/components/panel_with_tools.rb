@@ -1,7 +1,7 @@
 class PanelWithTools < Netzke::Base
-  def configure
+  def configure(c)
     super
-    config.tools = [:refresh, :gear]
+    c.tools = [:refresh, :gear]
   end
 
   js_configure do |c|

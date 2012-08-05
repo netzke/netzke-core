@@ -1,7 +1,7 @@
 class ExtendedServerCaller < ServerCaller
-  def configure
+  def configure(c)
     super
-    config.title = "Extended Server Caller"
+    c.title = "Extended Server Caller"
   end
 
   js_configure do |c|

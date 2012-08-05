@@ -20,10 +20,10 @@ module ExtDirect
 
     action :update
 
-    def configure
+    def configure(c)
       super
-      config.items = [{:name => "user", :field_label => "User", :xtype => :textfield}]
-      config.bbar = [:update]
+      c.items = [{:name => "user", :field_label => "User", :xtype => :textfield}]
+      c.bbar = [:update]
     end
   end
 end

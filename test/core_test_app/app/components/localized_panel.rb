@@ -27,9 +27,9 @@ class LocalizedPanel < Netzke::Base
     JS
   end
 
-  def configure
+  def configure(c)
     super
-    config.title = I18n.t('localized_panel.title')
-    config.bbar = [:action_one, :action_two, :action_three]
+    c.title = I18n.t('localized_panel.title')
+    c.bbar = [:action_one, :action_two, :action_three]
   end
 end
