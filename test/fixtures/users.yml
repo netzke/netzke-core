@@ -1,9 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-one:
-  login: MyString
-  role_id: 1
-
-two:
-  login: MyString
-  role_id: 1

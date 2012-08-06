@@ -8,23 +8,8 @@ begin
     gemspec.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
     gemspec.email = "nmcoder@gmail.com"
     gemspec.homepage = "http://netzke.org"
-    gemspec.authors = ["NomadCoder"]
+    gemspec.authors = ["Denis Gorin"]
     gemspec.add_dependency("activesupport", ">=3.0.0")
-    gemspec.post_install_message = <<-MESSAGE
-
-==========================================================
-
-           Thanks for installing netzke-core!
-
-  Home page:     http://netzke.org
-  Google Groups: http://groups.google.com/group/netzke
-  News:          http://twitter.com/netzke
-  Tutorials:     http://blog.writelesscode.com
-
-==========================================================
-
-MESSAGE
-
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
@@ -39,7 +24,11 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-require 'rake/rdoctask'
+begin
+  require 'rdoc/task'
+rescue LoadError
+  require 'rake/rdoctask'
+end
 Rake::RDocTask.new do |rdoc|
   require './lib/netzke/core/version'
   version = Netzke::Core::Version::STRING

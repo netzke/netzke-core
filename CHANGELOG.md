@@ -5,11 +5,10 @@
 
 * drop Ruby 1.8.7
 
-* upcoming
-  * Ext JS 4.1 support
+# v0.7.7 - ?
+* Ext JS required version bump (4.1.x)
 
-# v0.7.6 - WIP
-* Using Travis CI
+# v0.7.6 - 2012-07-27
 * Rails 3.2
 
 # v0.7.5 - 2012-03-05

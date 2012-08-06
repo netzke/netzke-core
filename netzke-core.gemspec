@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version = "0.8.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["NomadCoder"]
-  s.date = "2012-08-05"
+  s.authors = ["Denis Gorin"]
+  s.date = "2012-08-06"
   s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -76,6 +76,7 @@ Gem::Specification.new do |s|
     "netzke-core.gemspec",
     "stylesheets/core.css",
     "test/core_test_app/.gitignore",
+    "test/core_test_app/.powrc",
     "test/core_test_app/.rvmrc",
     "test/core_test_app/Gemfile",
     "test/core_test_app/Gemfile.lock",
@@ -220,16 +221,12 @@ Gem::Specification.new do |s|
     "test/core_test_app/spec/spec_helper.rb",
     "test/core_test_app/tmp/restart.txt",
     "test/core_test_app/vendor/plugins/.gitkeep",
-    "test/fixtures/roles.yml",
-    "test/fixtures/users.yml",
     "test/test_helper.rb",
     "test/unit/core_ext_test.rb",
     "test/unit/netzke_core_test.rb",
-    "test/unit/netzke_preference_test.rb",
     "uninstall.rb"
   ]
   s.homepage = "http://netzke.org"
-  s.post_install_message = "\n==========================================================\n\n           Thanks for installing netzke-core!\n\n  Home page:     http://netzke.org\n  Google Groups: http://groups.google.com/group/netzke\n  News:          http://twitter.com/netzke\n  Tutorials:     http://blog.writelesscode.com\n\n==========================================================\n\n"
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.10"
   s.summary = "Build ExtJS/Rails components with minimum effort"
