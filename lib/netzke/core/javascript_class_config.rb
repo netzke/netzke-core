@@ -66,6 +66,18 @@ module Netzke
         args.each{ |a| @mixins << (a.is_a?(Symbol) ? File.read(expand_js_include_path(a, callr)) : File.read(a))}
       end
 
+      # Defines the "i18n" config property, that is a translation object for this component, such as:
+      #     i18n: {
+      #       overwriteConfirm: "Are you sure you want to overwrite preset '{0}'?",
+      #       overwriteConfirmTitle: "Overwriting preset",
+      #       deleteConfirm: "Are you sure you want to delete preset '{0}'?",
+      #       deleteConfirmTitle: "Deleting preset"
+      #     }
+      #
+      # E.g.:
+      #     js_translate :overwrite_confirm, :overwrite_confirm_title, :delete_confirm, :delete_confirm_title
+      #
+      # TODO: make the name of the root property configurable
       def translate(*args)
         @translated_properties |= args
       end

@@ -40,176 +40,25 @@ module Netzke
 
     included do
       include Scopes
-
-      class_attribute :js_included_files
-      self.js_included_files = []
-
-      # Returns all JS method definitions in a hash
-      class_attribute :js_methods_attr
-      self.js_methods_attr = {}
-
-      class_attribute :js_properties_attr
-      self.js_properties_attr = {}
-
-      # Returns all objects to be mixed in (as array of strings)
-      class_attribute :js_mixins_attr
-      self.js_mixins_attr = []
-
-      class_attribute :js_translated_properties_attr
-      self.js_translated_properties_attr = {}
-
-      # class_attribute :js_base_class_attr
-      # self.js_base_class_attr = 'Ext.panel.Panel'
     end
 
     module ClassMethods
+
       # Configures JS class
+      # Example:
+      #   js_configure do |c|
+      #     # c is an instance of JsClassConfig
+      #     c.title = "My title"
+      #     c.mixin
+      #     c.include :extra_js
+      #     # ...etc
+      #   end
       def js_configure &block
         block.call(js_config)
       end
 
       def js_config
         @_js_config ||= Netzke::Core::JavascriptClassConfig.new(self)
-      end
-
-      # Used it to specify what JavaScript class this component's JavaScript class will be extending, e.g.:
-      #
-      #     js_base_class "Ext.TabPanel"
-      #
-      # By default, "Ext.Panel" is assumed.
-      #
-      # If called without parameters, returns the JS base class declared for the component.
-      # def js_base_class(class_name = nil)
-      #   class_name.nil? ? self.js_base_class_attr : self.js_base_class_attr = class_name
-      # end
-
-      # Use it to define a public method of the component's JavaScript class, e.g.:
-      #
-      #     js_method :do_something, <<-JS
-      #       function(params){
-      #         // implementation, maybe dynamically generated
-      #       }
-      #     JS
-      #
-      # This will effectively result in definition of a public method called +doSomething+ in the JavaScript class (note the conversion from underscore_name to camelCaseName).
-      def js_method(name, definition = nil)
-        definition = yield.l if block_given?
-        current_js_methods = clean_class_attribute_hash(:js_methods_attr).dup
-        self.js_methods_attr = current_js_methods.merge(name => definition.l)
-      end
-
-      # Returns all JS method definitions in a hash
-      def js_methods
-        clean_class_attribute_hash(:js_methods_attr)
-      end
-
-      # Use it to specify JS files to be loaded before this component's JS code. Useful when using external extensions required by this component.
-      # It may accept one or more symbols or strings. Strings will be interpreted as full paths to included JS file:
-      #
-      #     js_include "#{File.dirname(__FILE__)}/my_component/one.js","#{File.dirname(__FILE__)}/my_component/two.js"
-      #
-      # Symbols will be expanded following a convention, e.g.:
-      #
-      #     class MyComponent < Netzke::Base
-      #       js_include :some_library
-      #       # ...
-      #     end
-      #
-      # This will "include" a JavaScript file +{component_location}/my_component/javascripts/some_library.js+
-      def js_include(*args)
-        callr = caller.first
-
-        self.js_included_files |= args.map{ |a| a.is_a?(Symbol) ? expand_js_include_path(a, callr) : a }
-      end
-
-      # Used to define default properties of the JavaScript class, e.g.:
-      #
-      #     js_properties :collapsible => true, :hide_collapse_tool => true
-      #
-      # (this will result in the definition of the following properties in the JavaScript class's prototype: +collapsible+ and +hideCollapseTool+ (note the automatic conversion from underscore to camelcase))
-      #
-      # Also, +js_property+ can be used to define properties one by one.
-      #
-      # For the complete list of available options refer to the Ext documentation, the "Config Options" section of a the component specified with +js_base_class+.
-      # Note, that not all the configuration options can be defined on the prototype of the class. For example, defining +items+ on the prototype won't take any effect, so, +items+ should be passed as a configuration option at the moment of instantiation (see Netzke::Base#configuration and Netzke::Base#default_config).
-      def js_properties(hsh = nil)
-        if hsh.nil?
-          clean_class_attribute_hash(:js_properties_attr)
-        else
-          current_js_properties = clean_class_attribute_hash(:js_properties_attr).dup
-          self.js_properties_attr = current_js_properties.merge(hsh)
-        end
-      end
-
-      # Used to define a single JS class property, e.g.:
-      #     js_property :title, "My Netzke Component"
-      def js_property(name, value = nil)
-        name = name.to_sym
-        if value.nil?
-          clean_class_attribute_hash(:js_properties_attr)[name]
-        else
-          current_js_properties = clean_class_attribute_hash(:js_properties_attr).dup
-          current_js_properties[name] = value
-          self.js_properties_attr = current_js_properties
-        end
-      end
-
-      # Defines the "i18n" config property, that is a translation object for this component, such as:
-      #     i18n: {
-      #       overwriteConfirm: "Are you sure you want to overwrite preset '{0}'?",
-      #       overwriteConfirmTitle: "Overwriting preset",
-      #       deleteConfirm: "Are you sure you want to delete preset '{0}'?",
-      #       deleteConfirmTitle: "Deleting preset"
-      #     }
-      #
-      # E.g.:
-      #     js_translate :overwrite_confirm, :overwrite_confirm_title, :delete_confirm, :delete_confirm_title
-      #
-      # TODO: make the name of the root property configurable
-      def js_translate(*properties)
-        if properties.empty?
-          clean_class_attribute_hash(:js_translated_properties_attr)
-        else
-          current_translated_properties = clean_class_attribute_hash(:js_translated_properties_attr).dup
-          properties.each do |p|
-            if p.is_a?(Hash)
-              # TODO: make it possible to nest translated objects
-            else
-              current_translated_properties[p] = p
-            end
-          end
-
-          self.js_translated_properties_attr = current_translated_properties
-        end
-      end
-
-      # Use it to "mixin" JavaScript objects defined in a separate file.
-      #
-      # You do not _have_ to use +js_method+ or +js_properties+ if those methods or properties are not supposed to be changed _dynamically_ (by means of configuring the component on the class level). Instead, you may "mixin" a JavaScript object defined in the JavaScript file named following a certain convention. This way static JavaScript code will rest in a corresponding .js file, not in the Ruby class. E.g.:
-      #
-      #     class MyComponent < Netzke::Base
-      #       js_mixin :some_functionality
-      #       #...
-      #     end
-      #
-      # This will "mixin" a JavaScript object defined in a file called +{component_location}/my_component/javascripts/some_functionality.js+, which way contain something like this:
-      #
-      #     {
-      #       someProperty: 100,
-      #
-      #       someMethod: function(params){
-      #         // ...
-      #       }
-      #     }
-      #
-      # Also accepts a string, which will be interpreted as a full path to the file (useful for sharing mixins between classes).
-      # With no parameters, will assume :component_class_name_underscored.
-      def js_mixin(*args)
-        args << name.split("::").last.underscore.to_sym if args.empty? # if no args provided, component_class_underscored_name is assumed
-        current_mixins = clean_class_attribute_array(:js_mixins_attr)
-        callr = caller.first
-        args.each{ |a| current_mixins << (a.is_a?(Symbol) ? File.read(expand_js_include_path(a, callr)) : File.read(a))}
-        self.js_mixins_attr = current_mixins
       end
 
       # Builds this component's xtype
@@ -377,13 +226,10 @@ alias: '#{js_alias}'
       code.blank? ? nil : code
     end
 
-    def js_translated_properties
-      (superclass.respond_to?(:js_translated_properties) ? super : {}).merge(js_config.translated_properties.inject({}){ |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) })
-    end
-
   private
 
     # Merges all the translations in the class hierarchy
+    # TODO: move to JsClassConfig
     def js_translate_properties
       @js_translate_properties ||= self.class.class_ancestors.inject({}) do |r,klass|
         hsh = klass.js_config.translated_properties.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }

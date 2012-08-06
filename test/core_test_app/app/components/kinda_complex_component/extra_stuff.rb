@@ -7,8 +7,9 @@ class KindaComplexComponent < Netzke::Base
     end
 
     # Let's add another tab with a Netzke component in it
-    def items
-      super + [{ netzke_component: :server_caller }]
+    def configure(c)
+      super
+      c.items += [{ netzke_component: :server_caller }]
     end
   end
 end
