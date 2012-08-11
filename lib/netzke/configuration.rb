@@ -16,7 +16,7 @@ module Netzke
 
     def configure(c)
       # default config
-      c.merge!(self.class.default_instance_config)
+      c.reverse_merge!(self.class.default_instance_config)
 
       # passed config
       c.merge!(@passed_config)
