@@ -161,8 +161,7 @@ module Netzke
           component_config = composite.components[cmp]
           raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.global_id}'" if component_config.nil?
 
-          klass = component_config[:klass]
-          raise ArgumentError, "No class specified for component #{cmp} of #{composite.global_id}" if klass.nil?
+          klass = component_config[:klass] || Netzke::Core::Panel
 
           instance_config = {}.merge(component_config).merge(strong_config).merge(:name => cmp)
 
