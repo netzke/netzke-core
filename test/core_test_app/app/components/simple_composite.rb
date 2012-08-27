@@ -1,8 +1,12 @@
+# Not used in tests
 class SimpleComposite < Netzke::Base
   def configure(c)
+    c.layout = :fit
+    c.items = [:child]
     super
-    c.items = [:child.component]
   end
 
-  component :child, :class_name => "SimpleComponent"
+  component :child do |c|
+    c.klass = SimpleComponent
+  end
 end
