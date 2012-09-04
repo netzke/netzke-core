@@ -109,8 +109,6 @@ You should define the component's layout in the items method that should return 
 
 In this case, the component `some_child_component` should be defined with the `component` method.
 
-Previously there was a way to specify a component class directly in items (by using the `class_name` option), which would implicitly define a child component. This is no longer possible. The layout can now only refer to explicitly defined components.
-
 When no additional layout configuration is needed for a component, you can refer to them simply as symbols:
 
     component :tab_one
@@ -119,6 +117,10 @@ When no additional layout configuration is needed for a component, you can refer
     def items
       [ :tab_one, :tab_two ]
     end
+
+### Implicit components in items
+
+Previously there was a way to specify a component class directly in items (by using the `class_name` option), which would implicitly define a child component. This is no longer possible. The layout can now only refer to explicitly defined components.
 
 ### Specifying items in config
 
