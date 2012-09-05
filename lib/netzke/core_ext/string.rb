@@ -1,6 +1,11 @@
 class String
   def jsonify
-    self.camelize(:lower)
+    if self.index('_') == 0
+      # '_some_string' should become '_someString' and not 'SomeString'
+      '_' + self[1..-1].camelize(:lower)
+    else
+      self.camelize(:lower)  
+    end
   end
 
   # Converts self to "literal JSON"-string - one that doesn't get quotes appended when being sent "to_json" method
