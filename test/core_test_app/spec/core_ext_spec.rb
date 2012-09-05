@@ -20,6 +20,10 @@ describe "Core extensions" do
     '_meta_data'.jsonify.should == '_metaData'
   end
 
+  it "should jsonify 'some_property' to 'someProperty'" do
+    'some_property'.jsonify.should == 'someProperty'
+  end
+
   it "should jsonify :_meta to :_meta" do
     :_meta.jsonify.should == :_meta
   end
