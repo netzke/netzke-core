@@ -5,13 +5,13 @@ class SomeComposite < Netzke::Base
 
     c.on_update_west_panel = <<-JS
       function(){
-        this.items.filter('name', 'west_panel').first().body.update('West Panel Body Updated');
+        this.getComponent('west_panel').body.update('West Panel Body Updated');
       }
     JS
 
     c.on_update_center_panel = <<-JS
       function(){
-        this.items.filter('name', 'center_panel').first().body.update('Center Panel Body Updated');
+        this.getComponent('center_panel').body.update('Center Panel Body Updated');
       }
     JS
 
