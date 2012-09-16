@@ -1,7 +1,5 @@
 module Netzke
   class Plugin < Base
-    # js_base_class "Ext.Component"
-
     js_configure do |c|
       c.extend = "Ext.Component"
       c.init = <<-JS
@@ -10,10 +8,6 @@ module Netzke
         }
       JS
     end
-
-    # def self.js_config(c)
-    #   c.extend = "Ext.Component"
-    # end
 
     def self.js_alias_prefix
       "plugin"
