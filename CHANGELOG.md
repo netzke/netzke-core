@@ -4,7 +4,7 @@
   * major code clean-up and refactor
   * introduce Netzke::Core::Panel - a simple panel with defaults, that can be immediatelly rendered
 
-* drop Ruby 1.8.7
+* drop support for Ruby 1.8.7
 
 # v0.7.7 - ?
 * Ext JS required version bump (4.1.x)

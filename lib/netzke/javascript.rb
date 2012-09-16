@@ -167,54 +167,59 @@ alias: '#{js_alias}'
       config.items || items
     end
 
-    # The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class. Override it when you want to pass any extra configuration to the JavaScript side.
+    # The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class.
     def js_config
-      {}.tap do |res|
-        # Unique id of the component
-        res[:id] = global_id
+      @js_config ||= ActiveSupport::OrderedOptions.new.tap{|c| js_configure(c)}
+    end
 
-        # Non-lazy-loaded components
-        comp_hash = {}
-        eager_loaded_components.each_pair do |comp_name, comp_config|
-          comp_instance = component_instance(comp_name.to_sym)
-          comp_instance.before_load
-          comp_hash[comp_name] = comp_instance.js_config
-        end
+    # The `js_configure' method should be used to override the JS-side component configuration. It is called by the framework when the configuration for the JS instantiating of the component should be retrieved. Thus, it's *not* being called when a component is being instantiated to process an endpoint call.
+    #
+    # Override it when you need to extend/modify the config for the JS component intance.
+    def js_configure(c)
+      # Merge in component config options, besides those that are only meant for the server side
+      c.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
 
-        # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ so they get instantiated by Ext.
-        res[:netzke_components] = comp_hash unless comp_hash.empty?
+      # Unique id of the component
+      c.id = global_id
 
-        # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
-        endpoints = self.class.endpoints.keys - [:deliver_component]
-
-        # pass them as strings, not as symbols
-        res[:endpoints] = endpoints.map(&:to_s) unless endpoints.empty?
-
-        # Inform the JavaScript side if persistent_config is enabled
-        # res[:persistent_config] = persistence_enabled?
-
-        # Include our xtype
-        res[:xtype] = self.class.js_xtype
-
-        # Include our alias: Ext.createByAlias may be used to instantiate the component.
-        res[:alias] = self.class.js_alias
-
-        # Merge with the rest of config options, besides those that are only meant for the server side
-        res.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
-
-        # Items (nested Ext/Netzke components)
-        res[:items] = js_items unless js_items.blank?
-
-        # So we can use getComponent(<component_name>) to retrieve a child component
-        res[:item_id] ||= name
-
-        res[:i18n] = js_translate_properties if js_translate_properties.present?
-
-        res[:netzke_plugins] = plugins.map{ |p| p.to_s.camelcase(:lower) } if plugins.present?
-
-        # we need to pass them as strigs, not as symbols
-        res[:tools] = res[:tools].map(&:to_s) if res[:tools].present?
+      # Non-lazy-loaded components
+      comp_hash = {}
+      eager_loaded_components.each_pair do |comp_name, comp_config|
+        comp_instance = component_instance(comp_name.to_sym)
+        comp_instance.before_load
+        comp_hash[comp_name] = comp_instance.js_config
       end
+
+      # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ so they get instantiated by Ext.
+      c.netzke_components = comp_hash unless comp_hash.empty?
+
+      # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
+      endpoints = self.class.endpoints.keys - [:deliver_component]
+
+      # pass them as strings, not as symbols
+      c.endpoints = endpoints.map(&:to_s) unless endpoints.empty?
+
+      # Inform the JavaScript side if persistent_config is enabled
+      # res[:persistent_config] = persistence_enabled?
+
+      # Include our xtype
+      c.xtype = self.class.js_xtype
+
+      # Include our alias: Ext.createByAlias may be used to instantiate the component.
+      c.alias = self.class.js_alias
+
+      # Items (nested Ext/Netzke components)
+      c.items = js_items unless js_items.blank?
+
+      # So we can use getComponent(<component_name>) to retrieve a child component
+      c.item_id ||= name
+
+      c.i18n = js_translate_properties if js_translate_properties.present?
+
+      c.netzke_plugins = plugins.map{ |p| p.to_s.camelcase(:lower) } if plugins.present?
+
+      # we need to pass them as strigs, not as symbols
+      c.tools = c.tools.map(&:to_s) if c.tools.present?
     end
 
     # All the JS-code required by this instance of the component to be instantiated in the browser.

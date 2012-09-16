@@ -132,6 +132,8 @@ It's advised to override the `items` method when a component needs to define it'
 
 ### The `configure` method
 
+The `configure` method should be used to override the Ruby-side component configuration.
+
 In case when a newly created component needs to change configuration values for its instance, it should define the `configure` method and make use of the component's global `config` method (which is an instance of `ActiveSupport::OrderedOptions`):
 
     def configure(c)
@@ -142,6 +144,12 @@ In case when a newly created component needs to change configuration values for 
 There's no more need for `default_config` or any other `*_config` methods, and they should be replaced with `configure`.
 
 The `configure` method is useful for (dynamically) defining toolbars, titles, and other properties of a component's instance.
+
+### The `js_configure` method
+
+The `js_configure' method should be used to override the JS-side component configuration. It is called by the framework when the configuration for the JS instantiating of the component should be retrieved. Thus, it's *not* being called when a component is being instantiated to process an endpoint call.
+
+Override it when you need to extend/modify the config for the JS component intance.
 
 ### DSL-delegated methods are gone
 
