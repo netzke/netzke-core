@@ -7,7 +7,8 @@ class SimpleTabPanel < Netzke::Base
   component :server_caller
   component :extended_server_caller
 
-  def items
-    [:server_caller, :extended_server_caller]
+  def configure(c)
+    c.items = [:server_caller, :extended_server_caller]
+    super
   end
 end

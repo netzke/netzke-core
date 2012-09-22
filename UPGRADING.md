@@ -92,7 +92,7 @@ Overriding a component, you should make use of the `super` method, passing to it
 
 ### Lazy loaded components
 
-All child components now by default are marked as lazy loaded, unless they are referred in the layout (see the **Layout (items)** section). You can override this behavior by setting `lazy_loading` to `false`.
+All child components now by default are marked as lazy loaded, unless they are referred in the layout (see the **Layout (items)** section). You can override this behavior by setting `eager_loading` to `true`.
 
 ## Layout (items)
 

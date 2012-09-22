@@ -52,11 +52,11 @@ module Netzke
   #
   # == Lazily vs eagerly loaded components
   #
-  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `loadNetzkeComponent` (see {Netzke::Javascript}). Referring a component in the layout automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `lazy_loading` can be set to false:
+  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `loadNetzkeComponent` (see {Netzke::Javascript}). Referring a component in the layout (the `items` property) automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `eager_loading` can be set to true:
   #
   #     component :eagerly_loaded_window do |c|
   #       c.klass = SomeWindowComponent
-  #       c.lazy_loading = false
+  #       c.eager_loading = true
   #     end
   module Composition
     extend ActiveSupport::Concern
@@ -119,29 +119,32 @@ module Netzke
 
     # Override this to specify the layout of the component
     def items
-      []
+      config.items || []
     end
 
     # All components for this instance, which includes components defined on class level, and components detected in :items
     def components
-      @components ||= self.class.registered_components.inject({}) do |res, name|
+      @components ||= self.class.registered_components.inject({}) do |out, name|
         component_config = Netzke::ComponentConfig.new(name, self)
         send(COMPONENT_METHOD_NAME % name, component_config)
-        component_config.delete(:lazy_loading) if component_config.lazy_loading == true && eagerly_loaded_components_referred_in_items.include?(name)
-        res.merge(name.to_sym => component_config)
+        out.merge(name.to_sym => component_config)
       end
     end
 
     def eager_loaded_components
-      components.reject{|k,v| v[:lazy_loading]}
+      @eager_loaded_components ||= components.select{|k,v| components_in_items.include?(k) || v[:eager_loading]}
+    end
+
+    def components_in_items
+      @components_in_items || (parse_items || true) && @components_in_items
     end
 
     # An array of component's names that are being referred in items and should be eagerly loaded
-    def eagerly_loaded_components_referred_in_items
-      @eagerly_loaded_components_referred_in_items ||= [].tap do |r|
-        traverse_components_in_items(config.items || items){ |c| r << c[:netzke_component] if c[:lazy_loading] != true }
-      end
-    end
+    # def eagerly_loaded_components_referred_in_items
+    #   @eagerly_loaded_components_referred_in_items ||= [].tap do |r|
+    #     traverse_components_in_items(config.items || items){ |c| r << c[:netzke_component] if c[:lazy_loading] != true }
+    #   end
+    # end
 
     # Called when the method_missing tries to processes a non-existing component. Override when needed.
     def component_missing(aggr)
@@ -213,6 +216,34 @@ module Netzke
 
         traverse_components_in_items(item[:items], &block) if item.is_a?(Hash) && item[:items]
       end
+    end
+
+    # We'll build a few useful class variables here:
+    #
+    # @components_in_items - an array of those components (by name) that are referred in items
+    # @js_items - items ready to be passed to the JS side
+    def parse_items
+      @components_in_items = []
+      @js_items = extended_items(items)
+    end
+
+    def extended_items(items)
+      items.map do |item|
+        extended_item = if item.is_a?(Hash) && item[:items].is_a?(Array)
+                          item.merge(items: extended_items(item[:items]))
+                        else
+                          extend_item(item)
+                        end
+
+        # extract eagerly loaded components referred in items along the way
+        extended_item.tap do |item|
+          @components_in_items << item[:netzke_component] if item[:netzke_component] && item[:lazy_loading] != true
+        end
+      end
+    end
+
+    def extend_item(item)
+      item.is_a?(Symbol) && components[item] ? {netzke_component: item} : item
     end
 
   end

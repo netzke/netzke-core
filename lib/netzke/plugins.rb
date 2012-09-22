@@ -16,7 +16,7 @@ module Netzke
           block.call(c) if block_given?
 
           # plugins are *always* eagerly loaded
-          c.lazy_loading = false
+          c.eager_loading = true
         end
       end
 

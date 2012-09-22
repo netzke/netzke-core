@@ -26,16 +26,23 @@ class SomeComposite < Netzke::Base
         this.updateWest();
       }
     JS
+
+    c.on_show_hidden_window = <<-JS
+      function(){
+        this.instantiateChildNetzkeComponent('hidden_window').show();
+      }
+    JS
   end
 
   action :update_center_panel
   action :update_west_panel
   action :update_west_from_server
   action :update_east_south_from_server
+  action :show_hidden_window
 
   def configure(c)
     super
-    c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server ]
+    c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server, :show_hidden_window ]
   end
 
   def items
@@ -67,6 +74,16 @@ class SomeComposite < Netzke::Base
     c.klass = SimpleComponent
     c.title = "Another panel"
     c.border = false
+  end
+
+  # Eagerly loaded Netzke component that only requires instantiating at client
+  component :hidden_window do |c|
+    c.klass = SimpleWindow
+    c.eager_loading = true # !
+    c.title = "Hidden window gone visible!"
+    c.width = 300
+    c.height = 200
+    c.modal = true
   end
 
   endpoint :update_east_south do |params, this|

@@ -17,6 +17,6 @@ class PluginWithComponents < Netzke::Plugin
     c.width = 300
     c.height = 200
     c.title = "Window created by PluginWithComponents"
-    c.lazy_loading = false # we want this component to be available immediately
+    c.eager_loading = true
   end
 end

@@ -164,12 +164,22 @@ alias: '#{js_alias}'
     end
 
     def js_items
-      config.items || items
+      # config.items || items
+      @js_items || (parse_items || true) && @js_items
     end
 
     # The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class.
     def js_config
       @js_config ||= ActiveSupport::OrderedOptions.new.tap{|c| js_configure(c)}
+    end
+
+    # Object containing configuration for all child components to be instantiated at the JS side
+    def js_components
+      @js_components ||= eager_loaded_components.inject({}) do |out, (name, config)|
+        instance = component_instance(name.to_sym)
+        instance.before_load
+        out.merge(name => instance.js_config)
+      end
     end
 
     # The `js_configure' method should be used to override the JS-side component configuration. It is called by the framework when the configuration for the JS instantiating of the component should be retrieved. Thus, it's *not* being called when a component is being instantiated to process an endpoint call.
@@ -182,16 +192,8 @@ alias: '#{js_alias}'
       # Unique id of the component
       c.id = global_id
 
-      # Non-lazy-loaded components
-      comp_hash = {}
-      eager_loaded_components.each_pair do |comp_name, comp_config|
-        comp_instance = component_instance(comp_name.to_sym)
-        comp_instance.before_load
-        comp_hash[comp_name] = comp_instance.js_config
-      end
-
       # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ so they get instantiated by Ext.
-      c.netzke_components = comp_hash unless comp_hash.empty?
+      c.netzke_components = js_components unless js_components.empty?
 
       # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
       endpoints = self.class.endpoints.keys - [:deliver_component]
