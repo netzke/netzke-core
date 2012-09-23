@@ -3,10 +3,9 @@ class WindowWithSimpleComponent < SimpleWindow
     c.layout = :fit
   end
 
-  def items
-    [
-      { netzke_component: :simple_component }
-    ]
+  def configure(c)
+    c.items = [:simple_component]
+    super
   end
 
   component :simple_component do |c|

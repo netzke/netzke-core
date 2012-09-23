@@ -208,6 +208,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
         cmpCfg = this.netzkeComponents[cmpName.camelize(true)];
         if (!cmpCfg) throw "Netzke: unknown component " + cmpName;
         items[i] = Ext.apply(cmpCfg, cfg);
+        delete(item);
       } else {
         for (key in cfg) {
           if (Ext.isArray(cfg[key])) {

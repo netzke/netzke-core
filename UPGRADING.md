@@ -39,7 +39,7 @@ Symbol#action is no longer defined. Refer to actions in toolbars/menus by simply
       c.bbar = [:my_action, :destroy]
     end
 
-Referring to actions on the class level with `js_property` or `js_properties` will no longer work. Define the toolbars inside the `configure` method.
+Referring to actions on the class level will no longer work. Define the toolbars inside the `configure` method.
 
 ### I18n of actions
 
@@ -98,10 +98,12 @@ All child components now by default are marked as lazy loaded, unless they are r
 
 ### Referring to Netzke components in items
 
-You should define the component's layout in the items method that should return an array. You can refer to child components by specifying the `netzke_component` key:
+You should define the component's layout in the `items` property in component's config. You can refer to child components by specifying the `netzke_component` key:
 
-    def items
-      [
+    def configure(c)
+      super
+
+      c.items = [
         { xtype: :panel, title: "Simple Ext panel" },
         { netzke_component: :some_child_component, title: "a netzke component" }
       ]
@@ -114,8 +116,9 @@ When no additional layout configuration is needed for a component, you can refer
     component :tab_one
     component :tab_two
 
-    def items
-      [ :tab_one, :tab_two ]
+    def configure(c)
+      super
+      c.items = [ :tab_one, :tab_two ]
     end
 
 ### Implicit components in items

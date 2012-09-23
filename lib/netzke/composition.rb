@@ -34,8 +34,9 @@ module Netzke
   #
   # When a child component is to be used in the layout, it can be referred by using the `netzke_component` key in the configuration hash:
   #
-  #     def items
-  #       [
+  #     def configure(c)
+  #       super
+  #       c.items = [
   #         { xtype: :panel, title: "Simple Ext panel" },
   #         { netzke_component: :users, title: "A Netzke component" }
   #       ]
@@ -46,8 +47,9 @@ module Netzke
   #     component :tab_one # ...
   #     component :tab_two # ...
   #
-  #     def items
-  #       [ :tab_one, :tab_two ]
+  #     def configure(c)
+  #       super
+  #       c.items = [:tab_one, :tab_two]
   #     end
   #
   # == Lazily vs eagerly loaded components
@@ -117,11 +119,6 @@ module Netzke
 
     end
 
-    # Override this to specify the layout of the component
-    def items
-      config.items || []
-    end
-
     # All components for this instance, which includes components defined on class level, and components detected in :items
     def components
       @components ||= self.class.registered_components.inject({}) do |out, name|
@@ -131,20 +128,14 @@ module Netzke
       end
     end
 
-    def eager_loaded_components
-      @eager_loaded_components ||= components.select{|k,v| components_in_items.include?(k) || v[:eager_loading]}
+    def eagerly_loaded_components
+      @eagerly_loaded_components ||= components.select{|k,v| components_in_config.include?(k) || v[:eager_loading]}
     end
 
-    def components_in_items
-      @components_in_items || (parse_items || true) && @components_in_items
+    # Array of components (by name) referred in config (and thus, required to be instantiated)
+    def components_in_config
+      @components_in_config || (normalize_config || true) && @components_in_config
     end
-
-    # An array of component's names that are being referred in items and should be eagerly loaded
-    # def eagerly_loaded_components_referred_in_items
-    #   @eagerly_loaded_components_referred_in_items ||= [].tap do |r|
-    #     traverse_components_in_items(config.items || items){ |c| r << c[:netzke_component] if c[:lazy_loading] != true }
-    #   end
-    # end
 
     # Called when the method_missing tries to processes a non-existing component. Override when needed.
     def component_missing(aggr)
@@ -178,7 +169,7 @@ module Netzke
     def dependency_classes
       res = []
 
-      eager_loaded_components.keys.each do |aggr|
+      eagerly_loaded_components.keys.each do |aggr|
         res += component_instance(aggr).dependency_classes
       end
 
@@ -218,32 +209,34 @@ module Netzke
       end
     end
 
-    # We'll build a few useful class variables here:
-    #
-    # @components_in_items - an array of those components (by name) that are referred in items
-    # @js_items - items ready to be passed to the JS side
-    def parse_items
-      @components_in_items = []
-      @js_items = extended_items(items)
+    def extend_item(item)
+      item = {netzke_component: item} if item.is_a?(Symbol) && components[item]
+      item = {netzke_action: item} if item.is_a?(Symbol) && actions[item]
+
+      if item.is_a?(Hash)
+        @components_in_config << item[:netzke_component] if item[:netzke_component] && item[:eager_loading] != false
+      end
+
+      item
     end
 
-    def extended_items(items)
-      items.map do |item|
-        extended_item = if item.is_a?(Hash) && item[:items].is_a?(Array)
-                          item.merge(items: extended_items(item[:items]))
-                        else
-                          extend_item(item)
-                        end
-
-        # extract eagerly loaded components referred in items along the way
-        extended_item.tap do |item|
-          @components_in_items << item[:netzke_component] if item[:netzke_component] && item[:lazy_loading] != true
+    # We'll build a few useful instance variables here:
+    #
+    # @components_in_config - an array of those components (by name) that are referred in items
+    # @normalized_config - a config that has all the extensions (duh...)
+    def normalize_config
+      @components_in_config = []
+      @normalized_config = config.dup.tap do |c|
+        c.each_pair do |k,v|
+          c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
+          c[k] = v.deep_map{|el| extend_item(el)} if v.is_a?(Array)
         end
       end
     end
 
-    def extend_item(item)
-      item.is_a?(Symbol) && components[item] ? {netzke_component: item} : item
+    def normalized_config
+      # make sure we call normalize_config first
+      @normalized_config || (normalize_config || true) && @normalized_config
     end
 
   end

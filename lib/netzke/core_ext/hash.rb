@@ -1,4 +1,10 @@
 class Hash
+  def deep_map(&block)
+    self.each_pair do |k,v|
+      self[k] = v.deep_map(&block) if v.respond_to?('deep_map')
+    end
+  end
+
   def deep_each_pair(&block)
     self.each_pair do |k,v|
       v.respond_to?('deep_each_pair') ? v.deep_each_pair(&block) : yield(k,v)

@@ -30,8 +30,9 @@ module ExtDirect
       c.user = component_session[:user]
     end
 
-    def items
-      [
+    def configure(c)
+      super
+      c.items = [
         {:region => :north, :height => 100, netzke_component: :selector},
         {:region => :center, netzke_component: :details},
         {:region => :east, :width => 300, :split => true, netzke_component: :statistics}

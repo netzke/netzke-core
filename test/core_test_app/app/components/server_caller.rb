@@ -12,7 +12,12 @@ class ServerCaller < Netzke::Base
 
   def configure(c)
     super
-    c.tbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
+    c.docked_items = [{
+      xtype: :toolbar,
+      dock: :right,
+      items: [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
+    }]
+    # c.tbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
   end
 
   endpoint :whats_up do |params, this|

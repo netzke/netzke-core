@@ -163,11 +163,6 @@ alias: '#{js_alias}'
 
     end
 
-    def js_items
-      # config.items || items
-      @js_items || (parse_items || true) && @js_items
-    end
-
     # The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class.
     def js_config
       @js_config ||= ActiveSupport::OrderedOptions.new.tap{|c| js_configure(c)}
@@ -175,7 +170,7 @@ alias: '#{js_alias}'
 
     # Object containing configuration for all child components to be instantiated at the JS side
     def js_components
-      @js_components ||= eager_loaded_components.inject({}) do |out, (name, config)|
+      @js_components ||= eagerly_loaded_components.inject({}) do |out, (name, config)|
         instance = component_instance(name.to_sym)
         instance.before_load
         out.merge(name => instance.js_config)
@@ -187,7 +182,8 @@ alias: '#{js_alias}'
     # Override it when you need to extend/modify the config for the JS component intance.
     def js_configure(c)
       # Merge in component config options, besides those that are only meant for the server side
-      c.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
+      # c.merge!(config.reject{ |k,v| self.class.server_side_config_options.include?(k.to_sym) })
+      c.merge!(normalized_config)
 
       # Unique id of the component
       c.id = global_id
@@ -209,9 +205,6 @@ alias: '#{js_alias}'
 
       # Include our alias: Ext.createByAlias may be used to instantiate the component.
       c.alias = self.class.js_alias
-
-      # Items (nested Ext/Netzke components)
-      c.items = js_items unless js_items.blank?
 
       # So we can use getComponent(<component_name>) to retrieve a child component
       c.item_id ||= name

@@ -43,11 +43,8 @@ class SomeComposite < Netzke::Base
   def configure(c)
     super
     c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server, :show_hidden_window ]
-  end
-
-  def items
-    [
-      { region: :center, netzke_component: :center_panel },
+    c.items = [
+      :center_panel,
       { region: :west, width: 300, split: true, netzke_component: :west_panel },
       { layout: :border, region: :east, width: 500, split: true, items: [
         { region: :center, netzke_component: :east_center_panel },
@@ -58,6 +55,7 @@ class SomeComposite < Netzke::Base
 
   component :center_panel do |c|
     c.klass = ServerCaller
+    c.region = :center
   end
 
   component :west_panel do |c|

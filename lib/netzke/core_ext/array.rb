@@ -1,4 +1,8 @@
 class Array
+  def deep_map(&block)
+    self.map{ |el| el.respond_to?(:deep_map) ? block.call(el.deep_map(&block)) : block.call(el) }
+  end
+
   def jsonify
     self.map{ |el| el.instance_of?(Array) || el.instance_of?(Hash) ? el.jsonify : el }
   end

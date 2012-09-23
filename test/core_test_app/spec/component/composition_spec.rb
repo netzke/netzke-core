@@ -51,8 +51,9 @@ module Netzke
         c.klass = ComponentTwo
       end
 
-      def items
-        [ :first_component_two, :second_component_two ]
+      def configure(c)
+        super
+        c.items = [ :first_component_two, :second_component_two ]
       end
     end
 
