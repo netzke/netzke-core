@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Denis Gorin"]
-  s.date = "2012-09-23"
+  s.date = "2012-09-27"
   s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [

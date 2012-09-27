@@ -1,7 +1,9 @@
 class Hash
   def deep_map(&block)
-    self.each_pair do |k,v|
-      self[k] = v.deep_map(&block) if v.respond_to?('deep_map')
+    self.dup.tap do |h|
+      h.each_pair do |k,v|
+        h[k] = v.deep_map(&block) if v.respond_to?('deep_map')
+      end
     end
   end
 
