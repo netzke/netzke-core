@@ -395,7 +395,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       var action = this.actions[actionName];
       var customHandler = action.initialConfig.customHandler;
       var methodName = (customHandler && customHandler.camelize(true)) || "on" + actionName.camelize();
-      if (!this[methodName]) {throw "Netzke: action handler '" + methodName + "' is undefined"}
+      if (!this[methodName]) {throw "Netzke: handler '" + methodName + "' is undefined in '" + this.id + "'";}
 
       // call the handler passing it the triggering component
       this[methodName](comp);
