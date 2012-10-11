@@ -11,12 +11,12 @@ class String
 
   # removes JS-comments (both single- and multi-line) from the string
   def strip_js_comments
-    regexp = /\/\/.*$|(?m:\/\*.*?\*\/)/
-    self.gsub!(regexp, '')
-
-    # also remove empty lines
-    regexp = /^\s*\n/
-    self.gsub!(regexp, '')
+    if defined?(::Rails) && Rails.application.assets.js_compressor
+      compressor = Rails.application.assets.js_compressor
+      compressor.processor.call(nil, self)
+    else
+      self
+    end
   end
 
   # "false" => false, "whatever_else" => true
