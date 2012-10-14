@@ -3,6 +3,7 @@
   * many API changes, see UPGRADING.md
   * major code clean-up and refactor
   * introduce Netzke::Core::Panel - a simple panel with defaults, that can be immediatelly rendered
+  * Netzke child components can now be referred anywhere (e.g. dockedItems), not only in items
 
 * drop support for Ruby 1.8.7
 
