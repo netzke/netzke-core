@@ -130,14 +130,16 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
     } else {
       for (var instr in instructions) {
+        var args = instructions[instr];
+
         if (Ext.isFunction(this[instr])) {
           // Executing the method.
-          this[instr].apply(this, instructions[instr]);
+          this[instr].apply(this, args);
         } else {
           var childComponent = this.getChildNetzkeComponent(instr);
           if (childComponent) {
-            childComponent.bulkExecute(instructions[instr]);
-          } else {
+            childComponent.bulkExecute(args);
+          } else if (Ext.isArray(args)) { // only consider those calls that have arguments wrapped in an array; the only (probably) case when they are not, is with 'success' property set to true in a non-ajax form submit - silently ignore that
             throw "Netzke: Unknown method or child component '" + instr +"' in component '" + this.id + "'"
           }
         }

@@ -54,8 +54,10 @@ protected
       result = {:component_not_in_session => true}.to_nifty_json
     end
 
-    {
-      :type => "rpc",
+    # We render text/plain, so that the browser never modifies our response
+    response.headers["Content-Type"] = "text/plain; charset=utf-8"
+
+    { :type => "rpc",
       :tid => tid,
       :action => component_name,
       :method => action,
@@ -71,7 +73,8 @@ protected
     component_instance = Netzke::Base.instance_by_config(Netzke::Core.session[:netzke_components][component_name.to_sym])
 
     # We render text/plain, so that the browser never modifies our response
-    response.headers["Content-Type"] = "text/plain; charset=utf-8"
+    # NOPE, we can't do it here; this method is only used for classic form submission, and the response from the server should be the (default) "text/html"
+    # response.headers["Content-Type"] = "text/plain; charset=utf-8"
 
     render :text => component_instance.invoke_endpoint(sub_components.join("__"), params).to_nifty_json, :layout => false
   end
