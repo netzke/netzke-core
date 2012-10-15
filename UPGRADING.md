@@ -7,6 +7,26 @@ The main goals of the refactor were:
 * Provide access to the component class/instance from any declaration (components, actions, endpoints, etc)
 * Generally simplify the code
 
+## JavaScript class configuration
+
+Such DSL methods as `js_include`, `js_mixin`, `js_base_class`, `js_method`, `js_property` are gone. Instead, use the `js_configure` DSL method:
+
+    js_configure do |c|
+      c.mixin                     # replaces js_mixin preserving the signature
+      c.include                   # replaces js_include preserving the signature
+      c.extend = "Ext.tab.Panel"  # replaces js_base_class
+
+      c.title = "My Component"    # use instead of js_property :title, "My Component"
+
+      c.on_my_action = <<-JS      # use instead of js_method :on_my_action, ...
+        function(){
+          // ...
+        }
+      JS
+    end
+
+As you see, you can use assignement to define the JS class properties, including functions.
+
 ## Actions
 
 ### Defining actions
@@ -133,7 +153,7 @@ It's advised to override the `items` method when a component needs to define it'
 
 ## Self-configuration
 
-### The `configure` method
+### Base#configure
 
 The `configure` method should be used to override the Ruby-side component configuration.
 
@@ -148,7 +168,7 @@ There's no more need for `default_config` or any other `*_config` methods, and t
 
 The `configure` method is useful for (dynamically) defining toolbars, titles, and other properties of a component's instance.
 
-### The `js_configure` method
+### Base#js_configure
 
 The `js_configure' method should be used to override the JS-side component configuration. It is called by the framework when the configuration for the JS instantiating of the component should be retrieved. Thus, it's *not* being called when a component is being instantiated to process an endpoint call.
 

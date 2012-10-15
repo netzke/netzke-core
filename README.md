@@ -1,21 +1,18 @@
-# Netzke Core
+# Netzke Core [![Build Status](https://secure.travis-ci.org/skozlov/netzke-core.png?branch=master)](http://travis-ci.org/skozlov/netzke-core) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/nomadcoder/netzke-core)
 
-[![Build Status](https://secure.travis-ci.org/skozlov/netzke-core.png?branch=master)](http://travis-ci.org/skozlov/netzke-core)
-
-Netzke Core is the bare bones of the [Netzke framework](https://github.com/nomadcoder/netzke). For pre-built full-featured components (like grids, forms, tab/accordion panels, applications, etc), see [netzke-basepack](http://github.com/nomadcoder/netzke-basepack) (Ext JS).
+Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/nomadcoder/netzke-basepack) and [netzke-communitypack](http://github.com/nomadcoder/netzke-communitypack).
 
 Netzke Core takes the burden of implementing the following key aspects of the framework:
 
-* JavaScript class generation
+* Client-side (JavaScript) class generation
 * Client-server communication
-* Extendibility of components (with OOP, in both Ruby and JavaScript)
+* Extendibility of components (class inheritance and mixins)
 * Unlimited nesting (composition)
 * Dynamic component loading
 * JavaScript class caching
-* Inclusion of “external” JavaScript CSS files
-* ... and more
+* Inclusion of “external” JavaScript and CSS files
 
-All this provides for fast, low-traffic, robust, highly maintainable applications.
+All this extremely facilitates building fast, low-traffic, robust, and highly maintainable applications.
 
 ## Requirements
 
