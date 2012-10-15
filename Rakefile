@@ -31,7 +31,7 @@ begin
   end
 
   namespace :yard do
-    desc "Publish docs"
+    desc "Publish docs to api.netzke.org"
     task publish: :yard do
       dir = 'www/api.netzke.org/core'
       puts "Publishing to fl:#{dir}..."
