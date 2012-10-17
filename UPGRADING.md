@@ -7,6 +7,10 @@ The main goals of the refactor were:
 * Provide access to the component class/instance from any declaration (components, actions, endpoints, etc)
 * Generally simplify the code
 
+## Embedding Netzke components in the Rails views
+
+The `netzke_init` method used in the application layout has been renamed to `load_netzke`.
+
 ## JavaScript class configuration
 
 Such DSL methods as `js_include`, `js_mixin`, `js_base_class`, `js_method`, `js_property` are gone. Instead, use the `js_configure` DSL method:

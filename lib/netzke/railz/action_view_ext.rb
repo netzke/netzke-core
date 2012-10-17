@@ -12,8 +12,8 @@ module Netzke
       # * :cache - enable Rails caching of assets
       #
       # E.g.:
-      #     <%= netzke_init :theme => :grey %>
-      def netzke_init(params = {})
+      #     <%= load_netzke :theme => :grey %>
+      def load_netzke(params = {})
         Netzke::Core.platform = params[:platform] || :ext
         theme = params[:theme] || params[:ext_theme]
 
