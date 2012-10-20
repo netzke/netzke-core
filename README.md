@@ -1,4 +1,8 @@
-# Netzke Core [![Build Status](https://secure.travis-ci.org/skozlov/netzke-core.png?branch=master)](http://travis-ci.org/skozlov/netzke-core) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/nomadcoder/netzke-core)
+# Netzke Core [![Build Status](https://secure.travis-ci.org/nomadcoder/netzke-core.png?branch=master)](http://travis-ci.org/nomadcoder/netzke-core) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/nomadcoder/netzke-core)
+
+[RDocs](http://rdoc.info/projects/nomadcoder/netzke-core)
+
+**WARNING 2012-10-20: This README is WIP, in the transition from v0-7 to v0-8**
 
 Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/nomadcoder/netzke-basepack) and [netzke-communitypack](http://github.com/nomadcoder/netzke-communitypack).
 
@@ -17,7 +21,7 @@ All this extremely facilitates building fast, low-traffic, robust, and highly ma
 ## Requirements
 
 * Ruby ~> 1.9.2
-* Rails ~> 3.1.0
+* Rails ~> 3.2.0
 * Ext JS ~> 4.1.0
 
 ## Getting started
