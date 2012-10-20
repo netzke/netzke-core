@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = "netzke-core"
-  s.version = "0.7.6"
+  s.version = "0.7.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Denis Gorin"]
-  s.date = "2012-08-04"
-  s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
+  s.authors = ["nomadcoder"]
+  s.date = "2012-10-20"
+  s.description = "Allows building DRY Sencha Ext JS Ruby on Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE",
@@ -226,18 +226,18 @@ Gem::Specification.new do |s|
   s.homepage = "http://netzke.org"
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.10"
-  s.summary = "Build ExtJS/Rails components with minimum effort"
+  s.summary = "Build complex Sencha Ext JS Ruby on Rails components with minimum effort"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, [">= 3.0.0"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 3.1.0"])
     else
-      s.add_dependency(%q<activesupport>, [">= 3.0.0"])
+      s.add_dependency(%q<activesupport>, [">= 3.1.0"])
     end
   else
-    s.add_dependency(%q<activesupport>, [">= 3.0.0"])
+    s.add_dependency(%q<activesupport>, [">= 3.1.0"])
   end
 end
 

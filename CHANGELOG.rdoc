@@ -1,4 +1,4 @@
-= v0.7.7 - ?
+= v0.7.7 - 2012-10-20
 * Ext JS required version bump (4.1.x)
 
 = v0.7.6 - 2012-07-27
