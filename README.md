@@ -2,7 +2,7 @@
 
 [RDocs](http://rdoc.info/projects/nomadcoder/netzke-core)
 
-**WARNING 2012-10-20: This README is WIP, in the transition from v0-7 to v0-8**
+**WARNING 2012-10-20: This README is WIP, in the transition from v0.7 to v0.8. For v0.7 see the [0-7 branch](https://github.com/nomadcoder/netzke-core/tree/0-7).**
 
 Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/nomadcoder/netzke-basepack) and [netzke-communitypack](http://github.com/nomadcoder/netzke-communitypack).
 
@@ -40,16 +40,13 @@ Besides, the bundled test application is a convenient [playground](https://githu
 ## Useful links
 * [Project website](http://netzke.org)
 * [Documentation](https://github.com/nomadcoder/netzke/wiki)
-* [Live-demo](http://demo.netzke.org) (features [Netzke Basepack](https://github.com/nomadcoder/netzke-basepack), with sample code)
+* [Live-demo](http://netzke-demo.herokuapp.com) (features [Netzke Basepack](https://github.com/nomadcoder/netzke-basepack), with sample code)
 * [Twitter](http://twitter.com/netzke) - latest news about the framework
-* [Author's twitter](http://twitter.com/nomadcoder) - author's rambling about OS X, productivity, lifestyle, and what not
 
-## Ext 3 support
+## Ext JS 3 support
 Versions 0.6.x are for you if you're using Ext 3 (*hardly maintained*)
 
-## Rails 2 support
-With Rails 2 (and Ext 3 only), use versions 0.5.x (*not maintained*)
-
 ---
-Copyright (c) 2008-2011 NomadCoder, released under the MIT license
+Copyright (c) 2008-2012 nomadcoder, released under the MIT license
+
 Note, that Ext JS itself is licensed [differently](http://www.sencha.com/products/extjs/license/)
