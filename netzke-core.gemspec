@@ -215,7 +215,6 @@ Gem::Specification.new do |s|
     "test/core_test_app/spec/component/base_spec.rb",
     "test/core_test_app/spec/component/component_spec.rb",
     "test/core_test_app/spec/component/composition_spec.rb",
-    "test/core_test_app/spec/component/configuration_spec.rb",
     "test/core_test_app/spec/component/javascript_spec.rb",
     "test/core_test_app/spec/component/state_spec.rb",
     "test/core_test_app/spec/core_ext_spec.rb",

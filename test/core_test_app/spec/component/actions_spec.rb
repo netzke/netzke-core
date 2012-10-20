@@ -3,10 +3,6 @@ require 'netzke-core'
 
 module Netzke
   describe Actions do
-    # it "should be possible to override toolbars without overriding action settings" do
-    #   ExtendedComponentWithActions.new.actions[:another_action][:disabled].should == true
-    # end
-
     class SomeComponent < Base
       action :action_one
       action :action_two
@@ -14,12 +10,9 @@ module Netzke
         a.text = "Action three"
       end
 
-      js_property :bbar, [:action_one, :action_two]
-
-      def config
-        {
-          :tbar => [:action_three]
-        }
+      def configure(c)
+        super
+        c.tbar = [:action_one, :action_two, :action_three]
       end
 
       def actions
@@ -34,8 +27,11 @@ module Netzke
     end
 
     class ExtendedComponent < SomeComponent
-      js_property :bbar, [:action_one, :action_two, :action_three, :action_four, :action_five]
-      js_property :tbar, [:action_one, :action_two, :action_three, :action_four, :action_five]
+      def configure(c)
+        super
+        c.bbar = [:action_one, :action_two, :action_three, :action_four, :action_five]
+        c.tbar = [:action_one, :action_two, :action_three, :action_four, :action_five]
+      end
     end
 
     class AnotherExtendedComponent < ExtendedComponent
@@ -47,10 +43,10 @@ module Netzke
         a.text = "Action Five"
       end
 
-      def action_two_action(a)
-        super
-        a.disabled = true
-        a.text = a.text + ", extended"
+      action :action_two do |c|
+        super(c)
+        c.disabled = true
+        c.text = c.text + ", extended"
       end
 
       action :action_three do |a|
@@ -59,21 +55,21 @@ module Netzke
     end
 
     class YetAnotherExtendedComponent < AnotherExtendedComponent
-      def action_two_action(a)
-        super
-        a.disabled = false
+      action :action_two do |c|
+        super(c)
+        c.disabled = false
       end
     end
 
-    # it "should auto collect actions from both js_methods and config" do
-    #   component = SomeComponent.new
-    #   component.actions.keys.size.should == 5
-    #   component.actions[:action_one][:text].should == "Action one"
-    #   component.actions[:action_two][:text].should == "Action two"
-    #   component.actions[:action_three][:text].should == "Action three"
-    #   component.actions[:action_four][:text].should == "Action 4"
-    #   component.actions[:action_five][:text].should == "Action 5"
-    # end
+    it "should auto collect actions from both js_methods and config" do
+      component = SomeComponent.new
+      component.actions.keys.size.should == 5
+      component.actions[:action_one][:text].should == "Action one"
+      component.actions[:action_two][:text].should == "Action two"
+      component.actions[:action_three][:text].should == "Action three"
+      component.actions[:action_four][:text].should == "Action 4"
+      component.actions[:action_five][:text].should == "Action 5"
+    end
 
     it "should not override previous actions when reconfiguring bars in child class" do
       component = ExtendedComponent.new

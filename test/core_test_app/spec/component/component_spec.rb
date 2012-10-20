@@ -2,11 +2,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require "netzke-core"
 
 describe "Any component" do
-
   class TestComponent < Netzke::Base
-
-    endpoint :some_action do
-      {}
+    endpoint :some_action do |params, this|
     end
   end
 
