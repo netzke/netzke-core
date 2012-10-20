@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Denis Gorin"]
-  s.date = "2012-10-17"
+  s.date = "2012-10-20"
   s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
     "README.md",
     "Rakefile",
     "TODO.md",
-    "UPGRADING.md",
     "app/controllers/netzke_controller.rb",
     "config/ci/before-travis.sh",
     "init.rb",

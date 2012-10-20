@@ -1,11 +1,224 @@
 # v0.8.0 - WIP
-* enhancements
-  * many API changes, see UPGRADING.md
+## Generic
+  * many backward-incompatible API changes, see below
   * major code clean-up and refactor
-  * introduce Netzke::Core::Panel - a simple panel with defaults, that can be immediatelly rendered
+  * introduce `Netzke::Core::Panel` - a simple panel with defaults, that can be immediately rendered
   * Netzke child components can now be referred anywhere (e.g. dockedItems), not only in items
+  * drop support for Ruby 1.8.7
 
-* drop support for Ruby 1.8.7
+## Embedding Netzke components in the Rails views
+
+The `netzke_init` method normally used in layouts has been renamed to `load_netzke`.
+
+## Component self-configuration
+
+Often when extending an existing component (e.g. from `Netzke::Basepack`), there's a need to tune its behaviour by modifying its configuration. There are 2 methods that can be overridden in order to achieve that: `Base#configure` and `Base#js_configure`. The former is used to configure a component as whole. The latter - exclusively the component's JavaScript class instance. `js_configure` is being called only when the component is being rendered in the browser, and not when a component is instantiated, for example, for invoking its endpoint.
+
+Both methods receive as the only argument a `ActiveSupport::OrderedOptions`, which allows for syntax like this:
+
+    def configure(c)
+      c.some_config_option = 42
+      c.merge!(option_one: 1, option_two: 2)
+      super
+    end
+
+Calling `super` is essential for the super-component to do its own configuration (for example, `Netzke::Base#configure` would mix in the passed config options).
+
+The `Base#default_config` method and any other `Base#*_config` methods are gone and should be replaced with `Base#configure` or `Base#js_configure` - depending on the goal.
+
+### Base#configure
+
+The `configure` method must be used to override the configuration of a component as whole (influencing component's both Ruby and JavaScript behaviour). For example, if the super component implements the `persistence` option, we may want to enable it in our component like this:
+
+    def configure(c)
+      c.persistence = true
+      super
+    end
+
+The place to call `super` is important. In the provided example, the `persistence` option can be overridden by this component's user. However, if we put it after `super`, it will override the user's setting. Another example of overriding a user's setting might be, for example, extending a component bottom bar depending on the `mode` config:
+
+    def configure(c)
+      super
+      c.bbar = [*c.bbar, '-', :admin] if c.mode == :admin
+    end
+
+The `configure` method is useful for (dynamically) defining toolbars, titles, and other properties of a component's instance.
+
+### Access to component's config
+
+The result of `Base#configure` can be accessed through `Base#config` method from anywhere in the class.
+
+### Base#js_configure
+
+The `js_configure' method should be used to override the JS-side component configuration. It is called by the framework when the configuration for the JS instantiating of the component should be retrieved. Thus, it's *not* being called when a component is being instantiated to process an endpoint call. Override it when you need to extend/modify the config for the JS component intance.
+
+The execution of `js_configure` does not influence the content of the `Base#config` method.
+
+## JavaScript class configuration
+
+The following DSL methods are gone: `js_include`, `js_mixin`, `js_base_class`, `js_method`, `js_property`, `js_properties`. Instead, use the `js_configure` class method (not to be confused with the previously mentioned *intstance* method `Base#js_configure`):
+
+    class MyComponent < Netzke::Base
+      js_configure do |c|
+        c.mixin                     # replaces js_mixin preserving the signature
+        c.include                   # replaces js_include preserving the signature
+        c.extend = "Ext.tab.Panel"  # replaces js_base_class
+
+        c.title = "My Component"    # use instead of js_property :title, "My Component"
+
+        c.on_my_action = <<-JS      # use instead of js_method :on_my_action, ...
+          function(){
+            // ...
+          }
+        JS
+      end
+
+      # ...
+    end
+
+As you see, assignement must be used to define the JS class's properties, including functions.
+
+## Actions
+
+The `action` DSL method does not accept a hash as an optional second parameter any longer, but rather a block, which receives a configuration object:
+
+    action :destroy do |c|
+      c.text = "Destroy!"
+      c.tooltip = "Destroying it all"
+      c.icon = :delete
+    end
+
+The following is still valid:
+
+    action :my_action # it will use default (eventually localized) values for text and tooltip
+
+### Overriding actions in inherited classes
+
+Overriding an action while extending a component is possible by using the same `acton` method. To receive the action config from the superclass, use the `super` method, passing to it the block parameter:
+
+    action :destroy do |c|
+      super(c) # do the config from the superclass
+      c.text = "Destroy if you dare" # overriding the text
+    end
+
+### Referring to actions in toolbars/menus
+
+`Symbol#action` is no longer defined. Refer to actions in toolbars/menus by simply using symbols:
+
+    def configure(c)
+      super
+      c.bbar = [:my_action, :destroy]
+    end
+
+Another way (useful when re-configuring the toolbars of a child component) is by using hashes that have the `netzke_action` key:
+
+    def configure(c)
+      super
+
+      c.bbar = [
+        { netzke_action: :my_action, title: "My cool action" },
+        { netzke_action: :destroy, title: "Destroy!" }
+      ]
+    end
+
+Referring to actions on the class level (e.g. with `js_property :bbar`) will no longer work. Define the toolbars inside the `configure` method.
+
+### I18n of actions
+
++text+, +tooltip+ and +icon+ for an action will be picked up from a locale file (if located there) whenever they are not specified in the config.
+E.g., an action `some_action` defined in the component +MyComponents::CoolComponent+, will look for its text in:
+
+    I18n.t('my_components.cool_component.actions.some_action.text')
+
+for its tooltip in:
+
+    I18n.t('my_components.cool_component.actions.some_action.tooltip')
+
+and for its icon in:
+
+    I18n.t('my_components.cool_component.actions.some_action.icon')
+
+## Child components
+
+### Defining child components
+
+A child component gets defined with the `component` method receiving a block:
+
+    component :east_center_panel do |c|
+      c.klass = SimpleComponent
+      c.title = "A panel"
+      c.border = false
+    end
+
+Child component's class is now specified as the `klass` option and is actually a Class, not a String. When no `klass` or no block is given, the component's class will be derived from its name, e.g.:
+
+    component :simple_component
+
+is equivalent to:
+
+    component :simple_component do |c|
+      c.klass = SimpleComponent
+    end
+
+Defining a component in a block gives an advantage of accessing the `config` method of the parent component, e.g.:
+
+    component :east_center_panel do |c|
+      c.klass = SimpleComponent
+      c.title = config.east_center_panel_title # something that could be passed as a config option to the parent component
+    end
+
+### Overriding child components
+
+Overriding a child component while extending a component is possible by using the same `component` method. To receive the child component config from the superclass, use the `super` method, passing to it the block parameter:
+
+    component :simple_component do |c|
+      super(c) # do the config from the superclass
+      c.klass = LessSimpleComponent # use a different class
+    end
+
+### Lazy vs eager component loading
+
+All child components now by default are being lazily loaded on request from the parent, unless they are referred in the layout (see the **Layout** section). You can override this behavior by setting `eager_loading` to `true`, so that the child component's config and class are instantly available at the parent.
+
+## Layout
+
+### Referring to Netzke components
+
+The `Symbol#component` method is no longer defined. The preferred way of referring to child components in (docked) items is by using symbols:
+
+    # provided child_one and child_two components are defined in the class
+    def configure(c)
+      super
+
+      c.items = [:child_one, :child_two]
+    end
+
+Another way (useful when re-configuring the layout of a child component) is by using hashes that have the `netzke_component` key:
+
+    def configure(c)
+      super
+
+      c.items = [
+        { xtype: :panel, title: "Simple Ext panel" },
+        { netzke_component: :child_one, title: "First child" },
+        { netzke_component: :child_two, title: "Second child" }
+      ]
+    end
+
+### Implicitly defined components in items
+
+Previously there was a way to specify a component class directly in items (by using the `class_name` option), which would implicitly define a child component. This is no longer possible. The layout can now only refer to explicitly defined components.
+
+### Specifying items in config
+
+It is possible to specify the items in the config in the same format as it is done in the `items` method. If `config.items` is provided, it takes precedence over the `items` method. This can be useful for modifying the default layout of a child component by means of configuring it.
+
+It's advised to override the `items` method when a component needs to define it's layout, and not use the `configure` method for that (see the **Self-configuration** section).
+
+### DSL-delegated methods are gone
+
+No more `title` and `items` are defined as DSL methods. Include `Netzke::ConfigToDslDelegator` and use `delegate_to_dsl` method if you need that functionality in a component.
+Thus, `Netzke::ConfigToDslDelegator` is not included in Netzke::Base anymore.
 
 # v0.7.7 - ?
 * Ext JS required version bump (4.1.x)
