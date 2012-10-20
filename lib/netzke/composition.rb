@@ -82,9 +82,6 @@ module Netzke
         component = components[component_name] && component_instance(component_name)
 
         if component
-          # inform the component that it's being loaded
-          component.before_load
-
           js, css = component.js_missing_code(cache), component.css_missing_code(cache)
           this.eval_js(js) if js.present?
           this.eval_css(css) if css.present?

@@ -16,11 +16,6 @@ class ServerCounter < Netzke::Base
     c.title "Server Counter"
   end
 
-  def before_load
-    component_session[:is_retry] = false
-    component_session[:count] = 0
-  end
-
   endpoint :count do |params, this|
     component_session[:count] ||= 0
     component_session[:count] += params[:how_many]

@@ -172,7 +172,6 @@ alias: '#{js_alias}'
     def js_components
       @js_components ||= eagerly_loaded_components.inject({}) do |out, (name, config)|
         instance = component_instance(name.to_sym)
-        instance.before_load
         out.merge(name => instance.js_config)
       end
     end

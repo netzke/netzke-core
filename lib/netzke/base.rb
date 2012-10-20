@@ -107,10 +107,6 @@ module Netzke
       self.class.short_component_class_name
     end
 
-    # Override this method to do stuff at the moment of first-time loading
-    def before_load
-    end
-
     def clean_up
       component_session.clear
       components.keys.each { |k| component_instance(k).clean_up }

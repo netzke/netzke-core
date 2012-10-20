@@ -39,7 +39,6 @@ module Netzke
         Netzke::Core.reg_component(config)
 
         cmp = Netzke::Base.instance_by_config(config)
-        cmp.before_load # inform the component about initial load
 
         content_for :netzke_js_classes, raw(cmp.js_missing_code(@rendered_classes))
 

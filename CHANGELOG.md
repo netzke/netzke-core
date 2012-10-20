@@ -1,14 +1,12 @@
 # v0.8.0 - WIP
-## Generic
+## Misc
   * many backward-incompatible API changes, see below
   * major code clean-up and refactor
   * introduce `Netzke::Core::Panel` - a simple panel with defaults, that can be immediately rendered
   * Netzke child components can now be referred anywhere (e.g. dockedItems), not only in items
   * drop support for Ruby 1.8.7
-
-## Embedding Netzke components in the Rails views
-
-The `netzke_init` method normally used in layouts has been renamed to `load_netzke`.
+  * `netzke_init` view helper method has been renamed to `load_netzke`
+  * `before_load` is gone; if necessary, do preload stuff in the overridden `Base#js_configure`
 
 ## Component self-configuration
 
