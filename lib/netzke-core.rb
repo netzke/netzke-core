@@ -25,4 +25,11 @@ if defined? Rails
   ActiveSupport.on_load(:action_view) do
     include Netzke::Railz::ActionViewExt
   end
+
+  ActiveSupport.on_load(:after_initialize) do
+    Netzke::Core.logger = Rails.logger
+  end
+else
+  require 'logger'
+  Netzke::Core.logger = Logger.new(STDOUT)
 end

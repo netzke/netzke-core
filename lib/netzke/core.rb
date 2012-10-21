@@ -26,6 +26,9 @@ module Netzke
     extend Session
     extend Masquerading
 
+    # Later is set to Rails.logger if using Rails, or to Logger from stdlib otherwise
+    mattr_accessor :logger
+
     # Use Ext 3 compatibility layer
     mattr_accessor :ext3_compat_uri
 
