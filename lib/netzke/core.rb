@@ -29,9 +29,6 @@ module Netzke
     # Later is set to Rails.logger if using Rails, or to Logger from stdlib otherwise
     mattr_accessor :logger
 
-    # Use Ext 3 compatibility layer
-    mattr_accessor :ext3_compat_uri
-
     # Configuration specified at the initialization times (set in the Engine in case of Rails)
     mattr_accessor :config
     @@config = {}
