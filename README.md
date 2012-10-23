@@ -18,6 +18,39 @@ Netzke Core takes the burden of implementing the following key aspects of the fr
 
 All this extremely facilitates building fast, low-traffic, robust, and highly maintainable applications.
 
+## Rationale
+
+[Sencha Ext JS]("") is a powerful front-end framework, which is used for crafting web-apps that give the end user experience similar to that of a desktop application. It has an extensive set of widgets ('components'), and leverages a modular approach to its fullest: a developer can extend components (using Ext JS's own [class system]("")), nest components using many powerful layouts, dynamically create and destroy them. The architecture of Ext JS is well-thought and very complete.
+
+However, with Ext JS being server-agnostic, it is not always a trivial task for a developer to bind Ext JS components to the server-side data *and* application business logic, especially in complex applications. Netzke as the solution that allows you to extend the modular approach to the server side.
+
+## What is a Netzke component
+
+A Netzke component is a Ruby class, which is being represented by an Ext JS Component on the server-side. The responsibility of the Ruby class is to "assemble" that Ext JS class (further referred as "client class"), and provide the configuration for its instance (further referred as "client instance"). Even if it may sound a bit complicated, Netzke provides a simple API for defining the client class. See "Configure client class" for details.
+
+With Netzke components being a Ruby class, and the client class being *incapsulated* in it, it is possible to use them writing only Ruby code. However, while creating a component, developers can fully use their Ext JS skills - Netzke puts no obstacles here.
+
+A typical Netzke component's code is structured like this:
+
+    your_web_app
+      app
+        components
+          my_component.rb             <-- the Ruby class
+          my_component
+            some_module.rb            <-- optional extra Ruby modules
+            javascripts
+              some_dependency.js      <-- an external JS library
+              init_component.js       <-- mixins to the client class
+              extra_functionality.js  <-- more mixins (possibly optional)
+            stylesheets
+              my_special_button.js    <-- custom CSS
+
+## Configuring client class
+
+## Defining actions
+
+## Client-server interaction within components
+
 ## Requirements
 
 * Ruby ~> 1.9.2
