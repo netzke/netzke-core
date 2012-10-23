@@ -29,7 +29,7 @@ module Netzke
         res = ""
 
         # include the base-class javascript if doing JS inheritance
-        res << superclass.css_code << "\n" if extends_netzke_component? && !cached.include?(superclass.short_component_class_name)
+        res << superclass.css_code << "\n" if js_config.extending_extjs_component? && !cached.include?(superclass.name)
 
         res << css_included << "\n"
 
@@ -39,7 +39,7 @@ module Netzke
 
     def css_missing_code(cached = [])
       code = dependency_classes.inject("") do |r,k|
-        cached.include?(k.js_xtype) ? r : r + k.css_code(cached)
+        cached.include?(k.js_config.xtype) ? r : r + k.css_code(cached)
       end
       code.blank? ? nil : code
     end

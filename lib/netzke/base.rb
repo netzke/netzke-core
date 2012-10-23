@@ -62,9 +62,9 @@ module Netzke
     class << self
       # Component's short class name, e.g.:
       # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
-      def short_component_class_name
-        self.name.sub(/^Netzke::/, "")
-      end
+      # def short_component_class_name
+      #   self.name.sub(/^Netzke::/, "")
+      # end
 
       # Instance of component by config
       def instance_by_config(config)
@@ -92,7 +92,7 @@ module Netzke
       @passed_config = conf # configuration passed at the moment of instantiation
       @passed_config.deep_freeze
       @parent        = parent
-      @name          = conf[:name].nil? ? short_component_class_name.underscore : conf[:name].to_s
+      @name          = conf[:name].nil? ? name.underscore : conf[:name].to_s
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
 
@@ -103,9 +103,9 @@ module Netzke
     end
 
     # Proxy to the equally named class method
-    def short_component_class_name
-      self.class.short_component_class_name
-    end
+    # def short_component_class_name
+    #   self.class.short_component_class_name
+    # end
 
     def clean_up
       component_session.clear
@@ -129,6 +129,8 @@ module Netzke
       @@instances ||= 0
       @@instances += 1
     end
+
+
 
   private
 

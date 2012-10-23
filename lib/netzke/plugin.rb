@@ -8,9 +8,5 @@ module Netzke
         }
       JS
     end
-
-    def self.js_alias_prefix
-      "plugin"
-    end
   end
 end

@@ -1,4 +1,3 @@
-require "netzke/javascript/scopes"
 module Netzke
   # == JavaScript class generation
   #
@@ -34,20 +33,16 @@ module Netzke
   # * netzkeFeedback - shows a feedback message
   # * componentNotInSession - gets called when the session that the component is defined in gets expired. Override it to do whatever is appropriate.
   #
-  # TODO: clean-up, update rdoc
+  # TODO: update docs
   module Javascript
     extend ActiveSupport::Concern
-
-    included do
-      include Scopes
-    end
 
     module ClassMethods
 
       # Configures JS class
       # Example:
       #   js_configure do |c|
-      #     # c is an instance of JsClassConfig
+      #     # c is an instance of ClientClass
       #     c.title = "My title"
       #     c.mixin
       #     c.include :extra_js
@@ -58,107 +53,7 @@ module Netzke
       end
 
       def js_config
-        @_js_config ||= Netzke::Core::JsClassConfig.new(self)
-      end
-
-      # Builds this component's xtype
-      # E.g.: netzkebasepackwindow, netzkebasepackgridpanel
-      def js_xtype
-        name.gsub("::", "").downcase
-      end
-
-      # Alias prefix. Overridden for plugins.
-      def js_alias_prefix
-        "widget"
-      end
-
-      # Builds this component's alias
-      # E.g.: netzke.basepack.window, netzke.basepack.gridpanel
-      #
-      # MAV from http://stackoverflow.com/questions/5380770/replacing-ext-reg-xtype-in-extjs4
-      # "When you use an xtype in Ext JS 4 it looks for a class with an alias of 'widget.[xtype]'"
-      def js_alias
-        [js_alias_prefix, js_xtype].join(".")
-      end
-
-      # Component's JavaScript class declaration.
-      # It gets stored in the JS class cache storage (Netzke.classes) at the client side to be reused at the moment of component instantiation.
-      def js_class
-        res = []
-        # Defining the scope if it isn't known yet
-        res << %{Ext.ns("#{js_full_scope}");} unless js_full_scope == js_default_scope
-
-        res << (extends_netzke_component? ? js_class_declaration_extending_component : js_class_declaration_new_component)
-
-        # Store created class xtype in the cache
-        res << %(
-Netzke.cache.push('#{js_xtype}');
-)
-
-        res.join("\n")
-      end
-
-
-      # Returns all included JavaScript files as a string
-      def js_included
-        res = ""
-
-        # Prevent re-including code that was already included by the parent
-        # (thus, only include those JS files when include_js was defined in the current class, not in its ancestors)
-        ((singleton_methods(false).map(&:to_sym).include?(:include_js) ? include_js : []) + js_config.included_files).each do |path|
-          f = File.new(path)
-          res << f.read << "\n"
-        end
-
-        res
-      end
-
-      # JavaScript code needed for this particulaer class. Includes external JS code and the JS class definition for self.
-      def js_code
-        [js_included, js_class].join("\n")
-      end
-
-    protected
-
-      # JS properties and methods merged together
-      def js_extend_properties
-        # @js_extend_properties ||= js_properties.merge(js_methods)
-        js_config.properties
-      end
-
-      # Generates declaration of the JS class as direct extension of a Ext component
-      def js_class_declaration_new_component
-        mixins = js_config.mixins.empty? ? "" : %(#{js_config.mixins.join(", \n")}, )
-
-        # Resulting JS:
-%(Ext.define('#{js_full_class_name}', Netzke.chainApply({
-alias: '#{js_alias}',
-constructor: function(config) {
-  Netzke.aliasMethodChain(this, "initComponent", "netzke");
-  #{js_full_class_name}.superclass.constructor.call(this, config);
-}
-}, Netzke.componentMixin,\n#{mixins} #{js_extend_properties.to_nifty_json}));)
-      end
-
-      # Generates declaration of the JS class as extension of another Netzke component
-      def js_class_declaration_extending_component
-        base_class = superclass.js_full_class_name
-
-        mixins = js_config.mixins.empty? ? "" : %(#{js_config.mixins.join(", \n")}, )
-
-        # Resulting JS:
-%(Ext.define('#{js_full_class_name}', Netzke.chainApply(#{mixins}#{js_extend_properties.to_nifty_json}, {
-extend: '#{base_class}',
-alias: '#{js_alias}'
-}));)
-      end
-
-      def expand_js_include_path(sym, callr) # :nodoc:
-        %Q(#{callr.split(".rb:").first}/javascripts/#{sym}.js)
-      end
-
-      def extends_netzke_component? # :nodoc:
-        superclass != Netzke::Base
+        @_js_config ||= Netzke::Core::ClientClass.new(self)
       end
 
     end
@@ -200,10 +95,10 @@ alias: '#{js_alias}'
       # res[:persistent_config] = persistence_enabled?
 
       # Include our xtype
-      c.xtype = self.class.js_xtype
+      c.xtype = self.class.js_config.xtype
 
       # Include our alias: Ext.createByAlias may be used to instantiate the component.
-      c.alias = self.class.js_alias
+      c.alias = self.class.js_config.class_alias
 
       # So we can use getComponent(<component_name>) to retrieve a child component
       c.item_id ||= name
@@ -220,15 +115,15 @@ alias: '#{js_alias}'
     # It includes JS-classes for the parents, non-lazy-loaded child components, and itself.
     def js_missing_code(cached = [])
       code = dependency_classes.inject("") do |r,k|
-        cached.include?(k.js_xtype) ? r : r + k.js_code#.strip_js_comments
+        cached.include?(k.js_config.xtype) ? r : r + k.js_config.js_code#.strip_js_comments
       end
       code.blank? ? nil : code
     end
 
-  private
+  protected
 
     # Merges all the translations in the class hierarchy
-    # TODO: move to JsClassConfig
+    # Note: this method can't be moved out to JsClass, because I18n is loaded only once, when other classes are evaluated; so, this must stay at instance level.
     def js_translate_properties
       @js_translate_properties ||= self.class.class_ancestors.inject({}) do |r,klass|
         hsh = klass.js_config.translated_properties.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }

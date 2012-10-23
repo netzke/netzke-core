@@ -26,7 +26,7 @@ However, with Ext JS being server-agnostic, it is not always a trivial task for 
 
 ## What is a Netzke component
 
-A Netzke component is a Ruby class, which is being represented by an Ext JS Component on the server-side. The responsibility of the Ruby class is to "assemble" that Ext JS class (further referred as "client class"), and provide the configuration for its instance (further referred as "client instance"). Even if it may sound a bit complicated, Netzke provides a simple API for defining the client class. See "Configure client class" for details.
+A Netzke component is a Ruby class, which is being represented by an Ext JS Component on the server-side. The responsibility of the Ruby class is to "assemble" that Ext JS class (further referred as "client class"), and provide the configuration for its instance (further referred as "client instance"). Even if it may sound a bit complicated, Netzke provides a simple API for defining the client class. See "Client class" for details.
 
 With Netzke components being a Ruby class, and the client class being *incapsulated* in it, it is possible to use them writing only Ruby code. However, while creating a component, developers can fully use their Ext JS skills - Netzke puts no obstacles here.
 
@@ -41,11 +41,20 @@ A typical Netzke component's code is structured like this:
             javascripts
               some_dependency.js      <-- an external JS library
               init_component.js       <-- mixins to the client class
-              extra_functionality.js  <-- more mixins (possibly optional)
+              extra_functionality.js  <-- more mixins (possibly optional, depending on the Ruby class configuration)
             stylesheets
               my_special_button.js    <-- custom CSS
 
-## Configuring client class
+## Client class
+
+First of all it is necessary to understand that a client class is inherited from an Ext JS class, which by default is [Ext.panel.Panel](""). For example, a component defined like this:
+
+    class HelloWorld < Netzke::Base
+    end
+
+will have the following client class (simplified):
+
+    Ext.define('Netzke.classes.HelloWorld', {"extend":"Ext.panel.Panel"});
 
 ## Defining actions
 
