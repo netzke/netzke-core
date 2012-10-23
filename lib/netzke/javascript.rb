@@ -58,7 +58,7 @@ module Netzke
       end
 
       def js_config
-        @_js_config ||= Netzke::Core::JavascriptClassConfig.new(self)
+        @_js_config ||= Netzke::Core::JsClassConfig.new(self)
       end
 
       # Builds this component's xtype
