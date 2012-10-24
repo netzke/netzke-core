@@ -8,9 +8,10 @@ At this time the following constants have been set by Rails:
 */
 
 // Initial stuff
+Netzke.classNamespace = 'Netzke.classes'; // TODO: pass from Ruby
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 Ext.ns('Netzke.page'); // namespace for all component instances on the page
-Ext.ns('Netzke.classes'); // namespace for all component classes
+Ext.ns(Netzke.classNamespace); // namespace for all component classes
 Ext.ns('Netzke.classes.Core'); // namespace for Core mixins
 
 Netzke.deprecationWarning = function(msg){

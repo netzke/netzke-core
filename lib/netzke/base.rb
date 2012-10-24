@@ -92,7 +92,7 @@ module Netzke
       @passed_config = conf # configuration passed at the moment of instantiation
       @passed_config.deep_freeze
       @parent        = parent
-      @name          = conf[:name].nil? ? name.underscore : conf[:name].to_s
+      @name          = conf[:name].nil? ? self.class.name.underscore : conf[:name].to_s
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
 

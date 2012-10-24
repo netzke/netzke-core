@@ -29,7 +29,7 @@ module Netzke
         res = ""
 
         # include the base-class javascript if doing JS inheritance
-        res << superclass.css_code << "\n" if js_config.extending_extjs_component? && !cached.include?(superclass.name)
+        res << superclass.css_code << "\n" if !js_config.extending_extjs_component? && !cached.include?(superclass.name)
 
         res << css_included << "\n"
 

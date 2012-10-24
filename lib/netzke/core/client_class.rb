@@ -15,7 +15,10 @@ module Netzke
         @klass = klass
         @included_files = []
         @mixins = []
-        @properties = {extend: "Ext.panel.Panel", alias: class_alias}
+        @properties = {
+          extend: extended_class,
+          alias: class_alias
+        }
         @translated_properties = []
       end
 
@@ -170,10 +173,9 @@ Netzke.cache.push('#{xtype}');
       end
 
       # Returns the scope of this component
-      # e.g. "Netzke.classes.GridPanelLib"
+      # e.g. "Netzke.classes.Netzke.Basepack"
       def scope
         [default_scope, *@klass.name.split("::")[0..-2]].join(".")
-        # scope.empty? ? default_scope : [default_scope, scope].join(".")
       end
 
       # Returns the full name of the JavaScript class, including the scopes *and* the common scope, which is 'Netzke.classes'.
@@ -211,27 +213,26 @@ Netzke.cache.push('#{xtype}');
 
       # Generates declaration of the JS class as direct extension of a Ext component
       def class_declaration_new_component
-        mixins = self.mixins.empty? ? "" : %(#{self.mixins.join(", \n")}, )
-
-        # Resulting JS:
-%(Ext.define('#{class_name}', Netzke.chainApply(Netzke.componentMixin,\n#{mixins} #{properties.to_nifty_json}));)
+%(Ext.define('#{class_name}', Netzke.chainApply(Netzke.componentMixin,\n#{mixins_string} #{properties.to_nifty_json}));)
       end
 
       # Generates declaration of the JS class as extension of another Netzke component
       def class_declaration_extending_component
-        base_class = @klass.superclass.js_config.class_name
-
-        mixins = self.mixins.empty? ? "" : %(#{self.mixins.join(", \n")}, )
-
-        # Resulting JS:
-%(Ext.define('#{class_name}', Netzke.chainApply(#{mixins}#{properties.to_nifty_json}, {
-extend: '#{base_class}'
-}));)
+%(Ext.define('#{class_name}', Netzke.chainApply(#{mixins_string}#{properties.to_nifty_json}));)
       end
 
       # Alias prefix: 'widget' for components, 'plugin' for plugins
       def alias_prefix
         @klass < Netzke::Plugin ? "plugin" : "widget"
+      end
+
+      def mixins_string
+        self.mixins.empty? ? "" : %(#{self.mixins.join(", \n")}, )
+      end
+
+      # Default extended class
+      def extended_class
+        extending_extjs_component? ? "Ext.panel.Panel" : @klass.superclass.js_config.class_name
       end
 
       def expand_include_path(sym, callr) # :nodoc:
