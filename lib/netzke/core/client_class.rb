@@ -214,12 +214,7 @@ Netzke.cache.push('#{xtype}');
         mixins = self.mixins.empty? ? "" : %(#{self.mixins.join(", \n")}, )
 
         # Resulting JS:
-%(Ext.define('#{class_name}', Netzke.chainApply({
-  constructor: function(config) {
-    Netzke.aliasMethodChain(this, "initComponent", "netzke");
-    this.callParent(arguments);
-  }
-}, Netzke.componentMixin,\n#{mixins} #{properties.to_nifty_json}));)
+%(Ext.define('#{class_name}', Netzke.chainApply(Netzke.componentMixin,\n#{mixins} #{properties.to_nifty_json}));)
       end
 
       # Generates declaration of the JS class as extension of another Netzke component

@@ -1,5 +1,6 @@
 /**
-This file gets loaded along with the rest of Ext library at the initial load
+This file gets loaded along with the rest of Ext library at the initial load. It is common for both Ext JS and Touch; Ext JS-specific stuff is in ext.js.
+
 At this time the following constants have been set by Rails:
 
   Netzke.RelativeUrlRoot - set to ActionController::Base.config.relative_url_root
@@ -50,17 +51,6 @@ Netzke.chainApply = function(){
     Ext.apply(res, o);
   });
   return res;
-};
-
-/* Similar to Rails' alias_method_chain. Usefull when using mixins. E.g.:
-
-    Netzke.aliasMethodChain(this, "initComponent", "netzke")
-
-    will result in 2 new methods on this.initComponentWithNetzke and this.initComponentWithoutNetzke
-*/
-Netzke.aliasMethodChain = function(klass, method, feature) {
-  klass[method + "Without" + feature.capitalize()] = klass[method];
-  klass[method] = klass[method + "With" + feature.capitalize()];
 };
 
 // xtypes of cached Netzke classes

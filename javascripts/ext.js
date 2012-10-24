@@ -1,13 +1,10 @@
-// Enable Ext 4 migration errors traceback display
-if (Ext.Compat) Ext.Compat.showErrors = true;
+// This file has stuff related to Ext JS (as apposed to Touch)
 
 // Because of Netzke's double-underscore notation, Ext.TabPanel should have a different id-delimiter (yes, this should be in netzke-core)
 Ext.TabPanel.prototype.idDelimiter = "___";
 
+// Enable quick tips
 Ext.QuickTips.init();
-
-// We don't want no state managment by default, thank you!
-Ext.state.Provider.prototype.set = Ext.emptyFn;
 
 // Checking Ext JS version: both major and minor versions must be the same
 (function(){
@@ -89,6 +86,36 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   }
 });
 
+Ext.define('', {
+  override: 'Ext.Component',
+  constructor: function(config) {
+    if (this.isNetzke) {
+
+      this.netzkeComponents = config.netzkeComponents;
+
+      // process and get rid of endpoints config
+      this.processEndpoints(config);
+
+      // process and get rid of plugins config
+      this.processPlugins(config);
+
+      this.normalizeActions(config);
+
+      this.normalizeConfig(config);
+
+      this.normalizeTools(config);
+
+      // This is where the references to different callback functions will be stored
+      this.callbackHash = {};
+
+      // This is where we store the information about components that are currently being loaded with this.loadComponent()
+      this.componentsBeingLoaded = {};
+    }
+
+    this.callOverridden([config]);
+  }
+});
+
 Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
   type: "remoting",       // create a Ext.direct.RemotingProvider
   url: Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
@@ -109,65 +136,23 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   */
   componentLoadMask: true,
 
-  /* initComponent common for all Netzke components */
-  initComponentWithNetzke: function(){
-
-    // process and get rid of endpoints config
-    this.processEndpoints();
-    delete(this.endpoints);
-
-    // process and get rid of plugins config
-    this.processPlugins();
-    delete(this.netzkePlugins);
-
-    this.normalizeActions();
-
-    this.normalizeConfig();
-
-    // We may also want to take care of the following: ["items", "bbar", "tbar", "fbar", "menu", "contextMenu", "buttons", "dockedItems"]
-
-    this.normalizeTools();
-
-    // This is where the references to different callback functions will be stored
-    this.callbackHash = {};
-
-    // This is where we store the information about components that are currently being loaded with this.loadComponent()
-    this.componentsBeingLoaded = {};
-
-    // Set title
-    if (this.mode === "config"){
-      if (!this.title) {
-        this.title = '[' + this.id + ']';
-      } else {
-        this.title = this.title + ' [' + this.id + ']';
-      }
-    } else {
-      if (!this.title) {
-        this.title = this.id.humanize();
-      }
-    }
-
-    // Call the original initComponent
-    this.initComponentWithoutNetzke();
-  },
-
   /*
    * Runs through initial config options and does the following:
    *
    * * detects component placeholders and replaces them with full component config found in netzkeComponents
    * * detects action placeholders and replaces them with instances of Ext actions found in this.actions
    */
-  normalizeConfig: function() {
-    for (key in this.initialConfig) {
-      if (Ext.isArray(this[key])) this.normalizeConfigArray(this[key]);
+  normalizeConfig: function(config) {
+    for (key in config) {
+      if (Ext.isArray(config[key])) this.normalizeConfigArray(config[key]);
     }
   },
 
   /*
   Dynamically creates methods for endpoints, so that we could later call them like: this.myEndpointMethod()
   */
-  processEndpoints: function(){
-    var endpoints = this.endpoints || [];
+  processEndpoints: function(config){
+    var endpoints = config.endpoints || [];
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
     var directActions = [];
     var that = this;
@@ -178,7 +163,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
         Netzke.runningRequests++;
 
         scope = scope || that;
-        Netzke.providers[this.id][intp.camelize(true)].call(scope, arg, function(result, remotingEvent) {
+        Netzke.providers[config.id][intp.camelize(true)].call(scope, arg, function(result, remotingEvent) {
           if(remotingEvent.message) {
             console.error("RPC event indicates an error: ", remotingEvent);
             throw new Error(remotingEvent.message);
@@ -192,13 +177,15 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       }
     }, this);
 
-    Netzke.directProvider.addAction(this.id, directActions);
+    Netzke.directProvider.addAction(config.id, directActions);
+
+    delete config.endpoints;
   },
 
-  normalizeTools: function() {
-    if (this.tools) {
+  normalizeTools: function(config) {
+    if (config.tools) {
       var normTools = [];
-      Ext.each(this.tools, function(tool){
+      Ext.each(config.tools, function(tool){
         // Create an event for each action (so that higher-level components could interfere)
         this.addEvents(tool.id+'click');
 
@@ -206,27 +193,28 @@ Ext.apply(Netzke.classes.Core.Mixin, {
         normTools.push({type : tool, handler : handler, scope : this});
       }, this);
       this.tools = normTools;
+      delete config.tools;
     }
   },
 
   /*
   Replaces actions configs with Ext.Action instances, assigning default handler to them
   */
-  normalizeActions : function(){
+  normalizeActions : function(config){
     var normActions = {};
-    for (var name in this.actions) {
+    for (var name in config.actions) {
       // Create an event for each action (so that higher-level components could interfere)
       this.addEvents(name+'click');
 
       // Configure the action
-      var actionConfig = Ext.apply({}, this.actions[name]); // do not modify original this.actions
+      var actionConfig = Ext.apply({}, config.actions[name]); // do not modify original this.actions
       actionConfig.customHandler = actionConfig.handler;
       actionConfig.handler = Ext.Function.bind(this.actionHandler, this); // handler common for all actions
       actionConfig.name = name;
       normActions[name] = new Ext.Action(actionConfig);
     }
-    delete(this.actions);
     this.actions = normActions;
+    delete(config.actions);
   },
 
   /*
@@ -412,12 +400,13 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     }
   },
 
-  processPlugins: function() {
-    if (this.netzkePlugins) {
+  processPlugins: function(config) {
+    if (config.netzkePlugins) {
       if (!this.plugins) this.plugins = [];
-      Ext.each(this.netzkePlugins, function(p){
+      Ext.each(config.netzkePlugins, function(p){
         this.plugins.push(this.instantiateChildNetzkeComponent(p));
       }, this);
+      delete config.netzkePlugins;
     }
   },
 
