@@ -1,7 +1,10 @@
 class ExtendedComponentWithJsMixin < ComponentWithJsMixin
-  js_mixin :some_method_set
-  action :action_three
+  js_configure do |c|
+    c.mixin :some_method_set
+  end
 
-  js_property :title, "ExtendedComponentWithJsMixin"
-  js_property :bbar, superclass.js_properties[:bbar] + [:action_three.action]
+  def configure(c)
+    super
+    c.title = "ExtendedComponentWithJsMixin"
+  end
 end

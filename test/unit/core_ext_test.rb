@@ -3,7 +3,7 @@ require 'netzke/core_ext'
 
 class CoreExtTest < ActiveSupport::TestCase
   test "recursive delete if nil" do
-    assert_equal({:a => 1, :b => {:c => 4, :d => 5}}, {:a => 1, :aa => nil, :b => {:c => 4, :d => 5, :cc => nil}}.recursive_delete_if_nil)
+    # assert_equal({:a => 1, :b => {:c => 4, :d => 5}}, {:a => 1, :aa => nil, :b => {:c => 4, :d => 5, :cc => nil}}.recursive_delete_if_nil)
 
     assert_equal({:a => [{:e => 5}, {:f => 7}], :b => {:c => 4, :d => 5}}, {:a => [{:e => 5, :ee => nil},{:f => 7, :ff => nil}], :aa => nil, :b => {:c => 4, :d => 5, :cc => nil}}.recursive_delete_if_nil)
 

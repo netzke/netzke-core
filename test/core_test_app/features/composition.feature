@@ -29,3 +29,10 @@ Feature: Composition
     When I press "Update east south from server"
     And I wait for response from server
     Then I should see "Here's an update for south panel in east panel"
+
+  @javascript
+  Scenario: Instantiation of pre-loaded Netzke components
+    Given I am on the SomeComposite test page
+    When I press "Show hidden window"
+    And I wait for response from server
+    Then I should see "Hidden window gone visible!"

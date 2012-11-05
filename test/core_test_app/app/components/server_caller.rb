@@ -1,23 +1,37 @@
 class ServerCaller < Netzke::Base
-  title "Server Caller!"
-
   action :bug_server # Actual action's text is set in en.yml
+  action :no_response
+  action :multiple_arguments
+  action :array_as_argument
 
-  js_properties(
-    :title => "Server Caller",
-    :html => "Wow",
-    :tbar => [:bug_server.action] # NOTE: used to be bbar, but Ext >= 4.0.2 has problems with rendering it!
-  )
-
-  js_method :on_bug_server, <<-JS
-    function(){
-      this.whatsUp();
-      this.update('You should see the response from the server in the title bar the very next moment');
-    }
-  JS
-
-  endpoint :whats_up do |params|
-    {:set_title => "All quiet here on the server"}
+  js_configure do |c|
+    c.title = "Server Caller"
+    c.html = "Wow"
+    c.mixin
   end
 
+  def configure(c)
+    super
+    # c.docked_items = [{
+    #   xtype: :toolbar,
+    #   dock: :right,
+    #   items: [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
+    # }]
+    c.bbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
+  end
+
+  endpoint :whats_up do |params, this|
+    this.set_title("All quiet here on the server")
+  end
+
+  endpoint :no_response do |params, this|
+  end
+
+  endpoint :multiple_arguments do |params, this|
+    this.take_two_arguments("First argument", "Second argument")
+  end
+
+  endpoint :array_as_argument do |params, this|
+    this.take_array_as_argument(['Element 1', 'Element 2'])
+  end
 end

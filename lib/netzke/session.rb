@@ -34,7 +34,8 @@ module Netzke
 
     # Returns this component's configuration options stored in the session. Those get merged into the component's configuration at instantiation.
     def session_options
-      session_persistence_enabled? && component_session[:options] || {}
+      component_session[:options] || {}
+      #session_persistence_enabled? && component_session[:options] || {}
     end
 
     # Updates the session options
@@ -48,7 +49,8 @@ module Netzke
 
     private
       def session_persistence_enabled?
-        initial_config[:session_persistence]
+        #initial_config[:session_persistence]
+        !!@config[:session_persistence]
       end
   end
 end

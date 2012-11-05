@@ -11,10 +11,15 @@ require 'netzke/state'
 require 'netzke/embedding'
 require 'netzke/actions'
 require 'netzke/session'
-require 'netzke/config_to_dsl_delegator'
 
 module Netzke
-  # The base for every Netzke component
+  # The base class for every Netzke component. Its main responsibilities include:
+  # * JavaScript class generation and inheritance (using Ext JS class system) which reflects the Ruby class inheritance (see {Netzke::Javascript})
+  # * Nesting and dynamic loading of child components (see {Netzke::Composition})
+  # * Ruby-side action declaration (see {Netzke::Actions})
+  # * I18n
+  # * Client-server communication (see {Netzke::Services})
+  # * Session-based persistence (see {Netzke::State})
   #
   # == Class-level configuration
   # You can configure component classes in Rails Application, e.g.:
@@ -41,11 +46,9 @@ module Netzke
     include Stylesheets
     include Embedding
     include Actions
-    include ConfigToDslDelegator
 
-    delegates_to_dsl :title, :items
-
-    class_config_option :default_instance_config, {}
+    class_attribute :default_instance_config
+    self.default_instance_config = {}
 
     # Parent component
     attr_reader :parent
@@ -59,19 +62,13 @@ module Netzke
     class << self
       # Component's short class name, e.g.:
       # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
-      def short_component_class_name
-        self.name.sub(/^Netzke::/, "")
-      end
-
-      # Component's class, given its name.
-      def constantize_class_name(class_name)
-        class_name.constantize # used to be more complex than this, but appeared to be difficult to debug
-      end
+      # def short_component_class_name
+      #   self.name.sub(/^Netzke::/, "")
+      # end
 
       # Instance of component by config
       def instance_by_config(config)
-        klass = config[:klass] || constantize_class_name(config[:class_name])
-        raise NameError, "Netzke: Unknown component #{config[:class_name]}" if klass.nil?
+        klass = config[:klass] || config[:class_name].constantize
         klass.new(config)
       end
 
@@ -80,6 +77,14 @@ module Netzke
         name.split("::").map{|c| c.underscore}.join(".")
       end
 
+      # Do class-level config of a component, e.g.:
+      #
+      #   Netzke::Basepack::GridPanel.setup do |c|
+      #     c.rows_reordering_available = false
+      #   end
+      def self.setup
+        yield self
+      end
     end
 
     # Instantiates a component instance. A parent can optionally be provided.
@@ -87,30 +92,20 @@ module Netzke
       @passed_config = conf # configuration passed at the moment of instantiation
       @passed_config.deep_freeze
       @parent        = parent
-      @name          = conf[:name].nil? ? short_component_class_name.underscore : conf[:name].to_s
+      @name          = conf[:name].nil? ? self.class.name.underscore : conf[:name].to_s
       @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
       @flash         = []
 
-      # initialize @components and @items
-      normalize_components_in_items
-      # auto_collect_actions_from_config_and_js_properties
+      # Build complete component configuration
+      configure(config)
 
       self.class.increase_total_instances
     end
 
     # Proxy to the equally named class method
-    def constantize_class_name(class_name)
-      self.class.constantize_class_name(class_name)
-    end
-
-    # Proxy to the equally named class method
-    def short_component_class_name
-      self.class.short_component_class_name
-    end
-
-    # Override this method to do stuff at the moment of first-time loading
-    def before_load
-    end
+    # def short_component_class_name
+    #   self.class.short_component_class_name
+    # end
 
     def clean_up
       component_session.clear
@@ -135,22 +130,19 @@ module Netzke
       @@instances += 1
     end
 
-    private
 
-      def logger #:nodoc:
-        if defined?(::Rails)
-          ::Rails.logger
-        else
-          require 'logger'
-          Logger.new(STDOUT)
-        end
-      end
 
-      def flash(flash_hash) #:nodoc:
-        level = flash_hash.keys.first
-        raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)
-        @flash << {:level => level, :msg => flash_hash[level]}
-      end
+  private
+
+    def logger #:nodoc:
+      Netzke::Core.logger
+    end
+
+    def flash(flash_hash) #:nodoc:
+      level = flash_hash.keys.first
+      raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)
+      @flash << {:level => level, :msg => flash_hash[level]}
+    end
 
   end
 end

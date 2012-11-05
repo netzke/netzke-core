@@ -2,11 +2,16 @@ $LOAD_PATH << File.dirname(__FILE__)
 
 require 'netzke/core'
 require 'netzke/base'
-require 'netzke/plugin'
 
 module Netzke
-  autoload :Core, 'netzke/core'
-  autoload :ExtComponent, 'netzke/ext_component'
+  autoload :Plugin, 'netzke/plugin'
+  autoload :ActionConfig, 'netzke/action_config'
+  autoload :ComponentConfig, 'netzke/component_config'
+  autoload :EndpointResponse, 'netzke/endpoint_response'
+
+  module Core
+    autoload :Panel, 'netzke/core/panel'
+  end
 end
 
 # Rails specific
@@ -20,4 +25,11 @@ if defined? Rails
   ActiveSupport.on_load(:action_view) do
     include Netzke::Railz::ActionViewExt
   end
+
+  ActiveSupport.on_load(:after_initialize) do
+    Netzke::Core.logger = Rails.logger
+  end
+else
+  require 'logger'
+  Netzke::Core.logger = Logger.new(STDOUT)
 end

@@ -3,7 +3,6 @@ pkg
 doc
 Manifest
 .DS_Store
-rdoc
 test/core_test_app/tmp/
 test/core_test_app/public/extjs*
 test/core_test_app/public/images/icons

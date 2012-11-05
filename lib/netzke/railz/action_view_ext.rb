@@ -1,24 +1,19 @@
 require 'netzke/railz/action_view_ext/ext'
-require 'netzke/railz/action_view_ext/touch'
 module Netzke
   module Railz
     module ActionViewExt
       include Ext
-      include Touch
 
       # A helper to initialize Netzke. Usually used in the layout.
       #
       # Params:
-      # * :platform - :ext or :touch, by default :ext
+      # * :platform - defaults to :ext
       # * :theme - the name of theme to apply
       # * :cache - enable Rails caching of assets
       #
       # E.g.:
-      #     <%= netzke_init :theme => :grey %>
-      #
-      # For Sencha Touch:
-      #     <%= netzke_init :platform => :touch %>
-      def netzke_init(params = {})
+      #     <%= load_netzke :theme => :grey %>
+      def load_netzke(params = {})
         Netzke::Core.platform = params[:platform] || :ext
         theme = params[:theme] || params[:ext_theme]
 
@@ -44,7 +39,6 @@ module Netzke
         Netzke::Core.reg_component(config)
 
         cmp = Netzke::Base.instance_by_config(config)
-        cmp.before_load # inform the component about initial load
 
         content_for :netzke_js_classes, raw(cmp.js_missing_code(@rendered_classes))
 
@@ -53,7 +47,7 @@ module Netzke
         content_for :netzke_on_ready, raw("#{cmp.js_component_instance}\n\n#{cmp.js_component_render}")
 
         # Now mark all this component's dependency classes (including self) as rendered (by storing their xtypes), so that we only generate a class once per view
-        @rendered_classes = (@rendered_classes + cmp.dependency_classes.map(&:js_xtype)).uniq
+        @rendered_classes = (@rendered_classes + cmp.dependency_classes.map{|k| k.js_config.xtype}).uniq
 
         # Return the html for this component
         raw(cmp.js_component_html)
@@ -79,7 +73,7 @@ module Netzke
           send :"netzke_#{Netzke::Core.platform}_js_include", params
         end
 
-        # Inline JavaScript for all Netzke classes on the page, as well as Ext.onReady (Ext.setup in case of Touch) which renders Netzke components in this view after the page is loaded
+        # Inline JavaScript for all Netzke classes on the page, as well as Ext.onReady, which renders Netzke components in this view after the page is loaded
         def netzke_js(params = {})
           send :"netzke_#{Netzke::Core.platform}_js", params
         end

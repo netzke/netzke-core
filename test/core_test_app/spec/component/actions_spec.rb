@@ -3,23 +3,16 @@ require 'netzke-core'
 
 module Netzke
   describe Actions do
-    # it "should be possible to override toolbars without overriding action settings" do
-    #   ExtendedComponentWithActions.new.actions[:another_action][:disabled].should == true
-    # end
-
     class SomeComponent < Base
       action :action_one
       action :action_two
-      action :action_three do
-        {:text => "Action three"}
+      action :action_three do |a|
+        a.text = "Action three"
       end
 
-      js_property :bbar, [:action_one.action, :action_two.action]
-
-      def config
-        {
-          :tbar => [:action_three.action]
-        }
+      def configure(c)
+        super
+        c.tbar = [:action_one, :action_two, :action_three]
       end
 
       def actions
@@ -28,40 +21,55 @@ module Netzke
         })
       end
 
-      action :action_five, :text => "Action 5"
+      action :action_five do |a|
+        a.text = "Action 5"
+      end
     end
 
     class ExtendedComponent < SomeComponent
-      js_property :bbar, [:action_one.action, :action_two.action, :action_three.action, :action_four.action, :action_five.action]
-      js_property :tbar, [:action_one.action, :action_two.action, :action_three.action, :action_four.action, :action_five.action]
+      def configure(c)
+        super
+        c.bbar = [:action_one, :action_two, :action_three, :action_four, :action_five]
+        c.tbar = [:action_one, :action_two, :action_three, :action_four, :action_five]
+      end
     end
 
     class AnotherExtendedComponent < ExtendedComponent
-      action :action_one, :text => "Action 1"
-      action :action_five, :text => "Action Five"
-
-      def action_two_action
-        super.merge(:disabled => true, :text => normalize_action_config(super)[:text] + ", extended")
+      action :action_one do |a|
+        a.text = "Action 1"
       end
 
-      action :action_three do
-        {:text => "Action 3"}
+      action :action_five do |a|
+        a.text = "Action Five"
+      end
+
+      action :action_two do |c|
+        super(c)
+        c.disabled = true
+        c.text = c.text + ", extended"
+      end
+
+      action :action_three do |a|
+        a.text = "Action 3"
       end
     end
 
     class YetAnotherExtendedComponent < AnotherExtendedComponent
-      action :action_two, :disabled => false
+      action :action_two do |c|
+        super(c)
+        c.disabled = false
+      end
     end
 
-    # it "should auto collect actions from both js_methods and config" do
-    #   component = SomeComponent.new
-    #   component.actions.keys.size.should == 5
-    #   component.actions[:action_one][:text].should == "Action one"
-    #   component.actions[:action_two][:text].should == "Action two"
-    #   component.actions[:action_three][:text].should == "Action three"
-    #   component.actions[:action_four][:text].should == "Action 4"
-    #   component.actions[:action_five][:text].should == "Action 5"
-    # end
+    it "should auto collect actions from both js_methods and config" do
+      component = SomeComponent.new
+      component.actions.keys.size.should == 5
+      component.actions[:action_one][:text].should == "Action one"
+      component.actions[:action_two][:text].should == "Action two"
+      component.actions[:action_three][:text].should == "Action three"
+      component.actions[:action_four][:text].should == "Action 4"
+      component.actions[:action_five][:text].should == "Action 5"
+    end
 
     it "should not override previous actions when reconfiguring bars in child class" do
       component = ExtendedComponent.new

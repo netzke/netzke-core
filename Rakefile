@@ -16,7 +16,6 @@ rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
-
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
@@ -25,24 +24,21 @@ Rake::TestTask.new(:test) do |test|
 end
 
 begin
-  require 'rdoc/task'
-rescue LoadError
-  require 'rake/rdoctask'
-end
-Rake::RDocTask.new do |rdoc|
-  require './lib/netzke/core/version'
-  version = Netzke::Core::Version::STRING
+  require 'yard'
 
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "netzke-core #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('CHANGELOG*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
-
-namespace :rdoc do
-  desc "Publish rdocs"
-  task :publish => :rdoc do
-    `scp -r rdoc/* fl:www/api.netzke.org/core`
+  YARD::Rake::YardocTask.new do |t|
+    t.options = ['--title', "Netzke Core #{Netzke::Core::Version::STRING}"]
   end
+
+  namespace :yard do
+    desc "Publish docs to api.netzke.org"
+    task publish: :yard do
+      dir = 'www/api.netzke.org/core'
+      puts "Publishing to fl:#{dir}..."
+      `ssh fl "mkdir -p #{dir}"`
+      `scp -r doc/* fl:#{dir}`
+    end
+  end
+rescue
+  puts "To enable yard do 'gem install yard'"
 end

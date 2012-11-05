@@ -1,37 +1,35 @@
 class LocalizedPanel < Netzke::Base
-  # This action will be translated per-class basis if the translation is available, and fall back to the default when it's not.
+  # This action will be translated per-class basis if the translation is available, falling back to the default
   action :action_one
 
-  # If you want action's text to be inheritable, this is what you shold do:
-  action :action_two do
-    {:text => I18n.t('localized_panel.action_two')}
+  action :action_two do |a|
+    a.text = I18n.t('localized_panel.action_two')
   end
 
   action :action_three
 
-  js_translate :property_one, :property_two
+  js_configure do |c|
+    c.translate :property_one, :property_two
 
-  js_property :bbar, [:action_one.action, :action_two.action, :action_three.action]
+    c.on_render = <<-JS
+      function(ct){
+        Netzke.classes.LocalizedPanel.superclass.onRender.call(this, ct);
 
-  def configuration
-    super.tap do |c|
-      c[:title] = I18n.t('localized_panel.title')
-    end
+        this.body.update(this.i18n.propertyOne + ", " + this.i18n.propertyTwo);
+      }
+    JS
+
+    c.on_action_three = <<-JS
+      function(){
+        var mask = new Ext.LoadMask(this.body);
+        mask.show();
+      }
+    JS
   end
 
-  js_method :on_render, <<-JS
-    function(ct){
-      Netzke.classes.LocalizedPanel.superclass.onRender.call(this, ct);
-
-      this.body.update(this.i18n.propertyOne + ", " + this.i18n.propertyTwo);
-    }
-  JS
-
-  js_method :on_action_three, <<-JS
-    function(){
-      var mask = new Ext.LoadMask(this.body);
-      mask.show();
-    }
-  JS
-
+  def configure(c)
+    super
+    c.title = I18n.t('localized_panel.title')
+    c.bbar = [:action_one, :action_two, :action_three]
+  end
 end

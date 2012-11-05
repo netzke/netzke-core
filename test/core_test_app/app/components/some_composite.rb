@@ -1,65 +1,94 @@
 class SomeComposite < Netzke::Base
-  js_properties :height => 400,
-                :layout => 'border',
-                :bbar => [
-                  :update_west_panel.action,
-                  :update_center_panel.action,
-                  :update_west_from_server.action,
-                  :update_east_south_from_server.action
-                ]
+  js_configure do |c|
+    c.height = 400
+    c.layout = :border
+
+    c.on_update_west_panel = <<-JS
+      function(){
+        this.getComponent('west_panel').body.update('West Panel Body Updated');
+      }
+    JS
+
+    c.on_update_center_panel = <<-JS
+      function(){
+        this.getComponent('center_panel').body.update('Center Panel Body Updated');
+      }
+    JS
+
+    c.on_update_east_south_from_server = <<-JS
+      function(){
+        this.updateEastSouth();
+      }
+    JS
+
+    c.on_update_west_from_server = <<-JS
+      function(){
+        this.updateWest();
+      }
+    JS
+
+    c.on_show_hidden_window = <<-JS
+      function(){
+        this.instantiateChildNetzkeComponent('hidden_window').show();
+      }
+    JS
+  end
 
   action :update_center_panel
   action :update_west_panel
   action :update_west_from_server
   action :update_east_south_from_server
+  action :show_hidden_window
 
-  config :items => [
-            :center_panel.component(:region => 'center'),
-            :west_panel.component(:region => 'west', :width => 300, :split => true),
-            {:layout => 'border', :region => :east, :width => 500, :split => true, :items => [
-              :east_center_panel.component(:region => :center),
-              :east_south_panel.component(:region => :south, :height => 200, :split => true)
-            ]},
-          ]
-
-  component :west_panel, :class_name => "ExtendedServerCaller"
-
-  component :center_panel, :class_name => "ServerCaller"
-
-  component :east_center_panel, :class_name => "SimpleComponent", :title => "A panel", :border => false
-
-  component :east_south_panel, :class_name => "SimpleComponent", :title => "Another panel", :border => false
-
-  endpoint :update_east_south do |params|
-    {:east_south_panel => {:set_title => "Here's an update for south panel in east panel"}}
+  def configure(c)
+    super
+    c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server, :show_hidden_window ]
+    c.items = [
+      :center_panel,
+      { region: :west, width: 300, split: true, netzke_component: :west_panel },
+      { layout: :border, region: :east, width: 500, split: true, items: [
+        { region: :center, netzke_component: :east_center_panel },
+        { region: :south, height: 200, split: true, netzke_component: :east_south_panel }
+      ] }
+    ]
   end
 
-  endpoint :update_west do |params|
-    {:west_panel => {:set_title => "Here's an update for west panel"}}
+  component :center_panel do |c|
+    c.klass = ServerCaller
+    c.region = :center
   end
 
-  js_method :on_update_west_panel, <<-JS
-    function(){
-      this.items.filter('name', 'west_panel').first().body.update('West Panel Body Updated');
-    }
-  JS
+  component :west_panel do |c|
+    c.klass = ExtendedServerCaller
+  end
 
-  js_method :on_update_center_panel, <<-JS
-    function(){
-      this.items.filter('name', 'center_panel').first().body.update('Center Panel Body Updated');
-    }
-  JS
+  component :east_center_panel do |c|
+    c.klass = SimpleComponent
+    c.title = "A panel"
+    c.border = false
+  end
 
-  js_method :on_update_east_south_from_server, <<-JS
-    function(){
-      this.updateEastSouth();
-    }
-  JS
+  component :east_south_panel do |c|
+    c.klass = SimpleComponent
+    c.title = "Another panel"
+    c.border = false
+  end
 
-  js_method :on_update_west_from_server, <<-JS
-    function(){
-      this.updateWest();
-    }
-  JS
+  # Eagerly loaded Netzke component that only requires instantiating at client
+  component :hidden_window do |c|
+    c.klass = SimpleWindow
+    c.eager_loading = true # !
+    c.title = "Hidden window gone visible!"
+    c.width = 300
+    c.height = 200
+    c.modal = true
+  end
 
+  endpoint :update_east_south do |params, this|
+    this.east_south_panel.set_title("Here's an update for south panel in east panel")
+  end
+
+  endpoint :update_west do |params, this|
+    this.west_panel.set_title("Here's an update for west panel")
+  end
 end

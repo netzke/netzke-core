@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require 'netzke-core'
 
 describe Netzke::Base do
-  it "should keep config independent inside class hierarchy" do
+  it "should preserve class config within class hierarchy" do
     class Parent < Netzke::Base
       class_attribute :with_feature
       self.with_feature = "yes"

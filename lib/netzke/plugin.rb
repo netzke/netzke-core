@@ -1,15 +1,12 @@
 module Netzke
   class Plugin < Base
-    js_base_class "Ext.Component"
-
-    def self.js_alias_prefix
-      "plugin"
+    js_configure do |c|
+      c.extend = "Ext.Component"
+      c.init = <<-JS
+        function(cmp){
+          this.cmp = cmp;
+        }
+      JS
     end
-
-    js_method :init, <<-JS
-      function(cmp){
-        this.cmp = cmp;
-      }
-    JS
   end
 end

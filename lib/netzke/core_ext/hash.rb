@@ -1,4 +1,12 @@
 class Hash
+  def deep_map(&block)
+    self.dup.tap do |h|
+      h.each_pair do |k,v|
+        h[k] = v.deep_map(&block) if v.respond_to?('deep_map')
+      end
+    end
+  end
+
   def deep_each_pair(&block)
     self.each_pair do |k,v|
       v.respond_to?('deep_each_pair') ? v.deep_each_pair(&block) : yield(k,v)
@@ -17,15 +25,15 @@ class Hash
 
   def jsonify
     self.inject({}) do |h,(k,v)|
-      new_key = k.instance_of?(String) || k.instance_of?(Symbol) ? k.jsonify : k
-      new_value = v.instance_of?(Array) || v.instance_of?(Hash) ? v.jsonify : v
+      new_key = (k.is_a?(String) || k.is_a?(Symbol)) && !k.is_a?(ActiveSupport::JSON::Variable) ? k.jsonify : k
+      new_value = v.is_a?(Array) || v.is_a?(Hash) ? v.jsonify : v
       h.merge(new_key => new_value)
     end
   end
 
   # First camelizes the keys, then convert the whole hash to JSON
   def to_nifty_json
-    self.recursive_delete_if_nil.jsonify.to_json
+    self.jsonify.to_json
   end
 
   # Converts values of a Hash in such a way that they can be easily stored in the database: hashes and arrays are jsonified, symbols - stringified
@@ -33,16 +41,6 @@ class Hash
     inject({}) do |options, (k, v)|
       options[k] = v.is_a?(Symbol) ? v.to_s : (v.is_a?(Hash) || v.is_a?(Array)) ? v.to_json : v
       options
-    end
-  end
-
-  # We don't need to pass null values in JSON, they are null by simply being absent
-  def recursive_delete_if_nil
-    self.inject({}) do |h,(k,v)|
-      if !v.nil?
-        h[k] = v.respond_to?('recursive_delete_if_nil') ? v.recursive_delete_if_nil : v
-      end
-      h
     end
   end
 

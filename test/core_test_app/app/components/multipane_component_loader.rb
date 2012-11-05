@@ -5,24 +5,23 @@ class MultipaneComponentLoader < Netzke::Base
   action :load_server_caller, :handler => :load_handler
   action :load_component_loader, :handler => :load_handler
 
-  def default_config
-    super.tap do |c|
-      c[:items] = [{
-        :title => "Container One",
-        :xtype => :panel,
-        :height => 200,
-        :flex => 1,
-        :border => true,
-        :bbar => [:load_server_caller.action, :load_component_loader.action],
-        :layout => :fit
-      },{
-        :title => "Container Two",
-        :xtype => :panel,
-        :height => 200,
-        :flex => 1,
-        :layout => :fit
-      }]
-    end
+  def configure(c)
+    super
+    c.items = [{
+      :title => "Container One",
+      :xtype => :panel,
+      :height => 200,
+      :flex => 1,
+      :border => true,
+      :bbar => [:load_server_caller, :load_component_loader],
+      :layout => :fit
+    },{
+      :title => "Container Two",
+      :xtype => :panel,
+      :height => 200,
+      :flex => 1,
+      :layout => :fit
+    }]
   end
 
   component :server_caller

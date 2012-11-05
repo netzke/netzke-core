@@ -10,9 +10,10 @@ module Netzke
       component.update_state(:value_to_remember, 42)
       component.state.should == {:value_to_remember => 42}
 
-      component.update_state(:more_to_remember => "a string", :and_yet_more => "another string")
-      component.state.should == {:value_to_remember => 42, :more_to_remember => "a string", :and_yet_more => "another string"}
+      component.update_state(:more_to_remember, "a string")
+      component.update_state(:and_yet_more, "another string")
 
+      component.state.should == {:value_to_remember => 42, :more_to_remember => "a string", :and_yet_more => "another string"}
     end
   end
 end

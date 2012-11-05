@@ -1,16 +1,26 @@
 class ComponentWithIncludedJs < Netzke::Base
-  js_include "#{File.dirname(__FILE__)}/included.js"
+  class_attribute :title
+  self.title = "My title"
 
-  js_base_class "Netzke.ComponentWithIncludedJs"
+  js_configure do |c|
+    c.extend = "Netzke.ComponentWithIncludedJs"
+
+    c.include "#{File.dirname(__FILE__)}/included.js"
+
+    c.on_print_message = <<-JS
+      function(){
+        this.updateBodyWithMessage("Some message " + "shown in the body");
+      }
+    JS
+
+    c.active_tab = 0
+    c.title = title
+  end
 
   action :print_message
 
-  js_property :bbar, [:print_message.action]
-
-  js_method :on_print_message, <<-JS
-    function(){
-      this.updateBodyWithMessage("Some message " + "shown in the body");
-    }
-  JS
-
+  def configure(c)
+    super
+    c.bbar = [:print_message]
+  end
 end

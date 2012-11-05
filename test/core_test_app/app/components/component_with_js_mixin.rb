@@ -1,11 +1,17 @@
 class ComponentWithJsMixin < Netzke::Base
-  title "ComponentWithJsMixin"
+  js_configure do |c|
+    c.include :extra_one, :extra_two
+    c.mixin :method_set_one, :method_set_two
+    c.mixin # with no parameters, it'll assume :component_with_js_mixin
+  end
 
-  js_include :extra_one, :extra_two
-  js_mixin :method_set_one, :method_set_two
-  js_mixin # with no parameters, it'll assume :component_with_js_mixin
   action :action_one
   action :action_two
   action :action_three
-  js_property :bbar, [:action_one.action, :action_two.action, :action_three.action]
+
+  def configure(c)
+    super
+    c.bbar = [:action_one, :action_two, :action_three]
+    c.title = "ComponentWithJsMixin"
+  end
 end

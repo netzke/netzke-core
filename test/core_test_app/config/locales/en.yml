@@ -4,15 +4,19 @@
 en:
   server_caller:
     actions:
-      bug_server: "Call server"
+      bug_server:
+        text: Call server
+        tooltip: Call server, seriously
   extended_server_caller:
     actions:
-      bug_server: "Call server extensively"
-      bug_server_tooltip: "With custom tooltip"
+      bug_server:
+        text: Call server extensively
+        tooltip: With overridden tooltip, naturally
   localized_panel:
     title: Localized Panel
     property_one: First property
     property_two: Second property
     action_two: Second action
     actions:
-      action_one: First action
+      action_one:
+        text: First action

@@ -1,5 +1,6 @@
 /**
-This file gets loaded along with the rest of Ext library at the initial load
+This file gets loaded along with the rest of Ext library at the initial load. It is common for both Ext JS and Touch; Ext JS-specific stuff is in ext.js.
+
 At this time the following constants have been set by Rails:
 
   Netzke.RelativeUrlRoot - set to ActionController::Base.config.relative_url_root
@@ -7,9 +8,10 @@ At this time the following constants have been set by Rails:
 */
 
 // Initial stuff
+Netzke.classNamespace = 'Netzke.classes'; // TODO: pass from Ruby
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext
 Ext.ns('Netzke.page'); // namespace for all component instances on the page
-Ext.ns('Netzke.classes'); // namespace for all component classes
+Ext.ns(Netzke.classNamespace); // namespace for all component classes
 Ext.ns('Netzke.classes.Core'); // namespace for Core mixins
 
 Netzke.deprecationWarning = function(msg){
@@ -52,17 +54,6 @@ Netzke.chainApply = function(){
   return res;
 };
 
-/* Similar to Rails' alias_method_chain. Usefull when using mixins. E.g.:
-
-    Netzke.aliasMethodChain(this, "initComponent", "netzke")
-
-    will result in 2 new methods on this.initComponentWithNetzke and this.initComponentWithoutNetzke
-*/
-Netzke.aliasMethodChain = function(klass, method, feature) {
-  klass[method + "Without" + feature.capitalize()] = klass[method];
-  klass[method] = klass[method + "With" + feature.capitalize()];
-};
-
 // xtypes of cached Netzke classes
 Netzke.cache = [];
 
@@ -75,28 +66,6 @@ Netzke.classes.Core.Mixin = {};
 // Properties/methods common to all Netzke component classes
 Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   isNetzke: true, // to distinguish Netzke components from regular Ext components
-
-  /*
-  Detects component placeholders in the passed object (typically, "items"),
-  and merges them with the corresponding config from this.netzkeComponents.
-  This way it becomes ready to be instantiated properly by Ext.
-  */
-  detectComponents: function(o){
-    if (Ext.isObject(o)) {
-      if (o.items) this.detectComponents(o.items);
-    } else if (Ext.isArray(o)) {
-      var a = o;
-      Ext.each(a, function(c, i){
-        if (c.netzkeComponent) {
-          var cmpName = c.netzkeComponent,
-              cmpCfg = this.netzkeComponents[cmpName.camelize(true)];
-          if (!cmpCfg) throw "Netzke: unknown component reference " + cmpName;
-          a[i] = Ext.apply(cmpCfg, c);
-          delete a[i].netzkeComponent; // not needed any longer
-        } else if (c.items) this.detectComponents(c.items);
-      }, this);
-    }
-  },
 
   /*
   Evaluates CSS
@@ -152,24 +121,21 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
     } else {
       for (var instr in instructions) {
+        var args = instructions[instr];
+
         if (Ext.isFunction(this[instr])) {
           // Executing the method.
-          this[instr].apply(this, [instructions[instr]]);
+          this[instr].apply(this, args);
         } else {
           var childComponent = this.getChildNetzkeComponent(instr);
           if (childComponent) {
-            childComponent.bulkExecute(instructions[instr]);
-          } else {
+            childComponent.bulkExecute(args);
+          } else if (Ext.isArray(args)) { // only consider those calls that have arguments wrapped in an array; the only (probably) case when they are not, is with 'success' property set to true in a non-ajax form submit - silently ignore that
             throw "Netzke: Unknown method or child component '" + instr +"' in component '" + this.id + "'"
           }
         }
       }
     }
-  },
-
-  // Used by Touch components
-  endpointUrl: function(endpoint){
-    return Netzke.RelativeUrlRoot + "/netzke/dispatcher?address=" + this.id + "__" + endpoint;
   },
 
   // Does the call to the server and processes the response
@@ -203,60 +169,46 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   // When an endpoint call is issued while the session has expired, this method is called. Override it to do whatever is appropriate.
   componentNotInSession: function() {
     Netzke.componentNotInSessionHandler();
-  }
-});
-
-
-// DEPRECATED as whole. Netzke extensions for Ext.Container.
-Ext.override(Ext.Container, {
-  // Instantiates an component by its config. If it appears to be a window, shows it instead of adding as item.
-  instantiateChild: function(config){
-    Netzke.deprecationWarning("instantiateChild is deprecated");
-    var instance = Ext.createByAlias( config.alias, config );
-    this.insertNetzkeComponent(instance);
-    return instance;
   },
 
-  insertNetzkeComponent: function(cmp) {
-    this.removeChild(); // first delete previous component
-    this.add(cmp);
-
-    // Sometimes a child is getting loaded into a hidden container...
-    if (this.isVisible()) {
-      this.doLayout();
-    } else {
-      this.on('show', function(cmp){cmp.doLayout();}, {single: true});
-    }
+  // Returns a URL for old-fashion requests (used at multi-part form non-AJAX submissions)
+  endpointUrl: function(endpoint){
+    return Netzke.RelativeUrlRoot + "/netzke/dispatcher?address=" + this.id + "__" + endpoint;
   },
 
-  /**
-    Get Netzke component that this Ext.Container is part of (*not* the parent component, for which call getParent)
-    It searches up the Ext.Container hierarchy until it finds a Container that has isNetzke property set to true
-    (or until it reaches the top).
-  */
-  getOwnerComponent: function(){
-    Netzke.deprecationWarning("getOwnerComponent is deprecated");
-    if (this.initialConfig.isNetzke) {
-      return this;
-    } else {
-      if (this.ownerCt){
-        return this.ownerCt.getOwnerComponent();
-      } else {
-        return null;
+  // private
+  normalizeConfigArray: function(items){
+    var cfg, ref, cmpName, cmpCfg, actName, actCfg;
+
+    Ext.each(items, function(item, i){
+      cfg = item;
+
+      // potentially, referencing a component or action with a string
+      if (Ext.isString(item)) {
+        ref = item.camelize(true);
+        if ((this.netzkeComponents || {})[ref]) cfg = {netzkeComponent: ref};
+        else if ((this.actions || {})[ref]) cfg = {netzkeAction: ref};
       }
-    }
-  },
 
-  // Get the component that we are hosting
-  getNetzkeComponent: function(){
-    Netzke.deprecationWarning("getNetzkeComponent is deprecated");
-    return this.items ? this.items.first() : null; // need this check in case when the container is not yet rendered, like an inactive tab in the TabPanel
-  },
+      if (cfg.netzkeAction) {
+        actName = cfg.netzkeAction.camelize(true);
+        if (!this.actions[actName]) throw "Netzke: unknown action " + cfg.netzkeAction;
 
-  // Remove the child
-  removeChild: function(){
-    Netzke.deprecationWarning("removeChild is deprecated");
-    var currentChild = this.getNetzkeComponent();
-    if (currentChild) {this.remove(currentChild);}
-  }
+        items[i] = this.actions[actName];
+        delete(item);
+      } else if (cfg.netzkeComponent) {
+        cmpName = cfg.netzkeComponent;
+        cmpCfg = this.netzkeComponents[cmpName.camelize(true)];
+        if (!cmpCfg) throw "Netzke: unknown component " + cmpName;
+        items[i] = Ext.apply(cmpCfg, cfg);
+        delete(item);
+      } else {
+        for (key in cfg) {
+          if (Ext.isArray(cfg[key])) {
+            this.normalizeConfigArray(cfg[key]);
+          }
+        }
+      }
+    }, this);
+  },
 });

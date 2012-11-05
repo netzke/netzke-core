@@ -4,12 +4,12 @@ module Netzke
 
     # Instantiating
     def js_component_instance
-      %Q{Netzke.page.#{name.jsonify} = Ext.create("#{self.class.js_alias}", #{js_config.to_nifty_json});}
+      %Q{Netzke.page.#{name.jsonify} = Ext.create("#{self.class.js_config.class_alias}", #{js_config.to_nifty_json});}
     end
 
     # Rendering
     def js_component_render
-      %Q{Netzke.page.#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-netzke");} unless self.class.js_xtype == "netzkewindow"
+      %Q{Netzke.page.#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-netzke");} unless self.class.js_config.xtype == "netzkewindow"
     end
 
     # Container for rendering

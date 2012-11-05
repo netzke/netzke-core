@@ -4,6 +4,9 @@ require 'netzke/core/version'
 require 'netzke/core/session'
 require 'netzke/core/masquerading'
 require 'netzke/core/dynamic_assets'
+require 'netzke/core/client_class'
+require 'netzke/core/css_config'
+require 'netzke/config_to_dsl_delegator'
 
 module Netzke
   # This module implements high-level configuration for Netzke Core.
@@ -23,14 +26,14 @@ module Netzke
     extend Session
     extend Masquerading
 
-    # Use Ext 3 compatibility layer
-    mattr_accessor :ext3_compat_uri
+    # Later is set to Rails.logger if using Rails, or to Logger from stdlib otherwise
+    mattr_accessor :logger
 
     # Configuration specified at the initialization times (set in the Engine in case of Rails)
     mattr_accessor :config
     @@config = {}
 
-    # :ext or :touch
+    # :ext (or :touch - when and if ever implemented)
     mattr_accessor :platform
     @@platform = :ext
 
@@ -73,22 +76,17 @@ module Netzke
 
     mattr_accessor :persistence_manager_class
 
-    # Sencha Touch specific
-    mattr_accessor :touch_javascripts
-    @@touch_javascripts = []
-
-    mattr_accessor :touch_stylesheets
-    @@touch_stylesheets = []
-
-    mattr_accessor :touch_uri
-    @@touch_uri = "/sencha-touch"
-
     def self.setup
       yield self
     end
 
     def self.reset_components_in_session
       Netzke::Core.session[:netzke_components].try(:clear)
+    end
+
+    # returns a full URI to an icon file by its name
+    def self.uri_to_icon(icon)
+      with_icons ? [(controller && controller.config.relative_url_root), icons_uri, '/', icon.to_s, ".png"].join : nil
     end
   end
 end

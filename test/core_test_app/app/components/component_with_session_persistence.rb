@@ -1,35 +1,32 @@
 class ComponentWithSessionPersistence < Netzke::Base
-  title "Default Title"
-
-  js_property :bbar, [:bug_server.action]
-
-  action :bug_server, :text => "Tell server to store new title"
-
-  def default_config
-    super.merge(:session_persistence => true)
+  action :bug_server do |a|
+    a.text = "Tell server to store new title"
   end
 
-  def configuration
-    super.merge(:html => component_session[:html_content] || "Default HTML")
+  def configure(c)
+    c.session_persistence = true
+    c.title = "Default Title"
+    super
+    c.html = component_session[:html_content] || "Default HTML"
+    c.bbar = [:bug_server]
   end
 
-  js_method :bug_server, <<-JS
-    function(){
-      this.whatsUp();
-    }
-  JS
+  js_configure do |c|
+    c.bug_server = <<-JS
+      function(){
+        this.whatsUp();
+      }
+    JS
 
-  js_method :on_bug_server, <<-JS
-    function(){
-      this.bugServer();
-    }
-  JS
+    c.on_bug_server = <<-JS
+      function(){
+        this.bugServer();
+      }
+    JS
+  end
 
-
-  endpoint :whats_up do |params|
+  endpoint :whats_up do |params, this|
     update_session_options(:title => "Title From Session") # setting a value in session_options, which will get auto-merged into +config+
     component_session[:html_content] = "HTML from session" # setting some custom session key/value, which we use manually in +configuration+
-    {}
   end
-
 end

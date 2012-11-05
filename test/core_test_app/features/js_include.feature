@@ -17,4 +17,4 @@ Feature: JsMixins
   Scenario: ExtendedComponentWithJsMixin should behave, too
     Given I am on the ExtendedComponentWithJsMixin test page
     When I press "Action three"
-    Then I should see "Action Three triggered!"
+    Then I should see "Modified action Three triggered!"

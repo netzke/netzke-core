@@ -24,12 +24,6 @@ module Netzke
             # ExtJS
             res << (Rails.env.development? ? "#{Netzke::Core.ext_uri}/ext-all-debug" : "#{Netzke::Core.ext_uri}/ext-all")
 
-            # ExtJS 3 compatibility layer
-            if compat_uri = Netzke::Core.ext3_compat_uri
-              res << "#{compat_uri}/ext3-core-compat"
-              res << "#{compat_uri}/ext3-compat"
-            end
-
             # Ext I18n
             res << "#{Netzke::Core.ext_uri}/locale/ext-lang-#{I18n.locale}" if I18n.locale != :en
 

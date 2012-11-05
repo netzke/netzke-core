@@ -1,20 +1,64 @@
 module Netzke
-  # This module takes care of components composition.
+  # Any Netzke component can define child components, which can either be statically nested in the compound layout (e.g. as different regions of the 'border' layout), or dynamically loaded at a request (as is the advanced search panel in Basepack::GridPanel, for example).
   #
-  # You can define a nested component by calling the +component+ class method:
+  # == Defining a component
   #
-  #     component :users, :data_class => "GridPanel", :model => "User"
+  # You can define a child component by calling the +component+ class method which normally requires a block:
   #
-  # The method also accepts a block in case you want access to the component's instance:
-  #
-  #     component :books do
-  #       {:data_class => "Book", :title => build_title}
+  #     component :users do |c|
+  #       c.klass = GridPanel
+  #       c.model = "User"
+  #       c.title = "Users"
   #     end
   #
-  # To override a component, define a method {component_name}_component, e.g.:
+  # If no configuration is required, and the component's class name can be derived from its name, then the block can be omitted, e.g.:
   #
-  #     def books_component
-  #       super.merge(:title => "Modified Title")
+  #     component :user_grid
+  #
+  # which is equivalent to:
+  #
+  #     component :user_grid do |c|
+  #       c.klass = UserGrid
+  #     end
+  #
+  # == Overriding a component
+  #
+  # When overriding a component, the `super` method should be called, with the configuration object passed to it as parameter:
+  #
+  #     component :users do |c|
+  #       super(c)
+  #       c.title = "Modified Title"
+  #     end
+  #
+  # == Referring to components in layouts
+  #
+  # When a child component is to be used in the layout, it can be referred by using the `netzke_component` key in the configuration hash:
+  #
+  #     def configure(c)
+  #       super
+  #       c.items = [
+  #         { xtype: :panel, title: "Simple Ext panel" },
+  #         { netzke_component: :users, title: "A Netzke component" }
+  #       ]
+  #     end
+  #
+  # If no extra (layout) configuration is needed, a component can be simply referred by using a symbol, e.g.:
+  #
+  #     component :tab_one # ...
+  #     component :tab_two # ...
+  #
+  #     def configure(c)
+  #       super
+  #       c.items = [:tab_one, :tab_two]
+  #     end
+  #
+  # == Lazily vs eagerly loaded components
+  #
+  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `loadNetzkeComponent` (see {Netzke::Javascript}). Referring a component in the layout (the `items` property) automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `eager_loading` can be set to true:
+  #
+  #     component :eagerly_loaded_window do |c|
+  #       c.klass = SomeWindowComponent
+  #       c.eager_loading = true
   #     end
   module Composition
     extend ActiveSupport::Concern
@@ -32,23 +76,19 @@ module Netzke
       # * <tt>:cache</tt> - an array of component classes cached at the browser
       # * <tt>:id</tt> - reference to the component
       # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
-      endpoint :deliver_component do |params|
+      endpoint :deliver_component do |params, this|
         cache = params[:cache].split(",") # array of cached xtypes
         component_name = params[:name].underscore.to_sym
         component = components[component_name] && component_instance(component_name)
 
         if component
-          # inform the component that it's being loaded
-          component.before_load
+          js, css = component.js_missing_code(cache), component.css_missing_code(cache)
+          this.eval_js(js) if js.present?
+          this.eval_css(css) if css.present?
 
-          [{
-            :eval_js => component.js_missing_code(cache),
-            :eval_css => component.css_missing_code(cache)
-          }, {
-            :component_delivered => component.js_config
-          }]
+          this.component_delivered(component.js_config);
         else
-          {:component_delivery_failed => {:component_name => component_name, :msg => "Couldn't load component '#{component_name}'"}}
+          this.component_delivery_failed(component_name: component_name, msg: "Couldn't load component '#{component_name}'")
         end
       end
 
@@ -56,35 +96,17 @@ module Netzke
 
     module ClassMethods
 
-      # Defines a nested component.
-      def component(name, config = {}, &block)
+      def component(name, &block)
         register_component(name)
-        config = config.dup
-        config[:class_name] ||= name.to_s.camelize
-        config[:name] = name.to_s
-        method_name = COMPONENT_METHOD_NAME % name
 
+        method_name = COMPONENT_METHOD_NAME % name
         if block_given?
           define_method(method_name, &block)
         else
-          if superclass.instance_methods.map(&:to_s).include?(method_name)
-            define_method(method_name) do
-              super().merge(config)
-            end
-          else
-            define_method(method_name) do
-              config
-            end
+          define_method(method_name) do |component_config|
+            component_config
           end
         end
-      end
-
-      # DEPRECATED in favor of Symbol#component
-      # Component's js config used when embedding components as Container's items
-      # (see some_composite.rb for an example)
-      def js_component(name, config = {})
-        ::ActiveSupport::Deprecation.warn("Using js_component is deprecated. Use Symbol#component instead", caller)
-        config.merge(:component => name)
       end
 
       # Register a component
@@ -94,38 +116,25 @@ module Netzke
 
     end
 
-    def items #:nodoc:
-      @items_with_normalized_components
-    end
-
-    # DEPRECATED in favor of Base.component
-    def initial_components
-      {}
-    end
-
     # All components for this instance, which includes components defined on class level, and components detected in :items
     def components
-      @components ||= self.class.registered_components.inject({}){ |res, name| res.merge(name.to_sym => send(COMPONENT_METHOD_NAME % name)) }.merge(config[:components] || {})
-    end
-
-    def eager_loaded_components
-      components.reject{|k,v| v[:lazy_loading]}
-    end
-
-    # DEPRECATED
-    def add_component(aggr)
-      components.merge!(aggr)
-    end
-
-    # DEPRECATED
-    def remove_component(aggr)
-      if config[:persistent_config]
-        persistence_manager_class.delete_all_for_component("#{global_id}__#{aggr}")
+      @components ||= self.class.registered_components.inject({}) do |out, name|
+        component_config = Netzke::ComponentConfig.new(name, self)
+        send(COMPONENT_METHOD_NAME % name, component_config)
+        out.merge(name.to_sym => component_config)
       end
-      components[aggr] = nil
     end
 
-    # Called when the method_missing tries to processes a non-existing component
+    def eagerly_loaded_components
+      @eagerly_loaded_components ||= components.select{|k,v| components_in_config.include?(k) || v[:eager_loading]}
+    end
+
+    # Array of components (by name) referred in config (and thus, required to be instantiated)
+    def components_in_config
+      @components_in_config || (normalize_config || true) && @components_in_config
+    end
+
+    # Called when the method_missing tries to processes a non-existing component. Override when needed.
     def component_missing(aggr)
       flash :error => "Unknown component #{aggr} for component #{name}"
       {:feedback => @flash}.to_nifty_json
@@ -143,15 +152,11 @@ module Netzke
           component_config = composite.components[cmp]
           raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.global_id}'" if component_config.nil?
 
-          component_class_name = component_config[:class_name]
-          raise ArgumentError, "No class_name specified for component #{cmp} of #{composite.global_id}" if component_class_name.nil?
+          klass = component_config[:klass] || Netzke::Core::Panel
 
-          component_class = constantize_class_name(component_class_name)
-          raise ArgumentError, "Unknown constant #{component_class_name}" if component_class.nil?
+          instance_config = {}.merge(component_config).merge(strong_config).merge(:name => cmp)
 
-          instance_config = weak_children_config.merge(component_config).merge(strong_config).merge(:name => cmp)
-
-          composite = component_class.new(instance_config, composite) # params: config, parent
+          composite = klass.new(instance_config, composite) # params: config, parent
         end
         composite
       end
@@ -161,7 +166,7 @@ module Netzke
     def dependency_classes
       res = []
 
-      eager_loaded_components.keys.each do |aggr|
+      eagerly_loaded_components.keys.each do |aggr|
         res += component_instance(aggr).dependency_classes
       end
 
@@ -169,11 +174,6 @@ module Netzke
 
       res << self.class
       res.uniq
-    end
-
-    # DEPRECATED
-    def js_component(*args)
-      self.class.js_component(*args)
     end
 
     # Returns global id of a component in the hierarchy, based on passed reference that follows
@@ -194,31 +194,47 @@ module Netzke
       end
     end
 
-    protected
+  protected
 
-      def normalize_components(items) #:nodoc:
-        @component_index ||= 0
-        @items_with_normalized_components = items.each_with_index.map do |item, i|
-          if is_component_config?(item)
-            component_name = item[:name] || :"netzke_#{@component_index}" # default name/item_id for child components
-            @component_index += 1
-            self.class.component(component_name.to_sym, item)
-            component_name.to_sym.component # replace current item with a reference to component
-          elsif item.is_a?(Hash)
-            item[:items].is_a?(Array) ? item.merge(:items => normalize_components(item[:items])) : item
-          else
-            item
-          end
+    # Yields each Netzke component config found in items (recursively)
+    def traverse_components_in_items(items, &block)
+      items.each do |item|
+        yield(:netzke_component => item) if item.is_a?(Symbol)
+        yield(item) if item.is_a?(Hash) && item[:netzke_component]
+
+        traverse_components_in_items(item[:items], &block) if item.is_a?(Hash) && item[:items]
+      end
+    end
+
+    def extend_item(item)
+      item = {netzke_component: item} if item.is_a?(Symbol) && components[item]
+      item = {netzke_action: item} if item.is_a?(Symbol) && actions[item]
+
+      if item.is_a?(Hash)
+        @components_in_config << item[:netzke_component] if item[:netzke_component] && item[:eager_loading] != false
+      end
+
+      item
+    end
+
+    # We'll build a few useful instance variables here:
+    #
+    # @components_in_config - an array of those components (by name) that are referred in items
+    # @normalized_config - a config that has all the extensions (duh...)
+    def normalize_config
+      @components_in_config = []
+      @normalized_config = config.dup.tap do |c|
+        c.each_pair do |k,v|
+          c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
+          c[k] = v.deep_map{|el| extend_item(el)} if v.is_a?(Array)
         end
       end
+    end
 
-      def normalize_components_in_items #:nodoc:
-        normalize_components(config[:items]) if config[:items]
-      end
-
-      def is_component_config?(c) #:nodoc:
-        !!(c.is_a?(Hash) && c[:class_name])
-      end
+    def normalized_config
+      # make sure we call normalize_config first
+      @normalized_config || (normalize_config || true) && @normalized_config
+    end
 
   end
 end

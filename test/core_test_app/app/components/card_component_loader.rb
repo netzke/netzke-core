@@ -4,7 +4,7 @@ class CardComponentLoader < Netzke::Base
   action :load_server_caller
   action :load_extended_server_caller
 
-  js_property :bbar, [:load_server_caller.action, :load_extended_server_caller.action]
+  js_property :bbar, [:load_server_caller, :load_extended_server_caller]
 
   component :server_caller
   component :extended_server_caller

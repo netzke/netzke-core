@@ -1,19 +1,20 @@
 class PanelWithTools < Netzke::Base
-  def configuration
-    super.tap do |c|
-      c[:tools] = [:refresh, :gear]
-    end
+  def configure(c)
+    super
+    c.tools = [:refresh, :gear]
   end
 
-  js_method :on_refresh, <<-JS
-    function(){
-      this.setTitle("Refresh" + " clicked");
-    }
-  JS
+  js_configure do |c|
+    c.on_refresh = <<-JS
+      function(){
+        this.setTitle("Refresh" + " clicked");
+      }
+    JS
 
-  js_method :on_gear, <<-JS
-    function(){
-      this.setTitle("Gear" + " clicked")
-    }
-  JS
+    c.on_gear = <<-JS
+      function(){
+        this.setTitle("Gear" + " clicked")
+      }
+    JS
+  end
 end

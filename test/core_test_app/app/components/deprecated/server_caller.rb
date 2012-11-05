@@ -1,7 +1,7 @@
 module Deprecated
   class ServerCaller < Netzke::Base
     js_properties :title => "Server caller",
-                  :bbar => [:call_server.action]
+                  :bbar => [:call_server]
 
     js_method :on_call_server, <<-JS
       function(){
