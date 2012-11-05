@@ -14,13 +14,13 @@ module Netzke
   # You can configure Netzke::Core like this:
   #
   #     Netzke::Core.setup do |config|
-  #       config.ext_location = "/home/netzke/ext-3.3.0"
+  #       config.ext_path = "/home/netzke/ext-4.1.1"
   #       config.icons_uri = "/images/famfamfam/icons"
   #       # ...
   #     end
   #
   # The following configuration options are available:
-  # * ext_location - absolute path to your Ext code root
+  # * ext_path - absolute path to your Ext code root
   # * icons_uri - relative URI to the icons
   module Core
     extend Session
