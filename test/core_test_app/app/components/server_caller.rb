@@ -12,12 +12,13 @@ class ServerCaller < Netzke::Base
 
   def configure(c)
     super
+    c.bbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
+    # Alternative way of defining bbar:
     # c.docked_items = [{
     #   xtype: :toolbar,
     #   dock: :right,
     #   items: [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
     # }]
-    c.bbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
   end
 
   endpoint :whats_up do |params, this|
