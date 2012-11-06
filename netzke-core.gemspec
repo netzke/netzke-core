@@ -130,6 +130,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/server_caller/javascripts/server_caller.js",
     "test/core_test_app/app/components/server_counter.rb",
     "test/core_test_app/app/components/server_counter/javascripts/server_counter.js",
+    "test/core_test_app/app/components/simple_authentication_component.rb",
     "test/core_test_app/app/components/simple_component.rb",
     "test/core_test_app/app/components/simple_composite.rb",
     "test/core_test_app/app/components/simple_form_with_file_upload.rb",
