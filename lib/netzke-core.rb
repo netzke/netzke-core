@@ -27,9 +27,9 @@ if defined? Rails
   end
 
   ActiveSupport.on_load(:after_initialize) do
-    Netzke::Core.logger = Rails.logger
+    Netzke::Base.logger = Rails.logger
   end
 else
   require 'logger'
-  Netzke::Core.logger = Logger.new(STDOUT)
+  Netzke::Base.logger = Logger.new(STDOUT)
 end

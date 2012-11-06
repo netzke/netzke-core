@@ -109,6 +109,8 @@ module Netzke
 
       # we need to pass them as strigs, not as symbols
       c.tools = c.tools.map(&:to_s) if c.tools.present?
+
+      c.flash = session[:flash] if session[:flash].present?
     end
 
     # All the JS-code required by this instance of the component to be instantiated in the browser.

@@ -29,10 +29,6 @@ module Netzke
     # Later is set to Rails.logger if using Rails, or to Logger from stdlib otherwise
     mattr_accessor :logger
 
-    # Configuration specified at the initialization times (set in the Engine in case of Rails)
-    mattr_accessor :config
-    @@config = {}
-
     # :ext (or :touch - when and if ever implemented)
     mattr_accessor :platform
     @@platform = :ext

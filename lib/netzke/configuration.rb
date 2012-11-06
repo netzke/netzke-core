@@ -26,9 +26,6 @@ module Netzke
 
       # session options
       c.merge!(session_options) # if c[:session_persistence]
-
-      # parent config
-      # config.merge!(parent.strong_children_config) unless parent.nil?
     end
 
     # Component's config

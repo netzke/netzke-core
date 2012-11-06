@@ -4,9 +4,9 @@ class ComponentWithSessionPersistence < Netzke::Base
   end
 
   def configure(c)
-    c.session_persistence = true
-    c.title = "Default Title"
     super
+    c.persistence = true
+    c.title = "Default Title"
     c.html = component_session[:html_content] || "Default HTML"
     c.bbar = [:bug_server]
   end

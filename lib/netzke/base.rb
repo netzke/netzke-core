@@ -50,6 +50,11 @@ module Netzke
     class_attribute :default_instance_config
     self.default_instance_config = {}
 
+    # set during initializations
+    mattr_accessor :session
+    mattr_accessor :controller
+    mattr_accessor :logger
+
     # Parent component
     attr_reader :parent
 
@@ -57,15 +62,10 @@ module Netzke
     attr_reader :name
 
     # Global id in the components tree, following the double-underscore notation, e.g. +books__config_panel__form+
+    # TODO: rename to js_id
     attr_reader :global_id
 
     class << self
-      # Component's short class name, e.g.:
-      # "Netzke::Module::SomeComponent" => "Module::SomeComponent"
-      # def short_component_class_name
-      #   self.name.sub(/^Netzke::/, "")
-      # end
-
       # Instance of component by config
       def instance_by_config(config)
         klass = config[:klass] || config[:class_name].constantize
@@ -98,46 +98,15 @@ module Netzke
 
       # Build complete component configuration
       configure(config)
-
-      self.class.increase_total_instances
-    end
-
-    # Proxy to the equally named class method
-    # def short_component_class_name
-    #   self.class.short_component_class_name
-    # end
-
-    def clean_up
-      component_session.clear
-      components.keys.each { |k| component_instance(k).clean_up }
     end
 
     def i18n_id
       self.class.i18n_id
     end
 
-    # Used for performance measurments
-    def self.total_instances
-      @@instances || 0
-    end
-
-    def self.reset_total_instances
-      @@instances = 0
-    end
-
-    def self.increase_total_instances
-      @@instances ||= 0
-      @@instances += 1
-    end
-
-
-
   private
 
-    def logger #:nodoc:
-      Netzke::Core.logger
-    end
-
+    # TODO: needs rework
     def flash(flash_hash) #:nodoc:
       level = flash_hash.keys.first
       raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)

@@ -9,22 +9,17 @@ module Netzke
       end
 
       def [](key)
-        (Netzke::Core.session[@component_id] || {})[key]
+        (Netzke::Base.session[@component_id] || {})[key]
       end
 
       def []=(key, value)
-        (Netzke::Core.session[@component_id] ||= {})[key] = value
+        (Netzke::Base.session[@component_id] ||= {})[key] = value
         # super
       end
 
       def clear
-        Netzke::Core.session[@component_id].clear if Netzke::Core.session[@component_id]
+        Netzke::Base.session[@component_id].clear if Netzke::Base.session[@component_id]
       end
-    end
-
-    # Top-level session (straight from the controller).
-    def session
-      ::Netzke::Core.session
     end
 
     # Component-specific session.
@@ -40,17 +35,11 @@ module Netzke
 
     # Updates the session options
     def update_session_options(hash)
-      if session_persistence_enabled?
+      # if session_persistence_enabled?
         component_session.deep_merge!(:options => hash)
-      else
-        logger.debug "Netzke warning: No session persistence enabled for component '#{global_id}'"
-      end
+      # else
+      #   logger.debug "Netzke warning: No session persistence enabled for component '#{global_id}'"
+      # end
     end
-
-    private
-      def session_persistence_enabled?
-        #initial_config[:session_persistence]
-        !!@config[:session_persistence]
-      end
   end
 end
