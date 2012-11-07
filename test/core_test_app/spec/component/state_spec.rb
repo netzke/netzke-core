@@ -4,6 +4,8 @@ require 'netzke-core'
 module Netzke
   describe State do
     it "should be possible to save component's state" do
+      Base.session = {} # mimick session
+
       component = Base.new(:name => 'some_component', :persistence => true)
       component.state.should == {}
 
