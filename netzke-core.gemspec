@@ -44,7 +44,6 @@ Gem::Specification.new do |s|
     "lib/netzke/core/client_class.rb",
     "lib/netzke/core/css_config.rb",
     "lib/netzke/core/dynamic_assets.rb",
-    "lib/netzke/core/masquerading.rb",
     "lib/netzke/core/options_hash.rb",
     "lib/netzke/core/panel.rb",
     "lib/netzke/core/version.rb",

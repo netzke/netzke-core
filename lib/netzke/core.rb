@@ -1,7 +1,6 @@
 require 'active_support/core_ext'
 require 'netzke/core/options_hash'
 require 'netzke/core/version'
-require 'netzke/core/masquerading'
 require 'netzke/core/dynamic_assets'
 require 'netzke/core/client_class'
 require 'netzke/core/css_config'
@@ -22,8 +21,6 @@ module Netzke
   # * ext_path - absolute path to your Ext code root
   # * icons_uri - relative URI to the icons
   module Core
-    extend Masquerading
-
     # :ext (or :touch - when and if ever implemented)
     mattr_accessor :platform
     @@platform = :ext
