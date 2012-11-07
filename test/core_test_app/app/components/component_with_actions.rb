@@ -1,13 +1,13 @@
 class ComponentWithActions < Netzke::Base
   action :some_action do |a|
     a.text = "Some Cool Action"
-    a.icon = Netzke::Core.icons_uri + "/tick.png" # specify full icon path
+    a.icon = Netzke::Core.icons_uri + "/tick.png" # specify full icon uri
   end
 
   action :another_action do |a|
     a.disabled = true
     a.text = "Disabled action"
-    a.icon = :accept # the accept.png icon will be looked for in Netzke::Core.icons_uri
+    a.icon = :accept # accept.png icon will be looked for in Netzke::Core.icons_uri
   end
 
   action :action_with_custom_handler do |c|
@@ -34,8 +34,7 @@ class ComponentWithActions < Netzke::Base
           :text => 'Menu Button',
           :scale => 'large',
           :rowspan => 3,
-          :iconCls => 'add',
-          :iconAlign => 'top',
+          icon: uri_to_icon(:anchor), # use uri_to_icon helper to get the full icon uri
           :arrowAlign => 'bottom',
           :menu => [:some_action]
       },{

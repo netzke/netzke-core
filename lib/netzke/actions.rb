@@ -102,5 +102,11 @@ module Netzke
     def js_config_with_actions #:nodoc
       actions.empty? ? js_config_without_actions : js_config_without_actions.merge(:actions => actions)
     end
+
+  protected
+
+    def uri_to_icon(icon)
+      self.class.uri_to_icon(icon)
+    end
   end
 end

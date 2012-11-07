@@ -1,11 +1,7 @@
 class SimpleAuthenticationComponent < Netzke::Base
-  action :sign_in do |c|
-    c.icon = :door_in
-  end
+  action :sign_in
 
-  action :sign_out do |c|
-    c.icon = :door_out
-  end
+  action :sign_out
 
   def configure(c)
     super
