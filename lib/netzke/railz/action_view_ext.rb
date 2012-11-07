@@ -4,18 +4,24 @@ module Netzke
     module ActionViewExt
       include Ext
 
-      # A helper to initialize Netzke. Usually used in the layout.
+      # A helper to load Netzke and Ext JS files. Usually used in the layout.
       #
       # Params:
-      # * :platform - defaults to :ext
-      # * :theme - the name of theme to apply
-      # * :cache - enable Rails caching of assets
+      #
+      # * :theme - the name of theme to apply; follows simple convention of including css files named "ext-#{theme}".
       #
       # E.g.:
-      #     <%= load_netzke :theme => :grey %>
+      #
+      #     <%= load_netzke theme: "neptune" %>
+      #
+      # Other theme options that may work (unless Sencha introduces some/other conventions):
+      #
+      # * all (standard)
+      # * all-gray
+      # * all-access
       def load_netzke(params = {})
         Netzke::Core.platform = params[:platform] || :ext
-        theme = params[:theme] || params[:ext_theme]
+        params[:theme] ||= :all
 
         raw([netzke_css_include(params), netzke_css(params), netzke_js_include(params), netzke_js(params)].join("\n"))
       end

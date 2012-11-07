@@ -8,7 +8,7 @@ module Netzke
 
           def netzke_ext_css_include(params)
             # ExtJS base
-            res = ["#{Netzke::Core.ext_uri}/resources/css/ext-all"]
+            res = ["#{Netzke::Core.ext_uri}/resources/css/ext-#{params[:theme]}"]
 
             # Netzke-related dynamic css
             res << "/netzke/ext"
@@ -43,15 +43,6 @@ module Netzke
 
             javascript_tag(res.join("\n"))
           end
-
-          # (Experimental) Embeds a "pure" (non-Netzke) Ext component into the view, e.g.:
-          #     <%= ext :my_panel, :xtype => :panel, :html => "Simple Panel"
-          def ext(name, config = {}) #:doc:
-            comp = Netzke::ExtComponent.new(name, config)
-            content_for :netzke_on_ready, raw("#{comp.js_component_render}")
-            raw(comp.js_component_html)
-          end
-
       end
     end
   end
