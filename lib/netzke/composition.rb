@@ -32,13 +32,13 @@ module Netzke
   #
   # == Referring to components in layouts
   #
-  # When a child component is to be used in the layout, it can be referred by using the `netzke_component` key in the configuration hash:
+  # When a child component is to be used in the layout, it can be referred by using the `component` key in the configuration hash:
   #
   #     def configure(c)
   #       super
   #       c.items = [
   #         { xtype: :panel, title: "Simple Ext panel" },
-  #         { netzke_component: :users, title: "A Netzke component" }
+  #         { component: :users, title: "A Netzke component" }
   #       ]
   #     end
   #
@@ -196,21 +196,15 @@ module Netzke
 
   protected
 
-    # Yields each Netzke component config found in items (recursively)
-    def traverse_components_in_items(items, &block)
-      items.each do |item|
-        yield(:netzke_component => item) if item.is_a?(Symbol)
-        yield(item) if item.is_a?(Hash) && item[:netzke_component]
-
-        traverse_components_in_items(item[:items], &block) if item.is_a?(Hash) && item[:items]
-      end
-    end
-
     def extend_item(item)
       item = {netzke_component: item} if item.is_a?(Symbol) && components[item]
       item = {netzke_action: item} if item.is_a?(Symbol) && actions[item]
 
       if item.is_a?(Hash)
+        # replace the `component` and `action` keys with `netzke_component` and `netzke_action`, which will be looked for at the JS side
+        item[:netzke_component] = item.delete(:component) || item[:netzke_component]
+        item[:netzke_action] = item.delete(:action) || item[:netzke_action]
+
         @components_in_config << item[:netzke_component] if item[:netzke_component] && item[:eager_loading] != false
       end
 

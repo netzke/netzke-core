@@ -193,15 +193,15 @@ The `Symbol#component` method is no longer defined. The preferred way of referri
       c.items = [:child_one, :child_two]
     end
 
-Another way (useful when re-configuring the layout of a child component) is by using hashes that have the `netzke_component` key:
+Another way (useful when re-configuring the layout of a child component) is by using hashes that have the `component` key:
 
     def configure(c)
       super
 
       c.items = [
         { xtype: :panel, title: "Simple Ext panel" },
-        { netzke_component: :child_one, title: "First child" },
-        { netzke_component: :child_two, title: "Second child" }
+        { component: :child_one, title: "First child" },
+        { component: :child_two, title: "Second child" }
       ]
     end
 
