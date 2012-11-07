@@ -1,4 +1,6 @@
 RailsApp::Application.routes.draw do
+  netzke "/some/path/netzke"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -61,10 +63,5 @@ RailsApp::Application.routes.draw do
   # Components configured in Rails views
   match 'simple_rails/:action' => 'simple_rails', :as => 'simple_rails_views'
 
-  # Non-Netzke Ext components
-  match 'ext/:component' => 'components#ext', :as => "ext"
-
   match ':controller(/:action(/:id(.:format)))'
-
-  netzke
 end

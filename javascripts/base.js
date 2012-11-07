@@ -5,6 +5,7 @@ At this time the following constants have been set by Rails:
 
   Netzke.RelativeUrlRoot - set to ActionController::Base.config.relative_url_root
   Netzke.RelativeExtUrl - URL to ext files
+  Netzke.ControllerUrl - NetzkeController URL
 */
 
 // Initial stuff
@@ -173,7 +174,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
 
   // Returns a URL for old-fashion requests (used at multi-part form non-AJAX submissions)
   endpointUrl: function(endpoint){
-    return Netzke.RelativeUrlRoot + "/netzke/dispatcher?address=" + this.id + "__" + endpoint;
+    return Netzke.ControllerUrl + "dispatcher?address=" + this.id + "__" + endpoint;
   },
 
   // private

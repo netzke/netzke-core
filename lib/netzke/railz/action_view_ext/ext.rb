@@ -11,7 +11,7 @@ module Netzke
             res = ["#{Netzke::Core.ext_uri}/resources/css/ext-#{params[:theme]}"]
 
             # Netzke-related dynamic css
-            res << "/netzke/ext"
+            res << netzke_path(:ext)
 
             res += Netzke::Core.external_ext_css
 
@@ -28,7 +28,7 @@ module Netzke
             res << "#{Netzke::Core.ext_uri}/locale/ext-lang-#{I18n.locale}" if I18n.locale != :en
 
             # Netzke-related dynamic JavaScript
-            res << "/netzke/ext"
+            res << netzke_path(:ext)
 
             javascript_include_tag(*res)
           end

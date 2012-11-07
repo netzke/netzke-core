@@ -118,7 +118,7 @@ Ext.define('', {
 
 Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
   type: "remoting",       // create a Ext.direct.RemotingProvider
-  url: Netzke.RelativeUrlRoot + "/netzke/direct/", // url to connect to the Ext.Direct server-side router.
+  url: Netzke.ControllerUrl + "direct/", // url to connect to the Ext.Direct server-side router.
   namespace: "Netzke.providers", // namespace to create the Remoting Provider in
   actions: {},
   maxRetries: Netzke.core.directMaxRetries,
