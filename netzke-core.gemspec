@@ -172,7 +172,6 @@ Gem::Specification.new do |s|
     "test/core_test_app/config/locales/es.yml",
     "test/core_test_app/config/routes.rb",
     "test/core_test_app/db/development_structure.sql",
-    "test/core_test_app/db/migrate/20110110132720_create_netzke_component_states.rb",
     "test/core_test_app/db/schema.rb",
     "test/core_test_app/db/seeds.rb",
     "test/core_test_app/features/actions_and_tools.feature",
