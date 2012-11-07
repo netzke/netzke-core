@@ -1,6 +1,6 @@
 class Symbol
   def jsonify
-    self.to_s.camelize(:lower).to_sym
+    self.to_s.jsonify.to_sym
   end
 
   def l
