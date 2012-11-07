@@ -4,7 +4,7 @@ module ActionDispatch::Routing
     #
     #     netzke "/some/path/netzke"
     def netzke(prefix = "/netzke")
-      match "#{prefix}/:action(.:format)", to: "netzke#", as: 'netzke'
+      match "#{prefix}/:action(.:format)", to: "netzke", as: 'netzke'
     end
   end
 end

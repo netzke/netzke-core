@@ -1,5 +1,5 @@
 RailsApp::Application.routes.draw do
-  netzke "/some/path/netzke"
+  netzke "/some/path/netzke" # the path is optional
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

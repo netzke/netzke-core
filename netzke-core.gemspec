@@ -199,7 +199,6 @@ Gem::Specification.new do |s|
     "test/core_test_app/features/step_definitions/web_steps.rb",
     "test/core_test_app/features/support/env.rb",
     "test/core_test_app/features/support/paths.rb",
-    "test/core_test_app/gemfiles/rails3_1.gemfile",
     "test/core_test_app/gemfiles/rails3_2.gemfile",
     "test/core_test_app/lib/tasks/.gitkeep",
     "test/core_test_app/public/404.html",

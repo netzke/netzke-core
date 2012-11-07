@@ -3,7 +3,6 @@ rvm:
   - 1.9.2
   - 1.9.3
 gemfile:
-  - test/core_test_app/gemfiles/rails3_1.gemfile
   - test/core_test_app/gemfiles/rails3_2.gemfile
 before_script: 
   - chmod 777 ./config/ci/before-travis.sh
