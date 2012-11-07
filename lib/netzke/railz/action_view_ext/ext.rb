@@ -22,7 +22,7 @@ module Netzke
             res = []
 
             # ExtJS
-            res << (Rails.env.development? ? "#{Netzke::Core.ext_uri}/ext-all-debug" : "#{Netzke::Core.ext_uri}/ext-all")
+            res << (params[:minified] ? "#{Netzke::Core.ext_uri}/ext-all" : "#{Netzke::Core.ext_uri}/ext-all-debug")
 
             # Ext I18n
             res << "#{Netzke::Core.ext_uri}/locale/ext-lang-#{I18n.locale}" if I18n.locale != :en

@@ -8,6 +8,7 @@
   * `netzke_init` view helper method has been renamed to `load_netzke`
   * `before_load` is gone; if necessary, do preload stuff in the overridden `Base#js_configure`
   * `global_id` becomes `js_id`
+  * `load_nezke` (ex `netzke_init`) now understands the `minified` option
 
 ## Component self-configuration
 

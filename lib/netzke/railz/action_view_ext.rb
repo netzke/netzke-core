@@ -16,11 +16,14 @@ module Netzke
       #
       # Other theme options that may work (unless Sencha introduces some/other conventions):
       #
-      # * all (standard)
-      # * all-gray
-      # * all-access
+      # - all (standard)
+      # - all-gray
+      # - all-access
+      #
+      # * :minified - set to +true+ to load minified JS and CSS for Ext JS also in development env
       def load_netzke(params = {})
         Netzke::Core.platform = params[:platform] || :ext
+        params[:minified] = !Rails.env.development? if params[:minified].nil?
         params[:theme] ||= :all
 
         raw([netzke_css_include(params), netzke_css(params), netzke_js_include(params), netzke_js(params)].join("\n"))
