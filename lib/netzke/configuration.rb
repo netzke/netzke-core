@@ -20,12 +20,6 @@ module Netzke
 
       # passed config
       c.merge!(@passed_config)
-
-      # persistent config
-      c.merge!(persistent_options) if c[:persistence]
-
-      # session options
-      c.merge!(session_options) # if c[:session_persistence]
     end
 
     # Component's config

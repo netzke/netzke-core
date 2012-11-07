@@ -5,14 +5,30 @@ Feature: Persistence
 
   @javascript
   Scenario: The component with persistence should be able to store and retrieve a persistence setting
-    When I go to the ComponentWithSessionPersistence test page
+    When I go to the StatefulComponent test page
     Then I should see "Default Title"
     And I should see "Default HTML"
-    But I should not see "Title From Session"
+    But I should not see "Title From State"
     And I should not see "HTML from session"
 
-    When I press "Tell server to store new title"
+    When I press "Set session data"
     And I wait for response from server
-    And I go to the ComponentWithSessionPersistence test page
-    Then I should see "Title From Session"
+    And I go to the StatefulComponent test page
+    Then I should see "Title From State"
     And I should see "HTML from session"
+
+    When I press "Reset session data"
+    And I wait for response from server
+    And I go to the StatefulComponent test page
+    Then I should see "Default Title"
+    And I should see "Default HTML"
+    But I should not see "Title From State"
+    And I should not see "HTML from session"
+
+  @javascript
+  Scenario: Sharing persistence key
+    When I go to the StatefulComponent test page
+    And I press "Set session data"
+    And I wait for response from server
+    And I go to the StatefulComponentWithSharedState test page
+    Then I should see "Title From State"

@@ -1,6 +1,5 @@
 module Netzke
-  # This modules provides (component-specific) session manupulation.
-  # The :session_persistence config option should be set to true in order for the component to make use of this.
+  # Implements component-specific session manupulation.
   module Session
     class ComponentSessionProxy < Hash #:nodoc:
       def initialize(component_id)
@@ -9,20 +8,25 @@ module Netzke
       end
 
       def [](key)
-        (Netzke::Base.session[@component_id] || {})[key]
+        component_session[key]
       end
 
       def []=(key, value)
-        (Netzke::Base.session[@component_id] ||= {})[key] = value
-        # super
+        component_session.try(:store, key, value)
       end
 
       def clear
-        Netzke::Base.session[@component_id].try(:clear)
+        component_session.try(:clear)
       end
 
       def merge!(hsh)
-        Netzke::Base.session[@component_id].try(:merge!, hsh)
+        component_session.try(:merge!, hsh)
+      end
+
+    protected
+
+      def component_session
+        Netzke::Base.session[@component_id] ||= {}
       end
     end
 
