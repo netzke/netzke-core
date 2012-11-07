@@ -45,7 +45,7 @@ protected
 
   def invoke_endpoint(endpoint_path, action, params, tid) #:nodoc:
     component_name, *sub_components = endpoint_path.split('__')
-    components_in_session = Netzke::Core.session[:netzke_components]
+    components_in_session = session[:netzke_components]
 
     if components_in_session
       component_instance = Netzke::Base.instance_by_config(components_in_session[component_name.to_sym])
@@ -70,10 +70,9 @@ protected
   # E.g.: some_grid__post_grid_data.
   def endpoint_dispatch(endpoint_path)
     component_name, *sub_components = endpoint_path.split('__')
-    component_instance = Netzke::Base.instance_by_config(Netzke::Core.session[:netzke_components][component_name.to_sym])
+    component_instance = Netzke::Base.instance_by_config(session[:netzke_components][component_name.to_sym])
 
-    # We render text/plain, so that the browser never modifies our response
-    # NOPE, we can't do it here; this method is only used for classic form submission, and the response from the server should be the (default) "text/html"
+    # We can't do this here; this method is only used for classic form submission, and the response from the server should be the (default) "text/html"
     # response.headers["Content-Type"] = "text/plain; charset=utf-8"
 
     render :text => component_instance.invoke_endpoint(sub_components.join("__"), params).to_nifty_json, :layout => false

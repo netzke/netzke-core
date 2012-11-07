@@ -35,10 +35,11 @@ module Netzke
 
         config[:name] = name
 
-        # Register the component in session
-        Netzke::Core.reg_component(config)
-
         cmp = Netzke::Base.instance_by_config(config)
+
+        # Register the component in session
+        session[:netzke_components] ||= {}
+        session[:netzke_components][cmp.js_id.to_sym] = config
 
         content_for :netzke_js_classes, raw(cmp.js_missing_code(@rendered_classes))
 

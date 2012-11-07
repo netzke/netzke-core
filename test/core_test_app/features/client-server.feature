@@ -9,4 +9,5 @@ Scenario: Ask server to set our title
   Then I should see "Server Caller"
 
   When I press "Call server"
+  And I wait for response from server
   Then I should see "All quiet here on the server"

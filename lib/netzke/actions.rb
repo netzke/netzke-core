@@ -83,6 +83,11 @@ module Netzke
       def register_action(name)
         self.registered_actions |= [name]
       end
+
+      # returns a full URI to an icon file by its name (provided we have controller)
+      def uri_to_icon(icon)
+        Netzke::Core.with_icons ? [(controller && controller.config.relative_url_root), Netzke::Core.icons_uri, '/', icon.to_s, ".png"].join : nil
+      end
     end
 
     # All actions for this instance
@@ -96,12 +101,6 @@ module Netzke
 
     def js_config_with_actions #:nodoc
       actions.empty? ? js_config_without_actions : js_config_without_actions.merge(:actions => actions)
-    end
-
-  protected
-
-    def uri_to_icon(icon)
-      Netzke::Core.uri_to_icon(icon)
     end
   end
 end

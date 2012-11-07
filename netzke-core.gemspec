@@ -47,7 +47,6 @@ Gem::Specification.new do |s|
     "lib/netzke/core/masquerading.rb",
     "lib/netzke/core/options_hash.rb",
     "lib/netzke/core/panel.rb",
-    "lib/netzke/core/session.rb",
     "lib/netzke/core/version.rb",
     "lib/netzke/core_ext.rb",
     "lib/netzke/core_ext/array.rb",

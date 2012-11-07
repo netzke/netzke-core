@@ -15,7 +15,7 @@ module Netzke
     end
 
     def icon=(path)
-      self[:icon] = path.is_a?(Symbol) ? Netzke::Core.uri_to_icon(path) : path
+      self[:icon] = path.is_a?(Symbol) ? Netzke::Base.uri_to_icon(path) : path
     end
   end
 end

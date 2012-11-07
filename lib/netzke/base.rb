@@ -92,8 +92,8 @@ module Netzke
       @passed_config = conf # configuration passed at the moment of instantiation
       @passed_config.deep_freeze
       @parent        = parent
-      @name          = conf[:name].nil? ? self.class.name.underscore : conf[:name].to_s
-      @js_id     = parent.nil? ? @name : "#{parent.js_id}__#{@name}"
+      @name          = conf[:name] || self.class.name.underscore
+      @js_id         = parent.nil? ? @name : "#{parent.js_id}__#{@name}"
       @flash         = []
 
       # Build complete component configuration
