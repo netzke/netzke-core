@@ -80,7 +80,7 @@ module Netzke
       c.merge!(normalized_config)
 
       # Unique id of the component
-      c.id = global_id
+      c.id = js_id
 
       # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ so they get instantiated by Ext.
       c.netzke_components = js_components unless js_components.empty?

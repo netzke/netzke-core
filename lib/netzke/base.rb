@@ -58,12 +58,12 @@ module Netzke
     # Parent component
     attr_reader :parent
 
-    # Name that the parent can reference us by. The last part of +global_id+
+    # Name that the parent can reference us by. The last part of +js_id+
     attr_reader :name
 
     # Global id in the components tree, following the double-underscore notation, e.g. +books__config_panel__form+
     # TODO: rename to js_id
-    attr_reader :global_id
+    attr_reader :js_id
 
     class << self
       # Instance of component by config
@@ -93,7 +93,7 @@ module Netzke
       @passed_config.deep_freeze
       @parent        = parent
       @name          = conf[:name].nil? ? self.class.name.underscore : conf[:name].to_s
-      @global_id     = parent.nil? ? @name : "#{parent.global_id}__#{@name}"
+      @js_id     = parent.nil? ? @name : "#{parent.js_id}__#{@name}"
       @flash         = []
 
       # Build complete component configuration

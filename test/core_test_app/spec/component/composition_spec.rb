@@ -80,10 +80,10 @@ module Netzke
       nested_component_two.class.should == NestedComponentTwo
       deep_nested_component.class.should == DeepNestedComponent
 
-      component.global_id.should == 'some_composite'
-      nested_component_one.global_id.should == 'some_composite__nested_one'
-      nested_component_two.global_id.should == 'some_composite__nested_two'
-      deep_nested_component.global_id.should == 'some_composite__nested_two__nested'
+      component.js_id.should == 'some_composite'
+      nested_component_one.js_id.should == 'some_composite__nested_one'
+      nested_component_two.js_id.should == 'some_composite__nested_two'
+      deep_nested_component.js_id.should == 'some_composite__nested_two__nested'
     end
 
      it "should be possible to override the superclass's declaration of a component" do

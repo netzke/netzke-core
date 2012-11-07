@@ -21,9 +21,9 @@ module Netzke
   #
   module State
     # A string which will identify the component in persistence subsystem.
-    # If +persistence_key+ is passed, use it. Otherwise use global_id.
+    # If +persistence_key+ is passed, use it. Otherwise use js_id.
     def persistence_key
-      initial_config[:persistence_key] ? initial_config[:persistence_key] : global_id
+      initial_config[:persistence_key] ? initial_config[:persistence_key] : js_id
     end
 
     # Component's persistent state. Can be overridden by plugins.

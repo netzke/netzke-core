@@ -150,7 +150,7 @@ module Netzke
           cmp = cmp.to_sym
 
           component_config = composite.components[cmp]
-          raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.global_id}'" if component_config.nil?
+          raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.js_id}'" if component_config.nil?
 
           klass = component_config[:klass] || Netzke::Core::Panel
 
@@ -183,14 +183,14 @@ module Netzke
     # <tt>parent__parent__child__subchild</tt> will traverse the hierarchy 2 levels up, then going down to "child",
     # and further to "subchild". If such a component exists in the hierarchy, its global id will be returned, otherwise
     # <tt>nil</tt> will be returned.
-    def global_id_by_reference(ref)
+    def js_id_by_reference(ref)
       ref = ref.to_s
-      return parent && parent.global_id if ref == "parent"
+      return parent && parent.js_id if ref == "parent"
       substr = ref.sub(/^parent__/, "")
       if substr == ref # there's no "parent__" in the beginning
-        return global_id + "__" + ref
+        return js_id + "__" + ref
       else
-        return parent.global_id_by_reference(substr)
+        return parent.js_id_by_reference(substr)
       end
     end
 

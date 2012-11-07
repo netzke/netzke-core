@@ -18,28 +18,17 @@ module Netzke
       end
 
       def clear
-        Netzke::Base.session[@component_id].clear if Netzke::Base.session[@component_id]
+        Netzke::Base.session[@component_id].try(:clear)
+      end
+
+      def merge!(hsh)
+        Netzke::Base.session[@component_id].try(:merge!, hsh)
       end
     end
 
     # Component-specific session.
     def component_session
-      @component_session_proxy ||= ComponentSessionProxy.new(global_id)
-    end
-
-    # Returns this component's configuration options stored in the session. Those get merged into the component's configuration at instantiation.
-    def session_options
-      component_session[:options] || {}
-      #session_persistence_enabled? && component_session[:options] || {}
-    end
-
-    # Updates the session options
-    def update_session_options(hash)
-      # if session_persistence_enabled?
-        component_session.deep_merge!(:options => hash)
-      # else
-      #   logger.debug "Netzke warning: No session persistence enabled for component '#{global_id}'"
-      # end
+      @component_session_proxy ||= ComponentSessionProxy.new(js_id)
     end
   end
 end

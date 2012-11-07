@@ -97,21 +97,21 @@ class NetzkeCoreTest < ActiveSupport::TestCase
     assert_kind_of NestedComponentTwo, nested_component_two
     assert_kind_of DeepNestedComponent, deep_nested_component
 
-    assert_equal 'my_component', component.global_id
-    assert_equal 'my_component__nested_one', nested_component_one.global_id
-    assert_equal 'my_component__nested_two', nested_component_two.global_id
-    assert_equal 'my_component__nested_two__nested', deep_nested_component.global_id
+    assert_equal 'my_component', component.js_id
+    assert_equal 'my_component__nested_one', nested_component_one.js_id
+    assert_equal 'my_component__nested_two', nested_component_two.js_id
+    assert_equal 'my_component__nested_two__nested', deep_nested_component.js_id
   end
 
-  test "global_id_by_reference" do
+  test "js_id_by_reference" do
     w = Component.new(:name => "a_component")
     deep_nested_component = w.component_instance(:nested_two__nested)
-    assert_equal("a_component__nested_two", deep_nested_component.global_id_by_reference(:parent))
-    assert_equal("a_component", deep_nested_component.global_id_by_reference(:parent__parent))
-    assert_equal("a_component__nested_one", deep_nested_component.global_id_by_reference(:parent__parent__nested_one))
-    assert_equal("a_component__nested_two__nested__nested", deep_nested_component.global_id_by_reference(:nested))
-    assert_equal("a_component__nested_two__nested__non_existing", deep_nested_component.global_id_by_reference(:non_existing))
-    assert_nil(deep_nested_component.global_id_by_reference(:parent__parent__parent)) # too far up
+    assert_equal("a_component__nested_two", deep_nested_component.js_id_by_reference(:parent))
+    assert_equal("a_component", deep_nested_component.js_id_by_reference(:parent__parent))
+    assert_equal("a_component__nested_one", deep_nested_component.js_id_by_reference(:parent__parent__nested_one))
+    assert_equal("a_component__nested_two__nested__nested", deep_nested_component.js_id_by_reference(:nested))
+    assert_equal("a_component__nested_two__nested__non_existing", deep_nested_component.js_id_by_reference(:non_existing))
+    assert_nil(deep_nested_component.js_id_by_reference(:parent__parent__parent)) # too far up
   end
 
   test "default config" do
