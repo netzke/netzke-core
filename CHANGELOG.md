@@ -167,6 +167,8 @@ Defining a component in a block gives an advantage of accessing the `config` met
       c.title = config.east_center_panel_title # something that could be passed as a config option to the parent component
     end
 
+If no `klass` is specified, `Netzke::Core::Panel` is assumed.
+
 ### Overriding child components
 
 Overriding a child component while extending a component is possible by using the same `component` method. To receive the child component config from the superclass, use the `super` method, passing to it the block parameter:
