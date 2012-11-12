@@ -5,10 +5,11 @@
   * introduce `Netzke::Core::Panel` - a simple panel with defaults, that can be immediately rendered
   * Netzke child components can now be referred anywhere (e.g. dockedItems), not only in items
   * drop support for Ruby 1.8.7
-  * `netzke_init` view helper method has been renamed to `load_netzke`
+  * rename `netzke_init` view helper method to `load_netzke`
   * `before_load` is gone; if necessary, do preload stuff in the overridden `Base#js_configure`
-  * `global_id` becomes `js_id`
-  * `load_nezke` (ex `netzke_init`) now understands the `minified` option
+  * rename `global_id` to `js_id`
+  * `load_nezke` (previously `netzke_init`) now understands the `minified` option
+  * implement referring to config methods declared in JavaScript from Ruby (see `Netzke::Base`)
 
 ## Component self-configuration
 

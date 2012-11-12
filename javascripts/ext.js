@@ -92,6 +92,7 @@ Ext.define('', {
     if (this.isNetzke) {
 
       this.netzkeComponents = config.netzkeComponents;
+      this.passedConfig = config;
 
       // process and get rid of endpoints config
       this.processEndpoints(config);

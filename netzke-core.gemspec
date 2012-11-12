@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Denis Gorin"]
-  s.date = "2012-11-11"
+  s.date = "2012-11-12"
   s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -94,6 +94,8 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/component_with_js_mixin/javascripts/method_set_one.js",
     "test/core_test_app/app/components/component_with_js_mixin/javascripts/method_set_two.js",
     "test/core_test_app/app/components/component_with_nested_through.rb",
+    "test/core_test_app/app/components/component_with_prebuilt_toolbar_control.rb",
+    "test/core_test_app/app/components/component_with_prebuilt_toolbar_control/javascripts/component_with_prebuilt_toolbar_control.js",
     "test/core_test_app/app/components/deprecated/server_caller.rb",
     "test/core_test_app/app/components/dsl_delegated_properties.rb",
     "test/core_test_app/app/components/dsl_delegated_properties_base.rb",

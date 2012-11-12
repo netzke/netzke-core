@@ -191,20 +191,21 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
         else if ((this.actions || {})[ref]) cfg = {netzkeAction: ref};
       }
 
-      if (cfg.netzkeAction) {
+      if (cfg.netzkeAction) { // replace with action instance
         actName = cfg.netzkeAction.camelize(true);
         if (!this.actions[actName]) throw "Netzke: unknown action " + cfg.netzkeAction;
-
         items[i] = this.actions[actName];
         delete(item);
-      } else if (cfg.netzkeComponent) {
+      } else if (cfg.netzkeComponent) { // replace with component config
         cmpName = cfg.netzkeComponent;
         cmpCfg = this.netzkeComponents[cmpName.camelize(true)];
         if (!cmpCfg) throw "Netzke: unknown component " + cmpName;
         items[i] = Ext.apply(cmpCfg, cfg);
         delete(item);
+      } else if (Ext.isString(cfg) && Ext.isFunction(this[cfg.camelize(true)+"Config"])) { // replace with config referred to on the Ruby side as a symbol
+        items[i] = Ext.apply(this[cfg.camelize(true)+"Config"](this.passedConfig), {netzkeParent: this});
       } else {
-        for (key in cfg) {
+        for (key in cfg) { // recursion
           if (Ext.isArray(cfg[key])) {
             this.normalizeConfigArray(cfg[key]);
           }
