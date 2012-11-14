@@ -190,7 +190,7 @@ Netzke.cache.push('#{xtype}');
       end
 
       # Returns all included JavaScript files as a string
-      def js_included
+      def included
         res = ""
 
         # Prevent re-including code that was already included by the parent
@@ -205,8 +205,8 @@ Netzke.cache.push('#{xtype}');
       end
 
       # JavaScript code needed for this particulaer class. Includes external JS code and the JS class definition for self.
-      def js_code
-        [js_included, class_code].join("\n")
+      def code_with_dependencies
+        [included, class_code].join("\n")
       end
 
     protected
