@@ -24,6 +24,79 @@ All this extremely facilitates building fast, low-traffic, robust, and highly ma
 
 However, with Ext JS being server-agnostic, it is not always a trivial task for a developer to bind Ext JS components to the server-side data *and* application business logic, especially in complex applications. Netzke as the solution that allows you to extend the modular approach to the server side.
 
+## HelloWorld component
+
+*This component is distributed as a part of the test application, see `test/core_test_app/components`.*
+
+In `YOUR_APP/components/hello_world.rb`:
+
+    class HelloWorld < Netzke::Base
+      # Configure clint class
+      js_configure do |c|
+        c.title = "Hello World component"
+        c.mixin # mix in methods from hello_world/javascripts/hello_world.js
+      end
+
+      # Actions are used by Ext JS to share functionality and state b/w buttons and menu items
+      # The handler for this action should be called onPingServer by default
+      action :ping_server
+
+      # Self-configure with a bottom toolbar
+      def configure(c)
+        super
+        c.bbar = [:ping_server] # embed the action into bottom toolbar
+      end
+
+      # Endpoint callable from client class
+      endpoint :greet_the_world do |params,this|
+        # call client class' method showGreeting
+        this.show_greeting("Hello World!")
+      end
+    end
+
+In `YOUR_APP/components/hello_world/javascripts/hello_world.js` put the client class (JavaScript) methods:
+
+    {
+      // handler for the ping_server action
+      onPingServer: function(){
+        // calling greet_the_world endpoint
+        this.greetTheWorld();
+      },
+
+      // called by the server as the result of executing the endpoint
+      showGreeting: function(greeting){
+        this.update("Server says: " + greeting);
+      }
+    }
+
+To embed the component in Rails view:
+
+Add `netzke` routes:
+
+    # in routes.rb
+    RailsApp::Application.routes.draw do
+      netzke
+      ...
+    end
+
+Add `load_netzke` to the layout:
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+      <%= csrf_meta_tag %>
+      <%= load_netzke %>
+    </head>
+    <body>
+      <%= yield %>
+    </body>
+    </html>
+
+In the view:
+
+    <%= netzke :hello_world %>
+
 ## What is a Netzke component
 
 A Netzke component is a Ruby class, which is being represented by an Ext JS Component on the server-side. The responsibility of the Ruby class is to "assemble" that Ext JS class (further referred as "client class"), and provide the configuration for its instance (further referred as "client instance"). Even if it may sound a bit complicated, Netzke provides a simple API for defining the client class. See "Client class" for details.

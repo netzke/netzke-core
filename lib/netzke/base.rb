@@ -76,7 +76,6 @@ module Netzke
     attr_reader :name
 
     # Global id in the components tree, following the double-underscore notation, e.g. +books__config_panel__form+
-    # TODO: rename to js_id
     attr_reader :js_id
 
     class << self
