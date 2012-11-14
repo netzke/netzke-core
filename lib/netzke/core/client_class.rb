@@ -17,7 +17,8 @@ module Netzke
         @mixins = []
         @properties = {
           extend: extended_class,
-          alias: class_alias
+          alias: class_alias,
+          mixins: ['Netzke.classes.Core.Mixin']
         }
         @translated_properties = []
       end
@@ -117,7 +118,13 @@ module Netzke
       def mixin(*args)
         args << @klass.name.split("::").last.underscore.to_sym if args.empty?
         callr = caller.first
-        args.each{ |a| @mixins << (a.is_a?(Symbol) ? File.read(expand_include_path(a, callr)) : File.read(a))}
+        args.each do |a|
+          as_string = a.is_a?(Symbol) ? File.read(expand_include_path(a, callr)) : File.read(a)
+          as_string.sub!('{', ' ')
+          as_string[as_string.rindex('}')] = ' '
+          as_string.rstrip!
+          @mixins << as_string
+        end
       end
 
       # Defines the "i18n" config property, that is a translation object for this component, such as:
@@ -157,7 +164,7 @@ module Netzke
         # Defining the scope if it isn't known yet
         res << %{Ext.ns("#{scope}");} unless scope == default_scope
 
-        res << (extending_extjs_component? ? class_declaration_new_component : class_declaration_extending_component)
+        res << class_declaration
 
         # Store created class xtype in the cache
         res << %(
@@ -212,13 +219,8 @@ Netzke.cache.push('#{xtype}');
     protected
 
       # Generates declaration of the JS class as direct extension of a Ext component
-      def class_declaration_new_component
-%(Ext.define('#{class_name}', Netzke.chainApply({mixins: ['Netzke.classes.Core.Mixin']},\n#{mixins_string} #{properties.to_nifty_json}));)
-      end
-
-      # Generates declaration of the JS class as extension of another Netzke component
-      def class_declaration_extending_component
-%(Ext.define('#{class_name}', Netzke.chainApply(#{mixins_string}#{properties.to_nifty_json}));)
+      def class_declaration
+%(Ext.define('#{class_name}', #{properties_as_string});)
       end
 
       # Alias prefix: 'widget' for components, 'plugin' for plugins
@@ -226,8 +228,12 @@ Netzke.cache.push('#{xtype}');
         @klass < Netzke::Plugin ? "plugin" : "widget"
       end
 
-      def mixins_string
-        self.mixins.empty? ? "" : %(#{self.mixins.join(", \n")}, )
+      def mixins_as_string
+        mixins.presence && mixins.join(",\n")
+      end
+
+      def properties_as_string
+        [properties.to_nifty_json.chop,  mixins_as_string].compact.join(",\n") + "}"
       end
 
       # Default extended class

@@ -44,25 +44,12 @@ Netzke.isLoading=function () {
   return Netzke.runningRequests != 0;
 }
 
-// Similar to Ext.apply, but can accept any number of parameters, e.g.
-//
-//     Netzke.chainApply(targetObject, {...}, {...}, {...});
-Netzke.chainApply = function(){
-  var res = {};
-  Ext.each(arguments, function(o){
-    Ext.apply(res, o);
-  });
-  return res;
-};
-
 // xtypes of cached Netzke classes
 Netzke.cache = [];
 
 Netzke.componentNotInSessionHandler = function() {
   throw "Netzke: component not in Rails session. Define Netzke.componentNotInSessionHandler to handle this.";
 };
-
-// Netzke.classes.Core.Mixin = {};
 
 Ext.define("Netzke.classes.Core.Mixin", {
   isNetzke: true, // to distinguish Netzke components from regular Ext components
@@ -140,30 +127,6 @@ Ext.define("Netzke.classes.Core.Mixin", {
     }
   },
 
-  // Does the call to the server and processes the response
-  // netzkeCallServer : function(intp, params, callback, scope){
-  //   Netzke.runningRequests++;
-  //   if (!params) params = {};
-  //     Ext.Ajax.request({
-  //     params: params,
-  //     url: this.netzkeEndpointUrl(intp),
-  //     callback: function(options, success, response){
-  //       if (success && response.responseText) {
-  //         // execute commands from server
-  //         this.netzkeBulkExecute(Ext.decode(response.responseText));
-
-  //         // provide callback if needed
-  //         if (typeof callback == 'function') {
-  //           if (!scope) scope = this;
-  //           callback.apply(scope, [this.latestResult]);
-  //         }
-  //       }
-  //       Netzke.runningRequests--;
-  //     },
-  //     scope : this
-  //   });
-  // },
-
   /**
    * @private
    */
@@ -226,8 +189,3 @@ Ext.define("Netzke.classes.Core.Mixin", {
     }, this);
   }
 });
-
-// // Properties/methods common to all Netzke component classes
-// Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
-
-// });

@@ -223,9 +223,13 @@ It's advised to override the `items` method when a component needs to define it'
 No more `title` and `items` are defined as DSL methods. Include `Netzke::ConfigToDslDelegator` and use `delegate_to_dsl` method if you need that functionality in a component.
 Thus, `Netzke::ConfigToDslDelegator` is not included in Netzke::Base anymore.
 
-## Client class
+## Defining client class
 
-Client class (JavaScript) has been refactored. The following public method name changes took place for the sake of consistence:
+Client class (JavaScript part of the component) has been refactored.
+
+### Methods renamed
+
+The following public method name changes took place for the sake of consistence:
 
 * localId => netzkeLocalId
 * setResult => netzkeSetResult
@@ -237,6 +241,7 @@ Client class (JavaScript) has been refactored. The following public method name 
 * reload => netzkeReload
 * instantiateChildNetzkeComponent => netzkeInstantiateComponent
 * getChildNetzkeComponent => netzkeGetComponent
+
 
 # v0.7.7 - ?
 * Ext JS required version bump (4.1.x)
