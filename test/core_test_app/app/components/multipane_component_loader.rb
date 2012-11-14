@@ -29,7 +29,7 @@ class MultipaneComponentLoader < Netzke::Base
   js_method :load_handler, <<-JS
     function(button){
       var container = button.ownerCt.ownerCt;
-      this.loadNetzkeComponent({name: 'server_caller', container: container});
+      this.netzkeLoadComponent({name: 'server_caller', container: container});
     }
   JS
 

@@ -18,7 +18,7 @@ class ComponentLoader < Netzke::Base
 
   component :some_composite
 
-  # this action is using loadNetzkeComponent "special" callback
+  # this action is using netzkeLoadComponent "special" callback
   action :load_with_feedback
 
   # this action is using generic endpoint callback

@@ -7,10 +7,10 @@ module ExtDirect
         function(){
           this.callParent();
 
-          this.getChildNetzkeComponent('selector').on('userupdate', function(user){
+          this.netzkeGetComponent('selector').on('userupdate', function(user){
             this.setUser(user);
-            this.getChildNetzkeComponent('details').update();
-            this.getChildNetzkeComponent('statistics').update();
+            this.netzkeGetComponent('details').update();
+            this.netzkeGetComponent('statistics').update();
           }, this);
         }
       JS

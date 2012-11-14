@@ -50,6 +50,7 @@ class ComponentWithActions < Netzke::Base
     c.on_some_action = <<-JS
       function(){
         this.update("Some action was triggered");
+        this.netzke.testik();
       }
     JS
 

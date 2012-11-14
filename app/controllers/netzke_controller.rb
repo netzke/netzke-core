@@ -51,7 +51,7 @@ protected
       component_instance = Netzke::Base.instance_by_config(components_in_session[component_name.to_sym])
       result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params).to_nifty_json
     else
-      result = {:component_not_in_session => true}.to_nifty_json
+      result = {:netzke_component_not_in_session => true}.to_nifty_json
     end
 
     # We render text/plain, so that the browser never modifies our response

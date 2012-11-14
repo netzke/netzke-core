@@ -52,9 +52,6 @@ Ext.define('Netzke.FeedbackGhost', {
   }
 });
 
-// Mix it into every Netzke component as feedbackGhost
-Netzke.componentMixin.feedbackGhost = Ext.create("Netzke.FeedbackGhost");
-
 Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   extend: 'Ext.direct.RemotingProvider',
 
@@ -86,7 +83,8 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   }
 });
 
-Ext.define('', {
+// Override Ext.Component's constructor to enable Netzke features
+Ext.define(null, {
   override: 'Ext.Component',
   constructor: function(config) {
     if (this.isNetzke) {
@@ -95,16 +93,16 @@ Ext.define('', {
       this.passedConfig = config;
 
       // process and get rid of endpoints config
-      this.processEndpoints(config);
+      this.netzkeProcessEndpoints(config);
 
       // process and get rid of plugins config
-      this.processPlugins(config);
+      this.netzkeProcessPlugins(config);
 
-      this.normalizeActions(config);
+      this.netzkeNormalizeActions(config);
 
-      this.normalizeConfig(config);
+      this.netzkeNormalizeConfig(config);
 
-      this.normalizeTools(config);
+      this.netzkeNormalizeTools(config);
 
       // This is where the references to different callback functions will be stored
       this.callbackHash = {};
@@ -130,29 +128,34 @@ Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
 Ext.Direct.addProvider(Netzke.directProvider);
 
 // Methods/properties that each and every Netzke component will have
-Ext.apply(Netzke.classes.Core.Mixin, {
+Ext.define(null, {
+  override: 'Netzke.classes.Core.Mixin',
+  feedbackGhost: Ext.create("Netzke.FeedbackGhost"),
+
   /*
   Mask shown during loading of a component. Set to false to not mask. Pass config for Ext.LoadMask for configuring msg/cls, etc.
   Set msg to null if mask without any msg is desirable.
   */
-  componentLoadMask: true,
+  netzkeLoadMask: true,
 
-  /*
+  /**
    * Runs through initial config options and does the following:
    *
    * * detects component placeholders and replaces them with full component config found in netzkeComponents
    * * detects action placeholders and replaces them with instances of Ext actions found in this.actions
+   * @private
    */
-  normalizeConfig: function(config) {
+  netzkeNormalizeConfig: function(config) {
     for (key in config) {
-      if (Ext.isArray(config[key])) this.normalizeConfigArray(config[key]);
+      if (Ext.isArray(config[key])) this.netzkeNormalizeConfigArray(config[key]);
     }
   },
 
-  /*
-  Dynamically creates methods for endpoints, so that we could later call them like: this.myEndpointMethod()
+  /**
+  * Dynamically creates methods for endpoints, so that we could later call them like: this.myEndpointMethod()
+  * @private
   */
-  processEndpoints: function(config){
+  netzkeProcessEndpoints: function(config){
     var endpoints = config.endpoints || [];
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
     var directActions = [];
@@ -169,7 +172,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
             console.error("RPC event indicates an error: ", remotingEvent);
             throw new Error(remotingEvent.message);
           }
-          that.bulkExecute(result); // invoke the endpoint result on the calling component
+          that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
           if(typeof callback == "function") {
             callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
           }
@@ -183,14 +186,17 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     delete config.endpoints;
   },
 
-  normalizeTools: function(config) {
+  /**
+   * @private
+   */
+  netzkeNormalizeTools: function(config) {
     if (config.tools) {
       var normTools = [];
       Ext.each(config.tools, function(tool){
         // Create an event for each action (so that higher-level components could interfere)
         this.addEvents(tool.id+'click');
 
-        var handler = Ext.Function.bind(this.toolActionHandler, this, [tool]);
+        var handler = Ext.Function.bind(this.netzkeToolHandler, this, [tool]);
         normTools.push({type : tool, handler : handler, scope : this});
       }, this);
       this.tools = normTools;
@@ -198,10 +204,11 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     }
   },
 
-  /*
-  Replaces actions configs with Ext.Action instances, assigning default handler to them
-  */
-  normalizeActions : function(config){
+  /**
+    * Replaces actions configs with Ext.Action instances, assigning default handler to them
+    * @private
+    */
+  netzkeNormalizeActions : function(config){
     var normActions = {};
     for (var name in config.actions) {
       // Create an event for each action (so that higher-level components could interfere)
@@ -210,7 +217,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
       // Configure the action
       var actionConfig = Ext.apply({}, config.actions[name]); // do not modify original this.actions
       actionConfig.customHandler = actionConfig.handler;
-      actionConfig.handler = Ext.Function.bind(this.actionHandler, this); // handler common for all actions
+      actionConfig.handler = Ext.Function.bind(this.netzkeActionHandler, this); // handler common for all actions
       actionConfig.name = name;
       normActions[name] = new Ext.Action(actionConfig);
     }
@@ -218,7 +225,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     delete(config.actions);
   },
 
-  /*
+  /**
   Dynamically loads a Netzke component.
   Config options:
   'name' (required) - the name of the child component to load
@@ -226,7 +233,7 @@ Ext.apply(Netzke.classes.Core.Mixin, {
   'callback' - function that gets called after the component is loaded; it receives the component's instance as parameter
   'scope' - scope for the callback
   */
-  loadNetzkeComponent: function(params){
+  netzkeLoadComponent: function(params){
     params.name = params.name.underscore();
 
     // params that will be provided for the server API call (deliver_component); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
@@ -244,8 +251,8 @@ Ext.apply(Netzke.classes.Core.Mixin, {
 
     // Show loading mask if possible
     var containerEl = (containerCmp || this).getEl();
-    if (this.componentLoadMask && containerEl){
-      storedConfig.loadMaskCmp = new Ext.LoadMask(containerEl, this.componentLoadMask);
+    if (this.netzkeLoadMask && containerEl){
+      storedConfig.loadMaskCmp = new Ext.LoadMask(containerEl, this.netzkeLoadMask);
       storedConfig.loadMaskCmp.show();
     }
 
@@ -253,10 +260,11 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     this.deliverComponent(serverParams);
   },
 
-  /*
-  Called by the server after we ask him to load a component
+  /**
+   * Called by the server after we ask him to load a component
+   * @private
   */
-  componentDelivered: function(config){
+  netzkeComponentDelivered: function(config){
     // retrieve the loading config for this component
     var storedConfig = this.componentsBeingLoaded[config.name] || {};
     delete this.componentsBeingLoaded[config.name];
@@ -288,7 +296,10 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     this.fireEvent('componentload', componentInstance);
   },
 
-  componentDeliveryFailed: function(params) {
+  /**
+   * @private
+   */
+  netzkeComponentDeliveryFailed: function(params) {
     var storedConfig = this.componentsBeingLoaded[params.componentName] || {};
     delete this.componentsBeingLoaded[params.componentName];
 
@@ -300,10 +311,10 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     this.netzkeFeedback({msg: params.msg, level: "Error"});
   },
 
-  /*
-  Returns parent Netzke component
+  /**
+  * Returns parent Netzke component
   */
-  getParentNetzkeComponent: function(){
+  netzkeGetParentComponent: function(){
     // simply cutting the last part of the id: some_parent__a_kid__a_great_kid => some_parent__a_kid
     var idSplit = this.id.split("__");
     idSplit.pop();
@@ -312,44 +323,46 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     return parentId === "" ? null : Ext.getCmp(parentId);
   },
 
-  /*
-  Reloads current component (calls the parent to reload us as its component)
+  /**
+   * Reloads current component (calls the parent to reload us as its component)
   */
-  reload: function(){
-    var parent = this.getParentNetzkeComponent();
+  netzkeReload: function(){
+    var parent = this.netzkeGetParentComponent();
     if (parent) {
-      parent.loadNetzkeComponent({id:this.localId(parent), container:this.ownerCt.id});
+      parent.netzkeLoadComponent({id:this.netzkeLocalId(parent), container:this.ownerCt.id});
     } else {
       window.location.reload();
     }
   },
 
-  /*
-  Instantiates and returns a Netzke component by its name.
+  /**
+  * Instantiates and returns a Netzke component by its name.
+  * @private
   */
-  instantiateChildNetzkeComponent: function(name) {
+  netzkeInstantiateComponent: function(name) {
     name = name.camelize(true);
     return Ext.createByAlias(this.netzkeComponents[name].alias, this.netzkeComponents[name])
   },
 
-  /*
-  Returns *instantiated* child component by its relative id, which may contain the 'parent' part to walk _up_ the hierarchy
+  /**
+  * Returns *instantiated* child component by its relative id, which may contain the 'parent' part to walk _up_ the hierarchy
+  * @private
   */
-  getChildNetzkeComponent: function(id){
+  netzkeGetComponent: function(id){
     if (id === "") {return this};
     id = id.underscore();
     var split = id.split("__");
     if (split[0] === 'parent') {
       split.shift();
       var childInParentScope = split.join("__");
-      return this.getParentNetzkeComponent().getChildNetzkeComponent(childInParentScope);
+      return this.netzkeGetParentComponent().netzkeGetComponent(childInParentScope);
     } else {
       return Ext.getCmp(this.id+"__"+id);
     }
   },
 
-  /*
-  Provides a visual feedback. TODO: refactor
+  /**
+  * Provides a visual feedback. TODO: refactor
   */
   netzkeFeedback: function(msg){
     if (this.initialConfig && this.initialConfig.quiet) {
@@ -374,10 +387,11 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     }
   },
 
-  /*
-  Common handler for all netzke's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
+  /**
+  * Common handler for all netzke's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
+  * @private
   */
-  actionHandler: function(comp){
+  netzkeActionHandler: function(comp){
     var actionName = comp.name;
     // If firing corresponding event doesn't return false, call the handler
     if (this.fireEvent(actionName+'click', comp)) {
@@ -391,8 +405,11 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     }
   },
 
-  // Common handler for tools
-  toolActionHandler: function(tool){
+  /**
+   * Common handler for tools
+   * @private
+   */
+  netzkeToolHandler: function(tool){
     // If firing corresponding event doesn't return false, call the handler
     if (this.fireEvent(tool.id+'click')) {
       var methodName = "on"+tool.camelize();
@@ -401,15 +418,18 @@ Ext.apply(Netzke.classes.Core.Mixin, {
     }
   },
 
-  processPlugins: function(config) {
+  /**
+   * @private
+   */
+  netzkeProcessPlugins: function(config) {
     if (config.netzkePlugins) {
       if (!this.plugins) this.plugins = [];
       Ext.each(config.netzkePlugins, function(p){
-        this.plugins.push(this.instantiateChildNetzkeComponent(p));
+        this.plugins.push(this.netzkeInstantiateComponent(p));
       }, this);
       delete config.netzkePlugins;
     }
   },
 
-  onComponentLoad:Ext.emptyFn // gets overridden
+  // netzkeOnComponentLoad: Ext.emptyFn // gets overridden
 });

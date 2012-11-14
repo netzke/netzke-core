@@ -29,7 +29,7 @@ class SomeComposite < Netzke::Base
 
     c.on_show_hidden_window = <<-JS
       function(){
-        this.instantiateChildNetzkeComponent('hidden_window').show();
+        this.netzkeInstantiateComponent('hidden_window').show();
       }
     JS
   end

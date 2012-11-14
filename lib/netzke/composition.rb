@@ -54,7 +54,7 @@ module Netzke
   #
   # == Lazily vs eagerly loaded components
   #
-  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `loadNetzkeComponent` (see {Netzke::Javascript}). Referring a component in the layout (the `items` property) automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `eager_loading` can be set to true:
+  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `netzkeLoadComponent` (see {Netzke::Javascript}). Referring a component in the layout (the `items` property) automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `eager_loading` can be set to true:
   #
   #     component :eagerly_loaded_window do |c|
   #       c.klass = SomeWindowComponent
@@ -83,12 +83,12 @@ module Netzke
 
         if component
           js, css = component.js_missing_code(cache), component.css_missing_code(cache)
-          this.eval_js(js) if js.present?
-          this.eval_css(css) if css.present?
+          this.netzke_eval_js(js) if js.present?
+          this.netzke_eval_css(css) if css.present?
 
-          this.component_delivered(component.js_config);
+          this.netzke_component_delivered(component.js_config);
         else
-          this.component_delivery_failed(component_name: component_name, msg: "Couldn't load component '#{component_name}'")
+          this.netzke_component_delivery_failed(component_name: component_name, msg: "Couldn't load component '#{component_name}'")
         end
       end
 

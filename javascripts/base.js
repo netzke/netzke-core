@@ -62,16 +62,16 @@ Netzke.componentNotInSessionHandler = function() {
   throw "Netzke: component not in Rails session. Define Netzke.componentNotInSessionHandler to handle this.";
 };
 
-Netzke.classes.Core.Mixin = {};
+// Netzke.classes.Core.Mixin = {};
 
-// Properties/methods common to all Netzke component classes
-Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
+Ext.define("Netzke.classes.Core.Mixin", {
   isNetzke: true, // to distinguish Netzke components from regular Ext components
 
-  /*
-  Evaluates CSS
+  /**
+  * Evaluates CSS
+  * @private
   */
-  evalCss : function(code){
+  netzkeEvalCss : function(code){
     var head = Ext.fly(document.getElementsByTagName('head')[0]);
     Ext.core.DomHelper.append(head, {
       tag: 'style',
@@ -80,24 +80,24 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
     });
   },
 
-  /*
-  Evaluates JS
+  /**
+  * Evaluates JS
+  * @private
   */
-  evalJs : function(code){
+  netzkeEvalJs : function(code){
     eval(code);
   },
 
-  /*
-  Gets id in the context of provided parent.
-  For example, the components "properties", being a child of "books" has global id "books__properties",
-  which *is* its component's real id. This methods, with the instance of "books" passed as parameter,
-  returns "properties".
+  /**
+  * Gets id in the context of provided parent.
+  * For example, the components "properties", being a child of "books" has global id "books__properties", which *is* its component's real id. This methods, with the instance of "books" passed as parameter, returns "properties".
+  * @private
   */
-  localId : function(parent){
+  netzkeLocalId : function(parent){
     return this.id.replace(parent.id + "__", "");
   },
 
-  /*
+  /**
   Executes a bunch of methods. This method is called almost every time a communication to the server takes place.
   Thus the server side of a component can provide any set of commands to its client side.
   Args:
@@ -105,7 +105,7 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       1) a hash of instructions, where the key is the method name, and value - the argument that method will be called with (thus, these methods are expected to *only* receive 1 argument). In this case, the methods will be executed in no particular order.
       2) an array of hashes of instructions. They will be executed in order.
       Arrays and hashes may be nested at will.
-      If the key in the instructions hash refers to a child Netzke component, bulkExecute will be called on that component with the value passed as the argument.
+      If the key in the instructions hash refers to a child Netzke component, netzkeBulkExecute will be called on that component with the value passed as the argument.
 
   Examples of the arguments:
       // same as this.feedback("Your order is accepted");
@@ -114,12 +114,13 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       // same as: this.setTitle('Suprise!'); this.setDisabled(true);
       [{setTitle:'Suprise!'}, {setDisabled:true}]
 
-      // the same as this.getChildNetzkeComponent('users').bulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}]);
+      // the same as this.netzkeGetComponent('users').netzkeBulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}]);
       {users: [{setTitle:'Suprise!'}, {setDisabled:true}] }
+  @private
   */
-  bulkExecute : function(instructions){
+  netzkeBulkExecute : function(instructions){
     if (Ext.isArray(instructions)) {
-      Ext.each(instructions, function(instruction){ this.bulkExecute(instruction)}, this);
+      Ext.each(instructions, function(instruction){ this.netzkeBulkExecute(instruction)}, this);
     } else {
       for (var instr in instructions) {
         var args = instructions[instr];
@@ -128,9 +129,9 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
           // Executing the method.
           this[instr].apply(this, args);
         } else {
-          var childComponent = this.getChildNetzkeComponent(instr);
+          var childComponent = this.netzkeGetComponent(instr);
           if (childComponent) {
-            childComponent.bulkExecute(args);
+            childComponent.netzkeBulkExecute(args);
           } else if (Ext.isArray(args)) { // only consider those calls that have arguments wrapped in an array; the only (probably) case when they are not, is with 'success' property set to true in a non-ajax form submit - silently ignore that
             throw "Netzke: Unknown method or child component '" + instr +"' in component '" + this.id + "'"
           }
@@ -140,45 +141,56 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
   },
 
   // Does the call to the server and processes the response
-  callServer : function(intp, params, callback, scope){
-    Netzke.runningRequests++;
-    if (!params) params = {};
-      Ext.Ajax.request({
-      params: params,
-      url: this.endpointUrl(intp),
-      callback: function(options, success, response){
-        if (success && response.responseText) {
-          // execute commands from server
-          this.bulkExecute(Ext.decode(response.responseText));
+  // netzkeCallServer : function(intp, params, callback, scope){
+  //   Netzke.runningRequests++;
+  //   if (!params) params = {};
+  //     Ext.Ajax.request({
+  //     params: params,
+  //     url: this.netzkeEndpointUrl(intp),
+  //     callback: function(options, success, response){
+  //       if (success && response.responseText) {
+  //         // execute commands from server
+  //         this.netzkeBulkExecute(Ext.decode(response.responseText));
 
-          // provide callback if needed
-          if (typeof callback == 'function') {
-            if (!scope) scope = this;
-            callback.apply(scope, [this.latestResult]);
-          }
-        }
-        Netzke.runningRequests--;
-      },
-      scope : this
-    });
-  },
+  //         // provide callback if needed
+  //         if (typeof callback == 'function') {
+  //           if (!scope) scope = this;
+  //           callback.apply(scope, [this.latestResult]);
+  //         }
+  //       }
+  //       Netzke.runningRequests--;
+  //     },
+  //     scope : this
+  //   });
+  // },
 
-  setResult: function(result) {
+  /**
+   * @private
+   */
+  netzkeSetResult: function(result) {
     this.latestResult = result;
   },
 
-  // When an endpoint call is issued while the session has expired, this method is called. Override it to do whatever is appropriate.
-  componentNotInSession: function() {
+  /**
+  * When an endpoint call is issued while the session has expired, this method is called. Override it to do whatever is appropriate.
+  * @private
+  */
+  netzkeComponentNotInSession: function() {
     Netzke.componentNotInSessionHandler();
   },
 
-  // Returns a URL for old-fashion requests (used at multi-part form non-AJAX submissions)
-  endpointUrl: function(endpoint){
+  /**
+   * Returns a URL for old-fashion requests (used at multi-part form non-AJAX submissions)
+   * @private
+   */
+  netzkeEndpointUrl: function(endpoint){
     return Netzke.ControllerUrl + "dispatcher?address=" + this.id + "__" + endpoint;
   },
 
-  // private
-  normalizeConfigArray: function(items){
+  /**
+   * @private
+   */
+  netzkeNormalizeConfigArray: function(items){
     var cfg, ref, cmpName, cmpCfg, actName, actCfg;
 
     Ext.each(items, function(item, i){
@@ -207,10 +219,15 @@ Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
       } else {
         for (key in cfg) { // recursion
           if (Ext.isArray(cfg[key])) {
-            this.normalizeConfigArray(cfg[key]);
+            this.netzkeNormalizeConfigArray(cfg[key]);
           }
         }
       }
     }, this);
-  },
+  }
 });
+
+// // Properties/methods common to all Netzke component classes
+// Netzke.componentMixin = Ext.applyIf(Netzke.classes.Core.Mixin, {
+
+// });

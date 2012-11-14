@@ -46,11 +46,11 @@ module Netzke
   #
   # == Providing arguments to the callback function
   #
-  # The callback function provided at the moment of calling an endpoint may receive an argument set by the endpoint by "calling" the special +set_result+ method. :
+  # The callback function provided at the moment of calling an endpoint may receive an argument set by the endpoint by "calling" the special +netzke_set_result+ method. :
   #
   #     endpoint :do_something do |params, this|
   #       # ... do the thing
-  #       this.set_result(42)
+  #       this.netzke_set_result(42)
   #     end
   #
   # By calling the endpoint from the client side like this:

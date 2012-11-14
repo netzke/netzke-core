@@ -3,7 +3,7 @@
   layout: "fit",
 
   onLoadWithFeedback: function(){
-    this.loadNetzkeComponent({name: 'simple_component', callback: function(){
+    this.netzkeLoadComponent({name: 'simple_component', callback: function(){
       this.setTitle("Callback" + " invoked!");
     }, scope: this});
   },
@@ -39,25 +39,25 @@
   },
 
   onLoadWindowWithSimpleComponent: function(params){
-    this.loadNetzkeComponent({name: "window_with_simple_component", callback: function(w){
+    this.netzkeLoadComponent({name: "window_with_simple_component", callback: function(w){
       w.show();
     }});
   },
 
   onLoadComposite: function(params){
-    this.loadNetzkeComponent({name: "some_composite", container: this});
+    this.netzkeLoadComponent({name: "some_composite", container: this});
   },
 
   onLoadWithParams: function(params){
-    this.loadNetzkeComponent({name: "simple_component", params: {html: "Simple Component" + " with changed HTML"}, container: this});
+    this.netzkeLoadComponent({name: "simple_component", params: {html: "Simple Component" + " with changed HTML"}, container: this});
   },
 
   onLoadComponent: function(){
-    this.loadNetzkeComponent({name: 'simple_component', container: this});
+    this.netzkeLoadComponent({name: 'simple_component', container: this});
   },
 
   onNonExistingComponent: function(){
-    this.loadNetzkeComponent({name: 'non_existing_component', container: this});
+    this.netzkeLoadComponent({name: 'non_existing_component', container: this});
   },
 
   onLoadInWindow: function(){
@@ -65,6 +65,6 @@
       width: 500, height: 400, modal: false, layout:'fit', title: 'A window'
     });
     w.show();
-    this.loadNetzkeComponent({name: 'component_loaded_in_window', container: w});
+    this.netzkeLoadComponent({name: 'component_loaded_in_window', container: w});
   }
 }

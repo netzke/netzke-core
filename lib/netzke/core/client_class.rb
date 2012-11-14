@@ -213,7 +213,7 @@ Netzke.cache.push('#{xtype}');
 
       # Generates declaration of the JS class as direct extension of a Ext component
       def class_declaration_new_component
-%(Ext.define('#{class_name}', Netzke.chainApply(Netzke.componentMixin,\n#{mixins_string} #{properties.to_nifty_json}));)
+%(Ext.define('#{class_name}', Netzke.chainApply({mixins: ['Netzke.classes.Core.Mixin']},\n#{mixins_string} #{properties.to_nifty_json}));)
       end
 
       # Generates declaration of the JS class as extension of another Netzke component

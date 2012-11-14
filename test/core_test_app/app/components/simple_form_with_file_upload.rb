@@ -20,7 +20,7 @@ class SimpleFormWithFileUpload < Netzke::Base
         var me = this;
 
         this.getForm().submit({
-          url: this.endpointUrl('server_submit'),
+          url: this.netzkeEndpointUrl('server_submit'),
           success: function(fp, o){
             msg("Success", 'Your file is uploaded!');
         },
