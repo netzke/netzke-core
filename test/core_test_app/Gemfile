@@ -8,7 +8,7 @@ gem 'sqlite3'
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
 group :test do
-  gem 'capybara'
+  gem 'capybara', '~>1'
   gem 'database_cleaner'
   gem 'cucumber-rails', :require => false
   gem 'cucumber'
