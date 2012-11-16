@@ -20,7 +20,7 @@ All this extremely facilitates building fast, low-traffic, robust, and highly ma
 
 ## Rationale
 
-[Sencha Ext JS]("") is a powerful front-end framework, which is used for crafting web-apps that give the end user experience similar to that of a desktop application. It has an extensive set of widgets ('components'), and leverages a modular approach to its fullest: a developer can extend components (using Ext JS's own [class system]("")), nest components using many powerful layouts, dynamically create and destroy them. The architecture of Ext JS is well-thought and very complete.
+[Sencha Ext JS]("http://www.sencha.com/products/extjs") is a powerful front-end framework, which is used for crafting web-apps that give the end user experience similar to that of a desktop application. It has an extensive set of widgets ('components'), and leverages a modular approach to its fullest: a developer can extend components (using Ext JS's own [class system]("http://docs.sencha.com/ext-js/4-1/#!/guide/class_system")), nest components using many powerful layouts, dynamically create and destroy them. The architecture of Ext JS is well-thought and very complete.
 
 However, with Ext JS being server-agnostic, it is not always a trivial task for a developer to bind Ext JS components to the server-side data *and* application business logic, especially in complex applications. Netzke as the solution that allows you to extend the modular approach to the server side.
 
@@ -30,72 +30,82 @@ However, with Ext JS being server-agnostic, it is not always a trivial task for 
 
 In `YOUR_APP/components/hello_world.rb`:
 
-    class HelloWorld < Netzke::Base
-      # Configure clint class
-      js_configure do |c|
-        c.title = "Hello World component"
-        c.mixin # mix in methods from hello_world/javascripts/hello_world.js
-      end
+```ruby
+class HelloWorld < Netzke::Base
+  # Configure clint class
+  js_configure do |c|
+    c.title = "Hello World component"
+    c.mixin # mix in methods from hello_world/javascripts/hello_world.js
+  end
 
-      # Actions are used by Ext JS to share functionality and state b/w buttons and menu items
-      # The handler for this action should be called onPingServer by default
-      action :ping_server
+  # Actions are used by Ext JS to share functionality and state b/w buttons and menu items
+  # The handler for this action should be called onPingServer by default
+  action :ping_server
 
-      # Self-configure with a bottom toolbar
-      def configure(c)
-        super
-        c.bbar = [:ping_server] # embed the action into bottom toolbar
-      end
+  # Self-configure with a bottom toolbar
+  def configure(c)
+    super
+    c.bbar = [:ping_server] # embed the action into bottom toolbar
+  end
 
-      # Endpoint callable from client class
-      endpoint :greet_the_world do |params,this|
-        # call client class' method showGreeting
-        this.show_greeting("Hello World!")
-      end
-    end
+  # Endpoint callable from client class
+  endpoint :greet_the_world do |params,this|
+    # call client class' method showGreeting
+    this.show_greeting("Hello World!")
+  end
+end
+```
 
 In `YOUR_APP/components/hello_world/javascripts/hello_world.js` put the client class (JavaScript) methods:
 
-    {
-      // handler for the ping_server action
-      onPingServer: function(){
-        // calling greet_the_world endpoint
-        this.greetTheWorld();
-      },
+```javascript
+{
+  // handler for the ping_server action
+  onPingServer: function(){
+    // calling greet_the_world endpoint
+    this.greetTheWorld();
+  },
 
-      // called by the server as the result of executing the endpoint
-      showGreeting: function(greeting){
-        this.update("Server says: " + greeting);
-      }
-    }
+  // called by the server as the result of executing the endpoint
+  showGreeting: function(greeting){
+    this.update("Server says: " + greeting);
+  }
+}
+```
 
 To embed the component in Rails view:
 
 Add `netzke` routes:
 
-    # in routes.rb
-    RailsApp::Application.routes.draw do
-      netzke
-      ...
-    end
+```ruby
+# in routes.rb
+RailsApp::Application.routes.draw do
+  netzke
+  ...
+end
+```
 
 Add `load_netzke` to the layout:
 
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-      <%= csrf_meta_tag %>
-      <%= load_netzke %>
-    </head>
-    <body>
-      <%= yield %>
-    </body>
-    </html>
+```erb
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <%= csrf_meta_tag %>
+  <%= load_netzke %>
+</head>
+<body>
+  <%= yield %>
+</body>
+</html>
+```
 
 In the view:
 
-    <%= netzke :hello_world %>
+```erb
+<%= netzke :hello_world %>
+```
 
 ## What is a Netzke component
 
@@ -120,25 +130,31 @@ A typical Netzke component's code is structured like this:
 
 ## Client class
 
-First of all it is necessary to understand that a client class is inherited (as defined by the Ext JS class system) from an Ext JS class, which by default is [Ext.panel.Panel](""). For example, a component defined like this:
+First of all it is necessary to understand that a client class is inherited (as defined by the Ext JS class system) from an Ext JS class, which by default is [Ext.panel.Panel]("http://docs.sencha.com/ext-js/4-1/#!/api/Ext.panel.Panel"). For example, a component defined like this:
 
-    class HelloWorld < Netzke::Base
-    end
+```ruby
+class HelloWorld < Netzke::Base
+end
+```
 
 will have the following client class (simplified):
 
-    Ext.define('Netzke.classes.HelloWorld', Ext.apply(Netzke.componentMixin, {"extend":"Ext.panel.Panel"}));
+```javascript
+Ext.define('Netzke.classes.HelloWorld', Ext.apply(Netzke.componentMixin, {"extend":"Ext.panel.Panel"}));
+```
 
 `Netzke.componentMixin` contains a set of client-side methods common for all Netzke components.
 
 The configuration of a client-class is done by using the `Netzke::Base.js_configure`. For example, in order to inherit from a different Ext JS component, and to mix in the methods defined in an external JavaScript class:
 
-    class HelloWorld < Netzke::Base
-      js_configure do |c|
-        c.extend = "Ext.tab.Panel"
-        c.mixin :extra_functionality
-      end
-    end
+```ruby
+class HelloWorld < Netzke::Base
+  js_configure do |c|
+    c.extend = "Ext.tab.Panel"
+    c.mixin :extra_functionality
+  end
+end
+```
 
 ## Defining actions
 
