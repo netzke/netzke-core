@@ -166,27 +166,46 @@ end
 * Rails ~> 3.2.0
 * Ext JS ~> 4.1.0
 
-## Getting started
+## Installation
 
-* Follow the simple [installation](https://github.com/nomadcoder/netzke-core/wiki/Installation) steps.
-* Learn how to build the [Hello World!](https://github.com/nomadcoder/netzke-core/wiki/Hello-world-extjs) component.
-* Dive into the [documentation](https://github.com/nomadcoder/netzke/wiki).
-* Get help on the [Google Groups](http://groups.google.com/group/netzke).
+    $ gem install netzke-core
 
-## Testing and playing with Netzke Core
+For the latest ("edge") stuff, instruct the bundler to get the gem straight from github:
 
-Netzke Core is bundled with Cucumber and RSpec tests. If you would like to contribute to the project, you may want to learn how to [run the tests](https://github.com/nomadcoder/netzke-core/wiki/Automated-testing).
+```ruby
+gem 'netzke-core', git: "git://github.com/nomadcoder/netzke-core.git"
+```
 
-Besides, the bundled test application is a convenient [playground](https://github.com/nomadcoder/netzke-core/wiki/Playground) for those who search to experiment with the framework.
+By default, Netzke assumes that your Ext JS library is located in public/extjs. It can be a symbolic link, e.g.:
+
+    $ ln -s ~/code/sencha/ext-4.1.1 public/extjs
+
+*(Make sure that the location of the license.txt distributed with Ext JS is exactly `public/extjs/license.txt`)*
+
+## Running tests
+
+The bundled `test/core_test_app` application used for automated testing can be easily run as a stand-alone Rails app. It's a good source of concise, focused examples. After starting the application, access any of the test components (located in  `app/components`) by using the following url:
+
+    http://localhost:3000/components/{name of the component's class}
+
+For example [http://localhost:3000/components/ServerCaller](http://localhost:3000/components/ServerCaller)
+
+Before being able run the test app and the tests themselves, you must link your Ext JS library to `test/core_test_app/public`, e.g. (from the gems's root):
+
+    $ ln -s ~/code/sencha/ext-4.1.1 test/core_test_app/public/extjs
+
+For cucumber tests (from `test/core_test_app`):
+
+    $ cucumber features
+
+For RSpec tests (from `test/core_test_app`):
+
+    $ rspec spec
 
 ## Useful links
 * [Project website](http://netzke.org)
-* [Documentation](https://github.com/nomadcoder/netzke/wiki)
 * [Live-demo](http://netzke-demo.herokuapp.com) (features [Netzke Basepack](https://github.com/nomadcoder/netzke-basepack), with sample code)
 * [Twitter](http://twitter.com/netzke) - latest news about the framework
-
-## Ext JS 3 support
-Versions 0.6.x are for you if you're using Ext 3 (*hardly maintained*)
 
 ---
 Copyright (c) 2008-2012 nomadcoder, released under the MIT license
