@@ -1,12 +1,12 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require 'netzke-core'
 
-module Netzke
+module Netzke::Core
   describe State do
     it "should be possible to save component's state" do
-      Base.session = {} # mimick session
+      Netzke::Base.session = {} # mimick session
 
-      component = Base.new(:name => 'some_component', :persistence => true)
+      component = Netzke::Base.new(:name => 'some_component', :persistence => true)
       component.state.should == {}
 
       component.update_state(:value_to_remember, 42)

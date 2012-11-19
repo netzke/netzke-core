@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   # Netzke components allow specifying Ext actions (see http://docs.sencha.com/ext-js/4-1/#!/api/Ext.Action) in Ruby code.
   #
   # == Defining actions
@@ -93,7 +93,7 @@ module Netzke
     # All actions for this instance
     def actions
       @actions ||= self.class.registered_actions.inject({}) do |res, name|
-        action_config = Netzke::ActionConfig.new(name, self)
+        action_config = Netzke::Core::ActionConfig.new(name, self)
         send(ACTION_METHOD_NAME % name, action_config)
         res.merge(name.to_sym => action_config)
       end

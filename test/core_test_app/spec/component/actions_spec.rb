@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require 'netzke-core'
 
-module Netzke
+module Netzke::Core
   describe Actions do
-    class SomeComponent < Base
+    class SomeComponent < Netzke::Base
       action :action_one
       action :action_two
       action :action_three do |a|

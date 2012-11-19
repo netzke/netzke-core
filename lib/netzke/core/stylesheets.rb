@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   module Stylesheets
     extend ActiveSupport::Concern
 

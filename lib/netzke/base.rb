@@ -1,25 +1,24 @@
 require 'active_support/core_ext'
-require 'netzke/core_ext'
-require 'netzke/javascript'
-require 'netzke/stylesheets'
-require 'netzke/inheritance'
-require 'netzke/services'
-require 'netzke/composition'
-require 'netzke/plugins'
-require 'netzke/configuration'
-require 'netzke/state'
-require 'netzke/embedding'
-require 'netzke/actions'
-require 'netzke/session'
+require 'netzke/core/ruby_ext'
+require 'netzke/core/javascript'
+require 'netzke/core/stylesheets'
+require 'netzke/core/services'
+require 'netzke/core/composition'
+require 'netzke/core/plugins'
+require 'netzke/core/configuration'
+require 'netzke/core/state'
+require 'netzke/core/embedding'
+require 'netzke/core/actions'
+require 'netzke/core/session'
 
 module Netzke
   # The base class for every Netzke component. Its main responsibilities include:
-  # * JavaScript class generation and inheritance (using Ext JS class system) which reflects the Ruby class inheritance (see {Netzke::Javascript})
-  # * Nesting and dynamic loading of child components (see {Netzke::Composition})
+  # * JavaScript class generation and inheritance (using Ext JS class system) which reflects the Ruby class inheritance (see {Netzke::Core::Javascript})
+  # * Nesting and dynamic loading of child components (see {Netzke::Core::Composition})
   # * Ruby-side action declaration (see {Netzke::Actions})
   # * I18n
-  # * Client-server communication (see {Netzke::Services})
-  # * Session-based persistence (see {Netzke::State})
+  # * Client-server communication (see {Netzke::Core::Services})
+  # * Session-based persistence (see {Netzke::Core::State})
   #
   # == Class-level configuration
   #
@@ -49,17 +48,16 @@ module Netzke
   #
   # This doesn't necessarily have to be used in toolbars, but also in other places in config (i.e. layouts).
   class Base
-    include Session
-    include State
-    include Configuration
-    include Javascript
-    include Inheritance
-    include Services
-    include Composition
-    include Plugins
-    include Stylesheets
-    include Embedding
-    include Actions
+    include Core::Session
+    include Core::State
+    include Core::Configuration
+    include Core::Javascript
+    include Core::Services
+    include Core::Composition
+    include Core::Plugins
+    include Core::Stylesheets
+    include Core::Embedding
+    include Core::Actions
 
     class_attribute :default_instance_config
     self.default_instance_config = {}
@@ -97,6 +95,15 @@ module Netzke
       #   end
       def self.setup
         yield self
+      end
+
+      # All ancestor classes in the Netzke class hierarchy (i.e. up to Netzke::Base)
+      def class_ancestors
+        if self == Netzke::Base
+          []
+        else
+          superclass.class_ancestors + [self]
+        end
       end
     end
 

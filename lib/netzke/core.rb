@@ -4,7 +4,7 @@ require 'netzke/core/version'
 require 'netzke/core/dynamic_assets'
 require 'netzke/core/client_class'
 require 'netzke/core/css_config'
-require 'netzke/config_to_dsl_delegator'
+require 'netzke/core/config_to_dsl_delegator'
 
 module Netzke
   # This module implements high-level configuration for Netzke Core.

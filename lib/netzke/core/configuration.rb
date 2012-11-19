@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   # TODO: Document
   module Configuration
     extend ActiveSupport::Concern

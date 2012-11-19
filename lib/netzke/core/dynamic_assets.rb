@@ -50,7 +50,7 @@ module Netzke
 
           def include_base_js(arry)
             # JavaScript extensions
-            arry << File.new(File.expand_path("../../../../javascripts/core_extensions.js", __FILE__)).read
+            arry << File.new(File.expand_path("../../../../javascripts/js_extensions.js", __FILE__)).read
 
             # Base Netzke component JavaScript
             arry << File.new(File.expand_path("../../../../javascripts/base.js", __FILE__)).read

@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   class ComponentConfig < ActiveSupport::OrderedOptions
     def initialize(name, component)
       name = name.to_s

@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require 'netzke-core'
 
-module Netzke
+module Netzke::Core
   describe Composition do
-    class SomeComposite < Base
+    class SomeComposite < Netzke::Base
       component :nested_one do |c|
         c.klass = NestedComponentOne
       end
@@ -13,31 +13,31 @@ module Netzke
       end
     end
 
-    class NestedComponentOne < Base
+    class NestedComponentOne < Netzke::Base
     end
 
-    class NestedComponentTwo < Base
+    class NestedComponentTwo < Netzke::Base
       component :nested do |c|
         c.klass = DeepNestedComponent
       end
     end
 
-    class DeepNestedComponent < Base
+    class DeepNestedComponent < Netzke::Base
       component :nested do |c|
         c.klass = VeryDeepNestedComponent
       end
     end
 
-    class VeryDeepNestedComponent < Base
+    class VeryDeepNestedComponent < Netzke::Base
     end
 
-    class ComponentOne < Base
+    class ComponentOne < Netzke::Base
     end
 
-    class ComponentTwo < Base
+    class ComponentTwo < Netzke::Base
     end
 
-    class BaseComposite < Base
+    class BaseComposite < Netzke::Base
       component :component_one do |c|
         c.klass = ComponentOne
         c.title = "My Cool Component"

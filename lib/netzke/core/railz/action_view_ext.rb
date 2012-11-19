@@ -1,4 +1,4 @@
-require 'netzke/railz/action_view_ext/ext'
+require 'netzke/core/railz/action_view_ext/ext'
 module Netzke
   module Railz
     module ActionViewExt

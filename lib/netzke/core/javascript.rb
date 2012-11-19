@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   # == JavaScript class generation
   #
   # (For class-level DSL methods mentioned here see {ClassMethods})

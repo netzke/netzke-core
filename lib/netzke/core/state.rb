@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   # A component can store its state using the +update_state+ method that accepts a hash, e.g.:
   #
   #     update_state(:position => {:x => 100, :y => 200})

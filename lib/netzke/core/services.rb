@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   # The client-server communication between the JavaScript and Ruby side of a component is provided by means of "endpoints".
   #
   # == Defining an endpoint
@@ -97,7 +97,6 @@ module Netzke
         self.endpoints = self.endpoints.dup if self.superclass.respond_to?(:endpoints) && self.endpoints == self.superclass.endpoints #  only dup for the first endpoint declaration
         self.endpoints[ep.to_sym] = true
       end
-
     end
 
     # Invokes an endpoint call
@@ -106,7 +105,7 @@ module Netzke
     #     invoke_endpoint(:users__center__get_data, params)
     def invoke_endpoint(endpoint, params)
       if self.class.endpoints[endpoint.to_sym]
-        endpoint_response = Netzke::EndpointResponse.new
+        endpoint_response = Netzke::Core::EndpointResponse.new
         send("#{endpoint}_endpoint", params, endpoint_response)
 
         endpoint_response

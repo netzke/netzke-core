@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   # This module can be included in a component class to allows delegating the configuration options for a component into the level of the component's class.
   # For example:
   #
@@ -48,7 +48,7 @@ module Netzke
     end
 
     module ClassMethods
-      # Delegates specified configuration options to the class level. See ConfigToDslDelegator.
+      # Delegates specified configuration options to the class level
       def delegates_to_dsl(*option_names)
         self.delegated_options |= option_names
       end

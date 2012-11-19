@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   # Implements component-specific session manupulation.
   module Session
     class ComponentSessionProxy < Hash #:nodoc:

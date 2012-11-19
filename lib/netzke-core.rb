@@ -3,18 +3,18 @@ require 'netzke/base'
 
 module Netzke
   autoload :Plugin, 'netzke/plugin'
-  autoload :ActionConfig, 'netzke/action_config'
-  autoload :ComponentConfig, 'netzke/component_config'
-  autoload :EndpointResponse, 'netzke/endpoint_response'
 
   module Core
+    autoload :ComponentConfig, 'netzke/core/component_config'
+    autoload :ActionConfig, 'netzke/core/action_config'
     autoload :Panel, 'netzke/core/panel'
+    autoload :EndpointResponse, 'netzke/core/endpoint_response'
   end
 end
 
 # Rails specific
 if defined? Rails
-  require 'netzke/railz'
+  require 'netzke/core/railz'
 
   ActiveSupport.on_load(:action_controller) do
     include Netzke::Railz::ControllerExtensions

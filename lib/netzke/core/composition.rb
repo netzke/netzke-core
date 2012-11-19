@@ -1,4 +1,4 @@
-module Netzke
+module Netzke::Core
   # Any Netzke component can define child components, which can either be statically nested in the compound layout (e.g. as different regions of the 'border' layout), or dynamically loaded at a request (as is the advanced search panel in Basepack::GridPanel, for example).
   #
   # == Defining a component
@@ -54,7 +54,7 @@ module Netzke
   #
   # == Lazily vs eagerly loaded components
   #
-  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `netzkeLoadComponent` (see {Netzke::Javascript}). Referring a component in the layout (the `items` property) automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `eager_loading` can be set to true:
+  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `netzkeLoadComponent` (see {Netzke::Core::Javascript}). Referring a component in the layout (the `items` property) automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `eager_loading` can be set to true:
   #
   #     component :eagerly_loaded_window do |c|
   #       c.klass = SomeWindowComponent
@@ -119,7 +119,7 @@ module Netzke
     # All components for this instance, which includes components defined on class level, and components detected in :items
     def components
       @components ||= self.class.registered_components.inject({}) do |out, name|
-        component_config = Netzke::ComponentConfig.new(name, self)
+        component_config = Netzke::Core::ComponentConfig.new(name, self)
         send(COMPONENT_METHOD_NAME % name, component_config)
         out.merge(name.to_sym => component_config)
       end
