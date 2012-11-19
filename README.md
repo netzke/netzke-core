@@ -6,23 +6,26 @@
 
 Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/nomadcoder/netzke-basepack) and [netzke-communitypack](http://github.com/nomadcoder/netzke-communitypack).
 
-Netzke Core takes the burden of implementing the following key aspects of the framework:
-
-* Client-side (JavaScript) class generation
-* Client-server communication
-* Extendibility of components (class inheritance and mixins)
-* Unlimited nesting (composition)
-* Dynamic component loading
-* JavaScript class caching
-* Inclusion of “external” JavaScript and CSS files
-
-All this extremely facilitates building fast, low-traffic, robust, and highly maintainable applications.
-
 ## Rationale
 
 [Sencha Ext JS]("http://www.sencha.com/products/extjs") is a powerful front-end framework, which is used for crafting web-apps that give the end user experience similar to that of a desktop application. It has an extensive set of widgets ('components'), and leverages a modular approach to its fullest: a developer can extend components (using Ext JS's own [class system]("http://docs.sencha.com/ext-js/4-1/#!/guide/class_system")), nest components using many powerful layouts, dynamically create and destroy them. The architecture of Ext JS is well-thought and very complete.
 
 However, with Ext JS being server-agnostic, it is not always a trivial task for a developer to bind Ext JS components to the server-side data *and* application business logic, especially in complex applications. Netzke as the solution that allows you to extend the modular approach to the server side.
+
+Netzke Core takes the burden of implementing the following key aspects of the framework:
+
+* Client-side (JavaScript) class generation
+* Client-server communication
+* Convinient declaration of Ext actions
+* Extendibility of components (class inheritance and mixins)
+* Unlimited nesting (composition)
+* Dynamic component loading
+* Client-side class caching
+* Inclusion of extra JavaScript and CSS files
+
+...and more.
+
+All this extremely facilitates building fast, low-traffic, robust, and highly maintainable applications.
 
 ## HelloWorld component
 
@@ -32,7 +35,7 @@ In `YOUR_APP/components/hello_world.rb`:
 
 ```ruby
 class HelloWorld < Netzke::Base
-  # Configure clint class
+  # Configure client class
   js_configure do |c|
     c.title = "Hello World component"
     c.mixin # mix in methods from hello_world/javascripts/hello_world.js
@@ -107,6 +110,8 @@ In the view:
 <%= netzke :hello_world %>
 ```
 
+Now let's see in more details what makes a Netzke component.
+
 ## What is a Netzke component
 
 A Netzke component is a Ruby class, which is being represented by an Ext JS Component on the server-side. The responsibility of the Ruby class is to "assemble" that Ext JS class (further referred as "client class"), and provide the configuration for its instance (further referred as "client instance"). Even if it may sound a bit complicated, Netzke provides a simple API for defining the client class. See "Client class" for details.
@@ -115,22 +120,24 @@ With Netzke components being a Ruby class, and the client class being *incapsula
 
 A typical Netzke component's code is structured like this:
 
-    your_web_app
-      app
-        components
-          my_component.rb             <-- the Ruby class
-          my_component
-            some_module.rb            <-- optional extra Ruby modules
-            javascripts
-              some_dependency.js      <-- an external JS library
-              init_component.js       <-- mixins to the client class
-              extra_functionality.js  <-- more mixins (possibly optional, depending on the Ruby class configuration)
-            stylesheets
-              my_special_button.js    <-- custom CSS
+```
+your_web_app
+  app
+    components
+      my_component.rb             <-- the Ruby class
+      my_component
+        some_module.rb            <-- optional extra Ruby modules
+        javascripts
+          some_dependency.js      <-- an external JS library
+          init_component.js       <-- mixins to the client class
+          extra_functionality.js  <-- more mixins (possibly optional, depending on the Ruby class configuration)
+        stylesheets
+          my_special_button.js    <-- custom CSS
+```
 
 ## Client class
 
-First of all it is necessary to understand that a client class is inherited (as defined by the Ext JS class system) from an Ext JS class, which by default is [Ext.panel.Panel]("http://docs.sencha.com/ext-js/4-1/#!/api/Ext.panel.Panel"). For example, a component defined like this:
+The generated client class is *inherited* (as defined by the Ext JS [class system]("http://docs.sencha.com/ext-js/4-1/#!/guide/class_system")) from an Ext JS class, which by default is [Ext.panel.Panel]("http://docs.sencha.com/ext-js/4-1/#!/api/Ext.panel.Panel"). For example, a component defined like this:
 
 ```ruby
 class HelloWorld < Netzke::Base
@@ -140,15 +147,15 @@ end
 will have the following client class (simplified):
 
 ```javascript
-Ext.define('Netzke.classes.HelloWorld', Ext.apply(Netzke.componentMixin, {"extend":"Ext.panel.Panel"}));
+Ext.define('Netzke.classes.HelloWorld', {"extend":"Ext.panel.Panel", "mixins":["Netzke.classes.Core.Mixin"]});
 ```
 
-`Netzke.componentMixin` contains a set of client-side methods common for all Netzke components.
+`Netzke.classes.Core.Mixin` contains a set of client-side methods and properties common to every Netzke component.
 
 The configuration of a client-class is done by using the `Netzke::Base.js_configure`. For example, in order to inherit from a different Ext JS component, and to mix in the methods defined in an external JavaScript class:
 
 ```ruby
-class HelloWorld < Netzke::Base
+class MyTabPanel < Netzke::Base
   js_configure do |c|
     c.extend = "Ext.tab.Panel"
     c.mixin :extra_functionality
@@ -156,9 +163,151 @@ class HelloWorld < Netzke::Base
 end
 ```
 
-## Defining actions
+You can also define JavaScript methods inline:
+
+```ruby
+class MyTabPanel < Netzke::Base
+  action :do_something # see Actions, toolbars, and menus
+
+  js_configure do |c|
+    c.extend = "Ext.tab.Panel"
+    c.on_do_something = <<-JS
+      function(){
+        // default handler for the do_something action
+      }
+    JS
+  end
+end
+```
+
+## Composition
+
+Any Netzke component can define child components, which can either be statically nested in the compound layout (e.g. as different regions of the ['border' layout]("")), or dynamically loaded at a request (as in the case of the edit form window in +Basepack::GridPanel+, for example).
+ 
+You can define a child component by calling the +component+ class method which normally requires a block:
+ 
+```ruby
+component :users do |c|
+  c.klass = GridPanel
+  c.model = "User"
+  c.title = "Users"
+end
+```
+
+Declared components can be referred to in the component layout:
+
+```ruby
+def configure(c)
+  super
+  c.items = [
+    { xtype: :panel, title: "Simple Ext panel" },
+    :users
+  ]
+end
+```
+
+For more details on composition refer to [Netzke::Core::Composition]().
+
+## Actions, toolbars, and menus
+
+Actions are [used by Ext JS]("") to share functionality and state among multiple buttons and menu items. Define actions with the `action` class method:
+
+```ruby
+action :show_report do |c|
+  c.text = "Show report"
+  c.icon = :report
+end
+```
+
+The icon for this button will be `images/icons/report.png` (see "Icons support").
+
+Refer to actions in toolbars:
+
+```ruby
+def configure(c)
+  super
+  c.bbar = [:show_report]
+end
+```
+
+Actions can also be referred to is submenus:
+
+```ruby
+  c.tbar = [{text: 'Menu', menu: {items: [:show_report]}}]
+```
+
+From inside the block you have access to the configuration of the component:
+
+```ruby
+action :show_report do |c|
+  c.text = "Show report"
+  c.icon = :report
+  c.disabled = !config[:can_see_report]
+end
+```
 
 ## Client-server interaction within components
+
+Communication between the client class and the corresponding server class is done by means of defining *endpoints*. By defining an endpoint on the server, the client class automatically gets a method that is used to call the server.
+
+### Defining and calling an endpoint from client class
+
+By defining an endpoint like this:
+
+```ruby
+class SimpleComponent < Netzke::Base
+  endpoint :whats_up_server do |params, this|
+    this.set_title("All quiet here on the server")
+  end
+end
+```
+
+... the client class will be able to call a method called `whatsUpServer`:
+
+```javascript
+this.whatsUpServer(params, callback, scope);
+```
+
+Parameters:
+
+* `params` will be passed to the enpdoint block as the first parameter
+* `callback` (optional) receives a function to be called after the server successfully processes the endpoint call
+* `scope` is the scope in which `callbackFunction` will be called
+
+### Calling client class methods from endpoint
+
+An endpoint can instruct the client class to execute a set of methods after its execution, passing those methods arbitrary parameters. For example:
+
+```ruby
+class SimpleComponent < Netzke::Base
+  endpoint :whats_up_server do |params, this|
+    this.set_title("All quiet here on the server")
+    this.my_method
+  end
+end
+```
+
+Here the client class will call its `setTitle` method (defined in `Ext.panel.Panel`) with parameter passed from the endpoint. Then a custom method `myMethod` will be called with no parameters.
+
+A special client method called `setResult` can be called by the endpoint in order to pass a parameter to the callback function mentioned above.
+
+For more details on client-server communication see [Netzke::Core::Services]("").
+
+## Icons support
+
+Netzke can optionally make use of icons for making clickable elements like buttons and menu items more visual. The icons should be (by default) located in `public/images/icons`.
+
+An example of specifying an icon for an action:
+
+```ruby
+action :logout do |c|
+  c.icon = :door
+end
+```
+
+The logout action will be configured with `public/images/icons/door.png` as icon.
+
+More on using icons see [Netzke::Core::Actions]("").
 
 ## Requirements
 
