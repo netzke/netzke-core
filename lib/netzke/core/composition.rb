@@ -32,24 +32,31 @@ module Netzke::Core
   #
   # == Referring to components in layouts
   #
-  # When a child component is to be used in the layout, it can be referred by using the `component` key in the configuration hash:
+  # A child component can be referred in the layout by using symbols:
+  #
+  #     component :users do |c|
+  #       c.title = "A Netzke component"
+  #     end
   #
   #     def configure(c)
   #       super
   #       c.items = [
   #         { xtype: :panel, title: "Simple Ext panel" },
-  #         { component: :users, title: "A Netzke component" }
+  #         :users # a Netzke component
   #       ]
   #     end
   #
-  # If no extra (layout) configuration is needed, a component can be simply referred by using a symbol, e.g.:
+  # If an extra (layout) configuration should be provided, a component can be referred to by using the +component+ key in the configuration hash (this can be useful when overriding a layout of a child component):
   #
   #     component :tab_one # ...
   #     component :tab_two # ...
   #
   #     def configure(c)
   #       super
-  #       c.items = [:tab_one, :tab_two]
+  #       c.items = [
+  #         {component: :tab_one, title: "One"},
+  #         {component: :tab_two, title: "Two"}
+  #       ]
   #     end
   #
   # == Lazily vs eagerly loaded components
@@ -136,13 +143,12 @@ module Netzke::Core
 
     # Called when the method_missing tries to processes a non-existing component. Override when needed.
     def component_missing(aggr)
-      flash :error => "Unknown component #{aggr} for component #{name}"
+      flash :error => "Unknown component #{aggr} for #{name}"
       {:feedback => @flash}.to_nifty_json
     end
 
     # Recursively instantiates a component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
-    # TODO: strong_config should probably be thrown away, and is not taken into account when caching the results
-    def component_instance(name, strong_config = {})
+    def component_instance(name)
       @component_instance_cache ||= {}
       @component_instance_cache[name] ||= begin
         composite = self
@@ -150,11 +156,11 @@ module Netzke::Core
           cmp = cmp.to_sym
 
           component_config = composite.components[cmp]
-          raise ArgumentError, "No child component '#{cmp}' defined for component '#{composite.js_id}'" if component_config.nil?
+          raise ArgumentError, "No component '#{cmp}' defined for '#{composite.js_id}'" if component_config.nil?
 
           klass = component_config[:klass] || Netzke::Core::Panel
 
-          instance_config = {}.merge(component_config).merge(strong_config).merge(:name => cmp)
+          instance_config = component_config.merge(:name => cmp)
 
           composite = klass.new(instance_config, composite) # params: config, parent
         end
@@ -176,13 +182,9 @@ module Netzke::Core
       res.uniq
     end
 
-    # Returns global id of a component in the hierarchy, based on passed reference that follows
-    # the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will
-    # result in <tt>nil</tt>, while referring to a non-existent component will simply provide an erroneous ID.
+    # Returns JS id of a component in the hierarchy, based on passed reference that follows the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will result in <tt>nil</tt>, while referring to a non-existent component will simply provide an erroneous ID.
     # Example:
-    # <tt>parent__parent__child__subchild</tt> will traverse the hierarchy 2 levels up, then going down to "child",
-    # and further to "subchild". If such a component exists in the hierarchy, its global id will be returned, otherwise
-    # <tt>nil</tt> will be returned.
+    # <tt>parent__parent__child__subchild</tt> will traverse the hierarchy 2 levels up, then going down to "child", and further to "subchild". If such a component exists in the hierarchy, its global id will be returned, otherwise <tt>nil</tt> will be returned.
     def js_id_by_reference(ref)
       ref = ref.to_s
       return parent && parent.js_id if ref == "parent"
@@ -211,7 +213,7 @@ module Netzke::Core
       item
     end
 
-    # We'll build a few useful instance variables here:
+    # We'll build a couple of useful instance variables here:
     #
     # @components_in_config - an array of those components (by name) that are referred in items
     # @normalized_config - a config that has all the extensions (duh...)
