@@ -243,7 +243,7 @@ The following public method name changes took place for the sake of consistence:
 * getChildNetzkeComponent => netzkeGetComponent
 
 
-# v0.7.7 - ?
+# v0.7.7 - 2012-10-21
 * Ext JS required version bump (4.1.x)
 
 # v0.7.6 - 2012-07-27
