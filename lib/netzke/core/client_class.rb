@@ -7,7 +7,6 @@ module Netzke
     #         c.extend = "Ext.form.Panel"
     #       end
     #     end
-    # TODO: rename to ClientClass
     class ClientClass
       attr_accessor :included_files, :base_class, :properties, :mixins, :translated_properties
 

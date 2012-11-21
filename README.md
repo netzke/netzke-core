@@ -88,7 +88,7 @@ RailsApp::Application.routes.draw do
 end
 ```
 
-Add `load_netzke` to the layout:
+Use `load_netzke` in the layout to include Ext JS and Netzke scripts and stylesheets:
 
 ```erb
 <!DOCTYPE html>
@@ -104,13 +104,13 @@ Add `load_netzke` to the layout:
 </html>
 ```
 
-In the view:
+Embed the component in the view:
 
 ```erb
 <%= netzke :hello_world %>
 ```
 
-Now let's see in more details what makes a Netzke component.
+Now let's see in more details what makes up a Netzke component.
 
 ## What is a Netzke component
 

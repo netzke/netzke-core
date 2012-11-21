@@ -8,12 +8,13 @@ module Netzke::Core
         yield self
       end
 
-      # Config options that should not go to the client side
+      # Config options that should not go to the client side. Can be overridden.
       def server_side_config_options
         [:eager_loading, :klass]
       end
     end
 
+    # Override to auto-configure components
     def configure(c)
       # default config
       c.reverse_merge!(self.class.default_instance_config)
