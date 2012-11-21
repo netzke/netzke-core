@@ -12,11 +12,13 @@ module Netzke::Core
   #       c.handler = :destroy_something # destroySomething will be called on JavaScript side
   #     end
   #
-  # All config settings for an action are optional. When omitted, the locale files will be consulted first (see "I18n of actions"), falling back to the defaults:
+  # All config settings for an action are optional. When omitted, the locale files will be consulted first (see "I18n of actions"), falling back to the defaults.
   #
-  # * +icon+ can be set to either a String (which will be interpreted as a full URI to the icon file), or as a Symbol, which will be expanded to +Netzke::Core.icons_uri+ + "/{icon}.png". Defaults to nil (no icon)
-  # * +handler+ - a symbol that represents the JavaScript public method (snake-case), which will be called in the scope of the component instance. Defaults to +on_{action_name}+, which on JavaScript side will result in a call to +on{CamelCaseActionName}+
-  # * +text+ and +tooltip+ default to "Humanized action name"
+  # [+icon+]
+  #   Can be set to either a String (which will be interpreted as a full URI to the icon file), or as a Symbol, which will be expanded to +Netzke::Core.icons_uri+ + "/(icon).png". Defaults to nil (no icon)
+  # [+handler+]
+  #   A symbol that represents the JavaScript public method (snake-case), which will be called in the scope of the component instance. Defaults to +on_(action_name)+, which on JavaScript side will result in a call to +on(CamelCaseActionName)+
+  # +text+ and +tooltip+ default to "Humanized action name"
   #
   # When no block is given, the defaults will be used:
   #

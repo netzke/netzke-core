@@ -12,7 +12,6 @@ module Netzke::Core
     extend ActiveSupport::Concern
 
     module ClassMethods
-
       # Configures JS class
       # Example:
       #
@@ -33,24 +32,9 @@ module Netzke::Core
       def js_config
         @_js_config ||= Netzke::Core::ClientClass.new(self)
       end
-
     end
 
-    # Instance-level client class config. The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class.
-    # Not to be overridden, override {js_configure} instead.
-    def js_config
-      @js_config ||= ActiveSupport::OrderedOptions.new.tap{|c| js_configure(c)}
-    end
-
-    # Hash containing configuration for all child components to be instantiated at the JS side
-    def js_components
-      @js_components ||= eagerly_loaded_components.inject({}) do |out, (name, config)|
-        instance = component_instance(name.to_sym)
-        out.merge(name => instance.js_config)
-      end
-    end
-
-    # Builds {js_config} used for instantiating a client class. Override it when you need to extend/modify the config for the JS component intance. It's *not* being called when the *server* class is being instantiated (e.g. to process an endpoint call). With other words, it's only being called before a component is first being loaded in the browser. so, it's ok to do heavy stuf fhere, like building a tree panel nodes from the database.
+    # Builds {#js_config} used for instantiating a client class. Override it when you need to extend/modify the config for the JS component intance. It's *not* being called when the *server* class is being instantiated (e.g. to process an endpoint call). With other words, it's only being called before a component is first being loaded in the browser. so, it's ok to do heavy stuf fhere, like building a tree panel nodes from the database.
     def js_configure(c)
       c.merge!(normalized_config)
 
@@ -83,6 +67,20 @@ module Netzke::Core
       c.tools = c.tools.map(&:to_s) if c.tools.present?
 
       c.flash = session[:flash] if session[:flash].present?
+    end
+
+    # Instance-level client class config. The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class.
+    # Not to be overridden, override {#js_configure} instead.
+    def js_config
+      @js_config ||= ActiveSupport::OrderedOptions.new.tap{|c| js_configure(c)}
+    end
+
+    # Hash containing configuration for all child components to be instantiated at the JS side
+    def js_components
+      @js_components ||= eagerly_loaded_components.inject({}) do |out, (name, config)|
+        instance = component_instance(name.to_sym)
+        out.merge(name => instance.js_config)
+      end
     end
 
     # All the JS-code required by this instance of the component to be instantiated in the browser.

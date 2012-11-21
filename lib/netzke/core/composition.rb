@@ -215,8 +215,8 @@ module Netzke::Core
 
     # We'll build a couple of useful instance variables here:
     #
-    # @components_in_config - an array of those components (by name) that are referred in items
-    # @normalized_config - a config that has all the extensions (duh...)
+    # +components_in_config+ - an array of components (by name) referred in items
+    # +normalized_config+ - a config that has all the config extensions applied
     def normalize_config
       @components_in_config = []
       @normalized_config = config.dup.tap do |c|
