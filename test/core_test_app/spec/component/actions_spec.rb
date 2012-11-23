@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
-require 'netzke-core'
+require 'spec_helper'
 
 module Netzke::Core
   describe Actions do
@@ -27,11 +26,6 @@ module Netzke::Core
     end
 
     class ExtendedComponent < SomeComponent
-      def configure(c)
-        super
-        c.bbar = [:action_one, :action_two, :action_three, :action_four, :action_five]
-        c.tbar = [:action_one, :action_two, :action_three, :action_four, :action_five]
-      end
     end
 
     class AnotherExtendedComponent < ExtendedComponent

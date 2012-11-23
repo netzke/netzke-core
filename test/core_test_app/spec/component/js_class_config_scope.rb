@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
-require 'netzke-core'
+require 'spec_helper'
 
 class SomeComponent < Netzke::Base
 end

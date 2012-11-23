@@ -4,6 +4,8 @@ class ExtendedServerCaller < ServerCaller
     c.title = "Extended Server Caller"
   end
 
+
+
   js_configure do |c|
     c.on_bug_server = <<-JS
       function(){

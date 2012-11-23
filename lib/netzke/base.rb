@@ -97,7 +97,8 @@ module Netzke
         yield self
       end
 
-      # All ancestor classes in the Netzke class hierarchy (i.e. up to Netzke::Base)
+      # All ancestor classes in the Netzke class hierarchy up to Netzke::Base, including self
+      # TODO: rename to netzke_ancestors
       def class_ancestors
         if self == Netzke::Base
           []

@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Denis Gorin"]
-  s.date = "2012-11-22"
+  s.date = "2012-11-23"
   s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -210,6 +210,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/public/images/rails.png",
     "test/core_test_app/public/robots.txt",
     "test/core_test_app/script/rails",
+    "test/core_test_app/spec/component/action_config_spec.rb",
     "test/core_test_app/spec/component/actions_spec.rb",
     "test/core_test_app/spec/component/base_spec.rb",
     "test/core_test_app/spec/component/component_spec.rb",
