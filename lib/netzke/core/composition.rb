@@ -176,9 +176,7 @@ module Netzke::Core
         res += component_instance(aggr).dependency_classes
       end
 
-      res += self.class.class_ancestors
-
-      res << self.class
+      res += self.class.netzke_ancestors
       res.uniq
     end
 

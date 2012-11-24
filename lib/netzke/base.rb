@@ -97,13 +97,12 @@ module Netzke
         yield self
       end
 
-      # All ancestor classes in the Netzke class hierarchy up to Netzke::Base, including self
-      # TODO: rename to netzke_ancestors
-      def class_ancestors
+      # Ancestor classes in the Netzke class hierarchy up to (and excluding) +Netzke::Base+, including self; in comparison to Ruby's own Class.ancestors, the order is reversed.
+      def netzke_ancestors
         if self == Netzke::Base
           []
         else
-          superclass.class_ancestors + [self]
+          superclass.netzke_ancestors + [self]
         end
       end
     end
@@ -128,6 +127,7 @@ module Netzke
   private
 
     # TODO: needs rework
+    # TODO: rename to smth more appropriate
     def flash(flash_hash) #:nodoc:
       level = flash_hash.keys.first
       raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)

@@ -97,7 +97,7 @@ module Netzke::Core
     # Merges all the translations in the class hierarchy
     # Note: this method can't be moved out to ClientClass, because I18n is loaded only once, when other Ruby classes are evaluated; so, this must remain at instance level.
     def js_translate_properties
-      @js_translate_properties ||= self.class.class_ancestors.inject({}) do |r,klass|
+      @js_translate_properties ||= self.class.netzke_ancestors.inject({}) do |r,klass|
         hsh = klass.js_config.translated_properties.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }
         r.merge(hsh)
       end

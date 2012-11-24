@@ -19,7 +19,7 @@ module Netzke::Core
   protected
 
     def build_localized_attributes
-      @component.class.class_ancestors.each do |c|
+      @component.class.netzke_ancestors.each do |c|
         i18n_id = c.i18n_id
         @text = I18n.t("#{i18n_id}.actions.#{@name}.text", default: "").presence || @text
         @tooltip = I18n.t("#{i18n_id}.actions.#{@name}.tooltip", default: "").presence || @tooltip
