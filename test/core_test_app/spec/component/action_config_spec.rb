@@ -6,7 +6,7 @@ module Netzke::Core
       sc = ServerCaller.new
       esc = ExtendedServerCaller.new
       sc.actions[:bug_server].text.should == "Call server"
-      esc.actions[:bug_server].text.should == "Call server"
+      esc.actions[:bug_server].text.should == "Call server extensively"
 
       sc.actions[:bug_server].tooltip.should == "This bugs server"
       esc.actions[:bug_server].tooltip.should == "This bugs server in its own way"

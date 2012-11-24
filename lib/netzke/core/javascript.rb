@@ -19,7 +19,7 @@ module Netzke::Core
       #     # c is an instance of ClientClass
       #     c.title = "My title"
       #     c.mixin
-      #     c.include :extra_js
+      #     c.require :extra_js
       #     # ...etc
       #   end
       #

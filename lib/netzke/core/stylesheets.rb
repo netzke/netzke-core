@@ -21,7 +21,7 @@ module Netzke::Core
       def css_included
         # Prevent re-including code that was already included by the parent
         # (thus, only include those JS files when include_js was defined in the current class, not in its ancestors)
-        ((singleton_methods(false).map(&:to_sym).include?(:include_css) ? include_css : [] ) + css_config.included_files).inject(""){ |r, path| r + File.new(path).read + "\n"}
+        ((singleton_methods(false).map(&:to_sym).include?(:include_css) ? include_css : [] ) + css_config.required_files).inject(""){ |r, path| r + File.new(path).read + "\n"}
       end
 
       # All CSS code needed for this class including the one from the ancestor component

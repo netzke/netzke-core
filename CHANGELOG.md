@@ -63,7 +63,7 @@ The following DSL methods are gone: `js_include`, `js_mixin`, `js_base_class`, `
     class MyComponent < Netzke::Base
       js_configure do |c|
         c.mixin                     # replaces js_mixin preserving the signature
-        c.include                   # replaces js_include preserving the signature
+        c.require                   # replaces js_include preserving the signature
         c.extend = "Ext.tab.Panel"  # replaces js_base_class
 
         c.title = "My Component"    # use instead of js_property :title, "My Component"

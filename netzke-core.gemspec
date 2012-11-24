@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Denis Gorin"]
-  s.date = "2012-11-24"
+  s.date = "2012-11-26"
   s.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -85,7 +85,6 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/component_with_actions.rb",
     "test/core_test_app/app/components/component_with_custom_css.rb",
     "test/core_test_app/app/components/component_with_custom_css/stylesheets/custom.css",
-    "test/core_test_app/app/components/component_with_included_js.rb",
     "test/core_test_app/app/components/component_with_js_mixin.rb",
     "test/core_test_app/app/components/component_with_js_mixin/javascripts/component_with_js_mixin.js",
     "test/core_test_app/app/components/component_with_js_mixin/javascripts/extra_one.js",
@@ -95,6 +94,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/component_with_nested_through.rb",
     "test/core_test_app/app/components/component_with_prebuilt_toolbar_control.rb",
     "test/core_test_app/app/components/component_with_prebuilt_toolbar_control/javascripts/component_with_prebuilt_toolbar_control.js",
+    "test/core_test_app/app/components/component_with_required_js.rb",
     "test/core_test_app/app/components/dsl_delegated_properties.rb",
     "test/core_test_app/app/components/dsl_delegated_properties_base.rb",
     "test/core_test_app/app/components/dynamic_tab_panel/javascripts/dynamic_tab_panel.js",
