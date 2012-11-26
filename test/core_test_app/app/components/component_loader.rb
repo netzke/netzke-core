@@ -18,6 +18,11 @@ class ComponentLoader < Netzke::Base
 
   component :some_composite
 
+  component :inaccessible do |c|
+    c.excluded = true
+  end
+
+
   # this action is using netzkeLoadComponent "special" callback
   action :load_with_feedback
 
@@ -46,9 +51,11 @@ class ComponentLoader < Netzke::Base
     a.text = "Non-existing component"
   end
 
+  action :inaccessible
+
   def configure(c)
     super
-    c.bbar = [:load_component, :load_in_window, :load_with_feedback, :load_window_with_simple_component, :load_composite, :load_with_params, :load_with_generic_callback, :load_with_generic_callback_and_scope, :non_existing_component]
+    c.bbar = [:load_component, :load_in_window, :load_with_feedback, :load_window_with_simple_component, :load_composite, :load_with_params, :load_with_generic_callback, :load_with_generic_callback_and_scope, :non_existing_component, :inaccessible]
   end
 
   endpoint :deliver_component do |params, this|

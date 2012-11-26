@@ -66,5 +66,9 @@
     });
     w.show();
     this.netzkeLoadComponent({name: 'component_loaded_in_window', container: w});
+  },
+
+  onInaccessible: function() {
+    this.netzkeLoadComponent({name: 'inaccessible', container: this});
   }
 }

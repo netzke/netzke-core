@@ -57,13 +57,20 @@ module Netzke::Core
     end
 
     class ExtendedComposite < BaseComposite
-      def component_one_component(c)
-        super
+      component :component_one do |c|
+        super c
         c.title = c.title + ", extended"
       end
 
       component :component_two do |c|
         c.title = "Another Nested Component"
+      end
+    end
+
+    class ComponentWithExcluded < Netzke::Base
+      component :accessible
+      component :inaccessible do |c|
+        c.excluded = true
       end
     end
 
@@ -93,6 +100,12 @@ module Netzke::Core
        extended_composite.components[:component_one][:title].should == "My Cool Component, extended"
        extended_composite.components[:component_one][:klass].should == ComponentOne
        extended_composite.components[:component_two][:title].should == "Another Nested Component"
+     end
+
+     it "should be impossible to access excluded components" do
+       c = ComponentWithExcluded.new
+       c.components.should have_key(:accessible)
+       c.components.should_not have_key(:inaccessible)
      end
   end
 end

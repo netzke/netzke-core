@@ -67,6 +67,11 @@ module Netzke::Core
   #       c.klass = SomeWindowComponent
   #       c.eager_loading = true
   #     end
+  #
+  # == Excluded components
+  #
+  # You can make a child component inavailable for dynamic loading by using the +excluded+ option. When an excluded component is used in the layout, it will be skipped.
+  # This can be used for authorization.
   module Composition
     extend ActiveSupport::Concern
 
@@ -128,7 +133,7 @@ module Netzke::Core
       @components ||= self.class.registered_components.inject({}) do |out, name|
         component_config = Netzke::Core::ComponentConfig.new(name, self)
         send(COMPONENT_METHOD_NAME % name, component_config)
-        out.merge(name.to_sym => component_config)
+        component_config.excluded ? out : out.merge(name.to_sym => component_config)
       end
     end
 
@@ -197,13 +202,14 @@ module Netzke::Core
   protected
 
     def extend_item(item)
-      item = {netzke_component: item} if item.is_a?(Symbol) && components[item]
+      # in a situation of action and component being equally named, action will take precedence
       item = {netzke_action: item} if item.is_a?(Symbol) && actions[item]
+      item = {netzke_component: item} if item.is_a?(Symbol) && components[item]
 
       if item.is_a?(Hash)
         # replace the `component` and `action` keys with `netzke_component` and `netzke_action`, which will be looked for at the JS side
-        item[:netzke_component] = item.delete(:component) if item[:component]
         item[:netzke_action] = item.delete(:action) if item[:action]
+        item[:netzke_component] = item.delete(:component) if item[:component]
 
         @components_in_config << item[:netzke_component] if item[:netzke_component] && item[:eager_loading] != false
       end

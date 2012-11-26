@@ -45,8 +45,14 @@ Feature: Component loader
     Then I should see "Simple Component with changed HTML"
 
   @javascript
-  Scenario: Component loader should report that it can't load a component
+  Scenario: Component loader should report that it can't load a component and stay adequate
     Given I am on the ComponentLoader test page
     When I press "Non-existing component"
     Then I should see "Couldn't load component 'non_existing_component'"
     And I should not see "Loading"
+
+  @javascript
+  Scenario: Component loader not be able to load a component marked as excluded
+    Given I am on the ComponentLoader test page
+    When I press "Inaccessible"
+    Then I should see "Couldn't load component 'inaccessible'"
