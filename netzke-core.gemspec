@@ -95,6 +95,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/component_with_prebuilt_toolbar_control.rb",
     "test/core_test_app/app/components/component_with_prebuilt_toolbar_control/javascripts/component_with_prebuilt_toolbar_control.js",
     "test/core_test_app/app/components/component_with_required_js.rb",
+    "test/core_test_app/app/components/configurable_on_class_level.rb",
     "test/core_test_app/app/components/dsl_delegated_properties.rb",
     "test/core_test_app/app/components/dsl_delegated_properties_base.rb",
     "test/core_test_app/app/components/dynamic_tab_panel/javascripts/dynamic_tab_panel.js",
