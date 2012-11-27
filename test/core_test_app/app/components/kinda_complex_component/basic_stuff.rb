@@ -1,4 +1,4 @@
-module KindaComplexComponentLib
+class KindaComplexComponent < Netzke::Base
   # Note the use of ActiveSupport::Concern module
   module BasicStuff
     extend ActiveSupport::Concern

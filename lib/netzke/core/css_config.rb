@@ -17,7 +17,7 @@ module Netzke
     protected
 
       def expand_css_require_path(sym, callr) # :nodoc:
-        %Q(#{callr.split(".rb:").first}_lib/stylesheets/#{sym}.css)
+        %Q(#{callr.split(".rb:").first}/stylesheets/#{sym}.css)
       end
 
     end

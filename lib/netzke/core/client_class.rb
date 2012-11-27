@@ -246,7 +246,7 @@ Netzke.cache.push('#{xtype}');
     protected
 
       def expand_require_path(sym, callr) # :nodoc:
-        %Q(#{callr.split(".rb:").first}_lib/javascripts/#{sym}.js)
+        %Q(#{callr.split(".rb:").first}/javascripts/#{sym}.js)
       end
     end
   end
