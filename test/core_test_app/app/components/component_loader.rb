@@ -19,6 +19,7 @@ class ComponentLoader < Netzke::Base
   component :some_composite
 
   component :inaccessible do |c|
+    c.klass = Netzke::Core::Panel
     c.excluded = true
   end
 

@@ -1,12 +1,12 @@
 module Netzke::Core
   class ComponentConfig < ActiveSupport::OrderedOptions
-    def initialize(name, component)
-      name = name.to_s
+    def initialize(name)
+      @name = name.to_s
+    end
 
-      # TODO: optimize
-      self.klass = name.camelize.constantize rescue nil
-
-      self.item_id = name
+    def set_defaults!
+      self.item_id ||= @name # default item_id
+      self.klass ||= @name.camelize.constantize # default klass
     end
   end
 end

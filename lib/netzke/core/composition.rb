@@ -131,8 +131,9 @@ module Netzke::Core
     # All components for this instance, which includes components defined on class level, and components detected in :items
     def components
       @components ||= self.class.registered_components.inject({}) do |out, name|
-        component_config = Netzke::Core::ComponentConfig.new(name, self)
+        component_config = Netzke::Core::ComponentConfig.new(name)
         send(COMPONENT_METHOD_NAME % name, component_config)
+        component_config.set_defaults!
         component_config.excluded ? out : out.merge(name.to_sym => component_config)
       end
     end
@@ -163,7 +164,7 @@ module Netzke::Core
           component_config = composite.components[cmp]
           raise ArgumentError, "No component '#{cmp}' defined for '#{composite.js_id}'" if component_config.nil?
 
-          klass = component_config[:klass] || Netzke::Core::Panel
+          klass = component_config[:klass]
 
           instance_config = component_config.merge(:name => cmp)
 

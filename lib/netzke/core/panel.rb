@@ -1,6 +1,6 @@
 module Netzke
   module Core
-    # A very simple panel with an automatically set title. It is used by the framework when no `klass` is specified in a child component declaration, and is not supposed to be used explicitly.
+    # A very simple panel with an automatically set title. Can be used as a child component +klass+.
     class Panel < Netzke::Base
       def js_configure(c)
         super
