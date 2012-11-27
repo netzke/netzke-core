@@ -66,7 +66,7 @@ module Netzke::Core
       # we need to pass them as strigs, not as symbols
       c.tools = c.tools.map(&:to_s) if c.tools.present?
 
-      c.flash = session[:flash] if session[:flash].present?
+      c.flash = session[:flash] if session && session[:flash].present?
     end
 
     # Instance-level client class config. The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class.
