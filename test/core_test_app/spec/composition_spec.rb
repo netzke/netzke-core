@@ -100,20 +100,20 @@ module Netzke::Core
       deep_nested_component.js_id.should == 'some_composite__nested_two__nested'
     end
 
-     it "should be possible to override the superclass's declaration of a component" do
-       composite = BaseComposite.new
-       composite.components[:component_one][:title].should == "My Cool Component"
+    it "should be possible to override the superclass's declaration of a component" do
+      composite = BaseComposite.new
+      composite.components[:component_one][:title].should == "My Cool Component"
 
-       extended_composite = ExtendedComposite.new
-       extended_composite.components[:component_one][:title].should == "My Cool Component, extended"
-       extended_composite.components[:component_one][:klass].should == ComponentOne
-       extended_composite.components[:component_two][:title].should == "Another Nested Component"
-     end
+      extended_composite = ExtendedComposite.new
+      extended_composite.components[:component_one][:title].should == "My Cool Component, extended"
+      extended_composite.components[:component_one][:klass].should == ComponentOne
+      extended_composite.components[:component_two][:title].should == "Another Nested Component"
+    end
 
-     it "should be impossible to access excluded components" do
-       c = ComponentWithExcluded.new
-       c.components.should have_key(:accessible)
-       c.components.should_not have_key(:inaccessible)
-     end
+    it "should be impossible to access excluded components" do
+      c = ComponentWithExcluded.new
+      c.components.should have_key(:accessible)
+      c.components.should_not have_key(:inaccessible)
+    end
   end
 end
