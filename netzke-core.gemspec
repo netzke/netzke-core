@@ -210,6 +210,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/public/images/rails.png",
     "test/core_test_app/public/robots.txt",
     "test/core_test_app/script/rails",
+    "test/core_test_app/spec/client_class_spec.rb",
     "test/core_test_app/spec/component/action_config_spec.rb",
     "test/core_test_app/spec/component/actions_spec.rb",
     "test/core_test_app/spec/component/base_spec.rb",

@@ -155,6 +155,8 @@ module Netzke::Core
 
     # Recursively instantiates a component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
     def component_instance(name)
+      raise ArgumentError, "No component '#{name.inspect}' defined for '#{self.js_id}'" if !name.present?
+
       @component_instance_cache ||= {}
       @component_instance_cache[name] ||= begin
         composite = self

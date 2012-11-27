@@ -38,7 +38,9 @@ module Netzke
       #       end
       #     end
       #
-      # An alternative way to define prototype properties is by using "mixins", see {ClientClass
+      # An alternative way to define prototype properties is by using "mixins", see {ClientClass#mixin}
+      #
+      # Class attributes are accessible from inside +js_configure+:
       #
       #     class MyComponent < Netzke::Base
       #       class_attribute :title
@@ -48,7 +50,7 @@ module Netzke
       #       end
       #     end
       #
-      # Then you can configure your component on a class level like this:
+      # Now you can configure your component on a class level like this:
       #
       #     # e.g. in Rails initializers
       #     MyComponent.title = "New title for all MyComponents"
@@ -59,10 +61,12 @@ module Netzke
       #       config.title = "New title for all MyComponents"
       #     end
       def method_missing(name, *args)
-        return super unless name =~ /(.+)=$/
-
-        value = args.first
-        @properties[$1.to_sym] = value.is_a?(String) && value =~ /^\s*function/ ? ActiveSupport::JSON::Variable.new(value) : value
+        if name =~ /(.+)=$/
+          value = args.first
+          @properties[$1.to_sym] = value.is_a?(String) && value =~ /^\s*function/ ? ActiveSupport::JSON::Variable.new(value) : value
+        else
+          @properties[name.to_sym]
+        end
       end
 
       # Use it to specify JavaScript files to be loaded *before* this component's JavaScript code. Useful when using external extensions required by this component.
