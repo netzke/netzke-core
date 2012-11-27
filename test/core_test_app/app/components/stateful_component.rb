@@ -35,7 +35,6 @@ class StatefulComponent < Netzke::Base
   end
 
   endpoint :server_set_session_data do |params, this|
-    ::Rails.logger.debug "!!! persistence_key:: #{persistence_key.inspect}\n"
     component_session[:html_content] = "HTML from session"
     update_state(:title, "Title From State")
   end

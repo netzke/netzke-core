@@ -1,32 +1,15 @@
 module Netzke::Core
   # Implements component-specific session manupulation.
   module Session
-    class ComponentSessionProxy < Hash #:nodoc:
+    # Instance of this class is returned through component_session, and allows writing/reading to/from the session part reserved for a specific component (specified by component's js_id).
+    class ComponentSessionProxy < Object
       def initialize(component_id)
-        @component_id = component_id
-        super
+        @session = Netzke::Base.session.nil? ? {} : Netzke::Base.session[component_id] ||= {}
       end
 
-      def [](key)
-        component_session[key]
-      end
-
-      def []=(key, value)
-        component_session.try(:store, key, value)
-      end
-
-      def clear
-        component_session.try(:clear)
-      end
-
-      def merge!(hsh)
-        component_session.try(:merge!, hsh)
-      end
-
-    protected
-
-      def component_session
-        Netzke::Base.session[@component_id] ||= {}
+      # Delegate everything to session
+      def method_missing(method, *args)
+        @session.send(method, *args)
       end
     end
 
