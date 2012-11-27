@@ -31,6 +31,16 @@ module Netzke::Core
   #       c.handler = :on_my_cool_action
   #     end
   #
+  # == Accessing component configuration from action block
+  #
+  # Because the action block get transformed into an instance method, it's possible to access the `config` method of the component itself:
+  #
+  #     action :show_report do |c|
+  #       c.text = "Show report"
+  #       c.icon = :report
+  #       c.disabled = !config[:can_see_report]
+  #     end
+  #
   # == Overriding an action
   #
   # When extending a component, it's possible to override its actions. You'll need to call the +super+ method passing the configuration object to it in order to get the super-class' action configuration:

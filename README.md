@@ -6,7 +6,7 @@
 
 Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/nomadcoder/netzke-basepack) and [netzke-communitypack](http://github.com/nomadcoder/netzke-communitypack).
 
-Some knowledge of Sencha Ext JS can be needed in order to fully understand this README.
+Some knowledge of Sencha Ext JS will be needed in order to fully understand this README.
 
 ## Rationale
 
@@ -18,7 +18,7 @@ Netzke Core takes the burden of implementing the following key aspects of the fr
 
 * Client-side (JavaScript) class generation
 * Client-server communication
-* Convinient declaration of Ext actions
+* Convenient declaration of Ext actions
 * Extendibility of components (class inheritance and mixins)
 * Unlimited nesting (composition)
 * Dynamic component loading
@@ -120,7 +120,7 @@ Further, each Netzke component inherits convenient API for enabling the communic
 
 With Netzke components being a Ruby class, and the client class being *incapsulated* in it, it is possible to use a Netzke component in your application by simply writing Ruby code. However, while creating a component, developers can fully use their Ext JS skills - Netzke puts no obstacles here.
 
-A typical Netzke component's code is structured like this:
+A typical Netzke component's code is structured like this (on example of MyComponent):
 
 ```
 your_web_app
@@ -128,11 +128,11 @@ your_web_app
     components
       my_component.rb             <-- the Ruby class
       my_component_lib
-        some_module.rb            <-- optional extra Ruby modules
+        some_module.rb            <-- optional extra Ruby module (MyComponentLib::SomeModule)
         javascripts
           some_dependency.js      <-- optional external JS library
           init_component.js       <-- optional mixins to the client class
-          extra_functionality.js  <-- more mixins (possibly optional, depending on the Ruby class configuration)
+          extra_functionality.js  <-- more mixins (mixin-in may depend on component class configuration)
         stylesheets
           my_special_button.css    <-- optional custom CSS
 ```
@@ -165,26 +165,13 @@ class MyTabPanel < Netzke::Base
 end
 ```
 
-You can also define JavaScript methods inline:
-
-```ruby
-class MyTabPanel < Netzke::Base
-  action :do_something # see Actions, toolbars, and menus
-
-  js_configure do |c|
-    c.extend = "Ext.tab.Panel"
-    c.on_do_something = <<-JS
-      function(){
-        // default handler for the do_something action
-      }
-    JS
-  end
-end
-```
+For more details on defining the client class, refer to [Netzke::Core::ClientClass](http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/ClientClass).
 
 ## Composition
 
 Any Netzke component can define child components, which can either be statically nested in the compound layout (e.g. as different regions of the ['border' layout]("http://docs.sencha.com/ext-js/4-1/#!/api/Ext.layout.container.Border")), or dynamically loaded at a request (as in the case of the edit form window in `Netzke::Basepack::GridPanel`, for example).
+
+### Defining child components
  
 You can define a child component by calling the `component` class method which normally requires a block:
  
@@ -195,6 +182,8 @@ component :users do |c|
   c.title = "Users"
 end
 ```
+
+### Nesting components
 
 Declared components can be referred to in the component layout:
 
@@ -207,6 +196,10 @@ def configure(c)
   ]
 end
 ```
+
+### Dynamic loading of components
+
+TODO
 
 For more details on composition refer to [Netzke::Core::Composition](http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Composition).
 
@@ -238,15 +231,7 @@ Actions can also be referred to is submenus:
   c.tbar = [{text: 'Menu', menu: {items: [:show_report]}}]
 ```
 
-From inside the block you have access to the configuration of the component:
-
-```ruby
-action :show_report do |c|
-  c.text = "Show report"
-  c.icon = :report
-  c.disabled = !config[:can_see_report]
-end
-```
+For more details on composition refer to [Netzke::Core::Action](http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Action).
 
 ## Client-server interaction
 
@@ -264,7 +249,7 @@ class SimpleComponent < Netzke::Base
 end
 ```
 
-... the client class will be able to call a method called `whatsUpServer`:
+...the client class will obtain a method called `whatsUpServer`:
 
 ```javascript
 this.whatsUpServer(params, callback, scope);
@@ -272,7 +257,7 @@ this.whatsUpServer(params, callback, scope);
 
 Parameters:
 
-* `params` will be passed to the enpdoint block as the first parameter
+* `params` will be passed to the endpoint block as the first parameter
 * `callback` (optional) receives a function to be called after the server successfully processes the endpoint call
 * `scope` is the scope in which `callbackFunction` will be called
 
@@ -309,7 +294,7 @@ end
 
 The logout action will be configured with `public/images/icons/door.png` as icon.
 
-More on using icons see [Netzke::Core::Actions]("http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Actions").
+For more details on using icons refer to [Netzke::Core::Actions]("http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Actions").
 
 ## I18n
 
