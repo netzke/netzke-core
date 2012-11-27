@@ -127,7 +127,7 @@ your_web_app
   app
     components
       my_component.rb             <-- the Ruby class
-      my_component
+      my_component_lib
         some_module.rb            <-- optional extra Ruby modules
         javascripts
           some_dependency.js      <-- optional external JS library

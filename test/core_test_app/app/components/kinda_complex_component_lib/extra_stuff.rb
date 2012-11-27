@@ -1,4 +1,4 @@
-class KindaComplexComponent < Netzke::Base
+module KindaComplexComponentLib
   module ExtraStuff
     extend ActiveSupport::Concern
 
