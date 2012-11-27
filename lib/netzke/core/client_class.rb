@@ -122,11 +122,7 @@ module Netzke
         args << @klass.name.split("::").last.underscore.to_sym if args.empty?
         callr = caller.first
         args.each do |a|
-          as_string = a.is_a?(Symbol) ? File.read(expand_require_path(a, callr)) : File.read(a)
-          as_string.sub!('{', ' ')
-          as_string[as_string.rindex('}')] = ' '
-          as_string.rstrip!
-          @mixins << as_string
+          @mixins << (a.is_a?(Symbol) ? expand_require_path(a, callr) : a)
         end
       end
 
@@ -219,8 +215,6 @@ Netzke.cache.push('#{xtype}');
         [required, class_code].join("\n")
       end
 
-    protected
-
       # Generates declaration of the JS class as direct extension of a Ext component
       def class_declaration
 %(Ext.define('#{class_name}', #{properties_as_string});)
@@ -232,7 +226,12 @@ Netzke.cache.push('#{xtype}');
       end
 
       def mixins_as_string
-        mixins.presence && mixins.join(",\n")
+        mixins.presence && mixins.map do |f|
+          as_string = File.read(f)
+          as_string.sub!('{', ' ')
+          as_string[as_string.rindex('}')] = ' '
+          as_string.rstrip
+        end.join(",\n")
       end
 
       def properties_as_string
@@ -243,6 +242,8 @@ Netzke.cache.push('#{xtype}');
       def extended_class
         extending_extjs_component? ? "Ext.panel.Panel" : @klass.superclass.js_config.class_name
       end
+
+    protected
 
       def expand_require_path(sym, callr) # :nodoc:
         %Q(#{callr.split(".rb:").first}_lib/javascripts/#{sym}.js)
