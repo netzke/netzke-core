@@ -77,12 +77,14 @@ module Netzke::Core
 
     COMPONENT_METHOD_NAME = "%s_component"
 
+
     included do
 
       # Returns registered components
       class_attribute :registered_components
       self.registered_components = []
 
+      # @!method Foobar
       # Loads a component on browser's request. Every Netzke component gets this endpoint.
       # <tt>params</tt> should contain:
       # * <tt>:cache</tt> - an array of component classes cached at the browser
@@ -108,8 +110,16 @@ module Netzke::Core
 
     module ClassMethods
 
+      # Declares a child (nested) component.
+      # @param name [Symbol] component name
+      # @param block [Proc] config block
+      # @example
+      #   component :users do |c|
+      #     c.klass = Netzke::Basepack::Grid
+      #     c.modul = "User"
+      #   end
       def component(name, &block)
-        register_component(name)
+        self.registered_components |= [name]
 
         method_name = COMPONENT_METHOD_NAME % name
         if block_given?
@@ -120,15 +130,9 @@ module Netzke::Core
           end
         end
       end
-
-      # Register a component
-      def register_component(name)
-        self.registered_components |= [name]
-      end
-
     end
 
-    # All components for this instance, which includes components defined on class level, and components detected in :items
+    # @return [Hash] component configs by name
     def components
       @components ||= self.class.registered_components.inject({}) do |out, name|
         component_config = Netzke::Core::ComponentConfig.new(name)
@@ -138,11 +142,12 @@ module Netzke::Core
       end
     end
 
+    # @return [Hash] configs of eagerly loaded components by name
     def eagerly_loaded_components
       @eagerly_loaded_components ||= components.select{|k,v| components_in_config.include?(k) || v[:eager_loading]}
     end
 
-    # Array of components (by name) referred in config (and thus, required to be instantiated)
+    # @return [Array<Symbol>] components (by name) referred in config (and thus, required to be instantiated)
     def components_in_config
       @components_in_config || (normalize_config || true) && @components_in_config
     end
@@ -153,7 +158,8 @@ module Netzke::Core
       {:feedback => @flash}.to_nifty_json
     end
 
-    # Recursively instantiates a component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
+    # Recursively instantiates a child component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
+    # @param name [Symbol] component name
     def component_instance(name)
       raise ArgumentError, "No component '#{name.inspect}' defined for '#{self.js_id}'" if !name.present?
 
@@ -176,7 +182,7 @@ module Netzke::Core
       end
     end
 
-    # All components that we depend on (used to render all necessary JavaScript and stylesheets)
+    # @return [Array<Class>] All component classes that we depend on (used to render all necessary javascripts and stylesheets)
     def dependency_classes
       res = []
 
@@ -188,9 +194,11 @@ module Netzke::Core
       res.uniq
     end
 
-    # Returns JS id of a component in the hierarchy, based on passed reference that follows the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will result in <tt>nil</tt>, while referring to a non-existent component will simply provide an erroneous ID.
-    # Example:
+    # JS id of a component in the hierarchy, based on passed reference that follows the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will result in <tt>nil</tt>, while referring to a non-existent component will simply provide an erroneous ID.
+    # For example:
     # <tt>parent__parent__child__subchild</tt> will traverse the hierarchy 2 levels up, then going down to "child", and further to "subchild". If such a component exists in the hierarchy, its global id will be returned, otherwise <tt>nil</tt> will be returned.
+    # @param ref [Symbol] reference to a child component
+    # @return [String] JS id
     def js_id_by_reference(ref)
       ref = ref.to_s
       return parent && parent.js_id if ref == "parent"
@@ -234,6 +242,7 @@ module Netzke::Core
       end
     end
 
+    # @return [Hash] config with all placeholders (like child components referred by symbols) expanded
     def normalized_config
       # make sure we call normalize_config first
       @normalized_config || (normalize_config || true) && @normalized_config
