@@ -1,8 +1,8 @@
 class ConfigurableOnClassLevel < Netzke::Base
-  class_attribute :awesome
-  self.awesome = false
+  class_attribute :title
+  self.title = "Default"
 
   js_configure do |c|
-    puts "!!! self.awesome: #{self.awesome.inspect}"
+    c.title = self.title
   end
 end
