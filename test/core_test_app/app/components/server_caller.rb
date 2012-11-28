@@ -4,6 +4,9 @@ class ServerCaller < Netzke::Base
   action :multiple_arguments
   action :array_as_argument
 
+  # this action is using generic endpoint callback with scope
+  action :call_with_generic_callback_and_scope
+
   js_configure do |c|
     c.title = "Server Caller"
     c.html = "Wow"
@@ -12,7 +15,7 @@ class ServerCaller < Netzke::Base
 
   def configure(c)
     super
-    c.bbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
+    c.bbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument, :call_with_generic_callback_and_scope]
 
     # Alternative way of defining bbar:
     # c.docked_items = [{
@@ -35,5 +38,8 @@ class ServerCaller < Netzke::Base
 
   endpoint :array_as_argument do |params, this|
     this.take_array_as_argument(['Element 1', 'Element 2'])
+  end
+
+  endpoint :do_nothing do |params,this|
   end
 end

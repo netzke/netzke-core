@@ -25,5 +25,18 @@
   takeArrayAsArgument: function(arry) {
     var arryAsString = "['"+ arry.join("', '") + "']";
     this.update("Called a function with array as arguments: " + arryAsString);
-  }
+  },
+
+  onCallWithGenericCallbackAndScope: function(){
+    var that=this;
+    var fancyScope={
+      setFancyTitle: function () {
+        that.setTitle("Fancy title" + " set!");
+      }
+    };
+    this.doNothing({}, function () {
+      this.setFancyTitle();
+    }, fancyScope);
+  },
+
 }

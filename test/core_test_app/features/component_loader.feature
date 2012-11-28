@@ -20,18 +20,6 @@ Feature: Component loader
     Then I should see "Callback invoked!"
 
   @selenium
-  Scenario: Component loader should invoke a generic endpoint callback
-    Given I am on the ComponentLoader test page
-    When I press "Load with generic callback"
-    Then I should see "Generic callback invoked!"
-
-  @selenium
-  Scenario: Component loader should invoke a generic endpoint callback
-    Given I am on the ComponentLoader test page
-    When I press "Load with generic callback and scope"
-    Then I should see "Fancy title set!"
-
-  @selenium
   Scenario: Component loader should load a window component with another component in it
     Given I am on the ComponentLoader test page
     When I press "Load window with simple component"
@@ -56,3 +44,9 @@ Feature: Component loader
     Given I am on the ComponentLoader test page
     When I press "Inaccessible"
     Then I should see "Couldn't load component 'inaccessible'"
+
+  @javascript
+  Scenario: Loading component's config
+    Given I am on the ComponentLoader test page
+    When I press "Config only"
+    Then I should see "SimpleComponent (overridden)"

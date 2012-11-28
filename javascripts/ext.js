@@ -226,14 +226,41 @@ Ext.define(null, {
   },
 
   /**
-  Dynamically loads a Netzke component.
-  Config options:
-  'name' (required) - the name of the child component to load
-  'container' - if specified, the id (or instance) of a panel with the 'fit' layout where the loaded component will be added to; the previously existing component will be destroyed
-  'callback' - function that gets called after the component is loaded; it receives the component's instance as parameter
-  'scope' - scope for the callback
-  */
-  netzkeLoadComponent: function(params){
+   * Dynamically loads a Netzke component.
+   * @param {String} name
+   * @param {Object} config Can contain the following keys:
+   *   'container' - if specified, the instance (or id) of a panel with the 'fit' layout where the loaded component will be added to; the previously existing component will be destroyed
+   *   'append' - if set to +true+, do not clear the container before adding the loaded component
+   *   'callback' - function that gets called after the component is loaded; it receives the component's instance as parameter
+   *   'configOnly' - if set to +true+, do not instantiate the component, instead pass its config to the callback function
+   *   'params' - object passed to the endpoint, may be useful for extra configuration
+   *   'scope' - scope for the callback
+   *
+   * Examples:
+   *
+   *    this.netzkeLoadComponent('info');
+   *
+   * loads 'info' and adds it to +this+ container, removing anything from it first.
+   *
+   *    this.netzkeLoadComponent('info', {container: win, callback: function(instance){}, scope: this});
+   *
+   * loads 'info' and adds it to +win+ container, envoking a callback in +this+ scope, passing it an instance of 'info'.
+   *
+   *    this.netzkeLoadComponent('info', {configOnly: true, callback: function(config){}, scope: this});
+   *
+   * loads configuration for the 'info' component, envoking a callback in +this+ scope, passing it the loaded config for 'info'.
+   */
+  netzkeLoadComponent: function(){
+    var params;
+
+    if (Ext.isString(arguments[0])) {
+      params = arguments[1] || {};
+      params.name = arguments[0];
+    } else {
+      params = arguments[0];
+    }
+
+    if (params.container == undefined) params.container = this;
     params.name = params.name.underscore();
 
     // params that will be provided for the server API call (deliver_component); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
@@ -267,6 +294,7 @@ Ext.define(null, {
   netzkeComponentDelivered: function(config){
     // retrieve the loading config for this component
     var storedConfig = this.componentsBeingLoaded[config.name] || {};
+    var callbackParam;
     delete this.componentsBeingLoaded[config.name];
 
     if (storedConfig.loadMaskCmp) {
@@ -274,26 +302,30 @@ Ext.define(null, {
       storedConfig.loadMaskCmp.destroy();
     }
 
-    var componentInstance = Ext.createByAlias(config.alias, config);
+    if (storedConfig.configOnly) {
+      callbackParam = config;
+    } else {
+      var componentInstance = Ext.ComponentManager.create(config);
 
-    if (storedConfig.container) {
-      var containerCmp = storedConfig.container;
-      if (!storedConfig.append) containerCmp.removeAll();
-      containerCmp.add(componentInstance);
+      // there's no sense in adding a window-type components
+      if (storedConfig.container && !componentInstance.isFloating()) {
+        var containerCmp = storedConfig.container;
+        if (!storedConfig.append) containerCmp.removeAll();
+        containerCmp.add(componentInstance);
 
-      if (containerCmp.isVisible()) {
-        containerCmp.doLayout();
-      } else {
-        // if loaded into a hidden container, we need a little trick
-        containerCmp.on('show', function(cmp){ cmp.doLayout(); }, {single: true});
+        if (containerCmp.isVisible()) {
+          containerCmp.doLayout();
+        } else {
+          // if loaded into a hidden container, we need a little trick
+          containerCmp.on('show', function(cmp){ cmp.doLayout(); }, {single: true});
+        }
       }
+      callbackParam = componentInstance;
     }
 
     if (storedConfig.callback) {
-      storedConfig.callback.call(storedConfig.scope || this, componentInstance);
+      storedConfig.callback.call(storedConfig.scope || this, callbackParam);
     }
-
-    this.fireEvent('componentload', componentInstance);
   },
 
   /**

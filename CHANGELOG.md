@@ -236,14 +236,13 @@ The following public method name changes took place for the sake of consistence:
 * localId => netzkeLocalId
 * setResult => netzkeSetResult
 * endpointUrl => netzkeEndpointUrl
-* loadNetzkeComponent => netzkeLoadComponent
+* loadNetzkeComponent => netzkeLoadComponent (signature changed, see "javascripts/ext.js")
 * componentDelivered => netzkeComponentDelivered
 * componentDeliveryFailed => netzkeComponentDeliveryFailed
 * getParentNetzkeComponent => netzkeGetParentComponent
 * reload => netzkeReload
 * instantiateChildNetzkeComponent => netzkeInstantiateComponent
 * getChildNetzkeComponent => netzkeGetComponent
-
 
 # v0.7.7 - 2012-10-21
 * Ext JS required version bump (4.1.x)

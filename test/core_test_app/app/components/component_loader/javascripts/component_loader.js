@@ -2,62 +2,28 @@
   title: "Component Loader",
   layout: "fit",
 
+  onLoadComponent: function(){
+    this.netzkeLoadComponent('simple_component');
+  },
+
   onLoadWithFeedback: function(){
-    this.netzkeLoadComponent({name: 'simple_component', callback: function(){
-      this.setTitle("Callback" + " invoked!");
-    }, scope: this});
-  },
-
-  onLoadWithGenericCallback: function(){
-    this.doNothing({}, function () {
-      this.setTitle("Generic callback invoked!");
-    });
-  },
-
-  onLoadWithGenericCallbackAndScope: function(){
-    var that=this;
-    var fancyScope={
-      setFancyTitle: function () {
-        that.setTitle("Fancy title set!");
-      }
-    };
-    this.doNothing({}, function () {
-      this.setFancyTitle();
-    }, fancyScope);
-  },
-
-  onLoadWithGenericCallbackAndScope: function(){
-    var that=this;
-    var fancyScope={
-      setFancyTitle: function () {
-        that.setTitle("Fancy title set!");
-      }
-    };
-    this.doNothing({}, function () {
-      this.setFancyTitle();
-    }, fancyScope);
+    this.netzkeLoadComponent('simple_component', {callback: function() { this.setTitle("Callback" + " invoked!"); }, scope: this});
   },
 
   onLoadWindowWithSimpleComponent: function(params){
-    this.netzkeLoadComponent({name: "window_with_simple_component", callback: function(w){
-      w.show();
-    }});
+    this.netzkeLoadComponent('window_with_simple_component', {callback: function(w){ w.show(); }});
   },
 
   onLoadComposite: function(params){
-    this.netzkeLoadComponent({name: "some_composite", container: this});
+    this.netzkeLoadComponent('some_composite');
   },
 
   onLoadWithParams: function(params){
-    this.netzkeLoadComponent({name: "simple_component", params: {html: "Simple Component" + " with changed HTML"}, container: this});
-  },
-
-  onLoadComponent: function(){
-    this.netzkeLoadComponent({name: 'simple_component', container: this});
+    this.netzkeLoadComponent("simple_component", {params: {html: "Simple Component" + " with changed HTML"}, container: this});
   },
 
   onNonExistingComponent: function(){
-    this.netzkeLoadComponent({name: 'non_existing_component', container: this});
+    this.netzkeLoadComponent('non_existing_component');
   },
 
   onLoadInWindow: function(){
@@ -65,10 +31,19 @@
       width: 500, height: 400, modal: false, layout:'fit', title: 'A window'
     });
     w.show();
-    this.netzkeLoadComponent({name: 'component_loaded_in_window', container: w});
+    this.netzkeLoadComponent('component_loaded_in_window', {container: w});
   },
 
   onInaccessible: function() {
-    this.netzkeLoadComponent({name: 'inaccessible', container: this});
+    this.netzkeLoadComponent('inaccessible');
+  },
+
+  onConfigOnly: function() {
+    this.netzkeLoadComponent('simple_component', {configOnly: true, callback: function(config) {
+      this.removeAll();
+      config.title = config.title + " (overridden)";
+      var instance = Ext.ComponentManager.create(config);
+      this.add(instance);
+    }, scope: this});
   }
 }
