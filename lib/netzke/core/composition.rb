@@ -233,6 +233,7 @@ module Netzke::Core
 
       if item.is_a?(Hash)
         return nil if item[:excluded] # it'll get compacted away by Array#deep_map
+
         # replace the `component` and `action` keys with `netzke_component` and `netzke_action`, which will be looked for at the JS side
         item[:netzke_action] = item.delete(:action) if item[:action]
         item[:netzke_component] = item.delete(:component) if item[:component]

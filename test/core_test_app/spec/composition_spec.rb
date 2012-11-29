@@ -110,10 +110,9 @@ module Netzke::Core
       extended_composite.components[:component_two][:title].should == "Another Nested Component"
     end
 
-    it "should be impossible to access excluded components" do
+    it "should be impossible to access excluded component config" do
       c = ComponentWithExcluded.new
-      c.components.should have_key(:accessible)
-      c.components.should_not have_key(:inaccessible)
+      c.components[:inaccessible].should == {excluded: true}
     end
   end
 end
