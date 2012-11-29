@@ -1,6 +1,6 @@
 class Array
   def deep_map(&block)
-    self.map{ |el| el.respond_to?(:deep_map) ? block.call(el.deep_map(&block)) : block.call(el) }
+    self.map{ |el| el.respond_to?(:deep_map) ? block.call(el.deep_map(&block)) : block.call(el) }.compact
   end
 
   def jsonify

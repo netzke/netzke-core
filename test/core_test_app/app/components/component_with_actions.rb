@@ -15,10 +15,14 @@ class ComponentWithActions < Netzke::Base
     c.handler = :custom_action_handler
   end
 
+  action :excluded_action do |c|
+    c.excluded = true
+  end
+
   def configure(c)
     super
     c.title = "Panel that has actions"
-    c.bbar = [:some_action, :another_action, :action_with_custom_handler]
+    c.bbar = [:some_action, :another_action, :action_with_custom_handler, :excluded_action]
     c.tbar = [{
       :xtype =>  'buttongroup',
       :columns => 3,

@@ -97,7 +97,7 @@ module Netzke::Core
       endpoint :deliver_component do |params, this|
         cache = params[:cache].split(",") # array of cached xtypes
         component_name = params[:name].underscore.to_sym
-        component = components[component_name] && component_instance(component_name)
+        component = components[component_name] && !components[component_name][:excluded] && component_instance(component_name)
 
         if component
           js, css = component.js_missing_code(cache), component.css_missing_code(cache)
@@ -142,7 +142,11 @@ module Netzke::Core
         component_config = Netzke::Core::ComponentConfig.new(name)
         send(COMPONENT_METHOD_NAME % name, component_config)
         component_config.set_defaults!
-        component_config.excluded ? out : out.merge(name.to_sym => component_config)
+        if component_config.excluded
+          out.merge(name.to_sym => {excluded: true})
+        else
+          out.merge(name.to_sym => component_config)
+        end
       end
     end
 
@@ -174,7 +178,7 @@ module Netzke::Core
           cmp = cmp.to_sym
 
           component_config = composite.components[cmp]
-          raise ArgumentError, "No component '#{cmp}' defined for '#{composite.js_id}'" if component_config.nil?
+          raise ArgumentError, "No component '#{cmp}' defined for '#{composite.js_id}'" if component_config.nil? || component_config.excluded
 
           klass = component_config[:klass]
 
@@ -218,10 +222,17 @@ module Netzke::Core
 
     def extend_item(item)
       # in a situation of action and component being equally named, action will take precedence
-      item = {netzke_action: item} if item.is_a?(Symbol) && actions[item]
-      item = {netzke_component: item} if item.is_a?(Symbol) && components[item]
+
+      if item.is_a?(Symbol) && item_config = actions[item]
+        item = {netzke_action: item}
+      elsif item.is_a?(Symbol) && item_config = components[item]
+        item = {netzke_component: item}
+      end
+
+      item[:excluded] = true if item_config && item_config[:excluded]
 
       if item.is_a?(Hash)
+        return nil if item[:excluded] # it'll get compacted away by Array#deep_map
         # replace the `component` and `action` keys with `netzke_component` and `netzke_action`, which will be looked for at the JS side
         item[:netzke_action] = item.delete(:action) if item[:action]
         item[:netzke_component] = item.delete(:component) if item[:component]

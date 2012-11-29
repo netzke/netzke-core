@@ -36,3 +36,10 @@ Feature: Composition
     When I press "Show hidden window"
     And I wait for response from server
     Then I should see "Hidden window gone visible!"
+
+  @javascript
+  Scenario: Excluding components for the layout
+    When I go to the SimpleTabPanel test page
+    Then tab panel should have tab with title "Server Caller"
+    And tab panel should have tab with title "Extended Server Caller"
+    But tab panel should not have tab with title "Hello World component"

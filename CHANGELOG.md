@@ -11,7 +11,7 @@
   * `load_nezke` (previously `netzke_init`) now understands the `minified` option
   * implement referring to config methods declared in JavaScript from Ruby by using :symbols (see `Netzke::Base`)
   * i18n of actions takes into account ancestor classes
-  * child component config now understands `excluded` option (used for authorization)
+  * child component and action config now understand `excluded` option (handy for authorization)
 
 ## Component self-configuration
 

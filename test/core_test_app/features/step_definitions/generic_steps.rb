@@ -41,6 +41,20 @@ When /^I press tool "([^"]*)"$/ do |tool|
   find("##{id} img").click
 end
 
+Then /^tab panel should have tab with title "(.*?)"$/ do |arg1|
+  page.driver.browser.execute_script(<<-JS).should == true
+    var tabPanel = Ext.ComponentQuery.query('tabpanel')[0];
+    return !!tabPanel.down('[title="#{arg1}"]');
+  JS
+end
+
+Then /^tab panel should not have tab with title "(.*?)"$/ do |arg1|
+  page.driver.browser.execute_script(<<-JS).should == true
+    var tabPanel = Ext.ComponentQuery.query('tabpanel')[0];
+    return !tabPanel.down('[title="#{arg1}"]');
+  JS
+end
+
 When /^I wait for response from server$/ do
   page.wait_until{ page.driver.browser.execute_script("return !Netzke.ajaxIsLoading()") }
 end

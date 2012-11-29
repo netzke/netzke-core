@@ -107,7 +107,11 @@ module Netzke::Core
       @actions ||= self.class.registered_actions.inject({}) do |res, name|
         action_config = Netzke::Core::ActionConfig.new(name, self)
         send(ACTION_METHOD_NAME % name, action_config)
-        res.merge(name.to_sym => action_config)
+        if action_config.excluded
+          res.merge(name.to_sym => {excluded: true})
+        else
+          res.merge(name.to_sym => action_config)
+        end
       end
     end
 
