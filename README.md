@@ -6,7 +6,7 @@
 
 Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/nomadcoder/netzke-basepack) and [netzke-communitypack](http://github.com/nomadcoder/netzke-communitypack).
 
-Some knowledge of Sencha Ext JS will be needed in order to fully understand this README.
+Some knowledge of Sencha Ext JS will be needed in order to fully understand this overview.
 
 ## Rationale
 
@@ -114,9 +114,9 @@ Embed the component in the Rails view:
 
 ## What is a Netzke component
 
-A Netzke component is a Ruby class (further referred to as "server class"), which is being represented by an Ext JS Component on the server-side (further referred to as "client class"). The responsibility of the server class is to "assemble" the client class and provide the configuration for its instance (further referred as "client class instance"). Even if it may sound a bit complicated, Netzke provides a simple API for defining and configuring the client class. See [Client class](#Client_class) for details.
+A Netzke component is a Ruby class (further referred to as "server class"), which is being represented by an Ext JS Component on the server-side (further referred to as "client class"). The responsibility of the server class is to "assemble" the client class and provide the configuration for its instance (further referred as "client class instance"). Even if it may sound a bit complicated, Netzke provides a simple API for defining and configuring the client class. See [Client class](#client-class) for details.
 
-Further, each Netzke component inherits convenient API for enabling the communication between the client and server class. See [Client-server interaction](#Client-server_interaction) for details.
+Further, each Netzke component inherits convenient API for enabling the communication between the client and server class. See [Client-server interaction](#client-server-interaction) for details.
 
 With Netzke components being a Ruby class, and the client class being *incapsulated* in it, it is possible to use a Netzke component in your application by simply writing Ruby code. However, while creating a component, developers can fully use their Ext JS skills - Netzke puts no obstacles here.
 
@@ -153,6 +153,19 @@ Ext.define('Netzke.classes.HelloWorld', {"extend":"Ext.panel.Panel", "mixins":["
 ```
 
 `Netzke.classes.Core.Mixin` contains a set of client class methods and properties common to every Netzke component.
+
+Extending `HelloWorld` will be automatically reflected on the client-class level:
+
+```ruby
+class HelloNewWorld < HelloWorld
+end
+```
+
+- will have the following client class generated (simplified):
+
+```javascript
+Ext.define('Netzke.classes.HelloNewWorld', {"extend":"Netzke.classes.HelloWorld"});
+```
 
 The configuration of a client-class is done by using the `Netzke::Base.js_configure`. For example, in order to inherit from a different Ext JS component, and to mix in the methods defined in an external JavaScript class:
 
@@ -199,7 +212,13 @@ end
 
 ### Dynamic loading of components
 
-TODO
+Next to being statically nested in the layout, a child component can also be dynamically loaded by using client class' `netzkeLoadComponent` method:
+
+    this.netzkeLoadComponent('users');
+
+- this will load the "users" component and [add](http://docs.sencha.com/ext-js/4-1/#!/api/Ext.container.Container-method-add) it to the current container.
+
+For more details on dynamic component loading refer to inline docs of [javascript/ext.js](https://github.com/nomadcoder/netzke-core/blob/master/javascripts/ext.js).
 
 For more details on composition refer to [Netzke::Core::Composition](http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Composition).
 
@@ -214,7 +233,7 @@ action :show_report do |c|
 end
 ```
 
-The icon for this button will be `images/icons/report.png` (see [Icons support](#Icons_support)).
+The icon for this button will be `images/icons/report.png` (see [Icons support](#icons-support)).
 
 Refer to actions in toolbars:
 
@@ -244,7 +263,7 @@ By defining an endpoint like this:
 ```ruby
 class SimpleComponent < Netzke::Base
   endpoint :whats_up_server do |params, this|
-    this.set_title("All quiet here on the server")
+  # ...
   end
 end
 ```
@@ -259,7 +278,7 @@ Parameters:
 
 * `params` will be passed to the endpoint block as the first parameter
 * `callback` (optional) receives a function to be called after the server successfully processes the endpoint call
-* `scope` is the scope in which `callbackFunction` will be called
+* `scope` (optional) is the scope in which the callback function will be called
 
 ### Calling client class methods from endpoint
 
@@ -275,8 +294,6 @@ end
 ```
 
 Here the client class will call its `setTitle` method (defined in `Ext.panel.Panel`) with parameter passed from the endpoint. Then a custom method `myMethod` will be called with no parameters.
-
-A special client method called `setResult` can be called by the endpoint in order to pass a parameter to the callback function mentioned above.
 
 For more details on client-server communication see [Netzke::Core::Services]("http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Services").
 

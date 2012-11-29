@@ -68,6 +68,10 @@ module Netzke::Core
   #       c.eager_loading = true
   #     end
   #
+  # == Dynamic component loading
+  #
+  # Child components can be dynamically loaded by using client class' +netzkeLoadComponent+ method (see {javascript/ext.js}[https://github.com/nomadcoder/netzke-core/blob/master/javascripts/ext.js] for inline documentation):
+  #
   # == Excluded components
   #
   # You can make a child component inavailable for dynamic loading by using the +excluded+ option. When an excluded component is used in the layout, it will be skipped.
