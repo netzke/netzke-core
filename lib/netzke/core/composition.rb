@@ -178,7 +178,7 @@ module Netzke::Core
           cmp = cmp.to_sym
 
           component_config = composite.components[cmp]
-          raise ArgumentError, "No component '#{cmp}' defined for '#{composite.js_id}'" if component_config.nil? || component_config.excluded
+          raise ArgumentError, "No component '#{cmp}' defined for '#{composite.js_id}'" if component_config.nil? || component_config[:excluded]
 
           klass = component_config[:klass]
 
