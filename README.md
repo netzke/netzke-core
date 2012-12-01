@@ -367,6 +367,6 @@ For RSpec tests (from `test/core_test_app`):
 * [Twitter](http://twitter.com/netzke) - latest news about the framework
 
 ---
-Copyright (c) 2008-2012 [nomadcoder](https://twitter.com/nomadcoder), released under the MIT license.
+Copyright (c) 2008-2012 [nomadcoder](https://twitter.com/nomadcoder), released under the MIT license (see LICENSE).
 
-Note, that Ext JS itself is licensed [differently](http://www.sencha.com/products/extjs/license/).
+**Note** that Ext JS is licensed [differently](http://www.sencha.com/products/extjs/license/), and you may need to purchase a commercial license in order to use it in your projects!
