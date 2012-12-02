@@ -25,7 +25,8 @@ module Netzke::Core
       #
       # For more details see {Netzke::Core::ClientClass}
       def js_configure &block
-        @js_configure_block = block
+        @js_configure_blocks ||= []
+        @js_configure_blocks << block
       end
 
       # Class-level client class config
@@ -33,7 +34,7 @@ module Netzke::Core
         return @js_config if @js_config.present?
         @js_config = Netzke::Core::ClientClass.new(self)
         @js_config.tap do |c|
-          @js_configure_block.call(c) if @js_configure_block
+          (@js_configure_blocks || []).each{|block| block.call(c)}
         end
       end
     end
