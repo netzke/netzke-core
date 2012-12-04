@@ -161,7 +161,7 @@ class HelloNewWorld < HelloWorld
 end
 ```
 
-- will have the following client class generated (simplified):
+will have the following client class generated (simplified):
 
 ```javascript
 Ext.define('Netzke.classes.HelloNewWorld', {"extend":"Netzke.classes.HelloWorld"});
@@ -216,7 +216,7 @@ Next to being statically nested in the layout, a child component can also be dyn
 
     this.netzkeLoadComponent('users');
 
-- this will load the "users" component and [add](http://docs.sencha.com/ext-js/4-1/#!/api/Ext.container.Container-method-add) it to the current container.
+this will load the "users" component and [add](http://docs.sencha.com/ext-js/4-1/#!/api/Ext.container.Container-method-add) it to the current container.
 
 For more details on dynamic component loading refer to inline docs of [javascript/ext.js](https://github.com/nomadcoder/netzke-core/blob/master/javascripts/ext.js).
 
