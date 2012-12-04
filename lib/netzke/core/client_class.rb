@@ -17,8 +17,8 @@ module Netzke
         @properties = {
           extend: extended_class,
           alias: class_alias,
-          mixins: ['Netzke.classes.Core.Mixin']
         }
+        @properties[:mixins] = ['Netzke.classes.Core.Mixin'] if extending_extjs_component?
         @translated_properties = []
       end
 
