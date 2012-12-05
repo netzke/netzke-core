@@ -91,14 +91,16 @@ module Netzke::Core
         end
       end
 
+      # Should stay public, used from ActionConfig
+      # @return [String|nil] full URI to an icon file by its name (provided we have a controller)
+      def uri_to_icon(icon)
+        Netzke::Core.with_icons ? [(controller && controller.config.relative_url_root), Netzke::Core.icons_uri, '/', icon.to_s, ".png"].join : nil
+      end
+
+    private
       # Register an action
       def register_action(name)
         self.registered_actions |= [name]
-      end
-
-      # returns a full URI to an icon file by its name (provided we have controller)
-      def uri_to_icon(icon)
-        Netzke::Core.with_icons ? [(controller && controller.config.relative_url_root), Netzke::Core.icons_uri, '/', icon.to_s, ".png"].join : nil
       end
     end
 
@@ -115,12 +117,11 @@ module Netzke::Core
       end
     end
 
-    def js_config_with_actions #:nodoc
+    def js_config_with_actions
       actions.empty? ? js_config_without_actions : js_config_without_actions.merge(:actions => actions)
     end
 
-  protected
-
+  private
     def uri_to_icon(icon)
       self.class.uri_to_icon(icon)
     end

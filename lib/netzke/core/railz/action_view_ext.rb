@@ -8,7 +8,7 @@ module Netzke
       #
       # Params:
       #
-      # * :theme - the name of theme to apply; follows simple convention of including css files named "ext-#{theme}".
+      # * :theme - the name of theme to apply; follows simple convention of including css files named "ext-(theme)".
       #
       # E.g.:
       #

@@ -243,9 +243,8 @@ Netzke.cache.push('#{xtype}');
         extending_extjs_component? ? "Ext.panel.Panel" : @klass.superclass.js_config.class_name
       end
 
-    protected
-
-      def expand_require_path(sym, callr) # :nodoc:
+    private
+      def expand_require_path(sym, callr)
         %Q(#{callr.split(".rb:").first}/javascripts/#{sym}.js)
       end
     end

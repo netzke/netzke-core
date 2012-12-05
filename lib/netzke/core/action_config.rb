@@ -1,4 +1,11 @@
 module Netzke::Core
+  # This class is responsible for configuring an action. It is passed as a block parameter to the +action+ DSL method:
+  #
+  #   class MyComponent < Netzke::Base
+  #     action :do_something do |c|
+  #       c.text = "Do it!"
+  #     end
+  #   end
   class ActionConfig < ActiveSupport::OrderedOptions
     def initialize(name, component)
       @component = component
@@ -16,7 +23,7 @@ module Netzke::Core
       self[:icon] = path.is_a?(Symbol) ? Netzke::Base.uri_to_icon(path) : path
     end
 
-  protected
+  private
 
     def build_localized_attributes
       @component.class.netzke_ancestors.each do |c|

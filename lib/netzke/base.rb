@@ -123,7 +123,7 @@ module Netzke
 
     # TODO: needs rework
     # TODO: rename to smth more appropriate
-    def flash(flash_hash) #:nodoc:
+    def flash(flash_hash)
       level = flash_hash.keys.first
       raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)
       @flash << {:level => level, :msg => flash_hash[level]}

@@ -43,7 +43,7 @@ class NetzkeController < ApplicationController
 
 protected
 
-  def invoke_endpoint(endpoint_path, action, params, tid) #:nodoc:
+  def invoke_endpoint(endpoint_path, action, params, tid)
     component_name, *sub_components = endpoint_path.split('__')
     components_in_session = session[:netzke_components]
 

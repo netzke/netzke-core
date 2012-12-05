@@ -6,7 +6,9 @@ module Netzke
         base.send(:before_filter, :set_controller_and_session)
       end
 
-      def set_controller_and_session #:nodoc:
+      protected
+
+      def set_controller_and_session
         Netzke::Base.controller = self
         Netzke::Base.session = session
       end

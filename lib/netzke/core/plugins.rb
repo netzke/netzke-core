@@ -20,11 +20,11 @@ module Netzke::Core
         end
       end
 
+    private
       # Register a plugin
       def register_plugin(name)
         self.registered_plugins |= [name]
       end
-
     end
 
     def plugins

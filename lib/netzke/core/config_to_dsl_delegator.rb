@@ -53,7 +53,7 @@ module Netzke::Core
         self.delegated_options |= option_names
       end
 
-      def inherited(inherited_class) # :nodoc:
+      def inherited(inherited_class)
         super
 
         properties = self.delegated_options

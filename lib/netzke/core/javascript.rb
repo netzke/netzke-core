@@ -97,7 +97,7 @@ module Netzke::Core
       code.blank? ? nil : code
     end
 
-  protected
+  private
 
     # Merges all the translations in the class hierarchy
     # Note: this method can't be moved out to ClientClass, because I18n is loaded only once, when other Ruby classes are evaluated; so, this must remain at instance level.

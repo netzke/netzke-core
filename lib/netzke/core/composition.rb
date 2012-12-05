@@ -220,6 +220,10 @@ module Netzke::Core
 
   protected
 
+    # During normalization of the config object, this method is being called with each item found (recursively) in there.
+    # For example, symbols representing nested child components get replaced with a proper config hash. Same goes for actions.
+    # Override to do any additional checks/enhancements. See, for example, +Netzke::Basepack::WrapLazyLoaded+.
+    # @return [Object] extended item
     def extend_item(item)
       # in a situation of action and component being equally named, action will take precedence
 
@@ -243,6 +247,8 @@ module Netzke::Core
 
       item
     end
+
+  private
 
     # We'll build a couple of useful instance variables here:
     #
