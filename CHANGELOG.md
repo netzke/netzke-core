@@ -12,6 +12,7 @@
   * implement referring to config methods declared in JavaScript from Ruby by using :symbols (see `Netzke::Base`)
   * i18n of actions takes into account ancestor classes
   * child component and action config now understand `excluded` option (handy for authorization)
+  * `Base#update_state` and `#clear_state` are gone. Use `state` directly.
 
 ## Component self-configuration
 

@@ -11,13 +11,13 @@ Feature: Persistence
     But I should not see "Title From State"
     And I should not see "HTML from session"
 
-    When I press "Set session data"
+    When I press "Set session and state"
     And I wait for response from server
     And I go to the StatefulComponent test page
     Then I should see "Title From State"
     And I should see "HTML from session"
 
-    When I press "Reset session data"
+    When I press "Reset session and state"
     And I wait for response from server
     And I go to the StatefulComponent test page
     Then I should see "Default Title"
@@ -28,7 +28,7 @@ Feature: Persistence
   @javascript
   Scenario: Sharing persistence key
     When I go to the StatefulComponent test page
-    And I press "Set session data"
+    And I press "Set session and state"
     And I wait for response from server
     And I go to the StatefulComponentWithSharedState test page
     Then I should see "Title From State"

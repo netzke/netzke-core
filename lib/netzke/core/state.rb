@@ -1,14 +1,11 @@
 module Netzke::Core
-  # A component can store its state using the +update_state+ method that accepts a hash, e.g.:
+  # A component can access and update its state through the +state+ method, e.g.:
   #
-  #     update_state(:position => {:x => 100, :y => 200})
-  #
-  # Later the state can be retrieved by calling the +state+ method:
+  #     state[:position] = {:x => 100, :y => 200}
   #
   #     state[:position] #=> {:x => 100, :y => 200}
   #
-  # To enable persistence for a specific component, configure it with +persistence+ option set to +true+.
-  # Default implementation uses session, but can be implemented differently by other gems (see netzke-persistence for an example).
+  # Default implementation uses session to store stateful data, but can be implemented differently by 3rd-party gems.
   #
   # == Sharing state
   #
@@ -25,25 +22,19 @@ module Netzke::Core
 
     # Component's persistent state.
     #
-    #     state[:title]
+    #     state[:position] = {:x => 100, :y => 200}
     #
-    # Can be overridden by persistence subsystems.
+    #     state[:position] #=> {:x => 100, :y => 200}
+    #
+    # May be overridden by persistence subsystems. The object returned by this should implement at least the following methods:
+    #
+    # * []
+    # * []=
+    # * delete(key)
+    # * clear
     def state
       session[:state] ||= {}
       session[:state][persistence_key] ||= {}
-    end
-
-    # Accepts 2 arguments which will be treated as a hash pair. E.g.:
-    #
-    #     update_state :request_counter, 3
-    #
-    # Can be overridden by persistence subsystems.
-    def update_state(*args)
-      state[args.first.to_sym] = args.last
-    end
-
-    def clear_state
-      state.clear
     end
   end
 end

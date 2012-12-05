@@ -1,11 +1,11 @@
 # Shows how component session and state can be used for persistence
 class StatefulComponent < Netzke::Base
   action :set_session_data do |a|
-    a.text = "Set session data"
+    a.text = "Set session and state"
   end
 
   action :reset_session_data do |a|
-    a.text = "Reset session data"
+    a.text = "Reset session and state"
   end
 
   def configure(c)
@@ -36,11 +36,11 @@ class StatefulComponent < Netzke::Base
 
   endpoint :server_set_session_data do |params, this|
     component_session[:html_content] = "HTML from session"
-    update_state(:title, "Title From State")
+    state[:title] = "Title From State"
   end
 
   endpoint :server_reset_session_data do |params,this|
     component_session.clear
-    clear_state
+    state.clear
   end
 end
