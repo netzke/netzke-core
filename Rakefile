@@ -4,12 +4,12 @@ begin
   Jeweler::Tasks.new do |gemspec|
     gemspec.version = Netzke::Core::Version::STRING
     gemspec.name = "netzke-core"
-    gemspec.summary = "Build ExtJS/Rails components with minimum effort"
-    gemspec.description = "Allows building DRY ExtJS/Rails applications by enabling modular development"
+    gemspec.summary = "Client-server GUI components with Sencha Ext JS and Ruby"
+    gemspec.description = "Allows building complex RIA by greatly facilitating modular development"
     gemspec.email = "nmcoder@gmail.com"
     gemspec.homepage = "http://netzke.org"
-    gemspec.authors = ["Denis Gorin"]
-    gemspec.add_dependency("activesupport", ">=3.0.0")
+    gemspec.authors = ["nomadcoder"]
+    gemspec.add_dependency("activesupport", ">=3.1.0")
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

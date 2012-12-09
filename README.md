@@ -2,8 +2,6 @@
 
 [RDocs](http://rdoc.info/projects/netzke/netzke-core)
 
-**WARNING 2012-10-20: This README is reflecting the upcoming v0.8. For v0.7 see the [0-7 branch](https://github.com/netzke/netzke-core/tree/0-7).**
-
 Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/netzke/netzke-basepack) and [netzke-communitypack](http://github.com/netzke/netzke-communitypack).
 
 Some knowledge of Sencha Ext JS will be needed in order to fully understand this overview.
