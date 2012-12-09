@@ -1,10 +1,10 @@
 # Netzke Core [![Build Status](https://secure.travis-ci.org/nomadcoder/netzke-core.png?branch=master)](http://travis-ci.org/nomadcoder/netzke-core) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/nomadcoder/netzke-core)
 
-[RDocs](http://rdoc.info/projects/nomadcoder/netzke-core)
+[RDocs](http://rdoc.info/projects/netzke/netzke-core)
 
-**WARNING 2012-10-20: This README is reflecting the upcoming v0.8. For v0.7 see the [0-7 branch](https://github.com/nomadcoder/netzke-core/tree/0-7).**
+**WARNING 2012-10-20: This README is reflecting the upcoming v0.8. For v0.7 see the [0-7 branch](https://github.com/netzke/netzke-core/tree/0-7).**
 
-Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/nomadcoder/netzke-basepack) and [netzke-communitypack](http://github.com/nomadcoder/netzke-communitypack).
+Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/netzke/netzke-basepack) and [netzke-communitypack](http://github.com/netzke/netzke-communitypack).
 
 Some knowledge of Sencha Ext JS will be needed in order to fully understand this overview.
 
@@ -178,7 +178,7 @@ class MyTabPanel < Netzke::Base
 end
 ```
 
-For more details on defining the client class, refer to [Netzke::Core::ClientClass](http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/ClientClass).
+For more details on defining the client class, refer to [Netzke::Core::ClientClass](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/ClientClass).
 
 ## Composition
 
@@ -218,9 +218,9 @@ Next to being statically nested in the layout, a child component can also be dyn
 
 this will load the "users" component and [add](http://docs.sencha.com/ext-js/4-1/#!/api/Ext.container.Container-method-add) it to the current container.
 
-For more details on dynamic component loading refer to inline docs of [javascript/ext.js](https://github.com/nomadcoder/netzke-core/blob/master/javascripts/ext.js).
+For more details on dynamic component loading refer to inline docs of [javascript/ext.js](https://github.com/netzke/netzke-core/blob/master/javascripts/ext.js).
 
-For more details on composition refer to [Netzke::Core::Composition](http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Composition).
+For more details on composition refer to [Netzke::Core::Composition](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Composition).
 
 ## Actions, toolbars, and menus
 
@@ -250,7 +250,7 @@ Actions can also be referred to is submenus:
   c.tbar = [{text: 'Menu', menu: {items: [:show_report]}}]
 ```
 
-For more details on composition refer to [Netzke::Core::Action](http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Action).
+For more details on composition refer to [Netzke::Core::Action](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Action).
 
 ## Client-server interaction
 
@@ -295,7 +295,7 @@ end
 
 Here the client class will call its `setTitle` method (defined in `Ext.panel.Panel`) with parameter passed from the endpoint. Then a custom method `myMethod` will be called with no parameters.
 
-For more details on client-server communication see [Netzke::Core::Services]("http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Services").
+For more details on client-server communication see [Netzke::Core::Services]("http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Services").
 
 ## Icons support
 
@@ -311,13 +311,13 @@ end
 
 The logout action will be configured with `public/images/icons/door.png` as icon.
 
-For more details on using icons refer to [Netzke::Core::Actions]("http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Actions").
+For more details on using icons refer to [Netzke::Core::Actions]("http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions").
 
 ## I18n
 
 Netzke Core will automatically include Ext JS localization files based on current `I18n.locale`.
 
-Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke::Core::Actions](http://rdoc.info/github/nomadcoder/netzke-core/Netzke/Core/Actions).
+Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke::Core::Actions](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
 
 ## Requirements
 
@@ -332,7 +332,7 @@ Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke
 For the latest ("edge") stuff, instruct the bundler to get the gem straight from github:
 
 ```ruby
-gem 'netzke-core', git: "git://github.com/nomadcoder/netzke-core.git"
+gem 'netzke-core', git: "git://github.com/netzke/netzke-core.git"
 ```
 
 By default, Netzke assumes that your Ext JS library is located in public/extjs. It can be a symbolic link, e.g.:
@@ -363,10 +363,10 @@ For RSpec tests (from `test/core_test_app`):
 
 ## Useful links
 * [Project website](http://netzke.org)
-* [Live demo](http://netzke-demo.herokuapp.com) (features [Netzke Basepack](https://github.com/nomadcoder/netzke-basepack), with sample code)
+* [Live demo](http://netzke-demo.herokuapp.com) (features [Netzke Basepack](https://github.com/netzke/netzke-basepack), with sample code)
 * [Twitter](http://twitter.com/netzke) - latest news about the framework
 
 ---
-Copyright (c) 2008-2012 [nomadcoder](https://twitter.com/nomadcoder), released under the MIT license (see LICENSE).
+Copyright (c) 2008-2012 [netzke](https://twitter.com/netzke), released under the MIT license (see LICENSE).
 
 **Note** that Ext JS is licensed [differently](http://www.sencha.com/products/extjs/license/), and you may need to purchase a commercial license in order to use it in your projects!

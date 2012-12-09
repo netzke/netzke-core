@@ -70,7 +70,7 @@ module Netzke::Core
   #
   # == Dynamic component loading
   #
-  # Child components can be dynamically loaded by using client class' +netzkeLoadComponent+ method (see {javascript/ext.js}[https://github.com/nomadcoder/netzke-core/blob/master/javascripts/ext.js] for inline documentation):
+  # Child components can be dynamically loaded by using client class' +netzkeLoadComponent+ method (see {javascript/ext.js}[https://github.com/netzke/netzke-core/blob/master/javascripts/ext.js] for inline documentation):
   #
   # == Excluded components
   #
