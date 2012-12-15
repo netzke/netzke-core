@@ -1,3 +1,19 @@
+require 'rubygems'
+
+begin
+  require 'bundler/setup'
+rescue LoadError => e
+  warn e.message
+  warn "Run `gem install bundler` to install Bundler"
+  exit -1
+end
+
+# Load tasks, that will be available for Rails user
+Dir[File.join(File.dirname(__FILE__), './lib/tasks/*.rake')].each { |file| load file }
+# Load tasks for gem development
+Dir[File.join(File.dirname(__FILE__), 'tasks/*.rake')].each { |file| load file }
+
+
 begin
   require 'jeweler'
   require './lib/netzke/core/version'
