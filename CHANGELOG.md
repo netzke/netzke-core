@@ -1,4 +1,8 @@
-# v0.8.0 - WIP
+# v0.8.1 - WIP
+* bug fix
+  * in production, JS comment stripping could cause modification of form_authenticity_token (issue #43) - by @scho
+
+# v0.8.0 - 2012-12-09
 ## Misc
   * many backward-incompatible API changes, see below
   * major code clean-up and refactor
