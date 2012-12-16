@@ -21,11 +21,19 @@
 # rake db:create && rake db:migrate
 # create gemset && bundle install
 
-class Step
-  attr_accessor :path
+begin
+  require 'rvm'
+rescue
+  warn "Development tasks need RVM API. Run `gem install bundler`, please."
+  exit -1
+end
 
-  def initialize(path)
-    @path = path
+
+class SetupStep
+  def initialize(options = {})
+    options.each_pair do |k, v|
+      instance_eval("@#{k} = \"#{v.to_s}\"")
+    end
   end
 
   def file_exists?(file)
@@ -33,15 +41,16 @@ class Step
   end
 end
 
-class ExtjsStep < Step
+class ExtjsStep < SetupStep
 
   def ready?
     file_exists?('public/extjs')
   end
 
   def perform
+    return if ready?
     if ENV['EXTJS_HOME'].nil?
-      print "You didn't specify EXTJS_HOME parameter. Would you like to install it from Github sources? [y/n]: "
+      print "You didn't specify EXTJS_HOME parameter. Would you like to install extjs from Github sources? [y/n]: "
       case gets.strip
         when 'Y', 'y', 'j', 'J', 'yes' # j for Germans (Ja)
           ENV['EXTJS_HOME'] = File.join(TestConfig.netzke_gem_directory, 'extjs')
@@ -68,28 +77,34 @@ private
   end
 
   def install_extjs
-    system %(ln -f #{ENV['EXTJS_HOME']} #{@path}/public/extjs)
+    system %(ln -s #{ENV['EXTJS_HOME']} #{@path}/public/extjs)
   end
 
 end
 
-class DatabaseStep < Step
+class DatabaseStep < SetupStep
   def ready?
     file_exists?('config/database.yml') && file_exists?('db/schema.rb')
   end
 
   def perform
-    system %(cd #{@path} && rake db:create && rake db:migrate)
+    return if ready?
+    RVM.gemset_use!(@gemset)
+    system %(cd #{@path} && ln config/database.sample.yml config/database.yml)
+    system %(cd #{@path} && bundle exec rake db:create && bundle exec rake db:migrate && bundle exec rake db:seed)
   end
 end
 
-class BundleStep < Step
-
+class BundleStep < SetupStep
   def ready?
-    file_exists?('Gemfile.lock')
+    (RVM.gemset_list << RVM.gemset.name).include?(@gemset)
   end
 
   def perform
+    return if ready?
+    RVM.gemset_create(@gemset)
+    RVM.gemset_use!(@gemset)
+    system %(gem install bundler)
     system %(cd #{@path} && bundle install)
   end
 
@@ -101,7 +116,10 @@ class TestApplication
   def initialize(name, path)
     @name  = name
     @path  = path
-    @steps = [ ExtjsStep.new(@path), DatabaseStep.new(@path), BundleStep.new(@path) ]
+    @rvm_gemset = "netzke-#{@name.gsub(' ', '').downcase}"
+    @steps = [ ExtjsStep.new(path: @path),
+               BundleStep.new(path: @path, gemset: @rvm_gemset),
+               DatabaseStep.new(path: @path, gemset: @rvm_gemset) ]
   end
 
   def ready?

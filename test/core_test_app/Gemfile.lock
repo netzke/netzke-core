@@ -136,6 +136,6 @@ DEPENDENCIES
   cucumber
   cucumber-rails
   database_cleaner
-  rails (~> 3.2.0)
+  rails (~> 3.2.9)
   rspec-rails
   sqlite3

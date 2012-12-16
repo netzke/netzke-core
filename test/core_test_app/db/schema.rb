@@ -11,19 +11,6 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110110132720) do
-
-  create_table "netzke_component_states", :force => true do |t|
-    t.string   "component"
-    t.integer  "user_id"
-    t.integer  "role_id"
-    t.text     "value"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "netzke_component_states", ["component"], :name => "index_netzke_component_states_on_component"
-  add_index "netzke_component_states", ["role_id"], :name => "index_netzke_component_states_on_role_id"
-  add_index "netzke_component_states", ["user_id"], :name => "index_netzke_component_states_on_user_id"
+ActiveRecord::Schema.define(:version => 0) do
 
 end
