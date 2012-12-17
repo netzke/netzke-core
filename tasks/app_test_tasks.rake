@@ -24,11 +24,12 @@
 begin
   require 'rvm'
 rescue
-  warn "Development tasks need RVM API. Run `gem install bundler`, please."
+  warn "Development tasks need RVM gem. Run `gem install rvm`, please."
   exit -1
 end
 
-
+# Super class for application configuration steps
+# it should allow to perform step and to check if step is reday
 class SetupStep
   def initialize(options = {})
     options.each_pair do |k, v|
@@ -41,6 +42,10 @@ class SetupStep
   end
 end
 
+# Step where we setup Extjs library to test application by creating link to folder with Extjs.
+# It assumes that path to Extjs folder if set in ENV['EXTJS_HOME'] parameter, if it is nil
+# message is prompted to user with suggestion to download it from github.
+# Downloading and installation is performed in automatically.
 class ExtjsStep < SetupStep
 
   def ready?
@@ -54,7 +59,7 @@ class ExtjsStep < SetupStep
       case STDIN.gets.strip
         when 'Y', 'y', 'j', 'J', 'yes' # j for Germans (Ja)
           ENV['EXTJS_HOME'] = File.join(TestConfig.netzke_gem_directory, 'extjs')
-          download_extjs(to: ENV['EXTJS_HOME'])
+          abort("Can't download Extjs from Github") unless download_extjs(to: ENV['EXTJS_HOME'])
         when /\A[nN]o?\Z/ # n or no
           abort("Ok. Then re-run this task this way: rake EXTJS_HOME=path/to/extjs/folder test:app:prepare")
       end
@@ -64,29 +69,27 @@ class ExtjsStep < SetupStep
 
 private
 
+  # Download netzko-demo application from Github and extract Extjs from it.
+  # Necessary option :to - folder where Extjs should be placed.
   def download_extjs(options = {})
-    # Download Extjs from demo application
     return unless (download_folder = options[:to])
     temp_folder = File.join(TestConfig.netzke_gem_directory, 'temp')
     demo_app_github_repo = "git://github.com/netzke/netzke-demo.git"
     temp_folder_exists = File.exist?(File.join(TestConfig.netzke_gem_directory, temp_folder))
+    repo_name = demo_app_github_repo.match("\/([^\/]+).git$")[1]
 
-    puts "Creating temp directory."
+    puts   "Creating temp directory."
     system %(mkdir -p #{temp_folder})
 
-    repo_name = demo_app_github_repo.match("\/([^\/]+).git$")[1]
-    puts "Fetching Extjs from Github sources."
-    puts %(cd #{temp_folder} && git clone #{demo_app_github_repo} && mv ./#{repo_name}/public/extjs #{download_folder})
+    puts   "Fetching Extjs from Github sources."
     system %(cd #{temp_folder} && git clone #{demo_app_github_repo} && mv ./#{repo_name}/public/extjs #{download_folder})
 
-    puts   "Remove temp directory"
-    puts   %(rm -rf #{temp_folder_exists ? File.join(temp_folder, repo_name) : temp_folder})
+    puts   "Remove temp directory."
     system %(rm -rf #{temp_folder_exists ? File.join(temp_folder, repo_name) : temp_folder})
   end
 
   def install_extjs
-    puts   "Link Extjs library with application in #{@path}"
-    puts   %(ln -s #{ENV['EXTJS_HOME']} #{@path}/public/extjs)
+    puts   "Link Extjs library with application in #{@path}."
     system %(ln -s #{ENV['EXTJS_HOME']} #{@path}/public/extjs)
   end
 
@@ -102,9 +105,7 @@ class DatabaseStep < SetupStep
     RVM.gemset_use!(@gemset)
 
     puts "Prepare Database for application in #{@path}"
-    puts %(cd #{@path} && ln config/database.sample.yml config/database.yml)
     system %(cd #{@path} && ln config/database.sample.yml config/database.yml)
-    puts %(cd #{@path} && bundle exec rake db:create && bundle exec rake db:migrate && bundle exec rake db:seed)
     system %(cd #{@path} && bundle exec rake db:create && bundle exec rake db:migrate && bundle exec rake db:seed)
   end
 end
@@ -147,6 +148,8 @@ class TestApplication
   end
 
   def test
+    RVM.gemset_use!(@rvm_gemset)
+    puts "Testing Netzke on #{@name} application."
     system %(cd #{@path} && bundle exec rspec spec)
     system %(cd #{@path} && bundle exec cucumber features)
   end
@@ -163,12 +166,12 @@ class TestConfig
       @rails3_application ||= TestApplication.new("Rails 3", File.join(netzke_gem_directory, 'test', "core_test_app"))
     end
 
-    def rails4_application
-      @rails4_application ||= TestApplication.new("Rails 4", File.join(netzke_gem_directory, 'test', "rails4_core_test_app"))
-    end
+    #def rails4_application
+    #  @rails4_application ||= TestApplication.new("Rails 4", File.join(netzke_gem_directory, 'test', "rails4_core_test_app"))
+    #end
 
     def test_applications
-      @test_applications ||= [rails3_application, rails4_application]
+      @test_applications ||= [ rails3_application ] #, rails4_application]
     end
   end
 end
@@ -200,7 +203,7 @@ namespace :test do
 
     desc "Test Netzke within Rails 4 application"
     task :rails4 do
-      TestConfig.rails4_application.test
+      # TestConfig.rails4_application.test
     end
 
   end
