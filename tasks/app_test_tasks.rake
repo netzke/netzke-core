@@ -70,13 +70,23 @@ private
     temp_folder = File.join(TestConfig.netzke_gem_directory, 'temp')
     demo_app_github_repo = "git://github.com/netzke/netzke-demo.git"
     temp_folder_exists = File.exist?(File.join(TestConfig.netzke_gem_directory, temp_folder))
+
+    puts "Creating temp directory."
     system %(mkdir -p #{temp_folder})
+
     repo_name = demo_app_github_repo.match("\/([^\/]+).git$")[1]
+    puts "Fetching Extjs from Github sources."
+    puts %(cd #{temp_folder} && git clone #{demo_app_github_repo} && mv ./#{repo_name}/public/extjs #{download_folder})
     system %(cd #{temp_folder} && git clone #{demo_app_github_repo} && mv ./#{repo_name}/public/extjs #{download_folder})
+
+    puts   "Remove temp directory"
+    puts   %(rm -rf #{temp_folder_exists ? File.join(temp_folder, repo_name) : temp_folder})
     system %(rm -rf #{temp_folder_exists ? File.join(temp_folder, repo_name) : temp_folder})
   end
 
   def install_extjs
+    puts   "Link Extjs library with application in #{@path}"
+    puts   %(ln -s #{ENV['EXTJS_HOME']} #{@path}/public/extjs)
     system %(ln -s #{ENV['EXTJS_HOME']} #{@path}/public/extjs)
   end
 
@@ -90,7 +100,11 @@ class DatabaseStep < SetupStep
   def perform
     return if ready?
     RVM.gemset_use!(@gemset)
+
+    puts "Prepare Database for application in #{@path}"
+    puts %(cd #{@path} && ln config/database.sample.yml config/database.yml)
     system %(cd #{@path} && ln config/database.sample.yml config/database.yml)
+    puts %(cd #{@path} && bundle exec rake db:create && bundle exec rake db:migrate && bundle exec rake db:seed)
     system %(cd #{@path} && bundle exec rake db:create && bundle exec rake db:migrate && bundle exec rake db:seed)
   end
 end
@@ -104,6 +118,8 @@ class BundleStep < SetupStep
     return if ready?
     RVM.gemset_create(@gemset)
     RVM.gemset_use!(@gemset)
+    puts %(gem install bundler)
+    puts %(cd #{@path} && bundle install)
     system %(gem install bundler)
     system %(cd #{@path} && bundle install)
   end
