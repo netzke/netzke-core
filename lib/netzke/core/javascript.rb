@@ -92,7 +92,7 @@ module Netzke::Core
     # It includes JS-classes for the parents, eagerly loaded child components, and itself.
     def js_missing_code(cached = [])
       code = dependency_classes.inject("") do |r,k|
-        cached.include?(k.js_config.xtype) ? r : r + k.js_config.code_with_dependencies#.strip_js_comments
+        cached.include?(k.js_config.xtype) ? r : r + k.js_config.code_with_dependencies.strip_js_comments
       end
       code.blank? ? nil : code
     end
