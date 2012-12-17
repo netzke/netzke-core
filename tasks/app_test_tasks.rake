@@ -51,7 +51,7 @@ class ExtjsStep < SetupStep
     return if ready?
     if ENV['EXTJS_HOME'].nil?
       print "You didn't specify EXTJS_HOME parameter. Would you like to install extjs from Github sources? [y/n]: "
-      case gets.strip
+      case STDIN.gets.strip
         when 'Y', 'y', 'j', 'J', 'yes' # j for Germans (Ja)
           ENV['EXTJS_HOME'] = File.join(TestConfig.netzke_gem_directory, 'extjs')
           download_extjs(to: ENV['EXTJS_HOME'])
