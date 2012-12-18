@@ -256,12 +256,14 @@ module Netzke::Core
     # +normalized_config+ - a config that has all the config extensions applied
     def normalize_config
       @components_in_config = []
-      @normalized_config = config.dup.tap do |c|
-        c.each_pair do |k,v|
-          c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
-          c[k] = v.deep_map{|el| extend_item(el)} if v.is_a?(Array)
+      c = config.dup
+      config.each_pair do |k, v|
+        c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
+        if v.is_a?(Array)
+          c[k] = v.deep_map{|el| extend_item(el)}
         end
       end
+      @normalized_config = c
     end
 
     # @return [Hash] config with all placeholders (like child components referred by symbols) expanded
