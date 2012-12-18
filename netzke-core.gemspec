@@ -72,6 +72,7 @@ Gem::Specification.new do |s|
     "netzke-core.gemspec",
     "stylesheets/core.css",
     "test/core_test_app/.gitignore",
+    "test/core_test_app/.rspec",
     "test/core_test_app/Gemfile",
     "test/core_test_app/Gemfile.lock",
     "test/core_test_app/README",
