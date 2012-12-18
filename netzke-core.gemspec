@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nomadcoder"]
-  s.date = "2012-12-17"
+  s.date = "2012-12-18"
   s.description = "Allows building complex RIA by greatly facilitating modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -72,8 +72,6 @@ Gem::Specification.new do |s|
     "netzke-core.gemspec",
     "stylesheets/core.css",
     "test/core_test_app/.gitignore",
-    "test/core_test_app/.powrc",
-    "test/core_test_app/.rvmrc",
     "test/core_test_app/Gemfile",
     "test/core_test_app/Gemfile.lock",
     "test/core_test_app/README",
@@ -235,7 +233,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://netzke.org"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.24"
+  s.rubygems_version = "1.8.23"
   s.summary = "Client-server GUI components with Sencha Ext JS and Ruby"
 
   if s.respond_to? :specification_version then
