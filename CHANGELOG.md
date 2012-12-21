@@ -1,3 +1,7 @@
+# v0.8.2 - WIP
+* bug fix
+  * RuntimeError "can't add a new key into hash during iteration" in Composition in some scenarious - by @wupdiwup
+
 # v0.8.1 - 2012-12-15
 * bug fix
   * in production, JS comment stripping could cause modification of form_authenticity_token (issue #43) - by @scho
