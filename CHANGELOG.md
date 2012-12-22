@@ -1,6 +1,7 @@
 # v0.8.2 - WIP
 * bug fix
   * RuntimeError "can't add a new key into hash during iteration" in Composition in some scenarious - by @wupdiwup
+  * netzkeReload works again
 
 # v0.8.1 - 2012-12-15
 * bug fix

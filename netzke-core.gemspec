@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nomadcoder"]
-  s.date = "2012-12-21"
+  s.date = "2012-12-22"
   s.description = "Allows building complex RIA by greatly facilitating modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -124,6 +124,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/scoped_components/deep_scoped_components/some_deep_scoped_component.rb",
     "test/core_test_app/app/components/scoped_components/extended_scoped_component.rb",
     "test/core_test_app/app/components/scoped_components/some_scoped_component.rb",
+    "test/core_test_app/app/components/self_reloading.rb",
     "test/core_test_app/app/components/server_caller.rb",
     "test/core_test_app/app/components/server_caller/javascripts/server_caller.js",
     "test/core_test_app/app/components/server_counter.rb",
