@@ -236,7 +236,7 @@ module Netzke::Core
       item[:excluded] = true if item_config && item_config[:excluded]
 
       if item.is_a?(Hash)
-        return nil if item[:excluded] # it'll get compacted away by Array#deep_map
+        return nil if item[:excluded] # it'll get compacted away by Array#netzke_deep_map
 
         # replace the `component` and `action` keys with `netzke_component` and `netzke_action`, which will be looked for at the JS side
         item[:netzke_action] = item.delete(:action) if item[:action]
@@ -260,7 +260,7 @@ module Netzke::Core
       config.each_pair do |k, v|
         c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
         if v.is_a?(Array)
-          c[k] = v.deep_map{|el| extend_item(el)}
+          c[k] = v.netzke_deep_map{|el| extend_item(el)}
         end
       end
       @normalized_config = c

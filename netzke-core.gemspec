@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nomadcoder"]
-  s.date = "2012-12-22"
+  s.date = "2012-12-25"
   s.description = "Allows building complex RIA by greatly facilitating modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [

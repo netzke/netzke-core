@@ -1,8 +1,8 @@
 class Hash
-  def deep_map(&block)
+  def netzke_deep_map(&block)
     self.dup.tap do |h|
       h.each_pair do |k,v|
-        h[k] = v.deep_map(&block) if v.respond_to?('deep_map')
+        h[k] = v.netzke_deep_map(&block) if v.respond_to?('netzke_deep_map')
       end
     end
   end
