@@ -3,12 +3,12 @@ module Netzke::Core
   module Embedding
     # Instantiating
     def js_component_instance
-      %Q{Netzke.page.#{name.jsonify} = Ext.create("#{self.class.js_config.class_alias}", #{js_config.to_nifty_json});}
+      %Q{Netzke.page.#{name.to_s.camelize(:lower)} = Ext.create("#{self.class.js_config.class_alias}", #{js_config.netzke_jsonify.to_json});}
     end
 
     # Rendering
     def js_component_render
-      %Q{Netzke.page.#{name.jsonify}.render("#{name.to_s.split('_').join('-')}-netzke");} unless self.class.js_config.xtype == "netzkewindow"
+      %Q{Netzke.page.#{name.to_s.camelize(:lower)}.render("#{name.to_s.split('_').join('-')}-netzke");} unless self.class.js_config.xtype == "netzkewindow"
     end
 
     # Container for rendering

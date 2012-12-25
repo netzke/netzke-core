@@ -235,7 +235,7 @@ Netzke.cache.push('#{xtype}');
       end
 
       def properties_as_string
-        [properties.to_nifty_json.chop,  mixins_as_string].compact.join(",\n") + "}"
+        [properties.netzke_jsonify.to_json.chop,  mixins_as_string].compact.join(",\n") + "}"
       end
 
       # Default extended class

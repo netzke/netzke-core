@@ -104,8 +104,7 @@ module Netzke
 
     # Instantiates a component instance. A parent can optionally be provided.
     def initialize(conf = {}, parent = nil)
-      @passed_config = conf # configuration passed at the moment of instantiation
-      @passed_config.deep_freeze
+      @passed_config = conf.deep_dup # configuration passed at the moment of instantiation
       @parent        = parent
       @name          = conf[:name] || self.class.name.underscore
       @js_id         = parent.nil? ? @name : "#{parent.js_id}__#{@name}"

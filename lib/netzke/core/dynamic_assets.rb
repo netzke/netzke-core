@@ -16,7 +16,7 @@ module Netzke
             res << f.read
           end
 
-          defined?(::Rails) && ::Rails.env.production? ? res.strip_js_comments : res
+          strip_js_comments(res)
         end
 
         def ext_css
@@ -29,6 +29,14 @@ module Netzke
           end
 
           res
+        end
+
+        def strip_js_comments(js_string)
+          if defined?(::Rails) && !::Rails.env.development? && compressor = ::Rails.application.assets.js_compressor
+            compressor.processor.call(nil, js_string)
+          else
+            js_string
+          end
         end
 
       private

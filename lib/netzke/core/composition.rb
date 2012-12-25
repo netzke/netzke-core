@@ -163,7 +163,7 @@ module Netzke::Core
     # Called when the method_missing tries to processes a non-existing component. Override when needed.
     def component_missing(aggr)
       flash :error => "Unknown component #{aggr} for #{name}"
-      {:feedback => @flash}.to_nifty_json
+      {:feedback => @flash}.netzke_jsonify.to_json
     end
 
     # Recursively instantiates a child component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"

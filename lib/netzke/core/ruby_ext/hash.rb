@@ -7,41 +7,35 @@ class Hash
     end
   end
 
-  def deep_each_pair(&block)
-    self.each_pair do |k,v|
-      v.respond_to?('deep_each_pair') ? v.deep_each_pair(&block) : yield(k,v)
-    end
-  end
-
-  def jsonify
+  def netzke_jsonify
     self.inject({}) do |h,(k,v)|
-      new_key = (k.is_a?(String) || k.is_a?(Symbol)) && !k.is_a?(ActiveSupport::JSON::Variable) ? k.jsonify : k
-      new_value = v.is_a?(Array) || v.is_a?(Hash) ? v.jsonify : v
+      new_key = if k.is_a?(ActiveSupport::JSON::Variable)
+                  k
+                elsif k.is_a?(String)
+                  k.camelize(:lower)
+                elsif k.is_a?(Symbol)
+                  k.to_s.camelize(:lower).to_sym
+                else
+                  k
+                end
+
+      new_value = v.is_a?(Array) || v.is_a?(Hash) ? v.netzke_jsonify : v
+
       h.merge(new_key => new_value)
     end
   end
 
-  # First camelizes the keys, then convert the whole hash to JSON
-  def to_nifty_json
-    self.jsonify.to_json
-  end
-
-  def deep_freeze
-    each { |k,v| v.deep_freeze if v.respond_to? :deep_freeze }
-    freeze
-  end
-
   # From http://rubyworks.github.com/facets
-  def update_keys #:yield:
+  def netzke_update_keys #:yield:
     if block_given?
       keys.each { |old_key| store(yield(old_key), delete(old_key)) }
     else
-      to_enum(:update_keys)
+      to_enum(:netzke_update_keys)
     end
   end
 
-  def literalize_keys
-    update_keys{ |k| k.to_s.l }
+  def netzke_literalize_keys
+    netzke_update_keys{ |k| ActiveSupport::JSON::Variable.new(k.to_s) }
     self
   end
 end

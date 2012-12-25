@@ -59,8 +59,6 @@ Gem::Specification.new do |s|
     "lib/netzke/core/ruby_ext.rb",
     "lib/netzke/core/ruby_ext/array.rb",
     "lib/netzke/core/ruby_ext/hash.rb",
-    "lib/netzke/core/ruby_ext/string.rb",
-    "lib/netzke/core/ruby_ext/symbol.rb",
     "lib/netzke/core/ruby_ext/time_with_zone.rb",
     "lib/netzke/core/services.rb",
     "lib/netzke/core/session.rb",
