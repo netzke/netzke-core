@@ -50,3 +50,20 @@ Feature: Component loader
     Given I am on the ComponentLoader test page
     When I press "Config only"
     Then I should see "SimpleComponent (overridden)"
+
+  @javascript
+  Scenario: Component autoreloading
+    When I go to the SelfReloading test page
+    Then I should see panel title saying "Loaded 1 time(s)"
+    When I press "Reload"
+    Then I should see panel title saying "Loaded 2 time(s)"
+
+  @javascript
+  Scenario: Component autoreloading when in container
+    Given I am on the ComponentLoader test page
+    When I press "Load self reloading"
+    And I wait for response from server
+    Then I should see panel title saying "Loaded 1 time(s)"
+    When I press "Reload"
+    And I wait for response from server
+    Then I should see panel title saying "Loaded 2 time(s)"

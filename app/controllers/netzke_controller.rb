@@ -49,9 +49,9 @@ protected
 
     if components_in_session
       component_instance = Netzke::Base.instance_by_config(components_in_session[component_name.to_sym])
-      result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params).to_nifty_json
+      result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params).netzke_jsonify.to_json
     else
-      result = {:netzke_component_not_in_session => true}.to_nifty_json
+      result = {:netzke_component_not_in_session => true}.netzke_jsonify.to_json
     end
 
     # We render text/plain, so that the browser never modifies our response
@@ -61,7 +61,7 @@ protected
       :tid => tid,
       :action => component_name,
       :method => action,
-      :result => result.present? && result.l || {}
+      :result => result.present? && ActiveSupport::JSON::Variable.new(result) || {}
     }.to_json
   end
 
@@ -75,7 +75,7 @@ protected
     # We can't do this here; this method is only used for classic form submission, and the response from the server should be the (default) "text/html"
     # response.headers["Content-Type"] = "text/plain; charset=utf-8"
 
-    render :text => component_instance.invoke_endpoint(sub_components.join("__"), params).to_nifty_json, :layout => false
+    render :text => component_instance.invoke_endpoint(sub_components.join("__"), params).netzke_jsonify.to_json, :layout => false
   end
 
 end

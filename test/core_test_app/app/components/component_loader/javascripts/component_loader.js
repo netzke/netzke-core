@@ -45,5 +45,10 @@
       var instance = Ext.ComponentManager.create(config);
       this.add(instance);
     }, scope: this});
+  },
+
+  onLoadSelfReloading: function() {
+    this.netzkeLoadComponent('self_reloading');
   }
+
 }

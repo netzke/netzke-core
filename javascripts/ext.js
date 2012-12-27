@@ -356,12 +356,15 @@ Ext.define(null, {
   },
 
   /**
-   * Reloads current component (calls the parent to reload us as its component)
+   * Reloads itself by instructing the parent to call `netzkeLoadComponent`.
+   * Note: in order for this to work, the component must be nested in a container with the 'fit' layout.
   */
   netzkeReload: function(){
     var parent = this.netzkeGetParentComponent();
+
     if (parent) {
-      parent.netzkeLoadComponent({id:this.netzkeLocalId(parent), container:this.ownerCt.id});
+      var name = this.netzkeLocalId(parent);
+      parent.netzkeLoadComponent(name, {container:this.ownerCt.id});
     } else {
       window.location.reload();
     }

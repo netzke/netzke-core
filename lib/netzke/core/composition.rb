@@ -163,7 +163,7 @@ module Netzke::Core
     # Called when the method_missing tries to processes a non-existing component. Override when needed.
     def component_missing(aggr)
       flash :error => "Unknown component #{aggr} for #{name}"
-      {:feedback => @flash}.to_nifty_json
+      {:feedback => @flash}.netzke_jsonify.to_json
     end
 
     # Recursively instantiates a child component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
@@ -236,7 +236,7 @@ module Netzke::Core
       item[:excluded] = true if item_config && item_config[:excluded]
 
       if item.is_a?(Hash)
-        return nil if item[:excluded] # it'll get compacted away by Array#deep_map
+        return nil if item[:excluded] # it'll get compacted away by Array#netzke_deep_map
 
         # replace the `component` and `action` keys with `netzke_component` and `netzke_action`, which will be looked for at the JS side
         item[:netzke_action] = item.delete(:action) if item[:action]
@@ -256,12 +256,14 @@ module Netzke::Core
     # +normalized_config+ - a config that has all the config extensions applied
     def normalize_config
       @components_in_config = []
-      @normalized_config = config.dup.tap do |c|
-        c.each_pair do |k,v|
-          c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
-          c[k] = v.deep_map{|el| extend_item(el)} if v.is_a?(Array)
+      c = config.dup
+      config.each_pair do |k, v|
+        c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
+        if v.is_a?(Array)
+          c[k] = v.netzke_deep_map{|el| extend_item(el)}
         end
       end
+      @normalized_config = c
     end
 
     # @return [Hash] config with all placeholders (like child components referred by symbols) expanded

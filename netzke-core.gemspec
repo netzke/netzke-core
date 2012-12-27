@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nomadcoder"]
-  s.date = "2012-12-17"
+  s.date = "2012-12-25"
   s.description = "Allows building complex RIA by greatly facilitating modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -59,8 +59,6 @@ Gem::Specification.new do |s|
     "lib/netzke/core/ruby_ext.rb",
     "lib/netzke/core/ruby_ext/array.rb",
     "lib/netzke/core/ruby_ext/hash.rb",
-    "lib/netzke/core/ruby_ext/string.rb",
-    "lib/netzke/core/ruby_ext/symbol.rb",
     "lib/netzke/core/ruby_ext/time_with_zone.rb",
     "lib/netzke/core/services.rb",
     "lib/netzke/core/session.rb",
@@ -72,8 +70,7 @@ Gem::Specification.new do |s|
     "netzke-core.gemspec",
     "stylesheets/core.css",
     "test/core_test_app/.gitignore",
-    "test/core_test_app/.powrc",
-    "test/core_test_app/.rvmrc",
+    "test/core_test_app/.rspec",
     "test/core_test_app/Gemfile",
     "test/core_test_app/Gemfile.lock",
     "test/core_test_app/README",
@@ -125,6 +122,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/app/components/scoped_components/deep_scoped_components/some_deep_scoped_component.rb",
     "test/core_test_app/app/components/scoped_components/extended_scoped_component.rb",
     "test/core_test_app/app/components/scoped_components/some_scoped_component.rb",
+    "test/core_test_app/app/components/self_reloading.rb",
     "test/core_test_app/app/components/server_caller.rb",
     "test/core_test_app/app/components/server_caller/javascripts/server_caller.js",
     "test/core_test_app/app/components/server_counter.rb",
@@ -215,9 +213,9 @@ Gem::Specification.new do |s|
     "test/core_test_app/spec/actions_spec.rb",
     "test/core_test_app/spec/base_spec.rb",
     "test/core_test_app/spec/client_class_spec.rb",
-    "test/core_test_app/spec/component",
     "test/core_test_app/spec/composition_spec.rb",
     "test/core_test_app/spec/core_ext_spec.rb",
+    "test/core_test_app/spec/dynamic_assets_spec.rb",
     "test/core_test_app/spec/endpoint_response_spec.rb",
     "test/core_test_app/spec/javascript_spec.rb",
     "test/core_test_app/spec/js_class_config_scope.rb",
@@ -235,7 +233,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://netzke.org"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.24"
+  s.rubygems_version = "1.8.23"
   s.summary = "Client-server GUI components with Sencha Ext JS and Ruby"
 
   if s.respond_to? :specification_version then

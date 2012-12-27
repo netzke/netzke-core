@@ -62,3 +62,9 @@ end
 When /I sleep (\d+) seconds?/ do |arg1|
   sleep arg1.to_i
 end
+
+Then /^I should see panel title saying "(.*?)"$/ do |title|
+  page.driver.browser.execute_script(<<-JS).should == true
+    return Ext.ComponentQuery.query('header[title="#{title}"]').length > 0;
+  JS
+end
