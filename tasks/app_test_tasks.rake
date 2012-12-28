@@ -14,20 +14,6 @@
 
 require './tasks/rake_helper'
 
-class TestAppChecker
-  def self.extjs_installed?
-    File.exists?(File.join(GemInfo.test_app_root, 'public', 'extjs'))
-  end
-
-  def self.database_config_exists?
-    File.exists?(File.join(GemInfo.test_app_root, 'config', 'database.yml'))
-  end
-
-  def self.database_exists?
-    File.exists?(File.join(GemInfo.test_app_root, 'db', 'development.sqlite3'))
-  end
-end
-
 
 def download_extjs(options = {})
   return false unless (extjs_home = options[:to])
@@ -38,28 +24,36 @@ def download_extjs(options = {})
   system(%(mkdir -p #{extjs_home}))                        ||
   system(%(unzip #{archive_name}"))                        ||
   system(%(mv "#{extracted_folder}/*" #{extjs_home}))      ||
-  system(%(rm "#{extracted_folder}" "#{archive_name}"))
+  system(%(rm "#{extracted_folder}" && rm "#{archive_name}"))
 end
 
 def install_extjs
-  return true if TestAppChecker.extjs_installed?
+
   extjs_home = File.join(GemInfo.gem_root, 'extjs')
   return false unless download_extjs(to: extjs_home)
   system %(ln -s #{extjs_home} #{File.join(GemInfo.test_app_root, 'public', 'extjs')})
 end
 
 task :test do
-  system %(cd #{GemInfo.test_app_root} && bundle exec rspec spec)
-  system %(cd #{GemInfo.test_app_root} && bundle exec cucumber features)
+  system %(cd #{GemInfo.test_app_root} && rspec spec)
+  system %(cd #{GemInfo.test_app_root} && cucumber features)
 end
 
 namespace :test do
 
   desc "Checks if test application is ready for testing."
   task :install_extjs do
-    extjs_home = File.join(GemInfo.gem_root, 'extjs')
-    return false unless download_extjs(to: extjs_home)
-    system %(ln -s #{extjs_home} #{File.join(GemInfo.test_app_root, 'public', 'extjs')})
+    puts "Installing Extjs library for application in #{GemInfo.test_app_root}"
+    if TestAppChecker.extjs_installed?
+      puts("Extjs is already installed.")
+    else
+      extjs_home = File.join(GemInfo.gem_root, 'extjs')
+      if download_extjs(to: extjs_home)
+        system(%(ln -s #{extjs_home} #{File.join(GemInfo.test_app_root, 'public', 'extjs')}))
+      else
+        puts("Can't download Extjs.")
+      end
+    end
   end
 
   desc "Checks if test application is ready for testing."
@@ -84,16 +78,15 @@ namespace :test do
 
       case STDIN.gets.strip
         when 'Y', 'y', 'j', 'J', 'yes' then # j for Germans (Ja)
-          puts "Installing Extjs library for application in #{GemInfo.test_app_root}"
-          install_extjs
+          Rake::Task['test:install_extjs'].invoke
         else
-          abort("Ok. Then re-run this task this way: rake EXTJS_HOME=path/to/extjs/folder test:app:prepare")
+          abort("Ok. Then you will need to add extjs folder to #{GemInfo.test_app_root}/public manually.")
       end
     end
 
     puts "Prepare Database for application in #{GemInfo.test_app_root}"
     system %(cd #{GemInfo.test_app_root} && ln config/database.sample.yml config/database.yml)
-    system %(cd #{GemInfo.test_app_root} && bundle exec rake db:create && bundle exec rake db:migrate && bundle exec rake db:seed)
+    system %(cd #{GemInfo.test_app_root} && rake db:create && rake db:migrate && rake db:seed)
 
   end
 
