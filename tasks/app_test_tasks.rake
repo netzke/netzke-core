@@ -39,8 +39,12 @@ def install_extjs
 end
 
 task :test do
-  system %(cd #{GemInfo.test_app_root} && rspec spec)
-  system %(cd #{GemInfo.test_app_root} && cucumber features)
+  if TestAppChecker.ready?
+    system %(cd #{GemInfo.test_app_root} && rspec spec)
+    system %(cd #{GemInfo.test_app_root} && cucumber features)
+  else
+    abort("Test application in #{GemInfo.test_app_root} is not ready. You can run rake test:check to see what is wrong.")
+  end
 end
 
 namespace :test do
@@ -55,7 +59,7 @@ namespace :test do
       if download_extjs(to: extjs_home)
         system(%(ln -s #{extjs_home} #{File.join(GemInfo.test_app_root, 'public', 'extjs')}))
       else
-        puts "Can't download Extjs.".red
+        abort "For some reason can't download Extjs. Try to do it manually. Sorry for inconvenience.".red
       end
     end
   end
@@ -91,7 +95,7 @@ namespace :test do
     puts "Prepare Database for application in #{GemInfo.test_app_root}".green
     system %(ln #{File.join(GemInfo.test_app_root, 'config', 'database.sample.yml')} #{File.join(GemInfo.test_app_root, 'config', 'database.yml')})
     system %(cd #{GemInfo.test_app_root} && rake db:create && rake db:migrate && rake db:seed)
-
+    puts "Test application is configured. Now you can run rake test.".green
   end
 
 end
