@@ -95,7 +95,7 @@ namespace :test do
     puts "Prepare Database for application in #{GemInfo.test_app_root}".green
     system %(ln #{File.join(GemInfo.test_app_root, 'config', 'database.sample.yml')} #{File.join(GemInfo.test_app_root, 'config', 'database.yml')})
     system %(cd #{GemInfo.test_app_root} && rake db:create && rake db:migrate && rake db:seed)
-    puts "Test application is configured. Now you can run rake test.".green
+    puts "Test application is configured. Now you are welcome to run rake test.".green
   end
 
 end
