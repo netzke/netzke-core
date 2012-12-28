@@ -14,17 +14,22 @@
 
 require './tasks/rake_helper'
 
+def commented_sh(comment, command)
+  puts(comment)
+  system("#{command} > /dev/null")
+end
 
 def download_extjs(options = {})
   return false unless (extjs_home = options[:to])
   extjs_download_url = "http://cdn.sencha.io/ext-4.1.1a-gpl.zip"
   archive_name       = extjs_download_url.match(/[^\/]+$/)[0]
   extracted_folder   = archive_name.match(/^(.+)-gpl\.[^\.]+$/)[1]
-  system(%(wget #{extjs_download_url}))                         &&
-  system(%(unzip #{archive_name}))                              &&
-  system(%(mkdir -p #{extjs_home}))                             &&
-  system(%(mv #{extracted_folder}/* #{extjs_home}))           &&
-  system(%(rm "#{extracted_folder}" && rm "#{archive_name}"))
+
+  commented_sh("Downloading Extjs from #{extjs_download_url}".green, %(wget #{extjs_download_url})) &&
+  commented_sh("Extracting Extjs from archive".green,                %(unzip #{archive_name}))      &&
+  system(%(mkdir -p #{extjs_home}))                  &&
+  system(%(mv #{extracted_folder}/* #{extjs_home}))  &&
+  system(%(rmdir "#{extracted_folder}" && rm "#{archive_name}"))
 end
 
 def install_extjs
