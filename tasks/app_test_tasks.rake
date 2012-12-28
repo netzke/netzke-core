@@ -20,10 +20,10 @@ def download_extjs(options = {})
   extjs_download_url = "http://cdn.sencha.io/ext-4.1.1a-gpl.zip"
   archive_name       = extjs_download_url.match(/[^\/]+$/)[0]
   extracted_folder   = archive_name.match(/^(.+)-gpl\.[^\.]+$/)[1]
-  system(%(wget #{extjs_download_url}))                    ||
-  system(%(mkdir -p #{extjs_home}))                        ||
-  system(%(unzip #{archive_name}"))                        ||
-  system(%(mv "#{extracted_folder}/*" #{extjs_home}))      ||
+  system(%(wget #{extjs_download_url}))                         &&
+  system(%(mkdir -p #{extjs_home}))                             &&
+  system(%(unzip #{archive_name}"))                             &&
+  system(%(mv "#{extracted_folder}/*" #{extjs_home}))           &&
   system(%(rm "#{extracted_folder}" && rm "#{archive_name}"))
 end
 
