@@ -61,7 +61,7 @@ namespace :test do
     puts "Checking application in #{GemInfo.test_app_root} folder."
     if    !TestAppChecker.extjs_installed?
       puts "You need to install Extjs library to #{GemInfo.test_app_root} test application."
-      puts "You can do it running this command: rake test:install_extjs."
+      puts "You can do it by running this command: rake test:install_extjs."
     elsif !TestAppChecker.database_config_exists?
       puts "You need to create config/database.yml in #{GemInfo.test_app_root} test application."
     elsif !TestAppChecker.database_exists?
@@ -74,18 +74,18 @@ namespace :test do
   desc "Prepare test application."
   task :prepare do
     if !TestAppChecker.extjs_installed?
-      print "Would you like to download and install Extjs to test application? [y/n]: "
+      print "Would you like to download and install Extjs for test application? [y/n]: "
 
       case STDIN.gets.strip
         when 'Y', 'y', 'j', 'J', 'yes' then # j for Germans (Ja)
           Rake::Task['test:install_extjs'].invoke
         else
-          abort("Ok. Then you will need to add extjs folder to #{GemInfo.test_app_root}/public manually.")
+          puts("Ok. Then you will need to add extjs folder and its content to #{GemInfo.test_app_root}/public manually.")
       end
     end
 
     puts "Prepare Database for application in #{GemInfo.test_app_root}"
-    system %(cd #{GemInfo.test_app_root} && ln config/database.sample.yml config/database.yml)
+    system %(ln #{File.join(GemInfo.test_app_root, 'config', 'database.sample.yml')} #{File.join(GemInfo.test_app_root, 'config', 'database.yml')})
     system %(cd #{GemInfo.test_app_root} && rake db:create && rake db:migrate && rake db:seed)
 
   end
