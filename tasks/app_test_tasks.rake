@@ -23,7 +23,7 @@ def download_extjs(options = {})
   system(%(wget #{extjs_download_url}))                         &&
   system(%(unzip #{archive_name}))                              &&
   system(%(mkdir -p #{extjs_home}))                             &&
-  system(%(mv "#{extracted_folder}/*" #{extjs_home}))           &&
+  system(%(mv #{extracted_folder}/* #{extjs_home}))           &&
   system(%(rm "#{extracted_folder}" && rm "#{archive_name}"))
 end
 
