@@ -8,5 +8,8 @@ test/core_test_app/public/extjs*
 test/core_test_app/vendor/gems/netzke-persistence
 test/core_test_app/public/javascripts
 test/core_test_app/public/stylesheets
+test/core_test_app/db/schema.rb
+test/core_test_app/config/database.yml
 *.gem
 .vimrc
+/extjs
