@@ -68,16 +68,17 @@ namespace :test do
   task :check do
     puts "Checking application in #{GemInfo.test_app_root} folder.".green
     if    !TestAppChecker.extjs_installed?
-      puts "You need to install Extjs library to #{GemInfo.test_app_root} test application."
+      puts "You need to #{'install Extjs library'.green} to #{GemInfo.test_app_root} test application."
       puts "You can do it by running " +
-           "rake test:install_extjs".green + " or creating " +
-           "symlink of Extjs folder to #{GemInfo.test_app_root}/public/extjs".green + "."
+           "rake test:install_extjs".green
+      puts "Or you can create a " +
+           "symlink of Extjs folder to #{GemInfo.test_app_root}/public/extjs".green + " manually."
     elsif !TestAppChecker.database_config_exists?
       puts "You need to create config/database.yml in #{GemInfo.test_app_root} test application."
-      puys "You can run #{'rake test:prepare'.green} to do it automatically."
+      puts "You can run #{'rake test:prepare'.green} to do it automatically."
     elsif !TestAppChecker.database_exists?
       puts "You need to run db:create and db:migrate in #{GemInfo.test_app_root} test application."
-      puys "You can run #{'rake test:prepare'.green} to do it automatically."
+      puts "You can run #{'rake test:prepare'.green} to do it automatically."
     else
       puts "Everything is fine. You can ran rake test now.".green
     end
