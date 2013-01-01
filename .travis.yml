@@ -9,7 +9,7 @@ before_script:
   - ./config/ci/before-travis.sh
 script:
   - export DISPLAY=:99.0
-  - rake
+  - rake TRAVIS=true
 branches:
   only:
     - master
