@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~>3.2.0'
+gem 'rails', '~>3.2.9'
 
 gem 'sqlite3'
 
@@ -17,3 +17,7 @@ group :test do
   gem 'cucumber'
   gem 'rspec-rails'
 end
+
+
+gem 'jeweler'
+gem 'yard'
