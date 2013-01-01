@@ -18,7 +18,7 @@ end
 
 class TestAppChecker
   def self.extjs_installed?
-    File.exists?(File.join(GemInfo.test_app_root, 'public', 'extjs'))
+    ENV['EXTJS_SRC'] == 'cdn' || File.exists?(File.join(GemInfo.test_app_root, 'public', 'extjs'))
   end
 
   def self.ready?

@@ -68,36 +68,29 @@ namespace :test do
   task :check do
     puts "Checking application in #{GemInfo.test_app_root} folder.".green
     if    !TestAppChecker.extjs_installed?
-      puts "You need to #{'install Extjs library'.green} to #{GemInfo.test_app_root} test application."
-      puts "You can do it by running " +
-           "rake test:install_extjs".green
-      puts "Or you can create a " +
-           "symlink of Extjs folder to #{GemInfo.test_app_root}/public/extjs".green + " manually."
-    elsif !TestAppChecker.database_config_exists?
-      puts "You need to create config/database.yml in #{GemInfo.test_app_root} test application."
-      puts "You can run #{'rake test:prepare'.green} to do it automatically."
-    elsif !TestAppChecker.database_exists?
-      puts "You need to run db:create and db:migrate in #{GemInfo.test_app_root} test application."
-      puts "You can run #{'rake test:prepare'.green} to do it automatically."
+      puts "You need to #{'install Ext JS'.green} in #{GemInfo.test_app_root} test application."
+      puts "You can do so by running " + "rake test:install_extjs".green + "."
+      puts "Alternatively, you can #{'symlink Ext JS'.green} folder to " +
+           "#{GemInfo.test_app_root}/public/extjs" + " manually, or run #{'EXTJS_SRC=cdn rake'.green} to make use of Sencha CDN."
     else
-      puts "Everything is fine. You can ran rake test now.".green
+      puts "Everything seems fine. You can run the tests now.".green
     end
   end
 
   desc "Prepare test application."
   task :prepare do
     if !TestAppChecker.extjs_installed?
-      print "Would you like to download and install Extjs for test application? [y/n]: ".green
+      print "Would you like to download and install Ext JS in test application? [y/n]: ".green
 
       case STDIN.gets.strip
         when 'Y', 'y', 'j', 'J', 'yes' then # j for Germans (Ja)
           Rake::Task['test:install_extjs'].invoke
         else
-          puts "Ok. Then you will need to add extjs folder and its content to #{GemInfo.test_app_root}/public manually.".green
+          puts "Ok. Then you will need to add/symlink Ext JS folder and its content to #{GemInfo.test_app_root}/public manually.".green
       end
     end
 
-    puts "Test application is configured. Now you are welcome to run rake test.".green
+    puts "Test application is configured. You can run the tests now.".green
   end
 
 end
