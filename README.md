@@ -347,17 +347,13 @@ The bundled `test/core_test_app` application used for automated testing can be e
 
 For example [http://localhost:3000/components/ServerCaller](http://localhost:3000/components/ServerCaller)
 
-Before being able run the test app and the tests themselves, you must link your Ext JS library to `test/core_test_app/public`, e.g. (from the gems's root):
+To run all the tests (from the gem's root):
 
-    $ ln -s ~/code/sencha/ext-4.1.1 test/core_test_app/public/extjs
+    $ rake
 
-For cucumber tests (from `test/core_test_app`):
+This assumes that the Ext JS library is located/symlinked in `test/core_test_app/public/extjs`. If you want to use Sencha CDN instead, run:
 
-    $ cucumber features
-
-For RSpec tests (from `test/core_test_app`):
-
-    $ rspec spec
+    $ EXTJS_SRC=cdn rake
 
 ## Useful links
 * [Project website](http://netzke.org)

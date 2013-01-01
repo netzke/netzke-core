@@ -1,14 +1,16 @@
 # v0.8.2 - WIP
 * bug fix
-  * RuntimeError "can't add a new key into hash during iteration" in Composition in some scenarious - by @wupdiwup
+  * RuntimeError "can't add a new key into hash during iteration" in Composition in some scenarious (thanks @wupdiwup)
   * netzkeReload works again
+  * setting `Netzke::Core.ext_uri` to external URI (e.g. Sencha CDN) works now
 
 * improvements
   * minimize core Ruby class extensions
+  * tests can now be run by simply executing `rake` from the gem's root (thanks @allomov)
 
 # v0.8.1 - 2012-12-15
 * bug fix
-  * in production, JS comment stripping could cause modification of form_authenticity_token (issue #43) - by @scho
+  * in production, JS comment stripping could cause modification of form_authenticity_token (issue #43) (thanks @scho)
 
 # v0.8.0 - 2012-12-09
 ## Misc
