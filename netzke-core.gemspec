@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nomadcoder"]
-  s.date = "2012-12-25"
+  s.date = "2013-01-01"
   s.description = "Allows building complex RIA by greatly facilitating modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -18,8 +18,11 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".autotest",
+    ".rvmrc",
     ".travis.yml",
     "CHANGELOG.md",
+    "Gemfile",
+    "Gemfile.lock",
     "LICENSE",
     "Manifest",
     "README.md",
@@ -69,10 +72,10 @@ Gem::Specification.new do |s|
     "lib/tasks/netzke_core_tasks.rake",
     "netzke-core.gemspec",
     "stylesheets/core.css",
+    "tasks/app_test_tasks.rake",
+    "tasks/rake_helper.rb",
     "test/core_test_app/.gitignore",
     "test/core_test_app/.rspec",
-    "test/core_test_app/Gemfile",
-    "test/core_test_app/Gemfile.lock",
     "test/core_test_app/README",
     "test/core_test_app/Rakefile",
     "test/core_test_app/app/components/border_layout_panel.rb",
@@ -156,7 +159,7 @@ Gem::Specification.new do |s|
     "test/core_test_app/config.ru",
     "test/core_test_app/config/application.rb",
     "test/core_test_app/config/boot.rb",
-    "test/core_test_app/config/database.yml",
+    "test/core_test_app/config/database.sample.yml",
     "test/core_test_app/config/database.yml.travis",
     "test/core_test_app/config/environment.rb",
     "test/core_test_app/config/environments/development.rb",
@@ -172,7 +175,6 @@ Gem::Specification.new do |s|
     "test/core_test_app/config/locales/es.yml",
     "test/core_test_app/config/routes.rb",
     "test/core_test_app/db/development_structure.sql",
-    "test/core_test_app/db/schema.rb",
     "test/core_test_app/db/seeds.rb",
     "test/core_test_app/features/actions_and_tools.feature",
     "test/core_test_app/features/basic.feature",
@@ -227,8 +229,6 @@ Gem::Specification.new do |s|
     "test/core_test_app/tmp/restart.txt",
     "test/core_test_app/vendor/plugins/.gitkeep",
     "test/test_helper.rb",
-    "test/unit/core_ext_test.rb",
-    "test/unit/netzke_core_test.rb",
     "uninstall.rb"
   ]
   s.homepage = "http://netzke.org"
@@ -240,11 +240,29 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<rails>, ["~> 3.2.9"])
+      s.add_runtime_dependency(%q<sqlite3>, [">= 0"])
+      s.add_runtime_dependency(%q<uglifier>, [">= 0"])
+      s.add_runtime_dependency(%q<execjs>, [">= 0"])
+      s.add_runtime_dependency(%q<jeweler>, [">= 0"])
+      s.add_runtime_dependency(%q<yard>, [">= 0"])
       s.add_runtime_dependency(%q<activesupport>, [">= 3.1.0"])
     else
+      s.add_dependency(%q<rails>, ["~> 3.2.9"])
+      s.add_dependency(%q<sqlite3>, [">= 0"])
+      s.add_dependency(%q<uglifier>, [">= 0"])
+      s.add_dependency(%q<execjs>, [">= 0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
+      s.add_dependency(%q<yard>, [">= 0"])
       s.add_dependency(%q<activesupport>, [">= 3.1.0"])
     end
   else
+    s.add_dependency(%q<rails>, ["~> 3.2.9"])
+    s.add_dependency(%q<sqlite3>, [">= 0"])
+    s.add_dependency(%q<uglifier>, [">= 0"])
+    s.add_dependency(%q<execjs>, [">= 0"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
+    s.add_dependency(%q<yard>, [">= 0"])
     s.add_dependency(%q<activesupport>, [">= 3.1.0"])
   end
 end
