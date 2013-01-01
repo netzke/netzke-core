@@ -9,8 +9,7 @@ before_script:
   - ./config/ci/before-travis.sh
 script:
   - export DISPLAY=:99.0
-  - bundle exec rake db:create db:migrate RAILS_ENV=test
-  - bundle exec rake test
+  - rake
 branches:
   only:
     - master

@@ -21,16 +21,8 @@ class TestAppChecker
     File.exists?(File.join(GemInfo.test_app_root, 'public', 'extjs'))
   end
 
-  def self.database_config_exists?
-    File.exists?(File.join(GemInfo.test_app_root, 'config', 'database.yml'))
-  end
-
-  def self.database_exists?
-    File.exists?(File.join(GemInfo.test_app_root, 'db', 'development.sqlite3'))
-  end
-
   def self.ready?
-    self.extjs_installed? && self.database_config_exists? && self.database_exists?
+    self.extjs_installed?
   end
 end
 

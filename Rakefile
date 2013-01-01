@@ -13,6 +13,8 @@ Dir[File.join(File.dirname(__FILE__), './lib/tasks/*.rake')].each { |file| load 
 # Load tasks for gem development
 Dir[File.join(File.dirname(__FILE__), 'tasks/*.rake')].each { |file| load file }
 
+desc 'Run all tests by default'
+task :default => :test
 
 begin
   require 'jeweler'
