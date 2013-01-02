@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["nomadcoder"]
-  s.date = "2013-01-01"
+  s.date = "2013-01-02"
   s.description = "Allows building complex RIA by greatly facilitating modular development"
   s.email = "nmcoder@gmail.com"
   s.extra_rdoc_files = [
@@ -240,28 +240,28 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rails>, ["~> 3.2.9"])
-      s.add_runtime_dependency(%q<sqlite3>, [">= 0"])
       s.add_runtime_dependency(%q<uglifier>, [">= 0"])
       s.add_runtime_dependency(%q<execjs>, [">= 0"])
-      s.add_runtime_dependency(%q<jeweler>, [">= 0"])
-      s.add_runtime_dependency(%q<yard>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_development_dependency(%q<yard>, [">= 0"])
+      s.add_development_dependency(%q<sqlite3>, [">= 0"])
       s.add_runtime_dependency(%q<activesupport>, [">= 3.1.0"])
     else
       s.add_dependency(%q<rails>, ["~> 3.2.9"])
-      s.add_dependency(%q<sqlite3>, [">= 0"])
       s.add_dependency(%q<uglifier>, [">= 0"])
       s.add_dependency(%q<execjs>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
+      s.add_dependency(%q<sqlite3>, [">= 0"])
       s.add_dependency(%q<activesupport>, [">= 3.1.0"])
     end
   else
     s.add_dependency(%q<rails>, ["~> 3.2.9"])
-    s.add_dependency(%q<sqlite3>, [">= 0"])
     s.add_dependency(%q<uglifier>, [">= 0"])
     s.add_dependency(%q<execjs>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
+    s.add_dependency(%q<sqlite3>, [">= 0"])
     s.add_dependency(%q<activesupport>, [">= 3.1.0"])
   end
 end

@@ -2,8 +2,6 @@ source 'http://rubygems.org'
 
 gem 'rails', '~>3.2.9'
 
-gem 'sqlite3'
-
 gem 'uglifier'
 gem 'execjs'
 
@@ -18,6 +16,8 @@ group :test do
   gem 'rspec-rails'
 end
 
-
-gem 'jeweler'
-gem 'yard'
+group :development, :test do
+  gem 'jeweler'
+  gem 'yard'
+  gem 'sqlite3'
+end
