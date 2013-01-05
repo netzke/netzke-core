@@ -327,17 +327,17 @@ Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke
 
 ## Installation
 
-  $ gem install netzke-core
+    $ gem install netzke-core
 
 For the latest ("edge") stuff, instruct the bundler to get the gem straight from github:
 
 ```ruby
-gem 'netzke-core', git: "git://github.com/netzke/netzke-core.git"
+gem 'netzke-core', github: "netzke/netzke-core"
 ```
 
-By default, Netzke assumes that your Ext JS library is located in public/extjs. It can be a symbolic link, e.g.:
+By default, Netzke assumes that your Ext JS library is located in `public/extjs`. It can be a symbolic link, e.g.:
 
-    $ ln -s ~/code/sencha/ext-4.1.1 public/extjs
+    $ ln -s PATH/TO/YOUR/EXTJS/FILES public/extjs
 
 *(Make sure that the location of the license.txt distributed with Ext JS is exactly `public/extjs/license.txt`)*
 
