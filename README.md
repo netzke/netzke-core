@@ -31,6 +31,8 @@ All this extremely facilitates building fast, low-traffic, robust, and highly ma
 
 *This component is distributed as a part of the test application, see `test/core_test_app/components`.*
 
+Ext JS files are not distributed with Netzke, so, make sure that they are located in (or sym-linked as) `YOUR_APP/public/extjs`.
+
 In `YOUR_APP/components/hello_world.rb`:
 
 ```ruby
