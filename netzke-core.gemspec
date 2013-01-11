@@ -1,4 +1,4 @@
-require "netzke/core/version"
+require "./lib/netzke/core/version"
 
 Gem::Specification.new do |s|
   s.name        = "netzke-core"
