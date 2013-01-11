@@ -18,7 +18,12 @@ class NetzkeController < ApplicationController
       end
       result+=']'
     else # this is a single request
-      result=invoke_endpoint params[:act], params[:method].underscore, params[:data].first, params[:tid]
+      # Work around Rails 3.2.11 issues
+      if ::Rails.version == '3.2.11'
+        result=invoke_endpoint params[:act], params[:method].underscore, params[:data].try(:first), params[:tid]
+      else
+        result=invoke_endpoint params[:act], params[:method].underscore, params[:data].first, params[:tid]
+      end
     end
     render :text => result, :layout => false, :status => error ? 500 : 200
   end
