@@ -1,10 +1,4 @@
 require 'active_support/core_ext'
-require 'netzke/core/options_hash'
-require 'netzke/core/version'
-require 'netzke/core/dynamic_assets'
-require 'netzke/core/client_class'
-require 'netzke/core/css_config'
-require 'netzke/core/config_to_dsl_delegator'
 
 module Netzke
   # This module implements high-level configuration for Netzke Core.
@@ -21,6 +15,16 @@ module Netzke
   # * ext_path - absolute path to your Ext code root
   # * icons_uri - relative URI to the icons
   module Core
+    autoload :ComponentConfig, 'netzke/core/component_config'
+    autoload :ActionConfig, 'netzke/core/action_config'
+    autoload :Panel, 'netzke/core/panel'
+    autoload :EndpointResponse, 'netzke/core/endpoint_response'
+    autoload :Version, 'netzke/core/version'
+    autoload :DynamicAssets, 'netzke/core/dynamic_assets'
+    autoload :ClientClass, 'netzke/core/client_class'
+    autoload :CssConfig, 'netzke/core/css_config'
+    autoload :ConfigToDslDelegator, 'netzke/core/config_to_dsl_delegator'
+
     # :ext (or :touch - when and if ever implemented)
     mattr_accessor :platform
     @@platform = :ext

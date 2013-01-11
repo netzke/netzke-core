@@ -38,6 +38,7 @@ def install_extjs
   system %(ln -s #{extjs_home} #{File.join(GemInfo.test_app_root, 'public', 'extjs')})
 end
 
+desc "Run all tests"
 task :test do
   if TestAppChecker.ready?
     system %(cd #{GemInfo.test_app_root} && rspec spec)
@@ -48,8 +49,7 @@ task :test do
 end
 
 namespace :test do
-
-  desc "Checks if test application is ready for testing."
+  desc "Downloads and installs Ext JS to test app"
   task :install_extjs do
     puts "Installing Extjs library for application in #{GemInfo.test_app_root}".green
     if TestAppChecker.extjs_installed?
