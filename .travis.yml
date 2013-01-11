@@ -1,9 +1,6 @@
 language: ruby
 rvm:
-  - 1.9.2
   - 1.9.3
-gemfile:
-  - Gemfile
 before_script: 
   - chmod 777 ./config/ci/before-travis.sh
   - ./config/ci/before-travis.sh
