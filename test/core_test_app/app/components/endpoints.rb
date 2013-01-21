@@ -9,7 +9,7 @@ class Endpoints < Netzke::Base
   action :callback_and_scope
 
   js_configure do |c|
-    c.title = "Server Caller"
+    c.title = "Endpoints"
     c.mixin
   end
 

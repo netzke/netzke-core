@@ -1,4 +1,4 @@
-class SomeComposite < Netzke::Base
+class Composition < Netzke::Base
   js_configure do |c|
     c.height = 400
     c.layout = :border
@@ -38,7 +38,9 @@ class SomeComposite < Netzke::Base
   action :update_west_panel
   action :update_west_from_server
   action :update_east_south_from_server
-  action :show_hidden_window
+  action :show_hidden_window do |c|
+    c.text = "Show pre-loaded window"
+  end
 
   def configure(c)
     super
@@ -54,12 +56,12 @@ class SomeComposite < Netzke::Base
   end
 
   component :center_panel do |c|
-    c.klass = ServerCaller
+    c.klass = Endpoints
     c.region = :center
   end
 
   component :west_panel do |c|
-    c.klass = ExtendedServerCaller
+    c.klass = ExtendedEndpoints
   end
 
   component :east_center_panel do |c|
@@ -78,7 +80,7 @@ class SomeComposite < Netzke::Base
   component :hidden_window do |c|
     c.klass = SimpleWindow
     c.eager_loading = true # !
-    c.title = "Hidden window gone visible!"
+    c.title = "Pre-loaded window"
     c.width = 300
     c.height = 200
     c.modal = true

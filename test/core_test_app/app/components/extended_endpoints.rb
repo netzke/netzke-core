@@ -1,10 +1,12 @@
-class ExtendedServerCaller < ServerCaller
+class ExtendedEndpoints < Endpoints
   def configure(c)
     super
-    c.title = "Extended Server Caller"
+    c.title = "Extended Endpoints"
   end
 
-
+  action :with_response do |c|
+    c.text = "With extended response"
+  end
 
   js_configure do |c|
     c.on_bug_server = <<-JS
@@ -20,6 +22,6 @@ class ExtendedServerCaller < ServerCaller
   endpoint :whats_up do |params, this|
     super(params, this)
 
-    this.set_title(this.set_title[0] + ", shiny weather")
+    this.set_title(this.set_title[0] + " indeed")
   end
 end

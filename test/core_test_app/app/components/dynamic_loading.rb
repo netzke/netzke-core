@@ -16,7 +16,7 @@ class DynamicLoading < Netzke::Base
     c.height = 300
   end
 
-  component :some_composite
+  component :composition
 
   component :inaccessible do |c|
     c.klass = Netzke::Core::Panel

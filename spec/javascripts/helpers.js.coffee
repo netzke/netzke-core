@@ -42,3 +42,17 @@ window.expectToSee = (text) ->
 window.expectNotToSee = (text) ->
   el = Ext.DomQuery.select("*:contains(" + text + ")")[0]
   throw "Error: didn't expect to find an element containing \"" + text + "\"" if el
+
+window.expectToSeeHeaderWithTitle = (title) ->
+  header = Ext.ComponentQuery.query('header[title="'+title+'"]')[0]
+  throw "Error: expected to see a header with title \"" + title + "\"" if !header
+
+window.expectToSee = (el) ->
+  expect(el).to.be.ok()
+
+window.expectToNotSee = (el) ->
+  expect(el).to.not.be.ok()
+
+window.headerWithTitle = (title) ->
+  query = 'header[title="'+title+'"]'
+  Ext.ComponentQuery.query(query)[0]
