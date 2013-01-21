@@ -1,5 +1,5 @@
 # TODO: some functionality (one that is calling doNothing) does not belong here, as it loads no componens, but rather to ServerCaller. Move it there.
-class ComponentLoader < Netzke::Base
+class DynamicLoading < Netzke::Base
   js_configure do |c|
     c.mixin
   end
@@ -54,8 +54,8 @@ class ComponentLoader < Netzke::Base
   end
 
   endpoint :deliver_component do |params, this|
-    if params[:name] == "simple_component" && params[:html]
-      components[:simple_component].merge!(:html => params[:html])
+    if params[:name] == "simple_component" && params[:title]
+      components[:simple_component].merge!(:title => params[:title])
     end
     super(params, this)
   end

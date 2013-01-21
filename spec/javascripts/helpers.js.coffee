@@ -27,3 +27,18 @@ window.clickButton = (id) ->
   btn = Ext.ComponentQuery.query('button[text="' + id + '"]')[0]
   throw "Button " + id + " not found" if !btn
   btn.btnEl.dom.click()
+
+window.headerWithTitle = (title) ->
+  Ext.ComponentQuery.query('header[title="'+title+'"]')[0]
+
+# Closes the first found window
+window.closeWindow = ->
+  Ext.ComponentQuery.query("window[hidden=false]")[0].close()
+
+window.expectToSee = (text) ->
+  el = Ext.DomQuery.select("*:contains(" + text + ")")[0]
+  throw "Error: expected to find an element containing \"" + text + "\"" if !el
+
+window.expectNotToSee = (text) ->
+  el = Ext.DomQuery.select("*:contains(" + text + ")")[0]
+  throw "Error: didn't expect to find an element containing \"" + text + "\"" if el
