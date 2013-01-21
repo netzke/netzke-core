@@ -4,10 +4,26 @@
   <title>Netzke Core Test App</title>
   <%= csrf_meta_tag %>
   <%= load_netzke minified: true %>
+
+  <% if params[:spec] %>
+    <%= javascript_include_tag "/assets/expect/expect.js" %>
+    <%= javascript_include_tag "/assets/mocha/mocha.js" %>
+    <%= stylesheet_link_tag "/assets/mocha/mocha.css" %>
+    <script>
+      mocha.setup('bdd');
+      mocha.setup({ignoreLeaks: true});
+      Ext.onReady(function(){
+        Netzke.mochaRunner = mocha.run(function(){Netzke.mochaDone = true;});
+      });
+    </script>
+    <%= javascript_include_tag "/specs/helpers" %>
+    <%= javascript_include_tag "/specs/#{params[:spec]}" %>
+  <% end %>
+
 </head>
 <body>
 
 <%= yield %>
-
+<div id="mocha"></div>
 </body>
 </html>

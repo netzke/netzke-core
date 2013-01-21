@@ -1,12 +1,11 @@
 {
-  onBugServer: function(){
+  onWithResponse: function(){
     this.whatsUp();
-    this.update('You should see the response from the server in the title bar the very next moment');
   },
 
   onNoResponse: function(){
     this.noResponse({}, function(){
-      this.update('Successfully called endpoint with no response (this is a callback)');
+      this.setTitle('Successfully called endpoint with no response (this is a callback)');
     }, this);
   },
 
@@ -15,7 +14,7 @@
   },
 
   takeTwoArguments: function(first, second){
-    this.update("Called a function with two arguments: " + first + ", " + second);
+    this.setTitle("Called a function with two arguments: " + first + ", " + second);
   },
 
   onArrayAsArgument: function() {
@@ -24,10 +23,10 @@
 
   takeArrayAsArgument: function(arry) {
     var arryAsString = "['"+ arry.join("', '") + "']";
-    this.update("Called a function with array as arguments: " + arryAsString);
+    this.setTitle("Called a function with array as arguments: " + arryAsString);
   },
 
-  onCallWithGenericCallbackAndScope: function(){
+  onCallbackAndScope: function(){
     var that=this;
     var fancyScope={
       setFancyTitle: function () {
@@ -39,4 +38,9 @@
     }, fancyScope);
   },
 
+  onReturnValue: function() {
+    this.getAnswer(null, function(answer) {
+      this.setTitle("Returned value: " + answer);
+    }, this);
+  }
 }

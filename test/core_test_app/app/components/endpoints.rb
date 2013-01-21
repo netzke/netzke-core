@@ -1,27 +1,27 @@
-class ServerCaller < Netzke::Base
-  action :bug_server # Actual action's text is set in en.yml
+class Endpoints < Netzke::Base
+  action :with_response
   action :no_response
   action :multiple_arguments
   action :array_as_argument
+  action :return_value
 
   # this action is using generic endpoint callback with scope
-  action :call_with_generic_callback_and_scope
+  action :callback_and_scope
 
   js_configure do |c|
     c.title = "Server Caller"
-    c.html = "Wow"
     c.mixin
   end
 
   def configure(c)
     super
-    c.bbar = [:bug_server, :no_response, :multiple_arguments, :array_as_argument, :call_with_generic_callback_and_scope]
+    c.bbar = [:with_response, :no_response, :multiple_arguments, :array_as_argument, :callback_and_scope, :return_value]
 
     # Alternative way of defining bbar:
     # c.docked_items = [{
     #   xtype: :toolbar,
     #   dock: :right,
-    #   items: [:bug_server, :no_response, :multiple_arguments, :array_as_argument]
+    #   items: [:with_response, :no_response, :multiple_arguments, :array_as_argument]
     # }]
   end
 
@@ -41,5 +41,9 @@ class ServerCaller < Netzke::Base
   end
 
   endpoint :do_nothing do |params,this|
+  end
+
+  endpoint :get_answer do |params,this|
+    this.netzke_set_result(42) # special method that passes a value as argument to callback function
   end
 end
