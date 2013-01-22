@@ -1,7 +1,14 @@
 module Helpers
-  def run_js_specs_for(component)
-    visit "/components/#{component}?spec=#{component.underscore}"
+  def run_js_specs_for(component, lang = nil)
+    spec = component.underscore
+    spec << "_#{lang}" if lang
 
+    url = "/components/#{component}?spec=#{spec}"
+    url << "&locale=#{lang}" if lang
+
+    visit url
+
+    # Wait while the test is running
     start = Time.now
     loop do
       done = page.execute_script(<<-JS)
@@ -13,10 +20,13 @@ module Helpers
       raise "Timeout running JavaScript specs for #{component}" if Time.now > start + 10.seconds # no specs are supposed to run longer than this
     end
 
-    # Make wait while the test is running
-    page.execute_script(<<-JS).should == 0
-    var runner = Netzke.mochaRunner;
-    return runner.failures;
+    page.execute_script(<<-JS).should be_true
+      var stats = Netzke.mochaRunner.stats;
+      return stats.failures == 0 && stats.tests !=0
     JS
+  end
+
+  def restore_locale
+    visit "/components/Localization?locale=en"
   end
 end

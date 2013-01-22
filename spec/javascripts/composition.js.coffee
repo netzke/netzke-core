@@ -24,6 +24,6 @@ describe "Composition component", ->
         done()
 
   it "should instantiate a pre-loaded component", ->
-    expectNotToSee headerWithTitle "Pre-loaded window"
+    expectToNotSee headerWithTitle "Pre-loaded window"
     clickButton "Show pre-loaded window"
     expectToSee headerWithTitle "Pre-loaded window"

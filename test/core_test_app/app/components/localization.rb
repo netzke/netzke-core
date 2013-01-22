@@ -1,9 +1,9 @@
-class LocalizedPanel < Netzke::Base
+class Localization < Netzke::Base
   # This action will be translated per-class basis if the translation is available, falling back to the default
   action :action_one
 
   action :action_two do |a|
-    a.text = I18n.t('localized_panel.action_two')
+    a.text = I18n.t('localization.action_two')
   end
 
   action :action_three
@@ -13,9 +13,9 @@ class LocalizedPanel < Netzke::Base
 
     c.on_render = <<-JS
       function(ct){
-        Netzke.classes.LocalizedPanel.superclass.onRender.call(this, ct);
+        this.callParent(this, ct);
 
-        this.body.update(this.i18n.propertyOne + ", " + this.i18n.propertyTwo);
+        this.body.update(this.i18n.propertyOne + " - " + this.i18n.propertyTwo);
       }
     JS
 
@@ -29,7 +29,7 @@ class LocalizedPanel < Netzke::Base
 
   def configure(c)
     super
-    c.title = I18n.t('localized_panel.title')
+    c.title = I18n.t('localization.title')
     c.bbar = [:action_one, :action_two, :action_three]
   end
 end

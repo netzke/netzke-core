@@ -34,14 +34,14 @@ describe 'DynamicLoading component', ->
   it "should gracefully fail loading a non-existing component", (done) ->
     clickButton('Non-existing component')
     wait ->
-      expectToSee "Couldn't load component 'non_existing_component'"
-      expectNotToSee "Loading..."
+      expectToSee somewhere "Couldn't load component 'non_existing_component'"
+      expectToNotSee anywhere "Loading..."
       done()
 
   it "should not be able to load an excluded component", (done) ->
     clickButton('Inaccessible')
     wait ->
-      expectToSee "Couldn't load component 'inaccessible'"
+      expectToSee somewhere "Couldn't load component 'inaccessible'"
       done()
 
   it "should be able to load component's config", (done) ->

@@ -35,14 +35,6 @@ window.headerWithTitle = (title) ->
 window.closeWindow = ->
   Ext.ComponentQuery.query("window[hidden=false]")[0].close()
 
-window.expectToSee = (text) ->
-  el = Ext.DomQuery.select("*:contains(" + text + ")")[0]
-  throw "Error: expected to find an element containing \"" + text + "\"" if !el
-
-window.expectNotToSee = (text) ->
-  el = Ext.DomQuery.select("*:contains(" + text + ")")[0]
-  throw "Error: didn't expect to find an element containing \"" + text + "\"" if el
-
 window.expectToSeeHeaderWithTitle = (title) ->
   header = Ext.ComponentQuery.query('header[title="'+title+'"]')[0]
   throw "Error: expected to see a header with title \"" + title + "\"" if !header
@@ -56,3 +48,14 @@ window.expectToNotSee = (el) ->
 window.headerWithTitle = (title) ->
   query = 'header[title="'+title+'"]'
   Ext.ComponentQuery.query(query)[0]
+
+window.panelWithContent = (text) ->
+  Ext.DomQuery.select("div.x-panel-body:contains(" + text + ")")[0]
+
+window.buttonWithText = (text) ->
+  Ext.ComponentQuery.query "button[text='"+text+"']"
+
+window.somewhere = (text) ->
+  Ext.DomQuery.select("*:contains(" + text + ")")[0]
+
+window.anywhere = window.somewhere
