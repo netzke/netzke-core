@@ -20,10 +20,12 @@ module Helpers
       raise "Timeout running JavaScript specs for #{component}" if Time.now > start + 10.seconds # no specs are supposed to run longer than this
     end
 
-    page.execute_script(<<-JS).should be_true
+    result = page.execute_script(<<-JS)
       var stats = Netzke.mochaRunner.stats;
       return stats.failures == 0 && stats.tests !=0
     JS
+
+    raise "Spec faild at url: #{url}" if !result
   end
 
   def restore_locale
