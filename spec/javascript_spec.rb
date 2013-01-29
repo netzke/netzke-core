@@ -1,29 +1,24 @@
 require 'spec_helper'
 
 feature "JavaScript specs", js: true do
-  tested_components = %w[
-    Actions
-    Tools
-    Endpoints
-    DynamicLoading
-    Composition
-    Localization
-    LocalizationExtended
-    Scoped::Scoping
-    Scoped::ScopingExtended
-    Scoped::DeeplyScoped::Scoping
-    RequireCss
-    LoadedRequireCss
-  ]
+  # create a spec for each file in javascripts/**/* except for extra/ and support/
+  dir = File.join(File.dirname(__FILE__), "javascripts")
+  Dir[File.join(dir, "**/*")].each do |f|
+    next if File.directory?(f)
 
-  tested_components.each do |component|
-    it "should successfully run for #{component}" do
-      run_js_specs_for(component)
+    file = f.gsub(dir, "")[1..-1].split(".").first
+    next if file.index(/helper$/) || file.index(/^extra\//)
+
+    spec = file.gsub("/", "__")
+    comp = file.split("/").map(&:camelize).join("::")
+
+    it "should successfully run for #{comp}" do
+      run_js_specs(comp, spec)
     end
   end
 
   it "should successfully run for Spanish version of Localization" do
-    run_js_specs_for("Localization", :es)
+    run_js_specs("Localization", "extra__localization_es", :es)
     restore_locale
   end
 end
