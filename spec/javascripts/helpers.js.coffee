@@ -23,7 +23,7 @@ window.currentPanelTitle = ->
   throw "Panel not found" if !panel
   panel.getHeader().title
 
-window.headerWithTitle = (title) ->
+window.header = (title) ->
   Ext.ComponentQuery.query('header[title="'+title+'"]')[0]
 
 # Closes the first found window
@@ -36,14 +36,10 @@ window.expectToSee = (el) ->
 window.expectToNotSee = (el) ->
   expect(el).to.not.be.ok()
 
-window.headerWithTitle = (title) ->
-  query = 'header[title="'+title+'"]'
-  Ext.ComponentQuery.query(query)[0]
-
 window.panelWithContent = (text) ->
   Ext.DomQuery.select("div.x-panel-body:contains(" + text + ")")[0]
 
-window.buttonWithText = (text) ->
+window.button = (text) ->
   Ext.ComponentQuery.query("button[text='"+text+"']")[0]
 
 window.somewhere = (text) ->

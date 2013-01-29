@@ -3,8 +3,8 @@ describe "Localization component", ->
     expectToSee panelWithContent "First property - Second property"
 
   it "should display title", ->
-    expectToSee headerWithTitle "Localized Panel"
+    expectToSee header "Localized Panel"
 
   it "should display buttons", ->
-    expectToSee buttonWithText "First action"
-    expectToSee buttonWithText "Second action"
+    expectToSee button "First action"
+    expectToSee button "Second action"
