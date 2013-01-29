@@ -25,6 +25,8 @@ class DynamicLoading < Netzke::Base
 
   component :self_reloading
 
+  component :require_css
+
   # this action is using netzkeLoadComponent "special" callback
   action :load_with_feedback
 
@@ -48,9 +50,11 @@ class DynamicLoading < Netzke::Base
 
   action :load_self_reloading
 
+  action :load_require_css
+
   def configure(c)
     super
-    c.bbar = [:load_component, :load_in_window, :load_with_feedback, :load_window_with_simple_component, :load_composite, :load_with_params, :non_existing_component, :inaccessible, :config_only, :load_self_reloading]
+    c.bbar = [:load_component, :load_in_window, :load_with_feedback, :load_window_with_simple_component, :load_composite, :load_with_params, :non_existing_component, :inaccessible, :config_only, :load_self_reloading, :load_require_css]
   end
 
   endpoint :deliver_component do |params, this|

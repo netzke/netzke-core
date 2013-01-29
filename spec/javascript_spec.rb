@@ -12,6 +12,8 @@ feature "JavaScript specs", js: true do
     Scoped::Scoping
     Scoped::ScopingExtended
     Scoped::DeeplyScoped::Scoping
+    RequireCss
+    LoadedRequireCss
   ]
 
   tested_components.each do |component|

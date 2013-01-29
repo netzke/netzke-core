@@ -49,6 +49,9 @@
 
   onLoadSelfReloading: function() {
     this.netzkeLoadComponent('self_reloading');
-  }
+  },
 
+  onLoadRequireCss: function() {
+    this.netzkeLoadComponent('require_css');
+  }
 }

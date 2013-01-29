@@ -65,3 +65,9 @@ window.click = (cmp) ->
 
 window.tool = (type) ->
   Ext.ComponentQuery.query("tool[type='"+type+"']")[0]
+
+window.component = (id) ->
+  Ext.ComponentQuery.query("panel[id='"+id+"']")[0]
+
+window.expectInvisibleBodyOf = (cmp) ->
+  expect(cmp.body.isVisible()).to.be false
