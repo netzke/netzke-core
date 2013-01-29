@@ -5,6 +5,9 @@ describe "Composition component", ->
     expectToSee headerWithTitle "A panel"
     expectToSee headerWithTitle "Another panel"
 
+  it "should not show excluded component", ->
+    expectToNotSee headerWithTitle "Should not be seen"
+
   it "should have properly working nested components", (done) ->
     click buttonWithText "With response"
     wait ->

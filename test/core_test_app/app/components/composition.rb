@@ -46,6 +46,7 @@ class Composition < Netzke::Base
     super
     c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server, :show_hidden_window ]
     c.items = [
+      :north_panel,
       :center_panel,
       { region: :west, width: 300, split: true, component: :west_panel },
       { layout: :border, region: :east, width: 500, split: true, items: [
@@ -62,6 +63,14 @@ class Composition < Netzke::Base
 
   component :west_panel do |c|
     c.klass = ExtendedEndpoints
+  end
+
+  component :north_panel do |c|
+    c.klass = SimpleComponent
+    c.title = "Should not be seen"
+    c.region = :north
+    c.height = 80
+    c.excluded = true
   end
 
   component :east_center_panel do |c|
