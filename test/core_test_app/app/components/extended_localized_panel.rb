@@ -1,2 +1,0 @@
-class ExtendedLocalizedPanel < LocalizedPanel
-end

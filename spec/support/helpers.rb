@@ -1,6 +1,6 @@
 module Helpers
   def run_js_specs_for(component, lang = nil)
-    spec = component.underscore
+    spec = component.gsub("::", "__").underscore
     spec << "_#{lang}" if lang
 
     url = "/components/#{component}?spec=#{spec}"

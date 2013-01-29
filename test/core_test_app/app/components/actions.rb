@@ -1,6 +1,5 @@
-class ComponentWithActions < Netzke::Base
-  action :some_action do |a|
-    a.text = "Some Cool Action"
+class Actions < Netzke::Base
+  action :simple_action do |a|
     a.icon = Netzke::Core.icons_uri + "/tick.png" # specify full icon uri
   end
 
@@ -22,7 +21,7 @@ class ComponentWithActions < Netzke::Base
   def configure(c)
     super
     c.title = "Panel that has actions"
-    c.bbar = [:some_action, :another_action, :action_with_custom_handler, :excluded_action]
+    c.bbar = [:simple_action, :another_action, :action_with_custom_handler, :excluded_action]
     c.tbar = [{
       :xtype =>  'buttongroup',
       :columns => 3,
@@ -40,21 +39,20 @@ class ComponentWithActions < Netzke::Base
           :rowspan => 3,
           icon: uri_to_icon(:anchor), # use uri_to_icon helper to get the full icon uri
           :arrowAlign => 'bottom',
-          :menu => [:some_action]
+          :menu => [:simple_action]
       },{
           :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action]
       }, :another_action,
       {
-          :menu => [:some_action], :text => 'Format'
+          :menu => [:simple_action], :text => 'Format'
       }]
     }]
   end
 
   js_configure do |c|
-    c.on_some_action = <<-JS
+    c.on_simple_action = <<-JS
       function(){
-        this.update("Some action was triggered");
-        this.netzke.testik();
+        this.setTitle("Simple action triggered");
       }
     JS
 

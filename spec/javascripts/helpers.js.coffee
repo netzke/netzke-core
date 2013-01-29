@@ -23,21 +23,12 @@ window.currentPanelTitle = ->
   throw "Panel not found" if !panel
   panel.getHeader().title
 
-window.clickButton = (id) ->
-  btn = Ext.ComponentQuery.query('button[text="' + id + '"]')[0]
-  throw "Button " + id + " not found" if !btn
-  btn.btnEl.dom.click()
-
 window.headerWithTitle = (title) ->
   Ext.ComponentQuery.query('header[title="'+title+'"]')[0]
 
 # Closes the first found window
 window.closeWindow = ->
   Ext.ComponentQuery.query("window[hidden=false]")[0].close()
-
-window.expectToSeeHeaderWithTitle = (title) ->
-  header = Ext.ComponentQuery.query('header[title="'+title+'"]')[0]
-  throw "Error: expected to see a header with title \"" + title + "\"" if !header
 
 window.expectToSee = (el) ->
   expect(el).to.be.ok()
@@ -53,9 +44,24 @@ window.panelWithContent = (text) ->
   Ext.DomQuery.select("div.x-panel-body:contains(" + text + ")")[0]
 
 window.buttonWithText = (text) ->
-  Ext.ComponentQuery.query "button[text='"+text+"']"
+  Ext.ComponentQuery.query("button[text='"+text+"']")[0]
 
 window.somewhere = (text) ->
   Ext.DomQuery.select("*:contains(" + text + ")")[0]
 
 window.anywhere = window.somewhere
+
+window.expectDisabled = (cmp) ->
+  expect(cmp.isDisabled()).to.be(true)
+
+window.click = (cmp) ->
+  if (cmp.isXType('tool'))
+    # a hack needed for tools
+    el = cmp.toolEl
+  else
+    el = cmp.getEl()
+
+  el.dom.click()
+
+window.tool = (type) ->
+  Ext.ComponentQuery.query("tool[type='"+type+"']")[0]
