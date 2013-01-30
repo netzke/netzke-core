@@ -25,7 +25,7 @@ class DynamicLoading < Netzke::Base
 
   component :self_reloading
 
-  component :require_css
+  component :css_inclusion
 
   # this action is using netzkeLoadComponent "special" callback
   action :load_with_feedback

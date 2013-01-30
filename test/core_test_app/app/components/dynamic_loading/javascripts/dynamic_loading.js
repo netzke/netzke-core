@@ -51,7 +51,7 @@
     this.netzkeLoadComponent('self_reloading');
   },
 
-  onLoadRequireCss: function() {
-    this.netzkeLoadComponent('require_css');
+  onLoadCssInclusion: function() {
+    this.netzkeLoadComponent('css_inclusion');
   }
 }
