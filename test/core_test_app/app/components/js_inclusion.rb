@@ -1,8 +1,8 @@
-class ComponentWithJsMixin < Netzke::Base
+class JsInclusion < Netzke::Base
   js_configure do |c|
     c.require :extra_one, :extra_two
     c.mixin :method_set_one, :method_set_two
-    c.mixin # with no parameters, it'll assume :component_with_js_mixin
+    c.mixin # by default it assumes :js_inclusion
   end
 
   action :action_one
@@ -12,6 +12,6 @@ class ComponentWithJsMixin < Netzke::Base
   def configure(c)
     super
     c.bbar = [:action_one, :action_two, :action_three]
-    c.title = "ComponentWithJsMixin"
+    c.title = "JsInclusion component"
   end
 end
