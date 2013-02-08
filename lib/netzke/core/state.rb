@@ -26,15 +26,15 @@ module Netzke::Core
     #
     #     state[:position] #=> {:x => 100, :y => 200}
     #
-    # May be overridden by persistence subsystems. The object returned by this should implement at least the following methods:
+    # May be overridden by persistence subsystems. The object returned by this should implement the following methods:
     #
     # * []
     # * []=
     # * delete(key)
     # * clear
     def state
-      session[:state] ||= {}
-      session[:state][persistence_key] ||= {}
+      session[:netzke_states] ||= {}
+      session[:netzke_states][persistence_key] ||= {}
     end
   end
 end

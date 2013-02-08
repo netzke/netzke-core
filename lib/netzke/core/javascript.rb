@@ -72,6 +72,10 @@ module Netzke::Core
       c.tools = c.tools.map(&:to_s) if c.tools.present?
 
       c.flash = session[:flash] if session && session[:flash].present?
+
+      # reset component session
+      # TODO: remove even the empty hash from the global session
+      component_session.clear
     end
 
     # Instance-level client class config. The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class.

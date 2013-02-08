@@ -19,13 +19,16 @@ Ext.apply window,
     , 20
 
   click: (cmp) ->
-    if (cmp.isXType('tool'))
-      # a hack needed for tools
-      el = cmp.toolEl
+    if Ext.isString(cmp)
+      throw "Could not locate " + cmp
     else
-      el = cmp.getEl()
+      if (cmp.isXType('tool'))
+        # a hack needed for tools
+        el = cmp.toolEl
+      else
+        el = cmp.getEl()
 
-    el.dom.click()
+      el.dom.click()
 
   # Closes the first found window
   closeWindow: ->

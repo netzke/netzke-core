@@ -1,9 +1,9 @@
 Ext.apply window,
   expectToSee: (el) ->
-    expect(el).to.be.ok()
+    expect(Ext.isObject(el) || Ext.isElement(el)).to.be.ok()
 
   expectToNotSee: (el) ->
-    expect(el).to.not.be.ok()
+    expect(Ext.isString(el)).to.be.ok()
 
   expectDisabled: (cmp) ->
     expect(cmp.isDisabled()).to.be(true)
