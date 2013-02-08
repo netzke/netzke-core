@@ -7,6 +7,11 @@ module ExtDirect
         function(){
           this.callParent();
 
+          Ext.Ajax.on('beforerequest',function (conn, options ) {
+            Netzke.connectionCount = Netzke.connectionCount || 0;
+            Netzke.connectionCount++;
+          });
+
           this.netzkeGetComponent('selector').on('userupdate', function(user){
             this.setUser(user);
             this.netzkeGetComponent('details').update();
