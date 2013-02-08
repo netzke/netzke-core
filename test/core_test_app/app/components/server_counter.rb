@@ -13,17 +13,17 @@ class ServerCounter < Netzke::Base
   def configure(c)
     super
     c.bbar = [:count_one_time, :count_seven_times, :count_eight_times_special, :fail_in_the_middle, :do_ordered, :fail_two_out_of_five]
-    c.title "Server Counter"
+    c.title = "Server Counter"
   end
 
   endpoint :count do |params, this|
     component_session[:count] ||= 0
     component_session[:count] += params[:how_many]
-    this.update_content("I am at " + component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : ''))
+    this.set_title("I am at " + component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : ''))
   end
 
   endpoint :successing_endpoint do |params, this|
-    this.update_content("Something successed ")
+    this.set_title("Something successed ")
   end
 
   endpoint :failing_endpoint do |params, this|
@@ -31,15 +31,15 @@ class ServerCounter < Netzke::Base
   end
 
   endpoint :first_ep do |params, this|
-    component_session[:count]||=0
-    component_session[:count]+=1
-    this.update_content("First. "+ component_session[:count].to_s)
+    component_session[:count2]||=0
+    component_session[:count2]+=1
+    this.set_title("First. "+ component_session[:count2].to_s)
   end
 
   endpoint :second_ep do |params, this|
-    component_session[:count]||=0
-    component_session[:count]+=1
-    this.update_content("Second. "+ component_session[:count].to_s)
+    component_session[:count2]||=0
+    component_session[:count2]+=1
+    this.set_title("Second. "+ component_session[:count2].to_s)
   end
 
   endpoint :fail_two_out_of_five do |count, this|
@@ -53,7 +53,7 @@ class ServerCounter < Netzke::Base
     end
 
     component_session[:is_retry] = false
-    this.update_appending(count)
+    this.append_to_title(count)
   end
 
 end
