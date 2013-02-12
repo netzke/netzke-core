@@ -1,15 +1,15 @@
-class KindaComplexComponent < Netzke::Base
+class RubyModules < Netzke::Base
   module ExtraStuff
     extend ActiveSupport::Concern
 
     included do
-      component :server_caller
+      component :endpoints
     end
 
     # Let's add another tab with a Netzke component in it
     def configure(c)
       super
-      c.items += [{ component: :server_caller }]
+      c.items += [:endpoints]
     end
   end
 end
