@@ -3,7 +3,7 @@ describe 'Endpoints component', ->
     click button 'With response'
 
     wait ->
-      expectToSee header 'All quiet here on the server'
+      expectToSee header 'Response from server'
       done()
 
   it "should call an endpoint without response", (done) ->

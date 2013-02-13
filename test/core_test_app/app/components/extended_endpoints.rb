@@ -22,6 +22,6 @@ class ExtendedEndpoints < Endpoints
   endpoint :whats_up do |params, this|
     super(params, this)
 
-    this.set_title(this.set_title[0] + " indeed")
+    this.set_title(this.set_title[0] + " plus")
   end
 end

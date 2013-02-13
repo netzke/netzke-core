@@ -26,7 +26,7 @@ class Endpoints < Netzke::Base
   end
 
   endpoint :whats_up do |params, this|
-    this.set_title("All quiet here on the server")
+    this.set_title("Response from server")
   end
 
   endpoint :no_response do |params, this|

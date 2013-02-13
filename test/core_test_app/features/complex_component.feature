@@ -15,4 +15,4 @@ Feature: Complex component
     Given I am on the KindaComplexComponent test page
     When I press "Server Caller"
     And I press "Call server"
-    Then I should see "All quiet here on the server"
+    Then I should see "Response from server"

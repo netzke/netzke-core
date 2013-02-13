@@ -287,7 +287,7 @@ An endpoint can instruct the client class to execute a set of methods after its 
 ```ruby
 class SimpleComponent < Netzke::Base
   endpoint :whats_up_server do |params, this|
-    this.set_title("All quiet here on the server")
+    this.set_title("Response from server")
     this.my_method
   end
 end
