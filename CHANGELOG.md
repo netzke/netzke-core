@@ -6,6 +6,7 @@
 
 * improvements
   * minimize core Ruby class extensions
+      * `String.l` is removed. There is usually no need for this method anymore. Should there be problems though (e.g. a function gets serialized as a String), `ActiveSupport::JSON::Variable.new('function(){...}')` can be used.
   * tests can now be run by simply executing `rake` from the gem's root (thanks @allomov)
 
 # v0.8.1 - 2012-12-15
