@@ -7,18 +7,18 @@ module Netzke
     #         c.extend = "Ext.form.Panel"
     #       end
     #     end
-    # TODO: rename to ClientClass
     class ClientClass
-      attr_accessor :included_files, :base_class, :properties, :mixins, :translated_properties
+      attr_accessor :required_files, :base_class, :properties, :mixins, :translated_properties
 
       def initialize(klass)
         @klass = klass
-        @included_files = []
+        @required_files = []
         @mixins = []
         @properties = {
           extend: extended_class,
-          alias: class_alias
+          alias: class_alias,
         }
+        @properties[:mixins] = ['Netzke.classes.Core.Mixin'] if extending_extjs_component?
         @translated_properties = []
       end
 
@@ -38,7 +38,9 @@ module Netzke
       #       end
       #     end
       #
-      # An alternative way to define prototype properties is by using "mixins", see {ClientClass
+      # An alternative way to define prototype properties is by using "mixins", see {ClientClass#mixin}
+      #
+      # Class attributes are accessible from inside +js_configure+:
       #
       #     class MyComponent < Netzke::Base
       #       class_attribute :title
@@ -48,7 +50,7 @@ module Netzke
       #       end
       #     end
       #
-      # Then you can configure your component on a class level like this:
+      # Now you can configure your component on a class level like this:
       #
       #     # e.g. in Rails initializers
       #     MyComponent.title = "New title for all MyComponents"
@@ -59,10 +61,12 @@ module Netzke
       #       config.title = "New title for all MyComponents"
       #     end
       def method_missing(name, *args)
-        return super unless name =~ /(.+)=$/
-
-        value = args.first
-        @properties[$1.to_sym] = value.is_a?(String) && value =~ /^\s*function/ ? ActiveSupport::JSON::Variable.new(value) : value
+        if name =~ /(.+)=$/
+          value = args.first
+          @properties[$1.to_sym] = value.is_a?(String) && value =~ /^\s*function/ ? ActiveSupport::JSON::Variable.new(value) : value
+        else
+          @properties[name.to_sym]
+        end
       end
 
       # Use it to specify JavaScript files to be loaded *before* this component's JavaScript code. Useful when using external extensions required by this component.
@@ -73,21 +77,21 @@ module Netzke
       #
       #     class MyComponent < Netzke::Base
       #       js_configure do |c|
-      #         c.include :some_library
+      #         c.require :some_library
       #       end
       #     end
       #
-      # This will "include" a JavaScript file +{component_location}/my_component/javascripts/some_library.js+
+      # This will "require" a JavaScript file +{component_location}/my_component/javascripts/some_library.js+
       #
-      # Strings will be interpreted as full paths to the included JavaScript file:
+      # Strings will be interpreted as full paths to the required JavaScript file:
       #
       #     js_configure do |c|
-      #       c.include "#{File.dirname(__FILE__)}/my_component/one.js", "#{File.dirname(__FILE__)}/my_component/two.js"
+      #       c.require "#{File.dirname(__FILE__)}/my_component/one.js", "#{File.dirname(__FILE__)}/my_component/two.js"
       #     end
-      def include(*args)
+      def require(*args)
         callr = caller.first
 
-        @included_files |= args.map{ |a| a.is_a?(Symbol) ? expand_include_path(a, callr) : a }
+        @required_files |= args.map{ |a| a.is_a?(Symbol) ? expand_require_path(a, callr) : a }
       end
 
       # Use it to "mixin" JavaScript objects defined in a separate file. It may accept one or more symbols or strings.
@@ -117,7 +121,9 @@ module Netzke
       def mixin(*args)
         args << @klass.name.split("::").last.underscore.to_sym if args.empty?
         callr = caller.first
-        args.each{ |a| @mixins << (a.is_a?(Symbol) ? File.read(expand_include_path(a, callr)) : File.read(a))}
+        args.each do |a|
+          @mixins << (a.is_a?(Symbol) ? expand_require_path(a, callr) : a)
+        end
       end
 
       # Defines the "i18n" config property, that is a translation object for this component, such as:
@@ -157,7 +163,7 @@ module Netzke
         # Defining the scope if it isn't known yet
         res << %{Ext.ns("#{scope}");} unless scope == default_scope
 
-        res << (extending_extjs_component? ? class_declaration_new_component : class_declaration_extending_component)
+        res << class_declaration
 
         # Store created class xtype in the cache
         res << %(
@@ -189,14 +195,14 @@ Netzke.cache.push('#{xtype}');
         @klass.superclass == Netzke::Base
       end
 
-      # Returns all included JavaScript files as a string
-      def js_included
+      # Returns all required JavaScript files as a string
+      def required
         res = ""
 
-        # Prevent re-including code that was already included by the parent
-        # (thus, only include those JS files when include_js was defined in the current class, not in its ancestors)
+        # Prevent re-including code that was already required by the parent
+        # (thus, only require those JS files when require_js was defined in the current class, not in its ancestors)
         # FIXME!
-        ((@klass.singleton_methods(false).map(&:to_sym).include?(:include_js) ? include_js : []) + included_files).each do |path|
+        ((@klass.singleton_methods(false).map(&:to_sym).include?(:include_js) ? include_js : []) + required_files).each do |path|
           f = File.new(path)
           res << f.read << "\n"
         end
@@ -205,20 +211,13 @@ Netzke.cache.push('#{xtype}');
       end
 
       # JavaScript code needed for this particulaer class. Includes external JS code and the JS class definition for self.
-      def js_code
-        [js_included, class_code].join("\n")
+      def code_with_dependencies
+        [required, class_code].join("\n")
       end
-
-    protected
 
       # Generates declaration of the JS class as direct extension of a Ext component
-      def class_declaration_new_component
-%(Ext.define('#{class_name}', Netzke.chainApply(Netzke.componentMixin,\n#{mixins_string} #{properties.to_nifty_json}));)
-      end
-
-      # Generates declaration of the JS class as extension of another Netzke component
-      def class_declaration_extending_component
-%(Ext.define('#{class_name}', Netzke.chainApply(#{mixins_string}#{properties.to_nifty_json}));)
+      def class_declaration
+%(Ext.define('#{class_name}', #{properties_as_string});)
       end
 
       # Alias prefix: 'widget' for components, 'plugin' for plugins
@@ -226,8 +225,17 @@ Netzke.cache.push('#{xtype}');
         @klass < Netzke::Plugin ? "plugin" : "widget"
       end
 
-      def mixins_string
-        self.mixins.empty? ? "" : %(#{self.mixins.join(", \n")}, )
+      def mixins_as_string
+        mixins.presence && mixins.map do |f|
+          as_string = File.read(f)
+          as_string.sub!('{', ' ')
+          as_string[as_string.rindex('}')] = ' '
+          as_string.rstrip
+        end.join(",\n")
+      end
+
+      def properties_as_string
+        [properties.netzke_jsonify.to_json.chop,  mixins_as_string].compact.join(",\n") + "}"
       end
 
       # Default extended class
@@ -235,7 +243,8 @@ Netzke.cache.push('#{xtype}');
         extending_extjs_component? ? "Ext.panel.Panel" : @klass.superclass.js_config.class_name
       end
 
-      def expand_include_path(sym, callr) # :nodoc:
+    private
+      def expand_require_path(sym, callr)
         %Q(#{callr.split(".rb:").first}/javascripts/#{sym}.js)
       end
     end

@@ -6,6 +6,6 @@ class ComponentWithCustomCss < Netzke::Base
   end
 
   css_configure do |c|
-    c.include :custom
+    c.require :custom
   end
 end

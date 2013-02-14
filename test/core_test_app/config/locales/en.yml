@@ -6,12 +6,13 @@ en:
     actions:
       bug_server:
         text: Call server
-        tooltip: Call server, seriously
+        tooltip: This bugs server
+        icon: tick
   extended_server_caller:
     actions:
       bug_server:
         text: Call server extensively
-        tooltip: With overridden tooltip, naturally
+        tooltip: This bugs server in its own way
   localized_panel:
     title: Localized Panel
     property_one: First property

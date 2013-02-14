@@ -9,16 +9,21 @@ class NetzkeController < ApplicationController
         begin
           result += invoke_endpoint(batch[:act], batch[:method].underscore, batch[:data].first, batch[:tid])
         rescue Exception  => e
-          Rails.logger.error "!!! Netzke: Error invoking endpoint: #{batch[:act]} #{batch[:method].underscore} #{batch[:data].inspect} #{batch[:tid]}\n"
-          Rails.logger.error e.message
-          Rails.logger.error e.backtrace.join("\n")
+          logger.error "!!! Netzke: Error invoking endpoint: #{batch[:act]} #{batch[:method].underscore} #{batch[:data].inspect} #{batch[:tid]}\n"
+          logger.error e.message
+          logger.error e.backtrace.join("\n")
           error=true
           break;
         end
       end
       result+=']'
     else # this is a single request
-      result=invoke_endpoint params[:act], params[:method].underscore, params[:data].first, params[:tid]
+      # Work around Rails 3.2.11 issues
+      if ::Rails.version == '3.2.11'
+        result=invoke_endpoint params[:act], params[:method].underscore, params[:data].try(:first), params[:tid]
+      else
+        result=invoke_endpoint params[:act], params[:method].underscore, params[:data].first, params[:tid]
+      end
     end
     render :text => result, :layout => false, :status => error ? 500 : 200
   end
@@ -43,15 +48,15 @@ class NetzkeController < ApplicationController
 
 protected
 
-  def invoke_endpoint(endpoint_path, action, params, tid) #:nodoc:
+  def invoke_endpoint(endpoint_path, action, params, tid)
     component_name, *sub_components = endpoint_path.split('__')
-    components_in_session = Netzke::Core.session[:netzke_components]
+    components_in_session = session[:netzke_components]
 
     if components_in_session
       component_instance = Netzke::Base.instance_by_config(components_in_session[component_name.to_sym])
-      result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params).to_nifty_json
+      result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params).netzke_jsonify.to_json
     else
-      result = {:component_not_in_session => true}.to_nifty_json
+      result = {:netzke_component_not_in_session => true}.netzke_jsonify.to_json
     end
 
     # We render text/plain, so that the browser never modifies our response
@@ -61,7 +66,7 @@ protected
       :tid => tid,
       :action => component_name,
       :method => action,
-      :result => result.present? && result.l || {}
+      :result => result.present? && ActiveSupport::JSON::Variable.new(result) || {}
     }.to_json
   end
 
@@ -70,13 +75,12 @@ protected
   # E.g.: some_grid__post_grid_data.
   def endpoint_dispatch(endpoint_path)
     component_name, *sub_components = endpoint_path.split('__')
-    component_instance = Netzke::Base.instance_by_config(Netzke::Core.session[:netzke_components][component_name.to_sym])
+    component_instance = Netzke::Base.instance_by_config(session[:netzke_components][component_name.to_sym])
 
-    # We render text/plain, so that the browser never modifies our response
-    # NOPE, we can't do it here; this method is only used for classic form submission, and the response from the server should be the (default) "text/html"
+    # We can't do this here; this method is only used for classic form submission, and the response from the server should be the (default) "text/html"
     # response.headers["Content-Type"] = "text/plain; charset=utf-8"
 
-    render :text => component_instance.invoke_endpoint(sub_components.join("__"), params).to_nifty_json, :layout => false
+    render :text => component_instance.invoke_endpoint(sub_components.join("__"), params).netzke_jsonify.to_json, :layout => false
   end
 
 end

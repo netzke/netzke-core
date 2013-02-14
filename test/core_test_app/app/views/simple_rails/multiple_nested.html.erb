@@ -1,23 +1,11 @@
 <%= netzke :tab_panel_one, {
-  :height => 200,
-  :class_name => "SimpleTabPanel",
-  :items => [{
-    netzke_component: :server_caller,
-    :title => "Server Caller One"
-  },{
-    netzke_component: :extended_server_caller,
-    :title => "Server Caller Two"
-  }]
+  height: 200,
+  class_name: "SimpleTabPanel",
+  items: [:server_caller, :extended_server_caller]
 } %>
 
 <%= netzke :tab_panel_two, {
-  :height => 200,
-  :class_name => "SimpleTabPanel",
-  :items => [{
-    netzke_component: :extended_server_caller,
-    :title => "Server Caller One"
-  },{
-    netzke_component: :server_caller,
-    :title => "Server Caller Two"
-  }]
+  height: 200,
+  class_name: "SimpleTabPanel",
+  items: [:extended_server_caller, :server_caller]
 } %>

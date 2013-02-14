@@ -7,10 +7,10 @@ module ExtDirect
         function(){
           this.callParent();
 
-          this.getChildNetzkeComponent('selector').on('userupdate', function(user){
+          this.netzkeGetComponent('selector').on('userupdate', function(user){
             this.setUser(user);
-            this.getChildNetzkeComponent('details').update();
-            this.getChildNetzkeComponent('statistics').update();
+            this.netzkeGetComponent('details').update();
+            this.netzkeGetComponent('statistics').update();
           }, this);
         }
       JS
@@ -33,9 +33,9 @@ module ExtDirect
     def configure(c)
       super
       c.items = [
-        {:region => :north, :height => 100, netzke_component: :selector},
-        {:region => :center, netzke_component: :details},
-        {:region => :east, :width => 300, :split => true, netzke_component: :statistics}
+        {:region => :north, :height => 100, component: :selector},
+        {:region => :center, component: :details},
+        {:region => :east, :width => 300, :split => true, component: :statistics}
       ]
     end
 

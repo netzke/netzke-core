@@ -1,5 +1,5 @@
 class DslDelegatedPropertiesBase < Netzke::Base
-  include Netzke::ConfigToDslDelegator
+  include Netzke::Core::ConfigToDslDelegator
 
   delegates_to_dsl :title, :html
 end

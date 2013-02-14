@@ -1,2 +1,2 @@
-class SimplePanel < Netzke::Base
+class SimplePanel < Netzke::Core::Panel
 end

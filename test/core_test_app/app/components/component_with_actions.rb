@@ -1,13 +1,13 @@
 class ComponentWithActions < Netzke::Base
   action :some_action do |a|
     a.text = "Some Cool Action"
-    a.icon = Netzke::Core.icons_uri + "/tick.png" # specify full icon path
+    a.icon = Netzke::Core.icons_uri + "/tick.png" # specify full icon uri
   end
 
   action :another_action do |a|
     a.disabled = true
     a.text = "Disabled action"
-    a.icon = :accept # the accept.png icon will be looked for in Netzke::Core.icons_uri
+    a.icon = :accept # accept.png icon will be looked for in Netzke::Core.icons_uri
   end
 
   action :action_with_custom_handler do |c|
@@ -15,10 +15,14 @@ class ComponentWithActions < Netzke::Base
     c.handler = :custom_action_handler
   end
 
+  action :excluded_action do |c|
+    c.excluded = true
+  end
+
   def configure(c)
     super
     c.title = "Panel that has actions"
-    c.bbar = [:some_action, :another_action, :action_with_custom_handler]
+    c.bbar = [:some_action, :another_action, :action_with_custom_handler, :excluded_action]
     c.tbar = [{
       :xtype =>  'buttongroup',
       :columns => 3,
@@ -34,8 +38,7 @@ class ComponentWithActions < Netzke::Base
           :text => 'Menu Button',
           :scale => 'large',
           :rowspan => 3,
-          :iconCls => 'add',
-          :iconAlign => 'top',
+          icon: uri_to_icon(:anchor), # use uri_to_icon helper to get the full icon uri
           :arrowAlign => 'bottom',
           :menu => [:some_action]
       },{
@@ -51,6 +54,7 @@ class ComponentWithActions < Netzke::Base
     c.on_some_action = <<-JS
       function(){
         this.update("Some action was triggered");
+        this.netzke.testik();
       }
     JS
 

@@ -1,12 +1,32 @@
-# v0.8.0 - WIP
+# v0.8.2 - WIP
+* bug fix
+  * RuntimeError "can't add a new key into hash during iteration" in Composition in some scenarious (thanks @wupdiwup)
+  * netzkeReload works again
+  * setting `Netzke::Core.ext_uri` to external URI (e.g. Sencha CDN) works now
+
+* improvements
+  * minimize core Ruby class extensions
+  * tests can now be run by simply executing `rake` from the gem's root (thanks @allomov)
+
+# v0.8.1 - 2012-12-15
+* bug fix
+  * in production, JS comment stripping could cause modification of form_authenticity_token (issue #43) (thanks @scho)
+
+# v0.8.0 - 2012-12-09
 ## Misc
   * many backward-incompatible API changes, see below
   * major code clean-up and refactor
   * introduce `Netzke::Core::Panel` - a simple panel with defaults, that can be immediately rendered
   * Netzke child components can now be referred anywhere (e.g. dockedItems), not only in items
   * drop support for Ruby 1.8.7
-  * `netzke_init` view helper method has been renamed to `load_netzke`
+  * rename `netzke_init` view helper method to `load_netzke`
   * `before_load` is gone; if necessary, do preload stuff in the overridden `Base#js_configure`
+  * rename `global_id` to `js_id`
+  * `load_nezke` (previously `netzke_init`) now understands the `minified` option
+  * implement referring to config methods declared in JavaScript from Ruby by using :symbols (see `Netzke::Base`)
+  * i18n of actions takes into account ancestor classes
+  * child component and action config now understand `excluded` option (handy for authorization)
+  * `Base#update_state` and `#clear_state` are gone. Use `state` directly.
 
 ## Component self-configuration
 
@@ -59,7 +79,7 @@ The following DSL methods are gone: `js_include`, `js_mixin`, `js_base_class`, `
     class MyComponent < Netzke::Base
       js_configure do |c|
         c.mixin                     # replaces js_mixin preserving the signature
-        c.include                   # replaces js_include preserving the signature
+        c.require                   # replaces js_include preserving the signature
         c.extend = "Ext.tab.Panel"  # replaces js_base_class
 
         c.title = "My Component"    # use instead of js_property :title, "My Component"
@@ -165,6 +185,8 @@ Defining a component in a block gives an advantage of accessing the `config` met
       c.title = config.east_center_panel_title # something that could be passed as a config option to the parent component
     end
 
+If no `klass` is specified, `Netzke::Core::Panel` is assumed.
+
 ### Overriding child components
 
 Overriding a child component while extending a component is possible by using the same `component` method. To receive the child component config from the superclass, use the `super` method, passing to it the block parameter:
@@ -191,15 +213,15 @@ The `Symbol#component` method is no longer defined. The preferred way of referri
       c.items = [:child_one, :child_two]
     end
 
-Another way (useful when re-configuring the layout of a child component) is by using hashes that have the `netzke_component` key:
+Another way (useful when re-configuring the layout of a child component) is by using hashes that have the `component` key:
 
     def configure(c)
       super
 
       c.items = [
         { xtype: :panel, title: "Simple Ext panel" },
-        { netzke_component: :child_one, title: "First child" },
-        { netzke_component: :child_two, title: "Second child" }
+        { component: :child_one, title: "First child" },
+        { component: :child_two, title: "Second child" }
       ]
     end
 
@@ -218,7 +240,26 @@ It's advised to override the `items` method when a component needs to define it'
 No more `title` and `items` are defined as DSL methods. Include `Netzke::ConfigToDslDelegator` and use `delegate_to_dsl` method if you need that functionality in a component.
 Thus, `Netzke::ConfigToDslDelegator` is not included in Netzke::Base anymore.
 
-# v0.7.7 - ?
+## Defining client class
+
+Client class (JavaScript part of the component) has been refactored.
+
+### Methods renamed
+
+The following public method name changes took place for the sake of consistence:
+
+* localId => netzkeLocalId
+* setResult => netzkeSetResult
+* endpointUrl => netzkeEndpointUrl
+* loadNetzkeComponent => netzkeLoadComponent (signature changed, see "javascripts/ext.js")
+* componentDelivered => netzkeComponentDelivered
+* componentDeliveryFailed => netzkeComponentDeliveryFailed
+* getParentNetzkeComponent => netzkeGetParentComponent
+* reload => netzkeReload
+* instantiateChildNetzkeComponent => netzkeInstantiateComponent
+* getChildNetzkeComponent => netzkeGetComponent
+
+# v0.7.7 - 2012-10-21
 * Ext JS required version bump (4.1.x)
 
 # v0.7.6 - 2012-07-27

@@ -19,7 +19,7 @@ class ComponentWithNestedThrough < Netzke::Base
 
   js_method :on_gear, <<-JS
     function(){
-      this.loadNetzkeComponent({name: 'some_window', callback: function(w){
+      this.netzkeLoadComponent({name: 'some_window', callback: function(w){
         w.show();
       }});
     }

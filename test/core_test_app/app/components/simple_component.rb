@@ -4,8 +4,8 @@ class SimpleComponent < Netzke::Base
   end
 
   def configure(c)
-    super
     c.bbar = ["Hello"]
-    c.title "SimpleComponent!"
+    c.title = "SimpleComponent"
+    super
   end
 end

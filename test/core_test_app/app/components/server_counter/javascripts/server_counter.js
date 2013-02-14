@@ -13,13 +13,15 @@
   },
 
   onCountSevenTimes: function(){
-    for(var i=0; i<7; i++)
+    for(var i=0; i<7; i++) {
       this.count({how_many: 1});
+    }
   },
 
   onCountEightTimesSpecial: function(){
-    for(var i=0;i<8;i++)
+    for(var i=0;i<8;i++) {
       this.count({how_many: 1, special: true});
+    }
   },
 
   onFailInTheMiddle: function() {

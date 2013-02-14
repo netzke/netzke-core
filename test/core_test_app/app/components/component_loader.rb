@@ -18,19 +18,15 @@ class ComponentLoader < Netzke::Base
 
   component :some_composite
 
-  # this action is using loadNetzkeComponent "special" callback
-  action :load_with_feedback
-
-  # this action is using generic endpoint callback
-  action :load_with_generic_callback
-
-  # this action is using generic endpoint callback with scope
-  action :load_with_generic_callback_and_scope
-
-  endpoint :do_nothing do |params|
-    # here be tumbleweed
-#    {}
+  component :inaccessible do |c|
+    c.klass = Netzke::Core::Panel
+    c.excluded = true
   end
+
+  component :self_reloading
+
+  # this action is using netzkeLoadComponent "special" callback
+  action :load_with_feedback
 
   action :load_component
 
@@ -42,13 +38,19 @@ class ComponentLoader < Netzke::Base
 
   action :load_with_params
 
+  action :config_only
+
   action :non_existing_component do |a|
     a.text = "Non-existing component"
   end
 
+  action :inaccessible
+
+  action :load_self_reloading
+
   def configure(c)
     super
-    c.bbar = [:load_component, :load_in_window, :load_with_feedback, :load_window_with_simple_component, :load_composite, :load_with_params, :load_with_generic_callback, :load_with_generic_callback_and_scope, :non_existing_component]
+    c.bbar = [:load_component, :load_in_window, :load_with_feedback, :load_window_with_simple_component, :load_composite, :load_with_params, :non_existing_component, :inaccessible, :config_only, :load_self_reloading]
   end
 
   endpoint :deliver_component do |params, this|

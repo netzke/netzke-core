@@ -44,5 +44,8 @@ module RailsApp
 
     # Enable the asset pipeline
     config.assets.enabled = true
+
+    config.assets.compress = true
+    config.assets.js_compressor = :uglifier
   end
 end

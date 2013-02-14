@@ -16,7 +16,7 @@ class LoaderOfComponentWithCustomCss < Netzke::Base
   js_configure do |c|
     c.on_load_component_with_custom_css = <<-JS
     function(params){
-      this.loadNetzkeComponent({name: 'component_with_custom_css', container: this});
+      this.netzkeLoadComponent({name: 'component_with_custom_css', container: this});
     }
     JS
   end

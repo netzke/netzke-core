@@ -29,7 +29,7 @@ class SomeComposite < Netzke::Base
 
     c.on_show_hidden_window = <<-JS
       function(){
-        this.instantiateChildNetzkeComponent('hidden_window').show();
+        this.netzkeInstantiateComponent('hidden_window').show();
       }
     JS
   end
@@ -45,10 +45,10 @@ class SomeComposite < Netzke::Base
     c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server, :show_hidden_window ]
     c.items = [
       :center_panel,
-      { region: :west, width: 300, split: true, netzke_component: :west_panel },
+      { region: :west, width: 300, split: true, component: :west_panel },
       { layout: :border, region: :east, width: 500, split: true, items: [
-        { region: :center, netzke_component: :east_center_panel },
-        { region: :south, height: 200, split: true, netzke_component: :east_south_panel }
+        { region: :center, component: :east_center_panel },
+        { region: :south, height: 200, split: true, component: :east_south_panel }
       ] }
     ]
   end

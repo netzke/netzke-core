@@ -1,19 +1,12 @@
 language: ruby
 rvm:
-  - 1.9.2
   - 1.9.3
-gemfile:
-  - test/core_test_app/gemfiles/rails3_1.gemfile
-  - test/core_test_app/gemfiles/rails3_2.gemfile
 before_script: 
   - chmod 777 ./config/ci/before-travis.sh
   - ./config/ci/before-travis.sh
 script:
   - export DISPLAY=:99.0
-  - cd test/core_test_app
-  - bundle exec rake db:create db:migrate RAILS_ENV=test
-  - bundle exec rspec spec
-  - bundle exec cucumber features
+  - EXTJS_SRC=cdn bundle exec rake
 branches:
   only:
     - master

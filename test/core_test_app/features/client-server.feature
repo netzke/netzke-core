@@ -9,4 +9,11 @@ Scenario: Ask server to set our title
   Then I should see "Server Caller"
 
   When I press "Call server"
+  And I wait for response from server
   Then I should see "All quiet here on the server"
+
+@selenium
+Scenario: Calling an endpoint with callback and scope
+  Given I am on the ServerCaller test page
+  When I press "Call with generic callback and scope"
+  Then I should see "Fancy title set!"

@@ -6,7 +6,7 @@ class PluginWithComponents < Netzke::Plugin
         this.cmp.tools = this.cmp.tools || [];
         this.cmp.tools.push({type: 'help', handler: function(){
           // we can instantiate this because it was eagerly loaded
-          var w = this.instantiateChildNetzkeComponent('simple_window');
+          var w = this.netzkeInstantiateComponent('simple_window');
           w.show();
         }, scope: this});
       }
