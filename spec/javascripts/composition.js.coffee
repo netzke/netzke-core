@@ -1,7 +1,7 @@
 describe "Composition component", ->
   it "should have 4 nested components", ->
     expectToSee header "Endpoints"
-    expectToSee header "Extended Endpoints"
+    expectToSee header "Endpoints Extended"
     expectToSee header "A panel"
     expectToSee header "Another panel"
 

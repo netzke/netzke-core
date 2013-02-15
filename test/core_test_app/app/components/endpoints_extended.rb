@@ -1,7 +1,7 @@
-class ExtendedEndpoints < Endpoints
+class EndpointsExtended < Endpoints
   def configure(c)
     super
-    c.title = "Extended Endpoints"
+    c.title = "Endpoints Extended"
   end
 
   action :with_response do |c|

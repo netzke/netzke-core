@@ -1,11 +1,10 @@
-# Not used in automatic tests
+# For demo purposes. Not used in testing.
 class SimpleFormWithFileUpload < Netzke::Base
   js_configure do |c|
     c.extend = "Ext.form.Panel"
     c.body_padding = 10
     c.on_submit = <<-JS
       function(){
-
         var msg = function(title, msg) {
             Ext.Msg.show({
                 title: title,

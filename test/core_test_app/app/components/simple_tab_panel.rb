@@ -10,7 +10,7 @@ class SimpleTabPanel < Netzke::Base
     c.excluded = true
   end
 
-  component :extended_endpoints
+  component :endpoints_extended
 
   component :simple_panel_one do |c|
     c.klass = SimplePanel
@@ -21,7 +21,7 @@ class SimpleTabPanel < Netzke::Base
   end
 
   def configure(c)
-    c.items = [:endpoints, :hello_world, :extended_endpoints, :simple_panel_one, :simple_panel_two]
+    c.items = [:endpoints, :hello_world, :endpoints_extended, :simple_panel_one, :simple_panel_two]
     super
   end
 end

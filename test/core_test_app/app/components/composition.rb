@@ -62,7 +62,7 @@ class Composition < Netzke::Base
   end
 
   component :west_panel do |c|
-    c.klass = ExtendedEndpoints
+    c.klass = EndpointsExtended
   end
 
   component :north_panel do |c|

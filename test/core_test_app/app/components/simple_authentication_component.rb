@@ -1,3 +1,4 @@
+# For demo purposes. Not used in testing.
 class SimpleAuthenticationComponent < Netzke::Base
   action :sign_in
 

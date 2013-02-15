@@ -1,3 +1,4 @@
+# Used in DynamicLoading
 class WindowWithSimpleComponent < SimpleWindow
   js_configure do |c|
     c.layout = :fit
