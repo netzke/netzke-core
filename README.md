@@ -349,7 +349,7 @@ The bundled `test/core_test_app` application used for automated testing can be e
 
 For example [http://localhost:3000/components/Endpoints](http://localhost:3000/components/Endpoints)
 
-To run a specific Mocha JS spec (located in `spec/javascripts`) for a component, append `?spec={name of spec}`, for example:
+To run a specific Mocha JS spec (located in `spec/mocha`) for a component, append `?spec={name of spec}`, for example:
 
     [http://localhost:3000/components/Endpoints?spec=endpoints](http://localhost:3000/components/Endpoints?spec=endpoints)
 
