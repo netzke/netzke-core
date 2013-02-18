@@ -1,4 +1,14 @@
 en:
+  foo:
+    actions:
+      foo_action:
+        text: 'Foo'
+        tooltip: 'Foo!'
+  foo_ext:
+    actions:
+      foo_action:
+        text: 'Foo plus'
+        tooltip: 'Foo plus!'
   server_caller:
     actions:
       bug_server:

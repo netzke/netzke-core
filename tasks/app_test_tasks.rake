@@ -41,7 +41,7 @@ end
 desc "Run all tests"
 task :test do
   if TestAppChecker.ready?
-    system(%(cd #{GemInfo.test_app_root} && rspec spec)) && system(%(cd #{GemInfo.test_app_root} && cucumber features)) || abort
+    system("bundle exec rspec spec") || abort
   else
     abort("Test application in #{GemInfo.test_app_root} is not ready. You can run rake test:check to see what is wrong.")
   end
