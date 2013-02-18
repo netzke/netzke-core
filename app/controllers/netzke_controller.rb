@@ -19,7 +19,7 @@ class NetzkeController < ApplicationController
       result+=']'
     else # this is a single request
       # Work around Rails 3.2.11 issues
-      if ::Rails.version == '3.2.11'
+      if ::Rails.version >= '3.2.11'
         result=invoke_endpoint params[:act], params[:method].underscore, params[:data].try(:first), params[:tid]
       else
         result=invoke_endpoint params[:act], params[:method].underscore, params[:data].first, params[:tid]
