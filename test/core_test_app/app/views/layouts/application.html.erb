@@ -16,9 +16,9 @@
         Netzke.mochaRunner = mocha.run(function(){Netzke.mochaDone = true;});
       });
     </script>
-    <%= javascript_include_tag "/specs/action_helper" %>
-    <%= javascript_include_tag "/specs/query_helper" %>
-    <%= javascript_include_tag "/specs/expectation_helper" %>
+    <%= javascript_include_tag "/specs/support__action_helper" %>
+    <%= javascript_include_tag "/specs/support__query_helper" %>
+    <%= javascript_include_tag "/specs/support__expectation_helper" %>
     <%= javascript_include_tag "/specs/#{params[:spec]}" %>
   <% end %>
 
