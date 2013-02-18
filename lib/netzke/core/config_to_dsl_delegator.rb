@@ -33,13 +33,6 @@ module Netzke::Core
 
       class_attribute :delegated_defaults
       self.delegated_defaults = {}
-
-      delegated_options.each do |property|
-        inherited_class.class.send(:define_method, property, lambda { |value|
-          self.delegated_defaults = self.delegated_defaults.dup if self.superclass.respond_to?(:delegated_defaults) && self.delegated_defaults == self.superclass.delegated_defaults
-          self.delegated_defaults[property.to_sym] = value
-        })
-      end
     end
 
     def configure(c)

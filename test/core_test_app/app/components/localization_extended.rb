@@ -1,0 +1,2 @@
+class LocalizationExtended < Localization
+end

@@ -4,6 +4,8 @@ module Netzke::Core
   #   class MyComponent < Netzke::Base
   #     action :do_something do |c|
   #       c.text = "Do it!"
+  #       c.tooltip = "Do something"
+  #       c.icon = :tick
   #     end
   #   end
   class ActionConfig < ActiveSupport::OrderedOptions

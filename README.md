@@ -1,4 +1,4 @@
-# Netzke Core [![Gem Version](https://fury-badge.herokuapp.com/rb/netzke-core.png)](http://badge.fury.io/rb/netzke-core) [![Build Status](https://secure.travis-ci.org/netzke/netzke-core.png?branch=master)](http://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/netzke/netzke-core)
+# Netzke Core [![Gem Version](https://fury-badge.herokuapp.com/rb/netzke-core.png)](http://badge.fury.io/rb/netzke-core) [![Build Status](https://travis-ci.org/netzke/netzke-core.png?branch=master)](https://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/github/netzke/netzke-core.png)](https://codeclimate.com/github/netzke/netzke-core)
 
 [RDocs](http://rdoc.info/projects/netzke/netzke-core)
 
@@ -287,7 +287,7 @@ An endpoint can instruct the client class to execute a set of methods after its 
 ```ruby
 class SimpleComponent < Netzke::Base
   endpoint :whats_up_server do |params, this|
-    this.set_title("All quiet here on the server")
+    this.set_title("Response from server")
     this.my_method
   end
 end
@@ -343,11 +343,15 @@ By default, Netzke assumes that your Ext JS library is located in `public/extjs`
 
 ## Running tests
 
-The bundled `test/core_test_app` application used for automated testing can be easily run as a stand-alone Rails app. It's a good source of concise, focused examples. After starting the application, access any of the test components (located in `app/components`) by using the following url:
+The bundled `test/core_test_app` application used for automated testing can be easily run as a stand-alone Rails app. It's a good source of concise, focused examples. After starting the application, access any of the test components (located in `test/core_test_app/app/components`) by using the following url:
 
     http://localhost:3000/components/{name of the component's class}
 
-For example [http://localhost:3000/components/ServerCaller](http://localhost:3000/components/ServerCaller)
+For example [http://localhost:3000/components/Endpoints](http://localhost:3000/components/Endpoints)
+
+To run a specific Mocha JS spec (located in `spec/javascripts`) for a component, append `?spec={name of spec}`, for example:
+
+    [http://localhost:3000/components/Endpoints?spec=endpoints](http://localhost:3000/components/Endpoints?spec=endpoints)
 
 To run all the tests (from the gem's root):
 
@@ -358,6 +362,7 @@ This assumes that the Ext JS library is located/symlinked in `test/core_test_app
     $ EXTJS_SRC=cdn rake
 
 ## Useful links
+
 * [Project website](http://netzke.org)
 * [Live demo](http://netzke-demo.herokuapp.com) (features [Netzke Basepack](https://github.com/netzke/netzke-basepack), with sample code)
 * [Twitter](http://twitter.com/netzke) - latest news about the framework

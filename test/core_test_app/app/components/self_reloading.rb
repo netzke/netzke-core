@@ -1,3 +1,4 @@
+# For demo purposes. Not used for testing.
 class SelfReloading < Netzke::Base
   action :reload
 

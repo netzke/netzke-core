@@ -1,31 +1,16 @@
 class NetzkeController < ApplicationController
-  # Action for Ext.Direct RPC calls
+  # Handles Ext.Direct RPC calls
   def direct
-    result=""
-    error=false
     if params['_json'] # this is a batched request
+      response = []
       params['_json'].each do |batch|
-        result += result.blank? ? '[' : ', '
-        begin
-          result += invoke_endpoint(batch[:act], batch[:method].underscore, batch[:data].first, batch[:tid])
-        rescue Exception  => e
-          logger.error "!!! Netzke: Error invoking endpoint: #{batch[:act]} #{batch[:method].underscore} #{batch[:data].inspect} #{batch[:tid]}\n"
-          logger.error e.message
-          logger.error e.backtrace.join("\n")
-          error=true
-          break;
-        end
+        response << invoke_endpoint(batch)
       end
-      result+=']'
     else # this is a single request
-      # Work around Rails 3.2.11 issues
-      if ::Rails.version == '3.2.11'
-        result=invoke_endpoint params[:act], params[:method].underscore, params[:data].try(:first), params[:tid]
-      else
-        result=invoke_endpoint params[:act], params[:method].underscore, params[:data].first, params[:tid]
-      end
+      response = invoke_endpoint(params)
     end
-    render :text => result, :layout => false, :status => error ? 500 : 200
+
+    render text: response.to_json, layout: false
   end
 
   # On-the-fly generation of public/netzke/ext.[js|css]
@@ -48,15 +33,17 @@ class NetzkeController < ApplicationController
 
 protected
 
-  def invoke_endpoint(endpoint_path, action, params, tid)
-    component_name, *sub_components = endpoint_path.split('__')
+  def invoke_endpoint(request_params)
+    path, action, params, tid = parse_request_params(request_params)
+
+    component_name, *sub_components = path.split('__')
     components_in_session = session[:netzke_components]
 
     if components_in_session
       component_instance = Netzke::Base.instance_by_config(components_in_session[component_name.to_sym])
-      result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params).netzke_jsonify.to_json
+      result = component_instance.invoke_endpoint((sub_components + [action]).join("__"), params).netzke_jsonify
     else
-      result = {:netzke_component_not_in_session => true}.netzke_jsonify.to_json
+      result = {:netzke_component_not_in_session => true}.netzke_jsonify
     end
 
     # We render text/plain, so that the browser never modifies our response
@@ -66,8 +53,17 @@ protected
       :tid => tid,
       :action => component_name,
       :method => action,
-      :result => result.present? && ActiveSupport::JSON::Variable.new(result) || {}
-    }.to_json
+      :result => ActiveSupport::JSON::Variable.new(result.to_json)
+    }
+  end
+
+  def parse_request_params(params)
+    path = params[:act]
+    action = params[:method].underscore
+    ep_params = params[:data].try(:first) # Rails >= 3.2.11 returns nil in request_params[:data]
+    tid = params[:tid]
+
+    [path, action, ep_params, tid]
   end
 
   # The dispatcher for the old-style requests (used for multi-part form submission). The URL contains the name of the component,

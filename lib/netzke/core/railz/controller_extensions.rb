@@ -6,7 +6,7 @@ module Netzke
         base.send(:before_filter, :set_controller_and_session)
       end
 
-      protected
+    protected
 
       def set_controller_and_session
         Netzke::Base.controller = self

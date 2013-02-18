@@ -1,8 +1,7 @@
 #
 #  Task for test performing :
 #
-#      test         - run tests on test rails application, it will run `rspec spec` and
-#                     `cucumber features` on application from test/core_test_app folder.
+#      test         - run tests on test rails application, it will run `rspec spec`
 #
 #      test:prepare - prepare test application for testing, creates symbolic link to
 #                     database.yml from database.sample.yml and run db:create, db:migrate
@@ -41,7 +40,7 @@ end
 desc "Run all tests"
 task :test do
   if TestAppChecker.ready?
-    system(%(cd #{GemInfo.test_app_root} && rspec spec)) && system(%(cd #{GemInfo.test_app_root} && cucumber features)) || abort
+    system("bundle exec rspec spec") || abort
   else
     abort("Test application in #{GemInfo.test_app_root} is not ready. You can run rake test:check to see what is wrong.")
   end

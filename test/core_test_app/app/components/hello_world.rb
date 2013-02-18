@@ -1,3 +1,4 @@
+# For demo purposes. Not used for testing.
 class HelloWorld < Netzke::Base
   # Configure clint class
   js_configure do |c|
