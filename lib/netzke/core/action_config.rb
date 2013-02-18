@@ -16,6 +16,7 @@ module Netzke::Core
 
       build_localized_attributes
 
+      self.name = @name
       self.text = @text.presence || @name.humanize
       self.tooltip = @tooltip.presence || @name.humanize
       self.icon = @icon.to_sym if @icon.present?

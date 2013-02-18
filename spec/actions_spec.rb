@@ -23,6 +23,10 @@ module Netzke::Core
       action :action_five do |a|
         a.text = "Action 5"
       end
+
+      action :action_six do |c|
+        c.text = c.name.humanize + " text"
+      end
     end
 
     class ExtendedComponent < SomeComponent
@@ -57,17 +61,16 @@ module Netzke::Core
 
     it "should auto collect actions from both js_methods and config" do
       component = SomeComponent.new
-      component.actions.keys.size.should == 5
       component.actions[:action_one][:text].should == "Action one"
       component.actions[:action_two][:text].should == "Action two"
       component.actions[:action_three][:text].should == "Action three"
       component.actions[:action_four][:text].should == "Action 4"
       component.actions[:action_five][:text].should == "Action 5"
+      component.actions[:action_six][:text].should == "Action six text"
     end
 
     it "should not override previous actions when reconfiguring bars in child class" do
       component = ExtendedComponent.new
-      # component.actions.keys.size.should == 5
       component.actions[:action_one][:text].should == "Action one"
       component.actions[:action_two][:text].should == "Action two"
       component.actions[:action_three][:text].should == "Action three"
