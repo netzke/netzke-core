@@ -1,8 +1,7 @@
 #
 #  Task for test performing :
 #
-#      test         - run tests on test rails application, it will run `rspec spec` and
-#                     `cucumber features` on application from test/core_test_app folder.
+#      test         - run tests on test rails application, it will run `rspec spec`
 #
 #      test:prepare - prepare test application for testing, creates symbolic link to
 #                     database.yml from database.sample.yml and run db:create, db:migrate
