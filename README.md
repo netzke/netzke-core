@@ -250,7 +250,7 @@ Actions can also be referred to is submenus:
   c.tbar = [{text: 'Menu', menu: {items: [:show_report]}}]
 ```
 
-For more details on composition refer to [Netzke::Core::Action](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Action).
+For more details on composition refer to [Netzke::Core::Actions](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
 
 ## Client-server interaction
 
