@@ -43,39 +43,39 @@ module Netzke::Core
     def js_configure(c)
       c.merge!(normalized_config)
 
-      # Unique id of the component
-      c.id = js_id
-
-      # Configuration for all of our non-lazy-loaded children specified here. We can refer to them in +items+ so they get instantiated by Ext.
-      c.netzke_components = js_components unless js_components.empty?
-
-      # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
-      endpoints = self.class.endpoints.keys - [:deliver_component]
-
-      # pass them as strings, not as symbols
-      c.endpoints = endpoints.map(&:to_s) unless endpoints.empty?
-
-      # Include our xtype
-      c.xtype = self.class.js_config.xtype
-
-      # Include our alias: Ext.createByAlias may be used to instantiate the component.
-      c.alias = self.class.js_config.class_alias
-
       # So we can use getComponent(<component_name>) to retrieve a child component
       c.item_id ||= name
 
-      c.i18n = js_translate_properties if js_translate_properties.present?
-
-      c.netzke_plugins = plugins.map{ |p| p.to_s.camelcase(:lower) } if plugins.present?
-
-      # we need to pass them as strigs, not as symbols
-      c.tools = c.tools.map(&:to_s) if c.tools.present?
-
-      c.flash = session[:flash] if session && session[:flash].present?
+      %w[id netzke_components endpoints xtype alias i18n netzke_plugins flash].each do |thing|
+        js_thing = send "js_#{thing}"
+        c[thing] = js_thing if js_thing.present?
+      end
 
       # reset component session
-      # TODO: remove even the empty hash from the global session
+      # TODO: also remove empty hashes from the global session
       component_session.clear
+    end
+
+    def js_xtype
+      self.class.js_config.xtype
+    end
+
+    # Ext.createByAlias may be used to instantiate the component.
+    def js_alias
+      self.class.js_config.class_alias
+    end
+
+    # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
+    def js_endpoints
+      self.class.endpoints.keys - [:deliver_component]
+    end
+
+    def js_netzke_plugins
+      plugins.map{ |p| p.to_s.camelcase(:lower) }
+    end
+
+    def js_flash
+      session && session[:flash]
     end
 
     # Instance-level client class config. The result of this method (a hash) is converted to a JSON object and passed as options to the constructor of our JavaScript class.
@@ -92,6 +92,8 @@ module Netzke::Core
       end
     end
 
+    alias js_netzke_components js_components
+
     # All the JS-code required by this instance of the component to be instantiated in the browser.
     # It includes JS-classes for the parents, eagerly loaded child components, and itself.
     def js_missing_code(cached = [])
@@ -105,8 +107,8 @@ module Netzke::Core
 
     # Merges all the translations in the class hierarchy
     # Note: this method can't be moved out to ClientClass, because I18n is loaded only once, when other Ruby classes are evaluated; so, this must remain at instance level.
-    def js_translate_properties
-      @js_translate_properties ||= self.class.netzke_ancestors.inject({}) do |r,klass|
+    def js_i18n
+      @js_i18n ||= self.class.netzke_ancestors.inject({}) do |r,klass|
         hsh = klass.js_config.translated_properties.inject({}) { |h,t| h.merge(t => I18n.t("#{klass.i18n_id}.#{t}")) }
         r.merge(hsh)
       end
