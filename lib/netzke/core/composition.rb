@@ -79,16 +79,10 @@ module Netzke::Core
   module Composition
     extend ActiveSupport::Concern
 
-    COMPONENT_METHOD_NAME = "%s_component"
-
-
     included do
+      # Declares Base.component, for declaring child componets, and Base#components, which returns a [Hash] of all component configs by name
+      declare_dsl_for :components
 
-      # Returns registered components
-      class_attribute :registered_components
-      self.registered_components = []
-
-      # @!method Foobar
       # Loads a component on browser's request. Every Netzke component gets this endpoint.
       # <tt>params</tt> should contain:
       # * <tt>:cache</tt> - an array of component classes cached at the browser
@@ -111,44 +105,6 @@ module Netzke::Core
       end
 
     end # included
-
-    module ClassMethods
-
-      # Declares a child (nested) component.
-      # @param name [Symbol] component name
-      # @param block [Proc] config block
-      # @example
-      #   component :users do |c|
-      #     c.klass = Netzke::Basepack::Grid
-      #     c.modul = "User"
-      #   end
-      def component(name, &block)
-        self.registered_components |= [name]
-
-        method_name = COMPONENT_METHOD_NAME % name
-        if block_given?
-          define_method(method_name, &block)
-        else
-          define_method(method_name) do |component_config|
-            component_config
-          end
-        end
-      end
-    end
-
-    # @return [Hash] component configs by name
-    def components
-      @components ||= self.class.registered_components.inject({}) do |out, name|
-        component_config = Netzke::Core::ComponentConfig.new(name)
-        send(COMPONENT_METHOD_NAME % name, component_config)
-        component_config.set_defaults!
-        if component_config.excluded
-          out.merge(name.to_sym => {excluded: true})
-        else
-          out.merge(name.to_sym => component_config)
-        end
-      end
-    end
 
     # @return [Hash] configs of eagerly loaded components by name
     def eagerly_loaded_components

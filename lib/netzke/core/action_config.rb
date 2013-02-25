@@ -26,6 +26,10 @@ module Netzke::Core
       self[:icon] = path.is_a?(Symbol) ? Netzke::Base.uri_to_icon(path) : path
     end
 
+    # later
+    def set_defaults!
+    end
+
   private
 
     def build_localized_attributes

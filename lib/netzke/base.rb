@@ -1,5 +1,6 @@
 require 'active_support/core_ext'
 require 'netzke/core/ruby_ext'
+require 'netzke/core/dsl_support'
 require 'netzke/core/javascript'
 require 'netzke/core/stylesheets'
 require 'netzke/core/services'
@@ -43,6 +44,7 @@ module Netzke
   #
   # This doesn't necessarily have to be used in toolbars, but also in other places in config (i.e. layouts).
   class Base
+    include Core::DslSupport
     include Core::Session
     include Core::State
     include Core::Configuration

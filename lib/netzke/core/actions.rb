@@ -67,46 +67,16 @@ module Netzke::Core
   module Actions
     extend ActiveSupport::Concern
 
-    ACTION_METHOD_NAME = "%s_action"
-
     included do
-      # Returns registered actions
-      class_attribute :registered_actions
-      self.registered_actions = []
+      # Declares Base.action, for declaring actions, and Base#actions, which returns a [Hash] of all action configs by name
+      declare_dsl_for :actions
     end
 
     module ClassMethods
-      def action(name, &block)
-        self.registered_actions |= [name]
-
-        method_name = ACTION_METHOD_NAME % name
-
-        if block_given?
-          define_method(method_name, &block)
-        else
-          define_method(method_name) do |action_config|
-            action_config
-          end
-        end
-      end
-
       # Must stay public, used from ActionConfig
       # @return [String|nil] full URI to an icon file by its name (provided we have a controller)
       def uri_to_icon(icon)
         Netzke::Core.with_icons ? [(controller && controller.config.relative_url_root), Netzke::Core.icons_uri, '/', icon.to_s, ".png"].join : nil
-      end
-    end
-
-    # All actions for this instance
-    def actions
-      @actions ||= self.class.registered_actions.inject({}) do |res, name|
-        action_config = Netzke::Core::ActionConfig.new(name, self)
-        send(ACTION_METHOD_NAME % name, action_config)
-        if action_config.excluded
-          res.merge(name.to_sym => {excluded: true})
-        else
-          res.merge(name.to_sym => action_config)
-        end
       end
     end
 

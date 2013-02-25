@@ -1,6 +1,6 @@
 module Netzke::Core
   class ComponentConfig < ActiveSupport::OrderedOptions
-    def initialize(name)
+    def initialize(name, parent)
       self.name = name.to_s
     end
 
