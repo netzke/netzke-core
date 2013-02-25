@@ -11,7 +11,7 @@
     <%= stylesheet_link_tag "/assets/mocha/mocha.css" %>
     <script>
       mocha.setup('bdd');
-      mocha.setup({ignoreLeaks: true});
+      mocha.setup({ignoreLeaks: true, slow: 500});
       Ext.onReady(function(){
         Netzke.mochaRunner = mocha.run(function(){Netzke.mochaDone = true;});
       });
