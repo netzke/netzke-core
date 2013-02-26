@@ -8,12 +8,14 @@ module Netzke
   #     Netzke::Core.setup do |config|
   #       config.ext_location = "/home/netzke/ext-4.1.1"
   #       config.icons_uri = "/images/famfamfam/icons"
+  #       config.parent_controller_class = AdminController
   #       # ...
   #     end
   #
   # The following configuration options are available:
   # * ext_path - absolute path to your Ext code root
   # * icons_uri - relative URI to the icons
+  # * parent_controller_class - class name for the parent controller (defaults to ApplicationController)
   module Core
     autoload :ComponentConfig, 'netzke/core/component_config'
     autoload :ActionConfig, 'netzke/core/action_config'
