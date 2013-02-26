@@ -52,6 +52,8 @@ module Netzke
     @@js_direct_max_retries = 0
 
     mattr_accessor :with_icons
+    
+    mattr_accessor :parent_controller_class
 
     def self.setup
       yield self
