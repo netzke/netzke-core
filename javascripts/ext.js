@@ -22,25 +22,26 @@ Ext.QuickTips.init();
 
 // FeedbackGhost is a little class that displays unified feedback from Netzke components.
 Ext.define('Netzke.FeedbackGhost', {
-  showFeedback: function(msg){
-    if (!msg) Netzke.exception("Netzke.FeedbackGhost#showFeedback: wrong number of arguments (0 for 1)");
+  showFeedback: function(msg, options){
+    options = options || {};
+    options.delay = options.delay || Netzke.core.FeedbackDelay;
     if (Ext.isObject(msg)) {
-      this.msg(msg.level.camelize(), msg.msg);
+      this.msg(msg.level.camelize(), msg.msg, options.delay);
     } else if (Ext.isArray(msg)) {
       Ext.each(msg, function(m) { this.showFeedback(m); }, this);
     } else {
-      this.msg(null, msg); // no header for now
+      this.msg(null, msg, options.delay); // no header for now
     }
   },
 
-  msg: function(title, format){
+  msg: function(title, format, delay){
       if(!this.msgCt){
           this.msgCt = Ext.core.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
       }
       var s = Ext.String.format.apply(String, Array.prototype.slice.call(arguments, 1));
       var m = Ext.core.DomHelper.append(this.msgCt, this.createBox(title, s), true);
       m.hide();
-      m.slideIn('t').ghost("t", { delay: 1000, remove: true});
+      m.slideIn('t').ghost("t", { delay: delay, remove: true});
   },
 
   createBox: function(t, s){
@@ -399,13 +400,13 @@ Ext.define(null, {
   /**
   * Provides a visual feedback. TODO: refactor
   */
-  netzkeFeedback: function(msg){
-    if (this.initialConfig && this.initialConfig.quiet) {
-      return false;
-    }
+  netzkeFeedback: function(msg, options){
+    if (this.initialConfig && this.initialConfig.quiet) return false;
+
+    options = options || {};
 
     if (this.feedbackGhost) {
-      this.feedbackGhost.showFeedback(msg);
+      this.feedbackGhost.showFeedback(msg, {delay: options.delay});
     } else {
       // there's no application to show the feedback - so, we do it ourselves
       if (typeof msg == 'string'){

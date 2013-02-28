@@ -7,6 +7,8 @@
 * improvements
   * minimize core Ruby class extensions
   * tests can now be run by simply executing `rake` from the gem's root (thanks @allomov)
+  * feedback delay is now globally configurable
+  * netzkeFeedback now understands {delay: seconds} as second parameter
 
 # v0.8.1 - 2012-12-15
 * bug fix
