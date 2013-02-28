@@ -1,4 +1,4 @@
-class NetzkeController < ApplicationController
+class NetzkeController < Netzke::Core.parent_controller_class || ApplicationController
   # Handles Ext.Direct RPC calls
   def direct
     if params['_json'] # this is a batched request
