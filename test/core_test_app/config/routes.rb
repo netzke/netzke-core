@@ -1,5 +1,12 @@
 RailsApp::Application.routes.draw do
-  netzke "/some/path/netzke" # the path is optional
+  # Defaults (NetzkeController mounted at /netzke)
+  netzke
+
+  # Specify custom mount url
+  # netzke "/some/path/netzke"
+
+  # Specify custom controller (AlternativeController)
+  # netzke '/netzke', controller: :alternative
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
