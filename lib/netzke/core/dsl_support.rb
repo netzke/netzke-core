@@ -4,11 +4,11 @@ module Netzke
       extend ActiveSupport::Concern
 
       module ClassMethods
-        # It's the easiest to explain by example.
+        # It's the easiest to be explained by an example:
         #
         #     declare_dsl_for :components
         #
-        # creates:
+        # This creates:
         #
         # 1) DSL method `component` for declaration of child component in a given class, e.g.:
         #
@@ -22,35 +22,47 @@ module Netzke
         #       # ...
         #     end
         #
-        # 2) Instance method `components` that returns a hash of all components configs. This hash is built by passing a new instance of `Netzke::Core::ComponentConfig` to each of the methods described in 1). The presence of `Netzke::Core::ComponentConfig` is assumed.
+        # 2) Instance method `components` that returns a hash of all components configs. This hash is built by passing a new instance of `Netzke::Core::ComponentConfig` to each of the methods described in 1). Presence of `Netzke::Core::ComponentConfig` is assumed.
         #
         # Besides components, this method is being used in Core for DSL for actions.
         def declare_dsl_for(things)
-          thing = things.to_s.singularize
-          thing_class = thing.camelcase
+          things = things.to_s
           storage_attribute = :"_declared_#{things}"
 
           class_attribute storage_attribute
           send("#{storage_attribute}=", [])
+
+          define_dsl_method(things, storage_attribute)
+          define_collector_method(things, storage_attribute)
+        end
+
+
+        def define_dsl_method(things, storage_attribute)
+          thing = things.singularize
 
           define_singleton_method thing do |name, &block|
             self.send("#{storage_attribute}=", self.send(storage_attribute) | [name])
             method_name = "#{name}_#{thing}"
             define_method(method_name, &(block || ->(c){c}))
           end
+        end
+
+        def define_collector_method(things, storage_attribute)
+          thing = things.singularize
+          config_class = "Netzke::Core::#{thing.camelcase}Config".constantize
 
           define_method things do
             # memoization
             return instance_variable_get("@#{things}") if instance_variable_get("@#{things}")
 
-            cfgs = self.class.send(storage_attribute).inject({}) do |out, name|
-              c = "Netzke::Core::#{thing.camelcase}Config".constantize.new(name, self)
+            config_hash = self.class.send(storage_attribute).inject({}) do |out, name|
+              c = config_class.new(name, self)
               send("#{name}_#{thing}", c)
               c.set_defaults!
               out.merge(name.to_sym => c.excluded ? {excluded: true} : c)
             end
 
-            instance_variable_set "@#{things}", cfgs
+            instance_variable_set "@#{things}", config_hash
           end
         end
       end
