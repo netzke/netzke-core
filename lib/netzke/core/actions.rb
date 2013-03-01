@@ -85,6 +85,10 @@ module Netzke::Core
       c.actions = actions
     end
 
+    def extend_item(item)
+      super detect_and_normalize(:action, item)
+    end
+
   private
     def uri_to_icon(icon)
       self.class.uri_to_icon(icon)

@@ -162,59 +162,19 @@ module Netzke::Core
       end
     end
 
-  protected
-
-    # During normalization of the config object, this method is being called with each item found (recursively) in there.
-    # For example, symbols representing nested child components get replaced with a proper config hash. Same goes for actions.
-    # Override to do any additional checks/enhancements. See, for example, +Netzke::Basepack::WrapLazyLoaded+.
-    # @return [Object] extended item
     def extend_item(item)
-      # in a situation of action and component being equally named, action will take precedence
-
-      if item.is_a?(Symbol) && item_config = actions[item]
-        item = {netzke_action: item}
-      elsif item.is_a?(Symbol) && item_config = components[item]
-        item = {netzke_component: item}
-      end
-
-      item[:excluded] = true if item_config && item_config[:excluded]
-
-      if item.is_a?(Hash)
-        return nil if item[:excluded] # it'll get compacted away by Array#netzke_deep_map
-
-        # replace the `component` and `action` keys with `netzke_component` and `netzke_action`, which will be looked for at the JS side
-        item[:netzke_action] = item.delete(:action) if item[:action]
-        item[:netzke_component] = item.delete(:component) if item[:component]
-
-        @components_in_config << item[:netzke_component] if item[:netzke_component] && item[:eager_loading] != false
-      end
-
-      item
+      item = detect_and_normalize(:component, item)
+      @components_in_config << item[:netzke_component] if include_component?(item)
+      super item
     end
 
   private
 
-    # We'll build a couple of useful instance variables here:
-    #
-    # +components_in_config+ - an array of components (by name) referred in items
-    # +normalized_config+ - a config that has all the config extensions applied
-    def normalize_config
-      @components_in_config = []
-      c = config.dup
-      config.each_pair do |k, v|
-        c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
-        if v.is_a?(Array)
-          c[k] = v.netzke_deep_map{|el| extend_item(el)}
-        end
-      end
-      @normalized_config = c
+    def include_component?(cmp_config)
+      cmp_config.is_a?(Hash) &&
+        cmp_config[:netzke_component] &&
+        cmp_config[:eager_loading] != false &&
+        !cmp_config[:excluded]
     end
-
-    # @return [Hash] config with all placeholders (like child components referred by symbols) expanded
-    def normalized_config
-      # make sure we call normalize_config first
-      @normalized_config || (normalize_config || true) && @normalized_config
-    end
-
   end
 end
