@@ -125,24 +125,12 @@ module Netzke::Core
     # Recursively instantiates a child component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
     # @param name [Symbol] component name
     def component_instance(name)
-      raise ArgumentError, "No component '#{name.inspect}' defined for '#{self.js_id}'" if !name.present?
-
-      @component_instance_cache ||= {}
-      @component_instance_cache[name] ||= begin
-        composite = self
-        name.to_s.split('__').each do |cmp|
-          cmp = cmp.to_sym
-
-          component_config = composite.components[cmp]
-          raise ArgumentError, "No component '#{cmp}' defined for '#{composite.js_id}'" if component_config.nil? || component_config[:excluded]
-
-          klass = component_config[:klass]
-
-          instance_config = component_config.merge(:name => cmp)
-
-          composite = klass.new(instance_config, composite) # params: config, parent
-        end
-        composite
+      @_component_instance ||= {} # memoization
+      @_component_instance[name] ||= name.to_s.split('__').inject(self) do |out, cmp_name|
+        cmp_config = out.components[cmp_name.to_sym]
+        raise ArgumentError, "No component '#{cmp_name}' defined for '#{out.js_id}'" if cmp_config.nil? || cmp_config[:excluded]
+        cmp_config[:name] = cmp_name
+        cmp_config[:klass].new(cmp_config, out)
       end
     end
 
