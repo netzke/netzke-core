@@ -319,6 +319,10 @@ Netzke Core will automatically include Ext JS localization files based on curren
 
 Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke::Core::Actions](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
 
+## HAML support (experimental)
+
+Netzke provides support for HAML templates in case you don't want to put HTML into Ruby files.
+
 ## Requirements
 
 * Ruby ~> 1.9.2
