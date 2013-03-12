@@ -1,4 +1,4 @@
-# v0.8.2 - WIP
+# v0.8.2 - 2013-03-12
 * bug fix
   * RuntimeError "can't add a new key into hash during iteration" in Composition in some scenarious (thanks @wupdiwup)
   * netzkeReload works again
