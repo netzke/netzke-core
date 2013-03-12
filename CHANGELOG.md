@@ -2,13 +2,16 @@
 * bug fix
   * RuntimeError "can't add a new key into hash during iteration" in Composition in some scenarious (thanks @wupdiwup)
   * netzkeReload works again
-  * setting `Netzke::Core.ext_uri` to external URI (e.g. Sencha CDN) works now
 
 * improvements
   * minimize core Ruby class extensions
   * tests can now be run by simply executing `rake` from the gem's root (thanks @allomov)
   * feedback delay is now globally configurable
   * netzkeFeedback now understands {delay: seconds} as second parameter
+  * add support for arbitrary controllers replacing NetzkeController
+  * add support for HAML templates
+  * some code refactoring
+  * tests are rewritten with Mocha.js and CoffeeScript
 
 # v0.8.1 - 2012-12-15
 * bug fix
