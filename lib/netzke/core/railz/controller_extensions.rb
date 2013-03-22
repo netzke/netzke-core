@@ -8,6 +8,13 @@ module Netzke
         send(:before_filter, :set_controller_and_session)
       end
 
+      module ClassMethods
+        # inform AbstractController::Base that methods direct, ext, and dispatcher are actually actions
+        def action_methods
+          super.merge(%w[ext direct dispatcher].to_set)
+        end
+      end
+
       # Handles Ext.Direct RPC calls
       def direct
         if params['_json'] # this is a batched request
@@ -97,13 +104,6 @@ module Netzke
       def set_controller_and_session
         Netzke::Base.controller = self
         Netzke::Base.session = session
-      end
-
-    private
-
-      # inform AbstractController::Base that methods direct, ext, and dispatcher are actually actions
-      def action_method?(name)
-        %w(direct ext dispatcher).include?(name.to_s) || super
       end
     end
   end
