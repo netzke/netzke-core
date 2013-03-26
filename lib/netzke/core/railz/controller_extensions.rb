@@ -57,11 +57,11 @@ module Netzke
         # We render text/plain, so that the browser never modifies our response
         response.headers["Content-Type"] = "text/plain; charset=utf-8"
 
-        { :type => "rpc",
-          :tid => tid,
-          :action => component_name,
-          :method => action,
-          :result => ActiveSupport::JSON::Variable.new(endpoint_response.netzke_jsonify.to_json)
+        { type: :rpc,
+          tid: tid,
+          action: component_name,
+          method: action,
+          result: ActiveSupport::JSON::Variable.new(endpoint_response.netzke_jsonify.to_json)
         }
       end
 
@@ -80,12 +80,12 @@ module Netzke
       end
 
       def parse_request_params(params)
-        path = params[:act]
-        action = params[:method].underscore
+        path = params[:path]
+        endpoint = params[:endpoint].underscore
         ep_params = params[:data].try(:first) # Rails >= 3.2.11 returns nil in request_params[:data]
         tid = params[:tid]
 
-        [path, action, ep_params, tid]
+        [path, endpoint, ep_params, tid]
       end
 
       # The dispatcher for the old-style requests (used for multi-part form submission). The URL contains the name of the component,

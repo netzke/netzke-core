@@ -58,20 +58,21 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
 
   getCallData: function(t){
     return {
-      act: t.action, // rails doesn't really support having a parameter named "action"
-      method: t.method,
+      path: t.action,
+      endpoint: t.method,
       data: t.data,
-      type: 'rpc',
       tid: t.id
     }
   },
 
-  addAction: function(action, methods) {
-    var cls = this.namespace[action] || (this.namespace[action] = {});
-    for(var i = 0, len = methods.length; i < len; i++){
-      method = Ext.create('Ext.direct.RemotingMethod', methods[i]);
-      cls[method.name] = this.createHandler(action, method);
-    }
+  addEndpointsForComponent: function(componentPath, endpoints) {
+    var cls = this.namespace[componentPath] || (this.namespace[componentPath] = {});
+
+    Ext.Array.each(endpoints, function(ep) {
+      var methodName = ep.camelize(true),
+          method = Ext.create('Ext.direct.RemotingMethod', {name: methodName, len: 1});
+      cls[methodName] = this.createHandler(componentPath, method);
+    }, this);
   },
 
   // HACK: Ext JS 4.0.0 retry mechanism is broken
@@ -83,6 +84,18 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
     }
   }
 });
+
+Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
+  type: "remoting",       // create a Ext.direct.RemotingProvider
+  url: Netzke.ControllerUrl + "direct/", // url to connect to the Ext.Direct server-side router.
+  namespace: "Netzke.providers", // Netzke.providers will have a key per Netzke component, each mapped to a hash with a RemotingMethod per endpoint
+  actions: {},
+  maxRetries: Netzke.core.directMaxRetries,
+  enableBuffer: true, // buffer/batch requests within 10ms timeframe
+  timeout: 30000 // 30s timeout per request
+});
+
+Ext.Direct.addProvider(Netzke.directProvider);
 
 // Override Ext.Component's constructor to enable Netzke features
 Ext.define(null, {
@@ -116,18 +129,6 @@ Ext.define(null, {
   }
 });
 
-Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
-  type: "remoting",       // create a Ext.direct.RemotingProvider
-  url: Netzke.ControllerUrl + "direct/", // url to connect to the Ext.Direct server-side router.
-  namespace: "Netzke.providers", // namespace to create the Remoting Provider in
-  actions: {},
-  maxRetries: Netzke.core.directMaxRetries,
-  enableBuffer: true, // buffer/batch requests within 10ms timeframe
-  timeout: 30000 // 30s timeout per request
-});
-
-Ext.Direct.addProvider(Netzke.directProvider);
-
 // Methods/properties that each and every Netzke component will have
 Ext.define(null, {
   override: 'Netzke.classes.Core.Mixin',
@@ -159,30 +160,35 @@ Ext.define(null, {
   netzkeProcessEndpoints: function(config){
     var endpoints = config.endpoints || [];
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
-    var directActions = [];
+
+    Netzke.directProvider.addEndpointsForComponent(config.id, endpoints);
+
     var that = this;
 
-    Ext.each(endpoints, function(intp){
-      directActions.push({"name":intp.camelize(true), "len":1});
-      this[intp.camelize(true)] = function(arg, callback, scope) {
+    Ext.each(endpoints, function(ep){
+      var methodName = ep.camelize(true);
+
+      /* add endpoint method to `this` */
+      this[methodName] = function(arg, callback, scope) {
         Netzke.runningRequests++;
 
         scope = scope || that;
-        Netzke.providers[config.id][intp.camelize(true)].call(scope, arg, function(result, remotingEvent) {
+        Netzke.providers[config.id][methodName].call(scope, arg, function(result, remotingEvent) {
           if(remotingEvent.message) {
             console.error("RPC event indicates an error: ", remotingEvent);
             throw new Error(remotingEvent.message);
           }
+
           that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
+
           if(typeof callback == "function") {
             callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
           }
+
           Netzke.runningRequests--;
         });
       }
     }, this);
-
-    Netzke.directProvider.addAction(config.id, directActions);
 
     delete config.endpoints;
   },
