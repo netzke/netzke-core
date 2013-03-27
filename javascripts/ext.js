@@ -70,7 +70,7 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
 
     Ext.Array.each(endpoints, function(ep) {
       var methodName = ep.camelize(true),
-          method = Ext.create('Ext.direct.RemotingMethod', {name: methodName, len: 1});
+          method = Ext.create('Ext.direct.RemotingMethod', {name: methodName, len: 1, blah: 666});
       cls[methodName] = this.createHandler(componentPath, method);
     }, this);
   },
@@ -102,7 +102,6 @@ Ext.define(null, {
   override: 'Ext.Component',
   constructor: function(config) {
     if (this.isNetzke) {
-
       this.netzkeComponents = config.netzkeComponents;
       this.passedConfig = config;
 
@@ -123,6 +122,7 @@ Ext.define(null, {
 
       // This is where we store the information about components that are currently being loaded with this.loadComponent()
       this.componentsBeingLoaded = {};
+
     }
 
     this.callOverridden([config]);
@@ -161,7 +161,7 @@ Ext.define(null, {
     var endpoints = config.endpoints || [];
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
 
-    Netzke.directProvider.addEndpointsForComponent(config.id, endpoints);
+    Netzke.directProvider.addEndpointsForComponent(config.path, endpoints);
 
     var that = this;
 
@@ -173,7 +173,9 @@ Ext.define(null, {
         Netzke.runningRequests++;
 
         scope = scope || that;
-        Netzke.providers[config.id][methodName].call(scope, arg, function(result, remotingEvent) {
+
+        // call RemotingMethod
+        Netzke.providers[config.path][methodName].call(scope, arg, function(result, remotingEvent) {
           if(remotingEvent.message) {
             console.error("RPC event indicates an error: ", remotingEvent);
             throw new Error(remotingEvent.message);
@@ -272,12 +274,21 @@ Ext.define(null, {
 
     // params that will be provided for the server API call (deliver_component); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
     var serverParams = params.params || {};
-    serverParams.name = params.name;
+    serverParams["name"] = params.name;
+
+    var loadingId = params.name;
+
+    if (params.clone) {
+      // Create a unique identifier for these request
+      serverParams["id"] = loadingId = Ext.id();
+    }
+
+    serverParams["loading_id"] = loadingId;
 
     // coma-separated list of xtypes of already loaded classes
-    serverParams.cache = Netzke.cache.join();
+    serverParams["cache"] = Netzke.cache.join();
 
-    var storedConfig = this.componentsBeingLoaded[params.name] = params;
+    var storedConfig = this.componentsBeingLoaded[loadingId] = params;
 
     // Remember where the loaded component should be inserted into
     var containerCmp = params.container && Ext.isString(params.container) ? Ext.getCmp(params.container) : params.container;
@@ -299,10 +310,12 @@ Ext.define(null, {
    * @private
   */
   netzkeComponentDelivered: function(config){
+    config.netzkeParent = this;
+
     // retrieve the loading config for this component
-    var storedConfig = this.componentsBeingLoaded[config.name] || {};
+    var storedConfig = this.componentsBeingLoaded[config.loadingId] || {};
     var callbackParam;
-    delete this.componentsBeingLoaded[config.name];
+    delete this.componentsBeingLoaded[config.loadingId];
 
     if (storedConfig.loadMaskCmp) {
       storedConfig.loadMaskCmp.hide();
@@ -339,8 +352,8 @@ Ext.define(null, {
    * @private
    */
   netzkeComponentDeliveryFailed: function(params) {
-    var storedConfig = this.componentsBeingLoaded[params.componentName] || {};
-    delete this.componentsBeingLoaded[params.componentName];
+    var storedConfig = this.componentsBeingLoaded[params.loadingId] || {};
+    delete this.componentsBeingLoaded[params.loadingId];
 
     if (storedConfig.loadMaskCmp) {
       storedConfig.loadMaskCmp.hide();
@@ -354,12 +367,7 @@ Ext.define(null, {
   * Returns parent Netzke component
   */
   netzkeGetParentComponent: function(){
-    // simply cutting the last part of the id: some_parent__a_kid__a_great_kid => some_parent__a_kid
-    var idSplit = this.id.split("__");
-    idSplit.pop();
-    var parentId = idSplit.join("__");
-
-    return parentId === "" ? null : Ext.getCmp(parentId);
+    return this.netzkeParent;
   },
 
   /**

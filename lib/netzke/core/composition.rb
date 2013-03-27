@@ -91,16 +91,16 @@ module Netzke::Core
       endpoint :deliver_component do |params, this|
         cache = params[:cache].split(",") # array of cached xtypes
         component_name = params[:name].underscore.to_sym
-        component = components[component_name] && !components[component_name][:excluded] && component_instance(component_name)
+        component = components[component_name] && !components[component_name][:excluded] && component_instance(component_name, {js_id: params[:id]})
 
         if component
           js, css = component.js_missing_code(cache), component.css_missing_code(cache)
           this.netzke_eval_js(js) if js.present?
           this.netzke_eval_css(css) if css.present?
 
-          this.netzke_component_delivered(component.js_config);
+          this.netzke_component_delivered(component.js_config.merge(loading_id: params[:loading_id]));
         else
-          this.netzke_component_delivery_failed(component_name: component_name, msg: "Couldn't load component '#{component_name}'")
+          this.netzke_component_delivery_failed(component_name: component_name, msg: "Couldn't load component '#{component_name}'", loading_id: params[:loading_id])
         end
       end
 
@@ -124,12 +124,12 @@ module Netzke::Core
 
     # Recursively instantiates a child component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
     # @param name [Symbol] component name
-    def component_instance(name)
-      @_component_instance ||= {} # memoization
-      @_component_instance[name] ||= name.to_s.split('__').inject(self) do |out, cmp_name|
+    def component_instance(name, strong_config = {})
+      name.to_s.split('__').inject(self) do |out, cmp_name|
         cmp_config = out.components[cmp_name.to_sym]
         raise ArgumentError, "No component '#{cmp_name}' defined for '#{out.js_id}'" if cmp_config.nil? || cmp_config[:excluded]
         cmp_config[:name] = cmp_name
+        cmp_config.merge!(strong_config)
         cmp_config[:klass].new(cmp_config, out)
       end
     end

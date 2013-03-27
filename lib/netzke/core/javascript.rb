@@ -44,16 +44,21 @@ module Netzke::Core
       c.merge!(normalized_config)
 
       # So we can use getComponent(<component_name>) to retrieve a child component
-      c.item_id ||= name
+      c.item_id ||= name.to_s
+      c.item_id += "-" + config.js_id if config.js_id
 
-      %w[id netzke_components endpoints xtype alias i18n netzke_plugins flash].each do |thing|
-        js_thing = send "js_#{thing}"
+      %w[id path netzke_components endpoints xtype alias i18n netzke_plugins flash].each do |thing|
+        js_thing = send(:"js_#{thing}")
         c[thing] = js_thing if js_thing.present?
       end
 
       # reset component session
       # TODO: also remove empty hashes from the global session
       component_session.clear
+    end
+
+    def js_path
+      @path
     end
 
     def js_xtype

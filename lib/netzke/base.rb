@@ -112,7 +112,8 @@ module Netzke
       @passed_config = conf.deep_dup # configuration passed at the moment of instantiation
       @parent        = parent
       @name          = conf[:name] || self.class.name.underscore
-      @js_id         = parent.nil? ? @name : "#{parent.js_id}__#{@name}"
+      @path          = parent.nil? ? @name : "#{parent.js_id}__#{@name}"
+      @js_id         = conf[:js_id] || @path
       @flash         = []
 
       # Build complete component configuration
