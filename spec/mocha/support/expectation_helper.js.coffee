@@ -6,7 +6,9 @@ Ext.apply window,
     expect(Ext.isString(el)).to.be.ok()
 
   expectDisabled: (cmp) ->
+    throw cmp + " not found" if Ext.isString(cmp)
     expect(cmp.isDisabled()).to.be(true)
 
   expectInvisibleBodyOf: (cmp) ->
+    throw cmp + " not found" if Ext.isString(cmp)
     expect(cmp.body.isVisible()).to.be false
