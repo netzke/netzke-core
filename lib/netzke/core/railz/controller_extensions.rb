@@ -20,7 +20,6 @@ module Netzke
         if params['_json'] # this is a batched request
           response = []
           params['_json'].each do |batch|
-            # response << invoke_endpoint(batch)
             response << direct_response(batch, invoke_endpoint(batch))
           end
         else # this is a single request
@@ -51,7 +50,9 @@ module Netzke
     protected
 
       def direct_response(request_params, endpoint_response)
-        path, action, params, tid = parse_request_params(request_params)
+        # DEBT: why this duplication?
+        path, configs, action, params, tid = parse_request_params(request_params)
+
         component_name, *sub_components = path.split('__')
 
         # We render text/plain, so that the browser never modifies our response
@@ -66,14 +67,17 @@ module Netzke
       end
 
       def invoke_endpoint(request_params)
-        path, action, params, tid = parse_request_params(request_params)
+        # DEBT: why this duplication?
+        path, configs, action, params, tid = parse_request_params(request_params)
 
         component_name, *sub_components = path.split('__')
         components_in_session = session[:netzke_components]
 
         if components_in_session
-          component_instance = Netzke::Base.instance_by_config(components_in_session[component_name.to_sym])
-          component_instance.invoke_endpoint((sub_components + [action]).join("__"), params)
+          cmp_config = components_in_session[component_name.to_sym]
+          cmp_config[:client_config] = configs.shift || {}
+          component_instance = Netzke::Base.instance_by_config(cmp_config)
+          component_instance.invoke_endpoint((sub_components + [action]).join("__"), params, configs)
         else
           {:netzke_component_not_in_session => true}
         end
@@ -83,9 +87,10 @@ module Netzke
         path = params[:path]
         endpoint = params[:endpoint].underscore
         ep_params = params[:data].try(:first) # Rails >= 3.2.11 returns nil in request_params[:data]
+        configs = (ep_params || {}).delete('configs') || []
         tid = params[:tid]
 
-        [path, endpoint, ep_params, tid]
+        [path, configs, endpoint, ep_params, tid]
       end
 
       # The dispatcher for the old-style requests (used for multi-part form submission). The URL contains the name of the component,

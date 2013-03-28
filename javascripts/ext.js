@@ -122,7 +122,6 @@ Ext.define(null, {
 
       // This is where we store the information about components that are currently being loaded with this.loadComponent()
       this.componentsBeingLoaded = {};
-
     }
 
     this.callOverridden([config]);
@@ -163,19 +162,23 @@ Ext.define(null, {
 
     Netzke.directProvider.addEndpointsForComponent(config.path, endpoints);
 
-    var that = this;
+    var that = this,
+        cfgs = this.buildParentClientConfigs(config);
 
     Ext.each(endpoints, function(ep){
       var methodName = ep.camelize(true);
 
       /* add endpoint method to `this` */
-      this[methodName] = function(arg, callback, scope) {
+      this[methodName] = function(args, callback, scope) {
         Netzke.runningRequests++;
 
         scope = scope || that;
 
+        var args = Ext.apply({}, args || {}); // duplicate before modifying
+        args.configs = cfgs; // append parent configs to each endpoint call, so the server can build the component tree branch properly
+
         // call RemotingMethod
-        Netzke.providers[config.path][methodName].call(scope, arg, function(result, remotingEvent) {
+        Netzke.providers[config.path][methodName].call(scope, args, function(result, remotingEvent) {
           if(remotingEvent.message) {
             console.error("RPC event indicates an error: ", remotingEvent);
             throw new Error(remotingEvent.message);
@@ -193,6 +196,19 @@ Ext.define(null, {
     }, this);
 
     delete config.endpoints;
+  },
+
+  /**
+   * Array of client configs for each parent down the tree
+   * @private
+   */
+  buildParentClientConfigs: function(config) {
+    var parent = config, out = [];
+    while (parent) {
+      out.unshift(parent.clientConfig || {});
+      parent = parent.netzkeParent;
+    }
+    return out;
   },
 
   /**
@@ -275,6 +291,7 @@ Ext.define(null, {
     // params that will be provided for the server API call (deliver_component); all what's passed in params.params is merged in. This way we exclude from sending along such things as :scope, :callback, etc.
     var serverParams = params.params || {};
     serverParams["name"] = params.name;
+    serverParams["client_config"] = params.clientConfig;
 
     var loadingId = params.name;
 
@@ -316,6 +333,10 @@ Ext.define(null, {
     var storedConfig = this.componentsBeingLoaded[config.loadingId] || {};
     var callbackParam;
     delete this.componentsBeingLoaded[config.loadingId];
+
+    if (storedConfig.config) {
+      config.clientConfig = storedConfig.config;
+    }
 
     if (storedConfig.loadMaskCmp) {
       storedConfig.loadMaskCmp.hide();
@@ -391,7 +412,9 @@ Ext.define(null, {
   */
   netzkeInstantiateComponent: function(name) {
     name = name.camelize(true);
-    return Ext.createByAlias(this.netzkeComponents[name].alias, this.netzkeComponents[name])
+    var cfg = this.netzkeComponents[name];
+    cfg.netzkeParent = this;
+    return Ext.createByAlias(this.netzkeComponents[name].alias, cfg)
   },
 
   /**

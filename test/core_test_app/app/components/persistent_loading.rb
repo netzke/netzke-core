@@ -9,7 +9,7 @@ class PersistentLoading < Netzke::Base
   action :temporary_tab
 
   component :tab do |c|
-    c.klass = Endpoints
+    c.klass = HelloUser
   end
 
   def configure(c)
