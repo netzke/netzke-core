@@ -104,7 +104,7 @@ module Netzke::Core
     #
     #     invoke_endpoint(:users__center__get_data, params)
     def invoke_endpoint(endpoint, params, configs = [])
-      if self.class.endpoints[endpoint.to_sym]
+      if has_endpoint?(endpoint)
         endpoint_response = Netzke::Core::EndpointResponse.new
         send("#{endpoint}_endpoint", params, endpoint_response)
 
@@ -118,12 +118,19 @@ module Netzke::Core
         raise RuntimeError, "Component '#{self.class.name}' does not have endpoint '#{endpoint}'" if !action
 
         if components[child_component]
-          component_instance(child_component, {client_config: configs.shift || {}}).invoke_endpoint(action, params, configs)
+          client_config = configs.shift || {}
+          js_id = client_config.delete("id")
+          cmp_strong_config = {client_config: client_config, js_id: js_id}
+          component_instance(child_component, cmp_strong_config).invoke_endpoint(action, params, configs)
         else
           # component_missing can be overridden if necessary
           component_missing(child_component)
         end
       end
+    end
+
+    def has_endpoint?(endpoint)
+      !!self.class.endpoints[endpoint.to_sym]
     end
 
   end

@@ -204,7 +204,9 @@ Ext.define(null, {
   buildParentClientConfigs: function(config) {
     var parent = config, out = [];
     while (parent) {
-      out.unshift(parent.clientConfig || {});
+      var cfg = parent.clientConfig || {};
+      cfg.id = parent.id;
+      out.unshift(cfg);
       parent = parent.netzkeParent;
     }
     return out;
