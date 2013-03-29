@@ -174,11 +174,10 @@ Ext.define(null, {
 
         scope = scope || that;
 
-        var args = Ext.apply({}, args || {}); // duplicate before modifying
-        args.configs = cfgs; // append parent configs to each endpoint call, so the server can build the component tree branch properly
+        var remotingArgs = {args: args, configs: cfgs};
 
         // call RemotingMethod
-        Netzke.providers[config.path][methodName].call(scope, args, function(result, remotingEvent) {
+        Netzke.providers[config.path][methodName].call(scope, remotingArgs, function(result, remotingEvent) {
           if(remotingEvent.message) {
             console.error("RPC event indicates an error: ", remotingEvent);
             throw new Error(remotingEvent.message);
