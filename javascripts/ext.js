@@ -175,13 +175,13 @@ Ext.define(null, {
         scope = scope || that;
         Netzke.providers[config.id][methodName].call(scope, arg, function(result, remotingEvent) {
           if(remotingEvent.message) {
-            console.error("RPC event indicates an error: ", remotingEvent);
+            Netzke.warning("RPC event indicates an error: ", remotingEvent);
             throw new Error(remotingEvent.message);
           }
 
           that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
 
-          if(typeof callback == "function") {
+          if(typeof callback == "function" && !scope.netzkeSessionIsExpired) {
             callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
           }
 
@@ -471,7 +471,5 @@ Ext.define(null, {
       }, this);
       delete config.netzkePlugins;
     }
-  },
-
-  // netzkeOnComponentLoad: Ext.emptyFn // gets overridden
+  }
 });

@@ -75,7 +75,7 @@ module Netzke
           component_instance = Netzke::Base.instance_by_config(components_in_session[component_name.to_sym])
           component_instance.invoke_endpoint((sub_components + [action]).join("__"), params)
         else
-          {:netzke_component_not_in_session => true}
+          {netzke_session_expired: []}
         end
       end
 

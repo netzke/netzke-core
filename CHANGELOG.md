@@ -1,4 +1,6 @@
 # v0.8.4 - WIP
+* bug fix
+  * Re-enable session expiration detection
 
 # v0.8.3 - 2013-03-22
 * support Rails 3.2.13
