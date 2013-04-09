@@ -365,6 +365,12 @@ This assumes that the Ext JS library is located/symlinked in `test/core_test_app
 
     $ EXTJS_SRC=cdn rake
 
+## Contributions and support
+
+Help developing Netzke by submitting a pull request when you think others can benefit from it.
+
+If you feel particularily generous, you can donate a couple of bucks a week at [GitTip](https://www.gittip.com/nomadcoder/).
+
 ## Useful links
 
 * [Project website](http://netzke.org)
