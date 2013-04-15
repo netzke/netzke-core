@@ -64,6 +64,27 @@ module Netzke::Core
   # and for its icon in:
   #
   #     I18n.t('my_components.cool_component.actions.some_action.icon')
+  #
+  # == Using actions
+  #
+  # Actions can be refferred to in the component configuration as symbols. The most common use cases are configuring toolbars.
+  # For example, to configure a bottom toolbar to show a button reflecting the +:do_something+ action:
+  #
+  #     def configure(c)
+  #       super
+  #       c.bbar = [:do_something]
+  #     end
+  #
+  # Using the +docked_items+ property is also possible:
+  #
+  #     def configure(c)
+  #       super
+  #       c.docked_items = [{
+  #         xtype: :toolbar,
+  #         dock: :left,
+  #         items: [:do_something]
+  #       }]
+  #     end
   module Actions
     extend ActiveSupport::Concern
 
