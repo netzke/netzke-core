@@ -173,16 +173,16 @@ Ext.define(null, {
         Netzke.runningRequests++;
 
         scope = scope || that;
-        Netzke.providers[config.id][methodName].call(scope, arg, function(result, remotingEvent) {
-          if(remotingEvent.message) {
-            Netzke.warning("RPC event indicates an error: ", remotingEvent);
-            throw new Error(remotingEvent.message);
-          }
 
-          that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
+        Netzke.providers[config.id][methodName].call(scope, arg, function(result, e) {
+          if (Ext.getClass(e) == Ext.direct.ExceptionEvent) {
+            that.onDirectException(e);
+          } else {
+            that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
 
-          if(typeof callback == "function" && !scope.netzkeSessionIsExpired) {
-            callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
+            if (typeof callback == "function" && !scope.netzkeSessionIsExpired) {
+              callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
+            }
           }
 
           Netzke.runningRequests--;
@@ -191,6 +191,14 @@ Ext.define(null, {
     }, this);
 
     delete config.endpoints;
+  },
+
+  /**
+   * @private
+   * Handles endpoint exceptions. Ext.direct.ExceptionEvent gets passed as parameter. Override to handle server side exceptions.
+   */
+  onDirectException: function(e) {
+    Netzke.warning("Server error. Override onDirectException to handle this.");
   },
 
   /**
