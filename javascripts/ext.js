@@ -163,6 +163,13 @@ Ext.define(null, {
 
     Netzke.directProvider.addEndpointsForComponent(config.id, endpoints);
 
+    // handle server exceptions
+    Netzke.directProvider.on('data', function(self, e) {
+      if (Ext.getClass(e) == Ext.direct.ExceptionEvent) {
+        this.onDirectException(e);
+      }
+    }, this);
+
     var that = this;
 
     Ext.each(endpoints, function(ep){
@@ -175,9 +182,7 @@ Ext.define(null, {
         scope = scope || that;
 
         Netzke.providers[config.id][methodName].call(scope, arg, function(result, e) {
-          if (Ext.getClass(e) == Ext.direct.ExceptionEvent) {
-            that.onDirectException(e);
-          } else {
+          if (Ext.getClass(e) == Ext.direct.RemotingEvent) { // means we didn't get an exception, which is handled elsewhere
             that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
 
             if (typeof callback == "function" && !scope.netzkeSessionIsExpired) {
