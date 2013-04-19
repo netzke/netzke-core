@@ -1,8 +1,8 @@
 # v0.8.4 - WIP
 * bug fix
-  * Re-enable session expiration detection
+  * re-enable session expiration detection
 * improvements
-  * Enable server exception handling
+  * add `serverexception` event on `Netzke.directProvider`, subscribe to it to handle server exceptions
 
 # v0.8.3 - 2013-03-22
 * support Rails 3.2.13

@@ -56,6 +56,20 @@ Ext.define('Netzke.FeedbackGhost', {
 Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   extend: 'Ext.direct.RemotingProvider',
 
+  initComponent: function() {
+    this.callParent();
+    this.addEvent('serverexception'); // because 'exception' is reserved by Ext JS (but never used!)
+  },
+
+  listeners: {
+    // work-around the fact that 'exception' is never thrown by Ext JS
+    data: function(self, e) {
+      if (Ext.getClass(e) == Ext.direct.ExceptionEvent) {
+        this.fireEvent('serverexception', e);
+      }
+    }
+  },
+
   getCallData: function(t){
     return {
       path: t.action,
@@ -162,13 +176,6 @@ Ext.define(null, {
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
 
     Netzke.directProvider.addEndpointsForComponent(config.id, endpoints);
-
-    // handle server exceptions
-    Netzke.directProvider.on('data', function(self, e) {
-      if (Ext.getClass(e) == Ext.direct.ExceptionEvent) {
-        this.onDirectException(e);
-      }
-    }, this);
 
     var that = this;
 
