@@ -107,6 +107,8 @@ Ext.define("Netzke.classes.Core.Mixin", {
     } else {
       for (var instr in instructions) {
         var args = instructions[instr];
+        if(args instanceof Object && Ext.isEmpty(args))
+          args = [];
 
         if (Ext.isFunction(this[instr])) {
           // Executing the method.
