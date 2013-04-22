@@ -79,16 +79,10 @@ module Netzke::Core
   module Composition
     extend ActiveSupport::Concern
 
-    COMPONENT_METHOD_NAME = "%s_component"
-
-
     included do
+      # Declares Base.component, for declaring child componets, and Base#components, which returns a [Hash] of all component configs by name
+      declare_dsl_for :components
 
-      # Returns registered components
-      class_attribute :registered_components
-      self.registered_components = []
-
-      # @!method Foobar
       # Loads a component on browser's request. Every Netzke component gets this endpoint.
       # <tt>params</tt> should contain:
       # * <tt>:cache</tt> - an array of component classes cached at the browser
@@ -112,44 +106,6 @@ module Netzke::Core
 
     end # included
 
-    module ClassMethods
-
-      # Declares a child (nested) component.
-      # @param name [Symbol] component name
-      # @param block [Proc] config block
-      # @example
-      #   component :users do |c|
-      #     c.klass = Netzke::Basepack::Grid
-      #     c.modul = "User"
-      #   end
-      def component(name, &block)
-        self.registered_components |= [name]
-
-        method_name = COMPONENT_METHOD_NAME % name
-        if block_given?
-          define_method(method_name, &block)
-        else
-          define_method(method_name) do |component_config|
-            component_config
-          end
-        end
-      end
-    end
-
-    # @return [Hash] component configs by name
-    def components
-      @components ||= self.class.registered_components.inject({}) do |out, name|
-        component_config = Netzke::Core::ComponentConfig.new(name)
-        send(COMPONENT_METHOD_NAME % name, component_config)
-        component_config.set_defaults!
-        if component_config.excluded
-          out.merge(name.to_sym => {excluded: true})
-        else
-          out.merge(name.to_sym => component_config)
-        end
-      end
-    end
-
     # @return [Hash] configs of eagerly loaded components by name
     def eagerly_loaded_components
       @eagerly_loaded_components ||= components.select{|k,v| components_in_config.include?(k) || v[:eager_loading]}
@@ -169,24 +125,12 @@ module Netzke::Core
     # Recursively instantiates a child component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
     # @param name [Symbol] component name
     def component_instance(name)
-      raise ArgumentError, "No component '#{name.inspect}' defined for '#{self.js_id}'" if !name.present?
-
-      @component_instance_cache ||= {}
-      @component_instance_cache[name] ||= begin
-        composite = self
-        name.to_s.split('__').each do |cmp|
-          cmp = cmp.to_sym
-
-          component_config = composite.components[cmp]
-          raise ArgumentError, "No component '#{cmp}' defined for '#{composite.js_id}'" if component_config.nil? || component_config[:excluded]
-
-          klass = component_config[:klass]
-
-          instance_config = component_config.merge(:name => cmp)
-
-          composite = klass.new(instance_config, composite) # params: config, parent
-        end
-        composite
+      @_component_instance ||= {} # memoization
+      @_component_instance[name] ||= name.to_s.split('__').inject(self) do |out, cmp_name|
+        cmp_config = out.components[cmp_name.to_sym]
+        raise ArgumentError, "No component '#{cmp_name}' defined for '#{out.js_id}'" if cmp_config.nil? || cmp_config[:excluded]
+        cmp_config[:name] = cmp_name
+        cmp_config[:klass].new(cmp_config, out)
       end
     end
 
@@ -218,59 +162,19 @@ module Netzke::Core
       end
     end
 
-  protected
-
-    # During normalization of the config object, this method is being called with each item found (recursively) in there.
-    # For example, symbols representing nested child components get replaced with a proper config hash. Same goes for actions.
-    # Override to do any additional checks/enhancements. See, for example, +Netzke::Basepack::WrapLazyLoaded+.
-    # @return [Object] extended item
     def extend_item(item)
-      # in a situation of action and component being equally named, action will take precedence
-
-      if item.is_a?(Symbol) && item_config = actions[item]
-        item = {netzke_action: item}
-      elsif item.is_a?(Symbol) && item_config = components[item]
-        item = {netzke_component: item}
-      end
-
-      item[:excluded] = true if item_config && item_config[:excluded]
-
-      if item.is_a?(Hash)
-        return nil if item[:excluded] # it'll get compacted away by Array#netzke_deep_map
-
-        # replace the `component` and `action` keys with `netzke_component` and `netzke_action`, which will be looked for at the JS side
-        item[:netzke_action] = item.delete(:action) if item[:action]
-        item[:netzke_component] = item.delete(:component) if item[:component]
-
-        @components_in_config << item[:netzke_component] if item[:netzke_component] && item[:eager_loading] != false
-      end
-
-      item
+      item = detect_and_normalize(:component, item)
+      @components_in_config << item[:netzke_component] if include_component?(item)
+      super item
     end
 
   private
 
-    # We'll build a couple of useful instance variables here:
-    #
-    # +components_in_config+ - an array of components (by name) referred in items
-    # +normalized_config+ - a config that has all the config extensions applied
-    def normalize_config
-      @components_in_config = []
-      c = config.dup
-      config.each_pair do |k, v|
-        c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
-        if v.is_a?(Array)
-          c[k] = v.netzke_deep_map{|el| extend_item(el)}
-        end
-      end
-      @normalized_config = c
+    def include_component?(cmp_config)
+      cmp_config.is_a?(Hash) &&
+        cmp_config[:netzke_component] &&
+        cmp_config[:eager_loading] != false &&
+        !cmp_config[:excluded]
     end
-
-    # @return [Hash] config with all placeholders (like child components referred by symbols) expanded
-    def normalized_config
-      # make sure we call normalize_config first
-      @normalized_config || (normalize_config || true) && @normalized_config
-    end
-
   end
 end

@@ -47,9 +47,13 @@ module Netzke
 
     mattr_accessor :ext_path
 
-    # The amount of retries that the direct remoting provider will attempt in case of failure
+    # Amount of retries that the direct remoting provider will attempt in case of failure
     mattr_accessor :js_direct_max_retries
     @@js_direct_max_retries = 0
+
+    # Amount of time feedback delay is being shown
+    mattr_accessor :js_feedback_delay
+    @@js_feedback_delay = 2000
 
     mattr_accessor :with_icons
 

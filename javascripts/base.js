@@ -47,10 +47,6 @@ Netzke.isLoading=function () {
 // xtypes of cached Netzke classes
 Netzke.cache = [];
 
-Netzke.componentNotInSessionHandler = function() {
-  throw "Netzke: component not in Rails session. Define Netzke.componentNotInSessionHandler to handle this.";
-};
-
 Ext.define("Netzke.classes.Core.Mixin", {
   isNetzke: true, // to distinguish Netzke components from regular Ext components
 
@@ -122,7 +118,7 @@ Ext.define("Netzke.classes.Core.Mixin", {
           if (childComponent) {
             childComponent.netzkeBulkExecute(args);
           } else if (Ext.isArray(args)) { // only consider those calls that have arguments wrapped in an array; the only (probably) case when they are not, is with 'success' property set to true in a non-ajax form submit - silently ignore that
-            throw "Netzke: Unknown method or child component '" + instr +"' in component '" + this.id + "'"
+            throw "Netzke: Unknown method or child component '" + instr + "' in component '" + this.id + "'"
           }
         }
       }
@@ -137,11 +133,20 @@ Ext.define("Netzke.classes.Core.Mixin", {
   },
 
   /**
-  * When an endpoint call is issued while the session has expired, this method is called. Override it to do whatever is appropriate.
+  * This method gets called by the server when the component to which an endpoint call was directed to, is not in the session anymore.
   * @private
   */
-  netzkeComponentNotInSession: function() {
-    Netzke.componentNotInSessionHandler();
+  netzkeSessionExpired: function() {
+    this.netzkeSessionIsExpired = true;
+    this.onNetzkeSessionExpired();
+  },
+
+  /**
+   * Override this method to handle session expiration. E.g. you may want to inform the user that they will be redirected to the login page.
+   * @private
+   */
+  onNetzkeSessionExpired: function() {
+    Netzke.warning("Component not in session. Override `onNetzkeSessionExpired` to handle this.");
   },
 
   /**

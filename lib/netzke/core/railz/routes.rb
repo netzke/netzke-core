@@ -1,10 +1,21 @@
 module ActionDispatch::Routing
   class Mapper
-    # Enable routes for Netzke assets and endpoint calls. By default the URL is "/netzke", but this can be changed by providing an argument:
+    # Enables routes for Netzke assets and endpoint calls (by default routes to NetzkeController). The default URL is "/netzke", but this can be changed:
     #
     #     netzke "/some/path/netzke"
-    def netzke(prefix = "/netzke")
-      match "#{prefix}/:action(.:format)", to: "netzke", as: 'netzke'
+    #
+    # If you want to use your own controller instead of NetzkeController, you can specify it like this:
+    #
+    #     netzke "/netzke", controller: :admin
+    #
+    # This will make Netzke use AdminController. Note, that in that case AdminController MUST implement the actions required by Netzke. The way to do this is to include Netzke::Railz::ControllerExtensions in your controller, e.g.:
+    #
+    #     class AdminController < ApplicationController
+    #       include Netzke::Railz::ControllerExtensions
+    #     end
+    def netzke(prefix = "/netzke", options = {})
+      controller = options[:controller] || :netzke
+      match "#{prefix}/:action(.:format)", to: controller.to_s, as: 'netzke'
     end
   end
 end

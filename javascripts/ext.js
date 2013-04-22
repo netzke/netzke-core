@@ -22,25 +22,26 @@ Ext.QuickTips.init();
 
 // FeedbackGhost is a little class that displays unified feedback from Netzke components.
 Ext.define('Netzke.FeedbackGhost', {
-  showFeedback: function(msg){
-    if (!msg) Netzke.exception("Netzke.FeedbackGhost#showFeedback: wrong number of arguments (0 for 1)");
+  showFeedback: function(msg, options){
+    options = options || {};
+    options.delay = options.delay || Netzke.core.FeedbackDelay;
     if (Ext.isObject(msg)) {
-      this.msg(msg.level.camelize(), msg.msg);
+      this.msg(msg.level.camelize(), msg.msg, options.delay);
     } else if (Ext.isArray(msg)) {
       Ext.each(msg, function(m) { this.showFeedback(m); }, this);
     } else {
-      this.msg(null, msg); // no header for now
+      this.msg(null, msg, options.delay); // no header for now
     }
   },
 
-  msg: function(title, format){
+  msg: function(title, format, delay){
       if(!this.msgCt){
           this.msgCt = Ext.core.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
       }
       var s = Ext.String.format.apply(String, Array.prototype.slice.call(arguments, 1));
       var m = Ext.core.DomHelper.append(this.msgCt, this.createBox(title, s), true);
       m.hide();
-      m.slideIn('t').ghost("t", { delay: 1000, remove: true});
+      m.slideIn('t').ghost("t", { delay: delay, remove: true});
   },
 
   createBox: function(t, s){
@@ -55,22 +56,37 @@ Ext.define('Netzke.FeedbackGhost', {
 Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   extend: 'Ext.direct.RemotingProvider',
 
+  initComponent: function() {
+    this.callParent();
+    this.addEvent('serverexception'); // because 'exception' is reserved by Ext JS (but never used!)
+  },
+
+  listeners: {
+    // work-around the fact that 'exception' is never thrown by Ext JS
+    data: function(self, e) {
+      if (Ext.getClass(e) == Ext.direct.ExceptionEvent) {
+        this.fireEvent('serverexception', e);
+      }
+    }
+  },
+
   getCallData: function(t){
     return {
-      act: t.action, // rails doesn't really support having a parameter named "action"
-      method: t.method,
+      path: t.action,
+      endpoint: t.method,
       data: t.data,
-      type: 'rpc',
       tid: t.id
     }
   },
 
-  addAction: function(action, methods) {
-    var cls = this.namespace[action] || (this.namespace[action] = {});
-    for(var i = 0, len = methods.length; i < len; i++){
-      method = Ext.create('Ext.direct.RemotingMethod', methods[i]);
-      cls[method.name] = this.createHandler(action, method);
-    }
+  addEndpointsForComponent: function(componentPath, endpoints) {
+    var cls = this.namespace[componentPath] || (this.namespace[componentPath] = {});
+
+    Ext.Array.each(endpoints, function(ep) {
+      var methodName = ep.camelize(true),
+          method = Ext.create('Ext.direct.RemotingMethod', {name: methodName, len: 1});
+      cls[methodName] = this.createHandler(componentPath, method);
+    }, this);
   },
 
   // HACK: Ext JS 4.0.0 retry mechanism is broken
@@ -82,6 +98,18 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
     }
   }
 });
+
+Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
+  type: "remoting",       // create a Ext.direct.RemotingProvider
+  url: Netzke.ControllerUrl + "direct/", // url to connect to the Ext.Direct server-side router.
+  namespace: "Netzke.providers", // Netzke.providers will have a key per Netzke component, each mapped to a hash with a RemotingMethod per endpoint
+  actions: {},
+  maxRetries: Netzke.core.directMaxRetries,
+  enableBuffer: true, // buffer/batch requests within 10ms timeframe
+  timeout: 30000 // 30s timeout per request
+});
+
+Ext.Direct.addProvider(Netzke.directProvider);
 
 // Override Ext.Component's constructor to enable Netzke features
 Ext.define(null, {
@@ -115,18 +143,6 @@ Ext.define(null, {
   }
 });
 
-Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
-  type: "remoting",       // create a Ext.direct.RemotingProvider
-  url: Netzke.ControllerUrl + "direct/", // url to connect to the Ext.Direct server-side router.
-  namespace: "Netzke.providers", // namespace to create the Remoting Provider in
-  actions: {},
-  maxRetries: Netzke.core.directMaxRetries,
-  enableBuffer: true, // buffer/batch requests within 10ms timeframe
-  timeout: 30000 // 30s timeout per request
-});
-
-Ext.Direct.addProvider(Netzke.directProvider);
-
 // Methods/properties that each and every Netzke component will have
 Ext.define(null, {
   override: 'Netzke.classes.Core.Mixin',
@@ -158,32 +174,43 @@ Ext.define(null, {
   netzkeProcessEndpoints: function(config){
     var endpoints = config.endpoints || [];
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
-    var directActions = [];
+
+    Netzke.directProvider.addEndpointsForComponent(config.id, endpoints);
+
     var that = this;
 
-    Ext.each(endpoints, function(intp){
-      directActions.push({"name":intp.camelize(true), "len":1});
-      this[intp.camelize(true)] = function(arg, callback, scope) {
+    Ext.each(endpoints, function(ep){
+      var methodName = ep.camelize(true);
+
+      /* add endpoint method to `this` */
+      this[methodName] = function(arg, callback, scope) {
         Netzke.runningRequests++;
 
         scope = scope || that;
-        Netzke.providers[config.id][intp.camelize(true)].call(scope, arg, function(result, remotingEvent) {
-          if(remotingEvent.message) {
-            console.error("RPC event indicates an error: ", remotingEvent);
-            throw new Error(remotingEvent.message);
+
+        Netzke.providers[config.id][methodName].call(scope, arg, function(result, e) {
+          if (Ext.getClass(e) == Ext.direct.RemotingEvent) { // means we didn't get an exception, which is handled elsewhere
+            that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
+
+            if (typeof callback == "function" && !scope.netzkeSessionIsExpired) {
+              callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
+            }
           }
-          that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
-          if(typeof callback == "function") {
-            callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
-          }
+
           Netzke.runningRequests--;
         });
       }
     }, this);
 
-    Netzke.directProvider.addAction(config.id, directActions);
-
     delete config.endpoints;
+  },
+
+  /**
+   * @private
+   * Handles endpoint exceptions. Ext.direct.ExceptionEvent gets passed as parameter. Override to handle server side exceptions.
+   */
+  onDirectException: function(e) {
+    Netzke.warning("Server error. Override onDirectException to handle this.");
   },
 
   /**
@@ -399,13 +426,13 @@ Ext.define(null, {
   /**
   * Provides a visual feedback. TODO: refactor
   */
-  netzkeFeedback: function(msg){
-    if (this.initialConfig && this.initialConfig.quiet) {
-      return false;
-    }
+  netzkeFeedback: function(msg, options){
+    if (this.initialConfig && this.initialConfig.quiet) return false;
+
+    options = options || {};
 
     if (this.feedbackGhost) {
-      this.feedbackGhost.showFeedback(msg);
+      this.feedbackGhost.showFeedback(msg, {delay: options.delay});
     } else {
       // there's no application to show the feedback - so, we do it ourselves
       if (typeof msg == 'string'){
@@ -464,7 +491,5 @@ Ext.define(null, {
       }, this);
       delete config.netzkePlugins;
     }
-  },
-
-  // netzkeOnComponentLoad: Ext.emptyFn // gets overridden
+  }
 });

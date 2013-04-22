@@ -4,6 +4,8 @@ module Netzke::Core
   #   class MyComponent < Netzke::Base
   #     action :do_something do |c|
   #       c.text = "Do it!"
+  #       c.tooltip = "Do something"
+  #       c.icon = :tick
   #     end
   #   end
   class ActionConfig < ActiveSupport::OrderedOptions
@@ -14,6 +16,7 @@ module Netzke::Core
 
       build_localized_attributes
 
+      self.name = @name
       self.text = @text.presence || @name.humanize
       self.tooltip = @tooltip.presence || @name.humanize
       self.icon = @icon.to_sym if @icon.present?
@@ -21,6 +24,10 @@ module Netzke::Core
 
     def icon=(path)
       self[:icon] = path.is_a?(Symbol) ? Netzke::Base.uri_to_icon(path) : path
+    end
+
+    # later
+    def set_defaults!
     end
 
   private

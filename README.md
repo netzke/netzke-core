@@ -1,4 +1,4 @@
-# Netzke Core [![Gem Version](https://fury-badge.herokuapp.com/rb/netzke-core.png)](http://badge.fury.io/rb/netzke-core) [![Build Status](https://secure.travis-ci.org/netzke/netzke-core.png?branch=master)](http://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/netzke/netzke-core)
+# Netzke Core [![Gem Version](https://fury-badge.herokuapp.com/rb/netzke-core.png)](http://badge.fury.io/rb/netzke-core) [![Build Status](https://travis-ci.org/netzke/netzke-core.png?branch=master)](https://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/github/netzke/netzke-core.png)](https://codeclimate.com/github/netzke/netzke-core)
 
 [RDocs](http://rdoc.info/projects/netzke/netzke-core)
 
@@ -8,7 +8,7 @@ Some knowledge of Sencha Ext JS will be needed in order to fully understand this
 
 ## Rationale
 
-[Sencha Ext JS]("http://www.sencha.com/products/extjs") is a powerful front-end framework, which is used for crafting web-apps that give the end user experience similar to that of a desktop application. It has an extensive set of widgets ('components'), and leverages a modular approach to its fullest: a developer can extend components (using Ext JS's own [class system]("http://docs.sencha.com/ext-js/4-1/#!/guide/class_system")), nest components using many powerful layouts, dynamically create and destroy them. The architecture of Ext JS is well-thought and very complete.
+[Sencha Ext JS]("http://www.sencha.com/products/extjs") is a powerful front-end framework, which is used for crafting web-apps that give the end user experience similar to that of a desktop application. It has an extensive set of widgets ('components'), and leverages a modular approach to its fullest: a developer can extend components (using Ext JS's own [class system]("http://docs.sencha.com/ext-js/4-1/#!/guide/class_system")), nest components using many powerful layouts, dynamically create and destroy them. The architecture of Ext JS is well thought out and very complete.
 
 However, with Ext JS being server-agnostic, it is not always a trivial task for a developer to bind Ext JS components to the server-side data *and* application business logic, especially in complex applications. Netzke as the solution that allows you to extend the modular approach to the server side.
 
@@ -25,11 +25,11 @@ Netzke Core takes the burden of implementing the following key aspects of the fr
 
 ...and more.
 
-All this extremely facilitates building fast, low-traffic, robust, and highly maintainable applications. As a result, your code scales much better in the sense of complexity, compared to using conventional MVC, where developers are pretty much limited with programming techniques they can apply.
+All this extremely facilitates building fast, low-traffic, robust, and highly maintainable applications. As a result, your code scales much better in the sense of complexity, compared to using conventional MVC, where developers are pretty much limited with the programming techniques that they can apply.
 
 ## HelloWorld component
 
-*This component is distributed as a part of the test application, see `test/core_test_app/components`.*
+*This component is distributed as a part of the test application, see `test/core_test_app/components/hello_world.rb`.*
 
 Ext JS files are not distributed with Netzke, so, make sure that they are located in (or sym-linked as) `YOUR_APP/public/extjs`.
 
@@ -250,7 +250,7 @@ Actions can also be referred to is submenus:
   c.tbar = [{text: 'Menu', menu: {items: [:show_report]}}]
 ```
 
-For more details on composition refer to [Netzke::Core::Action](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Action).
+For more details on composition refer to [Netzke::Core::Actions](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
 
 ## Client-server interaction
 
@@ -287,7 +287,7 @@ An endpoint can instruct the client class to execute a set of methods after its 
 ```ruby
 class SimpleComponent < Netzke::Base
   endpoint :whats_up_server do |params, this|
-    this.set_title("All quiet here on the server")
+    this.set_title("Response from server")
     this.my_method
   end
 end
@@ -319,6 +319,10 @@ Netzke Core will automatically include Ext JS localization files based on curren
 
 Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke::Core::Actions](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
 
+## HAML support (experimental)
+
+Netzke provides support for HAML templates in case you don't want to put HTML into Ruby files.
+
 ## Requirements
 
 * Ruby ~> 1.9.2
@@ -343,11 +347,15 @@ By default, Netzke assumes that your Ext JS library is located in `public/extjs`
 
 ## Running tests
 
-The bundled `test/core_test_app` application used for automated testing can be easily run as a stand-alone Rails app. It's a good source of concise, focused examples. After starting the application, access any of the test components (located in `app/components`) by using the following url:
+The bundled `test/core_test_app` application used for automated testing can be easily run as a stand-alone Rails app. It's a good source of concise, focused examples. After starting the application, access any of the test components (located in `test/core_test_app/app/components`) by using the following url:
 
     http://localhost:3000/components/{name of the component's class}
 
-For example [http://localhost:3000/components/ServerCaller](http://localhost:3000/components/ServerCaller)
+For example [http://localhost:3000/components/Endpoints](http://localhost:3000/components/Endpoints)
+
+To run a specific Mocha JS spec (located in `spec/mocha`) for a component, append `?spec={name of spec}`, for example:
+
+    [http://localhost:3000/components/Endpoints?spec=endpoints](http://localhost:3000/components/Endpoints?spec=endpoints)
 
 To run all the tests (from the gem's root):
 
@@ -357,7 +365,14 @@ This assumes that the Ext JS library is located/symlinked in `test/core_test_app
 
     $ EXTJS_SRC=cdn rake
 
+## Contributions and support
+
+Help developing Netzke by submitting a pull request when you think others can benefit from it.
+
+If you feel particularily generous, you can donate a couple of bucks a week at [GitTip](https://www.gittip.com/nomadcoder/).
+
 ## Useful links
+
 * [Project website](http://netzke.org)
 * [Live demo](http://netzke-demo.herokuapp.com) (features [Netzke Basepack](https://github.com/netzke/netzke-basepack), with sample code)
 * [Twitter](http://twitter.com/netzke) - latest news about the framework

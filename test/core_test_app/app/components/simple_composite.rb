@@ -1,4 +1,4 @@
-# Not used in tests
+# For demo purposes. Not used in testing.
 class SimpleComposite < Netzke::Base
   def configure(c)
     c.layout = :fit

@@ -1,5 +1,6 @@
 require 'active_support/core_ext'
 require 'netzke/core/ruby_ext'
+require 'netzke/core/dsl_support'
 require 'netzke/core/javascript'
 require 'netzke/core/stylesheets'
 require 'netzke/core/services'
@@ -10,6 +11,7 @@ require 'netzke/core/state'
 require 'netzke/core/embedding'
 require 'netzke/core/actions'
 require 'netzke/core/session'
+require 'netzke/core/html' if Module.const_defined?(:Haml)
 
 module Netzke
   # The base class for every Netzke component. Its main responsibilities include:
@@ -43,6 +45,7 @@ module Netzke
   #
   # This doesn't necessarily have to be used in toolbars, but also in other places in config (i.e. layouts).
   class Base
+    include Core::DslSupport
     include Core::Session
     include Core::State
     include Core::Configuration
@@ -53,7 +56,9 @@ module Netzke
     include Core::Stylesheets
     include Core::Embedding
     include Core::Actions
+    include Core::Html if const_defined? :Haml
 
+    # DELETE ME
     class_attribute :default_instance_config
     self.default_instance_config = {}
 

@@ -59,5 +59,53 @@ module Netzke::Core
     def config
       @config ||= ActiveSupport::OrderedOptions.new
     end
+
+
+  protected
+
+    # During the normalization of config object, +extend_item+ is being called with each item found (recursively) in there.
+    # For example, symbols representing nested child components get replaced with a proper config hash, same goes for actions (see +Composition+ and +Actions+ respectively).
+    # Override to do any additional checks/enhancements. See, for example, +Netzke::Basepack::WrapLazyLoaded+ or +Netzke::Basepack::Fields+.
+    # @return [Object|nil] normalized item or nil. If nil is returned, this item will be excluded from the config.
+    def extend_item(item)
+      item.is_a?(Hash) && item[:excluded] ? nil : item
+    end
+
+    # Used for detecting actions and components referred by symbols. For example, say, action +do_something+ is declared. Then:
+    #
+    #     item #=> :do_something
+    #     item = detect_and_normalize :action, item
+    #     item #=> {netzke_action: :do_something, text: 'Do it'} # uses action declaration
+    def detect_and_normalize(thing, item)
+      if item.is_a?(Symbol) && thing_config = send(thing.to_s.pluralize)[item]
+        item = {:"netzke_#{thing}" => item, excluded: thing_config[:excluded]}
+      elsif item.is_a?(Hash)
+        # replace `action` key with `netzke_action`, which will be looked for at the JS side
+        item[:"netzke_#{thing}"] = item.delete(thing) if item[thing]
+      end
+      item
+    end
+
+    # We'll build a couple of useful instance variables here:
+    #
+    # +components_in_config+ - an array of components (by name) referred in items
+    # +normalized_config+ - a config that has all the config extensions applied
+    def normalize_config
+      @components_in_config = []
+      c = config.dup
+      config.each_pair do |k, v|
+        c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
+        if v.is_a?(Array)
+          c[k] = v.netzke_deep_map{|el| extend_item(el)}
+        end
+      end
+      @normalized_config = c
+    end
+
+    # @return [Hash] config with all placeholders (like child components referred by symbols) expanded
+    def normalized_config
+      # make sure we call normalize_config first
+      @normalized_config || (normalize_config || true) && @normalized_config
+    end
   end
 end

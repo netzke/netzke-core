@@ -4,11 +4,13 @@ class SimpleTabPanel < Netzke::Base
     c.active_tab = 0
   end
 
-  component :server_caller
+  component :endpoints
+
   component :hello_world do |c|
     c.excluded = true
   end
-  component :extended_server_caller
+
+  component :endpoints_extended
 
   component :simple_panel_one do |c|
     c.klass = SimplePanel
@@ -19,7 +21,7 @@ class SimpleTabPanel < Netzke::Base
   end
 
   def configure(c)
-    c.items = [:server_caller, :hello_world, :extended_server_caller, :simple_panel_one, :simple_panel_two]
+    c.items = [:endpoints, :hello_world, :endpoints_extended, :simple_panel_one, :simple_panel_two]
     super
   end
 end

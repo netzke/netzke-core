@@ -39,13 +39,13 @@
     this.update(html);
   },
 
-  updateAppending: function(html){
-    if (!this.panelText) { this.panelText = ""; }
-    this.panelText += html + ",";
-    this.body.update(this.panelText);
+  appendToTitle: function(html){
+    this.titl += " " + html;
+    this.setTitle(this.titl)
   },
 
   onFailTwoOutOfFive: function(){
+    this.titl = "0";
     for(var i=1; i<=5; i++) {
       this.failTwoOutOfFive(i);
     }
