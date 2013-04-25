@@ -85,6 +85,10 @@ module Netzke::Core
   #         items: [:do_something]
   #       }]
   #     end
+  #
+  # == Interfering with action events in client class
+  #
+  # For each action Netzke creates an event on the level of the parent component following the convention '<action_name>click'. The handler receives the component itself as a parameter. If the handler returns +false+, the action event is not further propagated.
   module Actions
     extend ActiveSupport::Concern
 
