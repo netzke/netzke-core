@@ -56,6 +56,20 @@ Ext.define('Netzke.FeedbackGhost', {
 Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   extend: 'Ext.direct.RemotingProvider',
 
+  initComponent: function() {
+    this.callParent();
+    this.addEvent('serverexception'); // because 'exception' is reserved by Ext JS (but never used!)
+  },
+
+  listeners: {
+    // work-around the fact that 'exception' is never thrown by Ext JS
+    data: function(self, e) {
+      if (Ext.getClass(e) == Ext.direct.ExceptionEvent) {
+        this.fireEvent('serverexception', e);
+      }
+    }
+  },
+
   getCallData: function(t){
     return {
       path: t.action,
@@ -176,17 +190,16 @@ Ext.define(null, {
 
         var remotingArgs = {args: args, configs: cfgs};
 
-        // call RemotingMethod
-        Netzke.providers[config.path][methodName].call(scope, remotingArgs, function(result, remotingEvent) {
-          if(remotingEvent.message) {
-            console.error("RPC event indicates an error: ", remotingEvent);
-            throw new Error(remotingEvent.message);
+        Netzke.providers[config.id][methodName].call(scope, remotingArgs, function(result, e) {
+          var callbackParam = e;
+
+          if (Ext.getClass(e) == Ext.direct.RemotingEvent) { // means we didn't get an exception
+            that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
+            callbackParam = that.latestResult;
           }
 
-          that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
-
-          if(typeof callback == "function") {
-            callback.call(scope, that.latestResult); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback
+          if (typeof callback == "function" && !scope.netzkeSessionIsExpired) {
+            callback.call(scope, callbackParam); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback in case of success, or the Ext.direct.ExceptionEvent otherwise
           }
 
           Netzke.runningRequests--;
@@ -210,6 +223,14 @@ Ext.define(null, {
       parent = parent.netzkeParent;
     }
     return out;
+  },
+
+  /**
+   * @private
+   * Handles endpoint exceptions. Ext.direct.ExceptionEvent gets passed as parameter. Override to handle server side exceptions.
+   */
+  onDirectException: function(e) {
+    Netzke.warning("Server error. Override onDirectException to handle this.");
   },
 
   /**
@@ -320,7 +341,11 @@ Ext.define(null, {
     }
 
     // do the remote API call
-    this.deliverComponent(serverParams);
+    this.deliverComponent(serverParams, function(e) {
+      if (Ext.getClass(e) == Ext.direct.ExceptionEvent) {
+        this.netzkeUndoLoadingComponent(params.name);
+      }
+    }, this);
   },
 
   /**
@@ -330,19 +355,8 @@ Ext.define(null, {
   netzkeComponentDelivered: function(config){
     config.netzkeParent = this;
 
-    // retrieve the loading config for this component
-    var storedConfig = this.componentsBeingLoaded[config.loadingId] || {};
-    var callbackParam;
-    delete this.componentsBeingLoaded[config.loadingId];
-
-    if (storedConfig.config) {
-      config.clientConfig = storedConfig.config;
-    }
-
-    if (storedConfig.loadMaskCmp) {
-      storedConfig.loadMaskCmp.hide();
-      storedConfig.loadMaskCmp.destroy();
-    }
+    var storedConfig = this.netzkeUndoLoadingComponent(config.name),
+        callbackParam;
 
     if (storedConfig.configOnly) {
       callbackParam = config;
@@ -368,6 +382,22 @@ Ext.define(null, {
     if (storedConfig.callback) {
       storedConfig.callback.call(storedConfig.scope || this, callbackParam);
     }
+  },
+
+  /**
+   * Destroys the loading mask and removes the component from componentsBeingLoaded
+   * @private
+   */
+  netzkeUndoLoadingComponent: function(name) {
+    var storedConfig = this.componentsBeingLoaded[name] || {};
+    delete this.componentsBeingLoaded[name];
+
+    if (storedConfig.loadMaskCmp) {
+      storedConfig.loadMaskCmp.hide();
+      storedConfig.loadMaskCmp.destroy();
+    }
+
+    return storedConfig;
   },
 
   /**
@@ -503,7 +533,5 @@ Ext.define(null, {
       }, this);
       delete config.netzkePlugins;
     }
-  },
-
-  // netzkeOnComponentLoad: Ext.emptyFn // gets overridden
+  }
 });

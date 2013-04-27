@@ -27,8 +27,8 @@
   },
 
   onCallbackAndScope: function(){
-    var that=this;
-    var fancyScope={
+    var that = this;
+    var fancyScope = {
       setFancyTitle: function () {
         that.setTitle("Fancy title" + " set!");
       }

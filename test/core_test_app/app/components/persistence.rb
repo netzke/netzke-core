@@ -36,7 +36,7 @@ class Persistence < Netzke::Base
     c.on_retrieve_session_variable = <<-JS
       function(){
         this.serverRetrieveSessionVariable(null, function(result){
-          this.setTitle("Session variable: "+result);
+          this.setTitle("Session variable: " + result);
         })
       }
     JS

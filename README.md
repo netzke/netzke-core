@@ -8,7 +8,7 @@ Some knowledge of Sencha Ext JS will be needed in order to fully understand this
 
 ## Rationale
 
-[Sencha Ext JS]("http://www.sencha.com/products/extjs") is a powerful front-end framework, which is used for crafting web-apps that give the end user experience similar to that of a desktop application. It has an extensive set of widgets ('components'), and leverages a modular approach to its fullest: a developer can extend components (using Ext JS's own [class system]("http://docs.sencha.com/ext-js/4-1/#!/guide/class_system")), nest components using many powerful layouts, dynamically create and destroy them. The architecture of Ext JS is well-thought and very complete.
+[Sencha Ext JS]("http://www.sencha.com/products/extjs") is a powerful front-end framework, which is used for crafting web-apps that give the end user experience similar to that of a desktop application. It has an extensive set of widgets ('components'), and leverages a modular approach to its fullest: a developer can extend components (using Ext JS's own [class system]("http://docs.sencha.com/ext-js/4-1/#!/guide/class_system")), nest components using many powerful layouts, dynamically create and destroy them. The architecture of Ext JS is well thought out and very complete.
 
 However, with Ext JS being server-agnostic, it is not always a trivial task for a developer to bind Ext JS components to the server-side data *and* application business logic, especially in complex applications. Netzke as the solution that allows you to extend the modular approach to the server side.
 
@@ -25,11 +25,11 @@ Netzke Core takes the burden of implementing the following key aspects of the fr
 
 ...and more.
 
-All this extremely facilitates building fast, low-traffic, robust, and highly maintainable applications. As a result, your code scales much better in the sense of complexity, compared to using conventional MVC, where developers are pretty much limited with programming techniques they can apply.
+All this extremely facilitates building fast, low-traffic, robust, and highly maintainable applications. As a result, your code scales much better in the sense of complexity, compared to using conventional MVC, where developers are pretty much limited with the programming techniques that they can apply.
 
 ## HelloWorld component
 
-*This component is distributed as a part of the test application, see `test/core_test_app/components`.*
+*This component is distributed as a part of the test application, see `test/core_test_app/components/hello_world.rb`.*
 
 Ext JS files are not distributed with Netzke, so, make sure that they are located in (or sym-linked as) `YOUR_APP/public/extjs`.
 
@@ -364,6 +364,12 @@ To run all the tests (from the gem's root):
 This assumes that the Ext JS library is located/symlinked in `test/core_test_app/public/extjs`. If you want to use Sencha CDN instead, run:
 
     $ EXTJS_SRC=cdn rake
+
+## Contributions and support
+
+Help developing Netzke by submitting a pull request when you think others can benefit from it.
+
+If you feel particularily generous, you can donate a couple of bucks a week at [GitTip](https://www.gittip.com/nomadcoder/).
 
 ## Useful links
 

@@ -47,6 +47,8 @@ class Actions < Netzke::Base
           :menu => [:simple_action], :text => 'Format'
       }]
     }]
+
+    c.docked_items = [{xtype: :toolbar, dock: :left, items: [:simple_action]}]
   end
 
   js_configure do |c|

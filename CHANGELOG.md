@@ -1,4 +1,10 @@
 # v0.8.4 - WIP
+* bug fix
+  * re-enable session expiration detection
+* improvements
+  * add `serverexception` event on `Netzke.directProvider`, subscribe to it to handle server exceptions
+  * endpoint calls will now pass Ext.direct.Exception to the provided callback function in case of server exception
+  * a component will clean-up the loading mask when a server exception occurs during dynamic component loading
 
 # v0.8.3 - 2013-03-22
 * support Rails 3.2.13

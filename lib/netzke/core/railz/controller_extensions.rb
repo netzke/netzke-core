@@ -107,7 +107,7 @@ module Netzke
           component_instance = Netzke::Base.instance_by_config(cmp_config)
           component_instance.invoke_endpoint((sub_components + [request.endpoint]).join("__"), request.args, request.client_configs)
         else
-          {:netzke_component_not_in_session => true}
+          {netzke_session_expired: []}
         end
       end
 
