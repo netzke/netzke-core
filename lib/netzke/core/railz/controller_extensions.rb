@@ -16,11 +16,15 @@ module Netzke
         end
 
         def args
-          remoting_args["args"]
+          # for backward compatibility, fall back to old data structure (with the endpoint params being in the root of
+          # 'data')
+          remoting_args["args"] || remoting_args
         end
 
         def client_configs
-          remoting_args["configs"]
+          # if no configs are provided, the behavior is the old one, and thus all instances the same child component
+          # will be treated as one
+          remoting_args["configs"] || []
         end
 
         def tid
@@ -118,7 +122,8 @@ module Netzke
         component_name, *sub_components = endpoint_path.split('__')
         component_instance = Netzke::Base.instance_by_config(session[:netzke_components][component_name.to_sym])
 
-        # We can't do this here; this method is only used for classic form submission, and the response from the server should be the (default) "text/html"
+        # We can't do this here; this method is only used for classic form submission, and the response from the server
+        # should be the (default) "text/html"
         # response.headers["Content-Type"] = "text/plain; charset=utf-8"
 
         render :text => component_instance.invoke_endpoint(sub_components.join("__"), params).netzke_jsonify.to_json, :layout => false
