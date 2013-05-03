@@ -355,7 +355,7 @@ Ext.define(null, {
   netzkeComponentDelivered: function(config){
     config.netzkeParent = this;
 
-    var storedConfig = this.netzkeUndoLoadingComponent(config.name),
+    var storedConfig = this.netzkeUndoLoadingComponent(config.loadingId),
         callbackParam;
 
     if (storedConfig.configOnly) {
