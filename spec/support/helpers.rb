@@ -34,6 +34,6 @@ module Helpers
       return stats.failures == 0 && stats.tests !=0
     JS
 
-    raise "JS spec faild" if !result
+    raise "JS spec failed" if !result
   end
 end

@@ -467,27 +467,23 @@ Ext.define(null, {
 
   /**
   * Provides a visual feedback. TODO: refactor
+  * msg can be a string, an array of strings, an object in form {msg: 'Message'}, or an array of such objects.
   */
   netzkeFeedback: function(msg, options){
     if (this.initialConfig && this.initialConfig.quiet) return false;
 
     options = options || {};
 
-    if (this.feedbackGhost) {
-      this.feedbackGhost.showFeedback(msg, {delay: options.delay});
-    } else {
-      // there's no application to show the feedback - so, we do it ourselves
-      if (typeof msg == 'string'){
-        alert(msg);
-      } else {
-        var compoundResponse = "";
-        Ext.each(msg, function(m){
-          compoundResponse += m.msg + "\n"
-        });
-        if (compoundResponse != "") {
-          alert(compoundResponse);
-        }
-      }
+    if (typeof msg == 'string'){ msg = [msg]; }
+
+    var feedback = "";
+
+    Ext.each(msg, function(m){
+      feedback += m.msg || m + "<br/>"
+    });
+
+    if (feedback != "") {
+      this.feedbackGhost.showFeedback(feedback, {delay: options.delay});
     }
   },
 
