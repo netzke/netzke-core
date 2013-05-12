@@ -44,6 +44,7 @@ class Endpoints < Netzke::Base
   end
 
   endpoint :get_answer do |params,this|
+    raise "params expected to be null" if !params.nil?
     this.netzke_set_result(42) # special method that passes a value as argument to callback function
   end
 end
