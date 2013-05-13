@@ -1,6 +1,7 @@
 # v0.8.4 - WIP
 * bug fix
   * Re-enable session expiration detection
+  * Do not crash on a rare situation when an endpoint is being called on an non-existing child component
 * improvements
   * Add `serverexception` event on `Netzke.directProvider`, subscribe to it to handle server exceptions
   * Endpoint calls will now pass Ext.direct.Exception to the provided callback function in case of server exception

@@ -104,10 +104,10 @@ module Netzke::Core
     #
     #     invoke_endpoint(:users__center__get_data, params)
     def invoke_endpoint(endpoint, params, configs = [])
-      if has_endpoint?(endpoint)
-        endpoint_response = Netzke::Core::EndpointResponse.new
-        send("#{endpoint}_endpoint", params, endpoint_response)
+      endpoint_response = Netzke::Core::EndpointResponse.new
 
+      if has_endpoint?(endpoint)
+        send("#{endpoint}_endpoint", params, endpoint_response)
         endpoint_response
       else
         # Let's try to find it recursively in a component down the hierarchy
@@ -124,13 +124,20 @@ module Netzke::Core
           component_instance(child_component, cmp_strong_config).invoke_endpoint(action, params, configs)
         else
           # component_missing can be overridden if necessary
-          component_missing(child_component)
+          component_missing(child_component, params, endpoint_response)
+          endpoint_response
         end
       end
     end
 
     def has_endpoint?(endpoint)
       !!self.class.endpoints[endpoint.to_sym]
+    end
+
+    # Called when the method_missing tries to processes a non-existing component. Override when needed.
+    # Note: this should actually never happen unless you mess up with Netzke component loading mechanisms.
+    def component_missing(missing_component, params, this)
+      this.netzke_feedback "Unknown component #{missing_component} for #{name}"
     end
 
   end

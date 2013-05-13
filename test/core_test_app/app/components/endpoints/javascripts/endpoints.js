@@ -38,6 +38,10 @@
     }, fancyScope);
   },
 
+  onNonExisting: function(){
+    this.serverNonExisting();
+  },
+
   onReturnValue: function() {
     this.getAnswer(null, function(answer) {
       this.setTitle("Returned value: " + answer);
