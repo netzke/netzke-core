@@ -58,7 +58,7 @@ module Netzke
     include Core::Actions
     include Core::Html if const_defined? :Haml
 
-    # DELETE ME
+    # TODO: get rid of it
     class_attribute :default_instance_config
     self.default_instance_config = {}
 
@@ -70,11 +70,17 @@ module Netzke
     # Parent component
     attr_reader :parent
 
-    # Name that the parent can reference us by. The last part of +js_id+
+    # Name that the parent can reference us by
     attr_reader :name
 
-    # Global id in the components tree, following the double-underscore notation, e.g. +books__config_panel__form+
+    # Global id in the component tree, following the double-underscore notation, e.g. +books__config_panel__form+
     attr_reader :js_id
+
+    # JS id in the context of the parent
+    attr_reader :item_id
+
+    # Component's path in the component tree
+    attr_reader :path
 
     class << self
       # Instance of component by config
@@ -109,12 +115,29 @@ module Netzke
 
     # Instantiates a component instance. A parent can optionally be provided.
     def initialize(conf = {}, parent = nil)
-      @passed_config = conf.deep_dup # configuration passed at the moment of instantiation
-      @parent        = parent
-      @name          = conf[:name] || self.class.name.underscore
-      @path          = parent.nil? ? @name : "#{parent.js_id}__#{@name}"
-      @js_id         = conf[:js_id] || @path
-      @flash         = []
+      @passed_config = conf
+
+      # parent component
+      @parent = parent
+
+      # name fo the component used in the +component+ DSL block, and is a part of component's +@path+
+      @name = conf[:name] || self.class.name.underscore
+
+      # path down the composition hierarchy (composed of names)
+      @path = parent.nil? ? @name : "#{parent.path}__#{@name}"
+
+      # JS id in the scope of the parent component. Auto-generated when using multiple instance loading.
+      # Full JS id will be built using these along the +@path+
+      @item_id = conf[:item_id] || @name
+
+      # JS full ID. Similar to +path+, but composed of item_id's. Differs from @path when multiple instances are being loaded.
+      @js_id = parent.nil? ? @item_id : [parent.js_id, @item_id].join("__")
+
+      # TODO: get rid of this in 0.9
+      @flash = []
+
+      # Make +client_config+ accessible in +configure+ before calling +super+
+      config.client_config = conf.delete(:client_config) || {}
 
       # Build complete component configuration
       configure(config)
@@ -126,8 +149,7 @@ module Netzke
 
   private
 
-    # TODO: needs rework
-    # TODO: rename to smth more appropriate
+    # TODO: get rid of this in 0.9
     def flash(flash_hash)
       level = flash_hash.keys.first
       raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)

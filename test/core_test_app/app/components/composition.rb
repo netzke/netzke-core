@@ -45,6 +45,7 @@ class Composition < Netzke::Base
   def configure(c)
     super
     c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server, :show_hidden_window ]
+    c.title = c.client_config[:title] || "Composition"
     c.items = [
       :north_panel,
       :center_panel,

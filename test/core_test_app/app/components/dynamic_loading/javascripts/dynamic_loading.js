@@ -19,7 +19,7 @@
   },
 
   onLoadWithParams: function(params){
-    this.netzkeLoadComponent("simple_component", {params: {title: "Simple Component with modified title"}, container: this});
+    this.netzkeLoadComponent("simple_component", {clientConfig: {title: "Simple Component with modified title"}, container: this});
   },
 
   onNonExistingComponent: function(){

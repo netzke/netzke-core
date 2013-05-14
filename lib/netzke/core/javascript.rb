@@ -43,11 +43,7 @@ module Netzke::Core
     def js_configure(c)
       c.merge!(normalized_config)
 
-      # So we can use getComponent(<component_name>) to retrieve a child component
-      c.item_id ||= name.to_s
-      c.item_id += "-" + config.js_id if config.js_id
-
-      %w[id path netzke_components endpoints xtype alias i18n netzke_plugins flash].each do |thing|
+      %w[id item_id path netzke_components endpoints xtype alias i18n netzke_plugins flash].each do |thing|
         js_thing = send(:"js_#{thing}")
         c[thing] = js_thing if js_thing.present?
       end
@@ -65,6 +61,10 @@ module Netzke::Core
       self.class.js_config.xtype
     end
 
+    def js_item_id
+      @item_id
+    end
+
     # Ext.createByAlias may be used to instantiate the component.
     def js_alias
       self.class.js_config.class_alias
@@ -79,6 +79,7 @@ module Netzke::Core
       plugins.map{ |p| p.to_s.camelcase(:lower) }
     end
 
+    # TODO: get rid of this in 0.9
     def js_flash
       session && session[:flash]
     end

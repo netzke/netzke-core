@@ -84,26 +84,28 @@ module Netzke::Core
       declare_dsl_for :components
 
       # Loads a component on browser's request. Every Netzke component gets this endpoint.
-      # <tt>params</tt> should contain:
-      # * <tt>:cache</tt> - an array of component classes cached at the browser
-      # * <tt>:id</tt> - reference to the component
-      # * <tt>:container</tt> - Ext id of the container where in which the component will be rendered
+      # +params+ should contain:
+      #   [cache] an array of component classes cached at the browser
+      #   [name] name of the child component to be loaded
+      #   [index] clone index of the loaded component
       endpoint :deliver_component do |params, this|
         cache = params[:cache].split(",") # array of cached xtypes
         component_name = params[:name].underscore.to_sym
 
+        item_id = "#{component_name}#{params[:index]}"
+
         cmp_instance = components[component_name] &&
           !components[component_name][:excluded] &&
-          component_instance(component_name, {js_id: params[:id], client_config: params[:client_config]})
+          component_instance(component_name, {item_id: item_id, client_config: params[:client_config]})
 
         if cmp_instance
           js, css = cmp_instance.js_missing_code(cache), cmp_instance.css_missing_code(cache)
           this.netzke_eval_js(js) if js.present?
           this.netzke_eval_css(css) if css.present?
 
-          this.netzke_component_delivered(cmp_instance.js_config.merge(loading_id: params[:loading_id]));
+          this.netzke_component_delivered(cmp_instance.js_config);
         else
-          this.netzke_component_delivery_failed(component_name: component_name, msg: "Couldn't load component '#{component_name}'", loading_id: params[:loading_id])
+          this.netzke_component_delivery_failed(item_id: item_id, msg: "Couldn't load component '#{item_id}'")
         end
       end
 
@@ -124,7 +126,7 @@ module Netzke::Core
     def component_instance(name, strong_config = {})
       name.to_s.split('__').inject(self) do |out, cmp_name|
         cmp_config = out.components[cmp_name.to_sym]
-        raise ArgumentError, "No component '#{cmp_name}' defined for '#{out.js_id}'" if cmp_config.nil? || cmp_config[:excluded]
+        raise ArgumentError, "No component '#{cmp_name}' defined for '#{out.path}'" if cmp_config.nil? || cmp_config[:excluded]
         cmp_config[:name] = cmp_name
         cmp_config.merge!(strong_config)
         cmp_config[:klass].new(cmp_config, out)
@@ -141,22 +143,6 @@ module Netzke::Core
 
       res += self.class.netzke_ancestors
       res.uniq
-    end
-
-    # JS id of a component in the hierarchy, based on passed reference that follows the double-underscore notation. Referring to "parent" is allowed. If going to far up the hierarchy will result in <tt>nil</tt>, while referring to a non-existent component will simply provide an erroneous ID.
-    # For example:
-    # <tt>parent__parent__child__subchild</tt> will traverse the hierarchy 2 levels up, then going down to "child", and further to "subchild". If such a component exists in the hierarchy, its global id will be returned, otherwise <tt>nil</tt> will be returned.
-    # @param ref [Symbol] reference to a child component
-    # @return [String] JS id
-    def js_id_by_reference(ref)
-      ref = ref.to_s
-      return parent && parent.js_id if ref == "parent"
-      substr = ref.sub(/^parent__/, "")
-      if substr == ref # there's no "parent__" in the beginning
-        return js_id + "__" + ref
-      else
-        return parent.js_id_by_reference(substr)
-      end
     end
 
     def extend_item(item)

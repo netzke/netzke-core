@@ -47,11 +47,10 @@ module Netzke::Core
     #     end
     #   end
     def configure(c)
-      # passed config
       c.merge!(@passed_config)
     end
 
-    # Complete server class configuration. Can be accessed from within endpoint, component, and action blocks, as well as any other instance method, for example:
+    # Complete configuration for server class instance. Can be accessed from within endpoint, component, and action blocks, as well as any other instance method, for example:
     #
     #   action :do_something do |c|
     #     c.title = "Do it for #{config.title}"
@@ -59,7 +58,6 @@ module Netzke::Core
     def config
       @config ||= ActiveSupport::OrderedOptions.new
     end
-
 
   protected
 

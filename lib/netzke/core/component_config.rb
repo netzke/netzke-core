@@ -6,6 +6,7 @@ module Netzke::Core
 
     def set_defaults!
       self.item_id ||= name # default item_id
+      self.client_config ||= {}
       self.klass ||= name.camelize.constantize # default klass
     end
   end

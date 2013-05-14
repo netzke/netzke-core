@@ -1,19 +1,18 @@
 # Subsequent loading of tabs should result in functional "tab" component instances
-class PersistentLoading < Netzke::Base
+class MultiInstanceLoading < Netzke::Base
   js_configure do |c|
     c.extend = "Ext.tab.Panel"
     c.mixin
   end
 
-  action :persistent_tab
-  action :temporary_tab
+  action :load_hello_user
+  action :load_composition
 
-  component :tab do |c|
-    c.klass = HelloUser
-  end
+  component :hello_user
+  component :composition
 
   def configure(c)
     super
-    c.bbar = [:persistent_tab, :temporary_tab]
+    c.bbar = [:load_hello_user, :load_composition]
   end
 end
