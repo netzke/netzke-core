@@ -8,10 +8,10 @@ module Netzke::Core
   #       c.icon = :tick
   #     end
   #   end
-  class ActionConfig < ActiveSupport::OrderedOptions
+  class ActionConfig < DslConfigBase
     def initialize(name, component)
-      @component = component
-      @name = name.to_s
+      super
+
       @text = @tooltip = @icon = ""
 
       build_localized_attributes

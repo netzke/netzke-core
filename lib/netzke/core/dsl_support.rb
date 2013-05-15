@@ -25,19 +25,19 @@ module Netzke
         # 2) Instance method `components` that returns a hash of all components configs. This hash is built by passing a new instance of `Netzke::Core::ComponentConfig` to each of the methods described in 1). Presence of `Netzke::Core::ComponentConfig` is assumed.
         #
         # Besides components, this method is being used in Core for DSL for actions.
-        def declare_dsl_for(things)
+        def declare_dsl_for(things, options = {})
           things = things.to_s
           storage_attribute = :"_declared_#{things}"
 
           class_attribute storage_attribute
           send("#{storage_attribute}=", [])
 
-          define_dsl_method(things, storage_attribute)
-          define_collector_method(things, storage_attribute)
+          define_dsl_method(things, storage_attribute, options)
+          define_collector_method(things, storage_attribute, options)
         end
 
 
-        def define_dsl_method(things, storage_attribute)
+        def define_dsl_method(things, storage_attribute, options)
           thing = things.singularize
 
           define_singleton_method thing do |name, &block|
@@ -47,9 +47,9 @@ module Netzke
           end
         end
 
-        def define_collector_method(things, storage_attribute)
+        def define_collector_method(things, storage_attribute, options)
           thing = things.singularize
-          config_class = "Netzke::Core::#{thing.camelcase}Config".constantize
+          config_class = options[:config_class] || Netzke::Core::DslConfigBase
 
           define_method things do
             # memoization

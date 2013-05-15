@@ -94,7 +94,7 @@ module Netzke::Core
 
     included do
       # Declares Base.action, for declaring actions, and Base#actions, which returns a [Hash] of all action configs by name
-      declare_dsl_for :actions
+      declare_dsl_for :actions, config_class: Netzke::Core::ActionConfig
     end
 
     module ClassMethods

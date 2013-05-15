@@ -81,7 +81,7 @@ module Netzke::Core
 
     included do
       # Declares Base.component, for declaring child componets, and Base#components, which returns a [Hash] of all component configs by name
-      declare_dsl_for :components
+      declare_dsl_for :components, config_class: Netzke::Core::ComponentConfig
 
       # Loads a component on browser's request. Every Netzke component gets this endpoint.
       # +params+ should contain:

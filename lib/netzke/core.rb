@@ -15,6 +15,7 @@ module Netzke
   # * ext_path - absolute path to your Ext code root
   # * icons_uri - relative URI to the icons
   module Core
+    autoload :DslConfigBase, 'netzke/core/dsl_config_base'
     autoload :ComponentConfig, 'netzke/core/component_config'
     autoload :ActionConfig, 'netzke/core/action_config'
     autoload :Panel, 'netzke/core/panel'
