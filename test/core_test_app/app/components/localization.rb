@@ -8,14 +8,15 @@ class Localization < Netzke::Base
 
   action :action_three
 
+  # Displayes localized JS properties in the header
+  action :show_properties
+
   js_configure do |c|
     c.translate :property_one, :property_two
 
-    c.on_render = <<-JS
+    c.on_show_properties = <<-JS
       function(ct){
-        this.callParent(this, ct);
-
-        this.body.update(this.i18n.propertyOne + " - " + this.i18n.propertyTwo);
+        this.setTitle(this.i18n.propertyOne + " - " + this.i18n.propertyTwo);
       }
     JS
 
@@ -30,6 +31,6 @@ class Localization < Netzke::Base
   def configure(c)
     super
     c.title = I18n.t('localization.title')
-    c.bbar = [:action_one, :action_two, :action_three]
+    c.bbar = [:action_one, :action_two, :action_three, :show_properties]
   end
 end

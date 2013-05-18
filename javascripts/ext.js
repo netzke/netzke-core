@@ -9,7 +9,7 @@ Ext.QuickTips.init();
 // Checking Ext JS version: both major and minor versions must be the same
 (function(){
   var requiredVersionMajor = 4,
-      requiredVersionMinor = 1,
+      requiredVersionMinor = 2,
       extVersion = Ext.getVersion('extjs'),
       currentVersionMajor = extVersion.getMajor(),
       currentVersionMinor = extVersion.getMinor(),

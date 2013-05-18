@@ -9,3 +9,5 @@ es:
         text: Primera acción
       action_three:
         text: Tercera acción
+      show_properties:
+        text: Muestra propriedades

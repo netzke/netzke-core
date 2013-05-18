@@ -3,7 +3,7 @@
 <head>
   <title>Netzke Core Test App</title>
   <%= csrf_meta_tag %>
-  <%= load_netzke minified: true %>
+  <%= load_netzke %>
 
   <% if params[:spec] %>
     <%= javascript_include_tag "/assets/expect/expect.js" %>
