@@ -8,23 +8,24 @@ module Netzke
       #
       # Params:
       #
-      # * :theme - the name of theme to apply; follows simple convention of including css files named "ext-(theme)".
+      # [theme]
+      #   The theme to apply. E.g.:
       #
-      # E.g.:
+      #     <%= load_netzke theme: "classic" %>
       #
-      #     <%= load_netzke theme: "neptune" %>
+      #   Themes shipped with Ext JS:
+      #   * "neptune" (default in Netzke)
+      #   * "classic"
+      #   * "gray"
+      #   * "access"
       #
-      # Other theme options that may work (unless Sencha introduces some/other conventions):
-      #
-      # - all (standard)
-      # - all-gray
-      # - all-access
-      #
-      # * :minified - set to +true+ to load minified JS and CSS for Ext JS also in development env
+      # [minified]
+      #   Whether to include minified JS and styleshetes. By default is +false+ for Rails development env,
+      #   +true+ otherwise
       def load_netzke(params = {})
         Netzke::Core.platform = params[:platform] || :ext
         params[:minified] = !Rails.env.development? if params[:minified].nil?
-        params[:theme] ||= :all
+        params[:theme] ||= "neptune"
 
         raw([netzke_css_include(params), netzke_css(params), netzke_js_include(params), netzke_js(params)].join("\n"))
       end
