@@ -1,4 +1,4 @@
-# v0.8.4 - WIP
+# v0.8.4 - 2013-05-22
 * bug fix
   * Re-enable session expiration detection
   * Do not crash on a rare situation when an endpoint is being called on an non-existing child component
