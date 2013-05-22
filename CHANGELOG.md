@@ -7,7 +7,7 @@
   * Endpoint calls will now pass Ext.direct.Exception to the provided callback function in case of server exception
   * A component will clean-up the loading mask when a server exception occurs during dynamic component loading
   * `netzkeFeedback` now shows multiple messages in a single slide banner
-  * Implement multi-instance child component loading with different configuration (see PersistentLoading in the test app)
+  * Implement multi-instance child component loading with different configuration (see MultiInstanceLoading in the test app)
 
 # v0.8.3 - 2013-03-22
 * support Rails 3.2.13
