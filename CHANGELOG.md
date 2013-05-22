@@ -1,3 +1,14 @@
+# v0.9.0 - WIP
+* TODO Rails 4
+* TODO Ext JS 4.2
+* TODO Ext JS Neptune scheme is default
+* changes
+  * TODO `js_configure`: c.mixin and c.include without params pickup "mixins/*.js" and "includes/*.js" respectively
+  * TODO new convention for endpoint naming: an endpoint declared with `endpoint :do_something` will be callable from
+  the client as `this.serverDoSomething`
+  * TODO netzkeFeedback removed in favor of netzkeInfo and netzkeError
+  * TODO Grid config options like `enable_advanced_search` loose their `enable_` prefix
+
 # v0.8.4 - 2013-05-22
 * bug fix
   * Re-enable session expiration detection
