@@ -492,7 +492,7 @@ Ext.define(null, {
     var feedback = "";
 
     Ext.each(msg, function(m){
-      feedback += m.msg || m + "<br/>"
+      feedback += (m.msg || m) + "<br/>"
     });
 
     if (feedback != "") {
