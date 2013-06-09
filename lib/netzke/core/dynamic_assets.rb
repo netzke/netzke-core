@@ -32,11 +32,7 @@ module Netzke
         end
 
         def strip_js_comments(js_string)
-          if defined?(::Rails) && !::Rails.env.development? && compressor = ::Rails.application.assets.js_compressor
-            compressor.processor.call(nil, js_string)
-          else
-            js_string
-          end
+          js_string
         end
 
       private
