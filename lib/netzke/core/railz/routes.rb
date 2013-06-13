@@ -15,7 +15,7 @@ module ActionDispatch::Routing
     #     end
     def netzke(prefix = "/netzke", options = {})
       controller = options[:controller] || :netzke
-      match "#{prefix}/:action(.:format)", to: controller.to_s, as: 'netzke'
+      get "#{prefix}/:action(.:format)" => controller.to_s, as: 'netzke'
     end
   end
 end
