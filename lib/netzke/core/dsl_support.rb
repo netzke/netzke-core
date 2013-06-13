@@ -36,7 +36,6 @@ module Netzke
           define_collector_method(things, storage_attribute, options)
         end
 
-
         def define_dsl_method(things, storage_attribute, options)
           thing = things.singularize
 

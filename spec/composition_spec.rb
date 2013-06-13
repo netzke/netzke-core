@@ -82,24 +82,6 @@ module Netzke::Core
       component.components[:nested_one][:item_id].should == "nested_one"
     end
 
-    it "should be possible to create (nested) component instances" do
-      component = SomeComposite.new(:name => 'some_composite')
-
-      # instantiate components
-      nested_component_one = component.component_instance(:nested_one)
-      nested_component_two = component.component_instance(:nested_two)
-      deep_nested_component = component.component_instance(:nested_two__nested)
-
-      nested_component_one.class.should == NestedComponentOne
-      nested_component_two.class.should == NestedComponentTwo
-      deep_nested_component.class.should == DeepNestedComponent
-
-      component.js_id.should == 'some_composite'
-      nested_component_one.js_id.should == 'some_composite__nested_one'
-      nested_component_two.js_id.should == 'some_composite__nested_two'
-      deep_nested_component.js_id.should == 'some_composite__nested_two__nested'
-    end
-
     it "should be possible to override the superclass's declaration of a component" do
       composite = BaseComposite.new
       composite.components[:component_one][:title].should == "My Cool Component"
