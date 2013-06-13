@@ -2,7 +2,6 @@ class HelloUser < HelloWorld
   def configure(c)
     c.user = 'Max'
     super
-    c.user = c.client_config[:user]
     c.title = "Configured with user #{c.user}"
   end
 
