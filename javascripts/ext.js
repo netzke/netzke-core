@@ -79,13 +79,14 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
     }
   },
 
-  addEndpointsForComponent: function(componentPath, endpoints) {
-    var cls = this.namespace[componentPath] || (this.namespace[componentPath] = {});
+  addEndpointsForComponent: function(componentPath, componentId, endpoints) {
+    var cls = this.namespace[componentId] || (this.namespace[componentId] = {});
 
     Ext.Array.each(endpoints, function(ep) {
       var methodName = ep.camelize(true),
-          method = Ext.create('Ext.direct.RemotingMethod', {name: methodName, len: 1, blah: 666});
-      cls[methodName] = this.createHandler(componentPath, method);
+          method = Ext.create('Ext.direct.RemotingMethod', {name: methodName, len: 1});
+
+        cls[methodName] = this.createHandler(componentPath, method);
     }, this);
   },
 
@@ -177,7 +178,7 @@ Ext.define(null, {
     var endpoints = config.endpoints || [];
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
 
-    Netzke.directProvider.addEndpointsForComponent(config.path, endpoints);
+    Netzke.directProvider.addEndpointsForComponent(config.path, config.id, endpoints);
 
     var that = this;
 
@@ -193,7 +194,7 @@ Ext.define(null, {
         var cfgs = this.buildParentClientConfigs();
         var remotingArgs = {args: args, configs: cfgs};
 
-        Netzke.providers[config.path][methodName].call(scope, remotingArgs, function(result, e) {
+        Netzke.providers[config.id][methodName].call(scope, remotingArgs, function(result, e) {
           var callbackParam = e;
 
           if (Ext.getClass(e) == Ext.direct.RemotingEvent) { // means we didn't get an exception
@@ -433,7 +434,8 @@ Ext.define(null, {
     idSplit.pop();
     var parentId = idSplit.join("__");
 
-    return parentId === "" ? null : Ext.getCmp(parentId);
+    var res = parentId === "" ? null : Ext.getCmp(parentId);
+    return res;
   },
 
   /**
@@ -468,14 +470,15 @@ Ext.define(null, {
   netzkeGetComponent: function(id){
     if (id === "") {return this};
     id = id.underscore();
-    var split = id.split("__");
+    var split = id.split("__"), res;
     if (split[0] === 'parent') {
       split.shift();
       var childInParentScope = split.join("__");
-      return this.netzkeGetParentComponent().netzkeGetComponent(childInParentScope);
+      res = this.netzkeGetParentComponent().netzkeGetComponent(childInParentScope);
     } else {
-      return Ext.getCmp(this.id+"__"+id);
+      res = Ext.getCmp(this.id+"__"+id);
     }
+    return res;
   },
 
   /**
