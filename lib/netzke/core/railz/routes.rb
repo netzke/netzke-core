@@ -15,8 +15,11 @@ module ActionDispatch::Routing
     #     end
     def netzke(prefix = "/netzke", options = {})
       controller = options[:controller] || :netzke
-      get "#{prefix}/:action(.:format)" => controller.to_s, as: 'netzke'
-      post "#{prefix}/:action(.:format)" => controller.to_s, as: 'netzke'
+
+      get "#{prefix}" => "#{controller.to_s}#index", as: :netzke
+      get "#{prefix}/ext(.:format)" => "#{controller.to_s}#ext", as: :netzke_ext
+      match "#{prefix}/direct" => "#{controller.to_s}#direct", as: :netzke_direct, via: [:get, :post]
+      match "#{prefix}/dispatcher" => "#{controller.to_s}#dispatcher", as: :netzke_dispatcher, via: [:get, :post]
     end
   end
 end

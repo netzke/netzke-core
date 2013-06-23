@@ -44,7 +44,7 @@ module Netzke
           res << %{Ext.ns('Netzke');}
           res << %{Ext.ns('Netzke.core');}
           res << %{Netzke.RelativeUrlRoot = '#{ActionController::Base.config.relative_url_root}';}
-          res << %{Netzke.ControllerUrl = '#{ActionController::Base.config.relative_url_root}#{Rails.application.routes.url_helpers.netzke_path('')}';}
+          res << %{Netzke.ControllerUrl = '#{ActionController::Base.config.relative_url_root}#{Rails.application.routes.url_helpers.netzke_path}/';}
           res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}#{Netzke::Core.ext_uri}';}
 
           res << %{Netzke.core.directMaxRetries = #{Netzke::Core.js_direct_max_retries};}
