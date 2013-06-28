@@ -130,7 +130,8 @@ module Netzke::Core
         cmp_config[:name] = cmp_name
         cmp_config.merge!(strong_config)
         cmp_config[:klass].new(cmp_config, out)
-      end 
+      end
+    end
 
     # @return [Array<Class>] All component classes that we depend on (used to render all necessary javascripts and stylesheets)
     def dependency_classes
