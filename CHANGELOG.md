@@ -1,7 +1,7 @@
 # v0.9.0 - WIP
-* TODO Rails 4
-* TODO Ext JS 4.2
-* TODO Ext JS Neptune scheme is default
+* Rails 4
+* Ext JS 4.2
+* Ext JS Neptune scheme is default
 * changes
   * TODO `js_configure`: c.mixin and c.include without params pickup "mixins/*.js" and "includes/*.js" respectively
   * TODO new convention for endpoint naming: an endpoint declared with `endpoint :do_something` will be callable from

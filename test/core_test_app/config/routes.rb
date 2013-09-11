@@ -22,7 +22,7 @@ RailsApp::Application.routes.draw do
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 
-  resources :specs
+  get '/specs/*name' => 'specs#spec'
 
   # Sample resource route with options:
   #   resources :products do
@@ -72,5 +72,5 @@ RailsApp::Application.routes.draw do
   # Components configured in Rails views
   match 'simple_rails/:action' => 'simple_rails', :as => 'simple_rails_views'
 
-  match ':controller(/:action(/:id(.:format)))'
+  # match ':controller(/:action(/:id(.:format)))'
 end

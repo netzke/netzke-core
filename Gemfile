@@ -2,7 +2,10 @@ source 'http://rubygems.org'
 
 gemspec
 
-gem 'haml'
+gem 'netzke_testing'
+
+# For local development
+# gem 'netzke_testing', path: '~/code/netzke/netzke_testing'
 
 group :test do
   gem 'capybara'
