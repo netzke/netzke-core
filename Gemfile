@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gemspec
 
-gem 'netzke_testing'
+gem 'netzke-testing'
 
 # For local development
 # gem 'netzke_testing', path: '~/code/netzke/netzke_testing'

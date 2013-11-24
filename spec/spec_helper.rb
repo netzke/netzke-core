@@ -8,14 +8,14 @@ require 'rspec/autorun'
 # in spec/support/ and its subdirectories.
 # Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 # require 'support/helpers'
-require 'netzke_testing'
+require 'netzke/testing'
 
 RSpec.configure do |config|
   require 'capybara/rspec'
   require 'capybara/rails'
 
-  # config.include NetzkeTesting::Helpers
-  NetzkeTesting.rspec_init(config)
+  # config.include Netzke::Testing::Helpers
+  Netzke::Testing.rspec_init(config)
 
   # ## Mock Framework
   #
