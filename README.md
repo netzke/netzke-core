@@ -185,9 +185,9 @@ For more details on defining the client class, refer to [Netzke::Core::ClientCla
 Any Netzke component can define child components, which can either be statically nested in the compound layout (e.g. as different regions of the ['border' layout]("http://docs.sencha.com/ext-js/4-1/#!/api/Ext.layout.container.Border")), or dynamically loaded at a request (as in the case of the edit form window in `Netzke::Basepack::GridPanel`, for example).
 
 ### Defining child components
- 
+
 You can define a child component by calling the `component` class method which normally requires a block:
- 
+
 ```ruby
 component :users do |c|
   c.klass = GridPanel
@@ -327,7 +327,7 @@ Netzke provides support for HAML templates in case you don't want to put HTML in
 
 * Ruby ~> 1.9.2
 * Rails ~> 3.2.0
-* Ext JS ~> 4.1.0
+* Ext JS ~> 4.2.0
 
 ## Installation
 
