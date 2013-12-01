@@ -378,6 +378,6 @@ If you feel particularily generous, you can donate a couple of bucks a week at [
 * [Twitter](http://twitter.com/netzke) - latest news about the framework
 
 ---
-Copyright (c) 2008-2012 [nomadcoder](https://twitter.com/nomadcoder), released under the MIT license (see LICENSE).
+Copyright (c) 2008-2013 [Max Gorin](https://twitter.com/nomadcoder), released under the MIT license (see LICENSE).
 
 **Note** that Ext JS is licensed [differently](http://www.sencha.com/products/extjs/license/), and you may need to purchase a commercial license in order to use it in your projects!
