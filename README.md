@@ -29,7 +29,7 @@ All this extremely facilitates building fast, low-traffic, robust, and highly ma
 
 ## HelloWorld component
 
-*This component is distributed as a part of the test application, see `test/core_test_app/components/hello_world.rb`.*
+*This component is distributed as a part of the test application, see `spec/rails_app/components/hello_world.rb`.*
 
 Ext JS files are not distributed with Netzke, so, make sure that they are located in (or sym-linked as) `YOUR_APP/public/extjs`.
 
@@ -347,7 +347,7 @@ By default, Netzke assumes that your Ext JS library is located in `public/extjs`
 
 ## Running tests
 
-The bundled `test/core_test_app` application used for automated testing can be easily run as a stand-alone Rails app. It's a good source of concise, focused examples. After starting the application, access any of the test components (located in `test/core_test_app/app/components`) by using the following url:
+The bundled `spec/rails_app` application used for automated testing can be easily run as a stand-alone Rails app. It's a good source of concise, focused examples. After starting the application, access any of the test components (located in `spec/rails_app/app/components`) by using the following url:
 
     http://localhost:3000/components/{name of the component's class}
 
@@ -361,7 +361,7 @@ To run all the tests (from the gem's root):
 
     $ rake
 
-This assumes that the Ext JS library is located/symlinked in `test/core_test_app/public/extjs`. If you want to use Sencha CDN instead, run:
+This assumes that the Ext JS library is located/symlinked in `spec/rails_app/public/extjs`. If you want to use Sencha CDN instead, run:
 
     $ EXTJS_SRC=cdn rake
 

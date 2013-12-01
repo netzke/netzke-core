@@ -11,7 +11,7 @@ class GemInfo
     @netzke_gem_root ||= File.expand_path('../..', __FILE__)
   end
   def self.test_app_root
-    @test_app_root   ||= File.join(gem_root, 'test', 'core_test_app')
+    @test_app_root   ||= File.join(gem_root, 'spec', 'rails_app')
   end
 end
 
