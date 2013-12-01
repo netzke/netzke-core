@@ -121,16 +121,19 @@ module Netzke::Core
       @components_in_config || (normalize_config || true) && @components_in_config
     end
 
-    # Recursively instantiates a child component based on its "path": e.g. if we have component :component1 which in its turn has component :component2, the path to the latter would be "component1__component2"
-    # @param name [Symbol] component name
-    def component_instance(name, strong_config = {})
-      name.to_s.split('__').inject(self) do |out, cmp_name|
-        cmp_config = out.components[cmp_name.to_sym]
-        raise ArgumentError, "No component '#{cmp_name}' defined for '#{out.path}'" if cmp_config.nil? || cmp_config[:excluded]
-        cmp_config[:name] = cmp_name
-        cmp_config.merge!(strong_config)
-        cmp_config[:klass].new(cmp_config, out)
-      end
+    # Instantiates a child component by its name.
+    # +params+ can contain:
+    #   [client_config] a config hash passed from the client class
+    #   [item_id] overridden item_id (used in case of multi-instance loading)
+    def component_instance(name, options = {})
+      return nil if !respond_to?("#{name}_component")
+
+      cfg = ComponentConfig.new(name, self)
+      cfg.client_config = options[:client_config] || {}
+      cfg.item_id = options[:item_id]
+      send("#{name}_component", cfg)
+      cfg.set_defaults!
+      cfg.klass.new(cfg, self)
     end
 
     # @return [Array<Class>] All component classes that we depend on (used to render all necessary javascripts and stylesheets)
