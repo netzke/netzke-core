@@ -1,2 +1,0 @@
-class SimpleRailsController < ApplicationController
-end

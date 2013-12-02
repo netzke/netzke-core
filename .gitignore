@@ -3,9 +3,9 @@ pkg
 doc
 Manifest
 .DS_Store
-test/core_test_app/tmp/
-test/core_test_app/public/extjs*
-test/core_test_app/db/schema.rb
+spec/rails_app/tmp/
+spec/rails_app/public/extjs*
+spec/rails_app/db/schema.rb
 *.gem
 .vimrc
 Gemfile.lock

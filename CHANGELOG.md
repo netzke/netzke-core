@@ -2,6 +2,7 @@
 * Rails 4
 * Ext JS 4.2
 * Ext JS Neptune scheme is default
+* Default icon location changed to `/assets/icons`
 
 # v0.8.4 - 2013-05-22
 * bug fix
