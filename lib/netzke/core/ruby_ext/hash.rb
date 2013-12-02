@@ -9,7 +9,7 @@ class Hash
 
   def netzke_jsonify
     self.inject({}) do |h,(k,v)|
-      new_key = if k.is_a?(ActiveSupport::JSON::Variable)
+      new_key = if k.is_a?(Netzke::Core::JsonLiteral)
                   k
                 elsif k.is_a?(String)
                   k.camelize(:lower)
@@ -35,7 +35,7 @@ class Hash
   end
 
   def netzke_literalize_keys
-    netzke_update_keys{ |k| ActiveSupport::JSON::Variable.new(k.to_s) }
+    netzke_update_keys{ |k| Netzke::Core::JsonLiteral.new(k.to_s) }
     self
   end
 end

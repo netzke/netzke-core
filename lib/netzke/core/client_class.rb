@@ -63,7 +63,7 @@ module Netzke
       def method_missing(name, *args)
         if name =~ /(.+)=$/
           value = args.first
-          @properties[$1.to_sym] = value.is_a?(String) && value =~ /^\s*function/ ? ActiveSupport::JSON::Variable.new(value) : value
+          @properties[$1.to_sym] = value.is_a?(String) && value =~ /^\s*function/ ? Netzke::Core::JsonLiteral.new(value) : value
         else
           @properties[name.to_sym]
         end

@@ -97,7 +97,7 @@ module Netzke
           tid: request.tid,
           action: component_name,
           method: request.endpoint,
-          result: ActiveSupport::JSON::Variable.new(endpoint_response.netzke_jsonify.to_json)
+          result: Netzke::Core::JsonLiteral.new(endpoint_response.netzke_jsonify.to_json)
         }
       end
 

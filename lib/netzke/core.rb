@@ -25,6 +25,7 @@ module Netzke
     autoload :ClientClass, 'netzke/core/client_class'
     autoload :CssConfig, 'netzke/core/css_config'
     autoload :ConfigToDslDelegator, 'netzke/core/config_to_dsl_delegator'
+    autoload :JsonLiteral, 'netzke/core/json_literal'
 
     # :ext (or :touch - when and if ever implemented)
     mattr_accessor :platform
