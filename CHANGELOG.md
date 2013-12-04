@@ -1,4 +1,7 @@
 # v0.9.0 - WIP
+* Fix icon detection
+
+# v0.9.0.rc1 - 2013-12-01
 * Rails 4
 * Ext JS 4.2
 * Ext JS Neptune scheme is default
