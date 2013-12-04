@@ -299,7 +299,7 @@ For more details on client-server communication see [Netzke::Core::Services]("ht
 
 ## Icons support
 
-Netzke can optionally make use of icons for making clickable elements like buttons and menu items more visual. The icons should be (by default) located in `public/images/icons`.
+Netzke can optionally make use of icons for making clickable elements like buttons and menu items more visual. The icons should be (by default) located in `app/assets/images/icons`.
 
 An example of specifying an icon for an action:
 
@@ -309,7 +309,7 @@ action :logout do |c|
 end
 ```
 
-The logout action will be configured with `public/images/icons/door.png` as icon.
+The logout action will be configured with `public/assets/icons/door.png` as icon.
 
 For more details on using icons refer to [Netzke::Core::Actions]("http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions").
 
@@ -349,13 +349,13 @@ By default, Netzke assumes that your Ext JS library is located in `public/extjs`
 
 The bundled `spec/rails_app` application used for automated testing can be easily run as a stand-alone Rails app. It's a good source of concise, focused examples. After starting the application, access any of the test components (located in `spec/rails_app/app/components`) by using the following url:
 
-    http://localhost:3000/components/{name of the component's class}
+    http://localhost:3000/netzke/components/{name of the component's class}
 
-For example [http://localhost:3000/components/Endpoints](http://localhost:3000/components/Endpoints)
+For example [http://localhost:3000/netzke/components/Endpoints](http://localhost:3000/netzke/components/Endpoints)
 
 To run a specific Mocha JS spec (located in `spec/mocha`) for a component, append `?spec={name of spec}`, for example:
 
-    [http://localhost:3000/components/Endpoints?spec=endpoints](http://localhost:3000/components/Endpoints?spec=endpoints)
+    [http://localhost:3000/netzke/components/Endpoints?spec=endpoints](http://localhost:3000/components/Endpoints?spec=endpoints)
 
 To run all the tests (from the gem's root):
 
@@ -369,7 +369,7 @@ This assumes that the Ext JS library is located/symlinked in `spec/rails_app/pub
 
 Help developing Netzke by submitting a pull request when you think others can benefit from it.
 
-If you feel particularily generous, you can donate a couple of bucks a week at [GitTip](https://www.gittip.com/uptomax).
+If you feel particularily generous, you can support the author by donating a couple bucks a week at [GitTip](https://www.gittip.com/uptomax).
 
 ## Useful links
 
