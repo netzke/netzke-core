@@ -4,7 +4,7 @@ module Netzke
       MAJOR = 0
       MINOR = 9
       PATCH = 0
-      PRE   = 'rc1'
+      PRE   = 'rc2'
 
       STRING = [MAJOR, MINOR, PATCH, PRE].compact.join('.')
     end
