@@ -6,7 +6,7 @@ module Netzke
   # You can configure Netzke::Core like this:
   #
   #     Netzke::Core.setup do |config|
-  #       config.ext_location = "/home/netzke/ext-4.1.1"
+  #       config.ext_path = "/home/netzke/ext-4.1.1"
   #       config.icons_uri = "/images/famfamfam/icons"
   #       # ...
   #     end
