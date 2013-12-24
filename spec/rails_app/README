@@ -1,0 +1,15 @@
+== Netzke-core testing application
+
+This application is used as a helper app by the RSpec tests run from the root of the plugin, but can also be run stand-alone (don't forget to link extjs into public, and run the migrations).
+
+After you start the server, you can access any component from lib/netzke using the following URL schema:
+
+http://localhost:3000/components/<full_component_class_name>, e.g.:
+
+http://localhost:3000/components/ServerCaller
+
+or
+
+http://localhost:3000/components/ScopedComponents::SomeScopedComponent
+
+etc
