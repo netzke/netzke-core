@@ -2,9 +2,9 @@ module Netzke
   module Core
     module Version
       MAJOR = 0
-      MINOR = 9
+      MINOR = 10
       PATCH = 0
-      PRE   = 'rc2'
+      PRE   = 'rc1'
 
       STRING = [MAJOR, MINOR, PATCH, PRE].compact.join('.')
     end
