@@ -1,4 +1,4 @@
-# Netzke Core [![Gem Version](https://fury-badge.herokuapp.com/rb/netzke-core.png)](http://badge.fury.io/rb/netzke-core) [![Build Status](https://travis-ci.org/netzke/netzke-core.png?branch=master)](https://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/github/netzke/netzke-core.png)](https://codeclimate.com/github/netzke/netzke-core)
+# Netzke Core [![Gem Version](https://fury-badge.herokuapp.com/rb/netzke-core.png)](http://badge.fury.io/rb/netzke-core) [![Build Status](https://travis-ci.org/netzke/netzke-core.png?branch=0-9)](https://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/github/netzke/netzke-core.png)](https://codeclimate.com/github/netzke/netzke-core)
 
 [RDocs](http://rdoc.info/projects/netzke/netzke-core)
 
