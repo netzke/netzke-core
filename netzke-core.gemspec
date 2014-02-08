@@ -2,7 +2,7 @@ require "./lib/netzke/core/version"
 
 Gem::Specification.new do |s|
   s.name        = "netzke-core"
-  s.version     = Netzke::Core::Version::STRING
+  s.version     = Netzke::Core::VERSION
   s.author      = "Max Gorin"
   s.email       = "gorinme@gmail.com"
   s.homepage    = "http://netzke.org"
