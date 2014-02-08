@@ -1,5 +1,6 @@
 # v0.9.0 - WIP
 * Fix icon detection
+* Introduce `Base#validate_config` that can be overridden to validate a component's configuration
 
 # v0.9.0.rc1 - 2013-12-01
 * Rails 4

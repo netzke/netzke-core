@@ -141,6 +141,9 @@ module Netzke
 
       # Build complete component configuration
       configure(config)
+
+      # Check whether the config is valid
+      validate_config(config)
     end
 
     def i18n_id

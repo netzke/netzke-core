@@ -61,6 +61,15 @@ module Netzke::Core
 
   protected
 
+    # Override to validate configuration and raise eventual exceptions
+    # E.g.:
+    #
+    #     def validate_config(c)
+    #       raise ArgumentError, "Grid requires a model" if c.model.nil?
+    #     end
+    def validate_config(c)
+    end
+
     # During the normalization of config object, +extend_item+ is being called with each item found (recursively) in there.
     # For example, symbols representing nested child components get replaced with a proper config hash, same goes for actions (see +Composition+ and +Actions+ respectively).
     # Override to do any additional checks/enhancements. See, for example, +Netzke::Basepack::WrapLazyLoaded+ or +Netzke::Basepack::Fields+.
