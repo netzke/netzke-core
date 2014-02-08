@@ -8,7 +8,7 @@ Dir[File.join(File.dirname(__FILE__), './lib/tasks/*.rake')].each { |file| load 
 Dir[File.join(File.dirname(__FILE__), 'tasks/*.rake')].each { |file| load file }
 
 YARD::Rake::YardocTask.new do |t|
-  t.options = ['--title', "Netzke Core #{Netzke::Core::Version::STRING}"]
+  t.options = ['--title', "Netzke Core #{Netzke::Core::VERSION}"]
 end
 
 namespace :yard do
