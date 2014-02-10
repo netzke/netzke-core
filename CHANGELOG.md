@@ -1,11 +1,11 @@
-# v0.10.0.rc2 - 2014-02-08
-* Support for Rails 4
-* Fix icon detection
-* Introduce `Base#validate_config` that can be overridden to validate a component's configuration
+# v0.10.0 - WIP
+* Rails 4
+* See release notes for 0.9.0
 
-# v0.9.0 - WIP
-* Support for Rails3
-* See release notes for 0.10.0.rc1
+# v0.9.0 - 2014-02-08
+* Introduce `Base#validate_config` that can be overridden to validate a component's configuration
+* Fix icon detection
+* Back to Rails 3 (use 0.10.x with Rails 4)
 
 # v0.9.0.rc1 - 2013-12-01
 * Rails 4
