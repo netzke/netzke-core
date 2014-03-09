@@ -4,7 +4,7 @@ doc
 Manifest
 .DS_Store
 spec/rails_app/tmp/
-spec/rails_app/public/extjs*
+spec/rails_app/public/extjs
 spec/rails_app/db/schema.rb
 *.gem
 .vimrc
