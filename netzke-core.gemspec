@@ -21,9 +21,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'redcarpet'
   s.add_development_dependency 'yard'
   s.add_development_dependency 'coffee-script'
-  s.add_development_dependency 'pry-rails'
-
-  s.add_development_dependency 'netzke-testing', '0.10.0.rc1'
 
   s.required_rubygems_version = ">= 1.3.4"
 end

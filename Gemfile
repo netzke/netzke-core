@@ -11,6 +11,5 @@ group :test do
   gem 'selenium-webdriver'
   gem 'database_cleaner'
   gem 'rspec-rails'
-  gem 'pry-rails'
-  gem 'netzke-testing', '0.10.0.rc1'
+  gem 'netzke-testing', '0.10.0'
 end

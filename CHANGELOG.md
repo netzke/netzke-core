@@ -1,6 +1,5 @@
-# v0.10.0 - WIP
+# v0.10.0 - 2014-04-02
 * Rails 4
-* See release notes for 0.9.0
 
 # v0.9.0 - 2014-02-08
 * Introduce `Base#validate_config` that can be overridden to validate a component's configuration
@@ -11,7 +10,6 @@
 * Rails 4
 * Ext JS 4.2
 * Ext JS Neptune scheme is default
-* Default icon location changed to `/assets/icons`
 
 # v0.8.4 - 2013-05-22
 * bug fix
