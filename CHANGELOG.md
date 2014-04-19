@@ -1,4 +1,9 @@
+# v0.10.1 - WIP
+
+* Fix an IE8 issue (@AlexKovynev)
+
 # v0.10.0 - 2014-04-02
+
 * Rails 4
 
 # v0.9.0 - 2014-02-08
