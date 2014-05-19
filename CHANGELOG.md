@@ -1,4 +1,4 @@
-# v0.10.1 - WIP
+# v0.10.1 - 2014-05-24
 
 * Fix an IE8 issue (@AlexKovynev)
 * Fix issue with multi-instance loading
