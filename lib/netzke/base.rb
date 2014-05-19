@@ -131,7 +131,8 @@ module Netzke
       @item_id = conf[:item_id] || @name
 
       # JS full ID. Similar to +path+, but composed of item_id's. Differs from @path when multiple instances are being loaded.
-      @js_id = parent.nil? ? @item_id : [parent.js_id, @item_id].join("__")
+      @js_id = conf[:js_id]
+      @js_id ||= parent.nil? ? @item_id : [parent.js_id, @item_id].join("__")
 
       # TODO: get rid of this in 0.9
       @flash = []

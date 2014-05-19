@@ -131,6 +131,7 @@ module Netzke::Core
       cfg = ComponentConfig.new(name, self)
       cfg.client_config = options[:client_config] || {}
       cfg.item_id = options[:item_id]
+      cfg.js_id = options[:js_id]
       send("#{name}_component", cfg)
       cfg.set_defaults!
       cfg.klass.new(cfg, self)
