@@ -134,7 +134,11 @@ module Netzke::Core
       cfg.js_id = options[:js_id]
       send("#{name}_component", cfg)
       cfg.set_defaults!
-      cfg.klass.new(cfg, self)
+      component_instance_from_config(cfg)
+    end
+
+    def component_instance_from_config(c)
+      c.klass.new(c, self)
     end
 
     # @return [Array<Class>] All component classes that we depend on (used to render all necessary javascripts and stylesheets)
