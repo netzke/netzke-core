@@ -97,16 +97,16 @@ module Netzke
           tid: request.tid,
           action: component_name,
           method: request.endpoint,
-          result: Netzke::Core::JsonLiteral.new(endpoint_response.netzke_jsonify.to_json)
+          result: endpoint_response.netzke_jsonify
         }
       end
 
       def invoke_endpoint(request)
         component_name, *sub_components = request.cmp_path.split('__')
-        components_in_session = session[:netzke_components]
+        components_in_session = session[:netzke_components].try(:symbolize_keys)
 
         if components_in_session
-          cmp_config = components_in_session[component_name.to_sym]
+          cmp_config = components_in_session[component_name.to_sym].symbolize_keys
           cmp_config[:client_config] = request.client_configs.shift || {}
           component_instance = Netzke::Base.instance_by_config(cmp_config)
           component_instance.invoke_endpoint((sub_components + [request.endpoint]).join("__"), request.args, request.client_configs)

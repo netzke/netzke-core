@@ -1,3 +1,5 @@
+### TODO
+
 # Netzke Core [![Gem Version](https://fury-badge.herokuapp.com/rb/netzke-core.png)](http://badge.fury.io/rb/netzke-core) [![Build Status](https://travis-ci.org/netzke/netzke-core.png?branch=master)](https://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/github/netzke/netzke-core.png)](https://codeclimate.com/github/netzke/netzke-core)
 
 [RDocs](http://rdoc.info/projects/netzke/netzke-core)
@@ -325,9 +327,9 @@ Netzke provides support for HAML templates in case you don't want to put HTML in
 
 ## Requirements
 
-* Ruby ~> 1.9.2
-* Rails ~> 4.0.0
-* Ext JS ~> 4.2.0
+* Ruby >= 2.0.0
+* Rails ~> 4.2.0
+* Ext JS = 4.2.1
 
 ## Installation
 
@@ -369,7 +371,7 @@ This assumes that the Ext JS library is located/symlinked in `spec/rails_app/pub
 
 Help developing Netzke by submitting a pull request when you think others can benefit from it.
 
-If you feel particularily generous, you can support the author by donating a couple bucks a week at [GitTip](https://www.gittip.com/uptomax).
+If you feel particularily generous, you can support the author by donating a couple bucks a week at [GitTip](https://www.gittip.com/mxgrn).
 
 ## Useful links
 
@@ -378,6 +380,6 @@ If you feel particularily generous, you can support the author by donating a cou
 * [Twitter](http://twitter.com/netzke) - latest news about the framework
 
 ---
-Copyright (c) 2008-2013 [Max Gorin](https://twitter.com/uptomax), released under the MIT license (see LICENSE).
+Copyright (c) 2008-2015 [Max Gorin](https://twitter.com/mxgrn), released under the MIT license (see LICENSE).
 
 **Note** that Ext JS is licensed [differently](http://www.sencha.com/products/extjs/license/), and you may need to purchase a commercial license in order to use it in your projects!
