@@ -1,3 +1,7 @@
+# v0.11.0 - 2015-02-05
+
+* Rails 4.2
+
 # v0.10.1 - 2014-05-24
 
 * Fix an IE8 issue (@AlexKovynev)
