@@ -156,7 +156,7 @@ Ext.define(null, {
   Mask shown during loading of a component. Set to false to not mask. Pass config for Ext.LoadMask for configuring msg/cls, etc.
   Set msg to null if mask without any msg is desirable.
   */
-  netzkeLoadMask: true,
+  netzkeLoadMask: false, // TODO: reenable
 
   /**
    * Runs through initial config options and does the following:
@@ -442,7 +442,7 @@ Ext.define(null, {
 
     if (parent) {
       var name = this.netzkeLocalId(parent);
-      parent.netzkeLoadComponent(name, {container:this.ownerCt.id});
+      parent.netzkeLoadComponent(name, {container: this.getRefOwner().id});
     } else {
       window.location.reload();
     }
