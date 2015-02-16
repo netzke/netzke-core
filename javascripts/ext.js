@@ -8,8 +8,8 @@ Ext.QuickTips.init();
 
 // Checking Ext JS version: both major and minor versions must be the same
 (function(){
-  var requiredVersionMajor = 4,
-      requiredVersionMinor = 2,
+  var requiredVersionMajor = 5,
+      requiredVersionMinor = 1,
       extVersion = Ext.getVersion('extjs'),
       currentVersionMajor = extVersion.getMajor(),
       currentVersionMinor = extVersion.getMinor(),
@@ -70,12 +70,13 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
     }
   },
 
-  getCallData: function(t){
+  getPayload: function(t){
     return {
       path: t.action,
       endpoint: t.method,
       data: t.data,
-      tid: t.id
+      tid: t.id,
+      type: 'rpc'
     }
   },
 
@@ -86,7 +87,7 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
       var methodName = ep.camelize(true),
           method = Ext.create('Ext.direct.RemotingMethod', {name: methodName, len: 1});
 
-        cls[methodName] = this.createHandler(componentPath, method);
+      cls[methodName] = this.createHandler(componentPath, method);
     }, this);
   },
 
