@@ -248,9 +248,6 @@ Ext.define(null, {
     if (config.tools) {
       var normTools = [];
       Ext.each(config.tools, function(tool){
-        // Create an event for each action (so that higher-level components could interfere)
-        this.addEvents(tool.id+'click');
-
         var handler = Ext.Function.bind(this.netzkeToolHandler, this, [tool]);
         normTools.push({type : tool, handler : handler, scope : this});
       }, this);
@@ -266,9 +263,6 @@ Ext.define(null, {
   netzkeNormalizeActions : function(config){
     var normActions = {};
     for (var name in config.actions) {
-      // Create an event for each action (so that higher-level components could interfere)
-      this.addEvents(name+'click');
-
       // Configure the action
       var actionConfig = Ext.apply({}, config.actions[name]); // do not modify original this.actions
       actionConfig.customHandler = actionConfig.handler;

@@ -8,7 +8,7 @@ module Netzke
 
         def netzke_ext_css_include(params)
           # ExtJS base
-          res = ["#{Netzke::Core.ext_uri}/resources/ext-theme-#{params[:theme]}/ext-theme-#{params[:theme]}-all.css"]
+          res = ["#{Netzke::Core.ext_uri}/packages/ext-theme-#{params[:theme]}/build/resources/ext-theme-#{params[:theme]}-all.css"]
 
           # Netzke-related dynamic css
           res << netzke_ext_path
@@ -22,10 +22,10 @@ module Netzke
           res = []
 
           # ExtJS
-          res << (params[:minified] ? "#{Netzke::Core.ext_uri}/ext-all.js" : "#{Netzke::Core.ext_uri}/ext-all-debug.js")
+          res << (params[:minified] ? "#{Netzke::Core.ext_uri}/build/ext-all.js" : "#{Netzke::Core.ext_uri}/build/ext-all-debug.js")
 
           # Ext I18n
-          res << "#{Netzke::Core.ext_uri}/locale/ext-lang-#{I18n.locale}" if I18n.locale != :en
+          res << "#{Netzke::Core.ext_uri}/packages/ext-locale/build/ext-locale-#{I18n.locale}" if I18n.locale != :en
 
           # Netzke-related dynamic JavaScript
           res << netzke_ext_path

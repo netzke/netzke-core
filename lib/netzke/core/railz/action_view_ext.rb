@@ -25,7 +25,7 @@ module Netzke
       def load_netzke(params = {})
         Netzke::Core.platform = params[:platform] || :ext
         params[:minified] = !Rails.env.development? if params[:minified].nil?
-        params[:theme] ||= "neptune"
+        params[:theme] ||= "crisp"
 
         raw([netzke_css_include(params), netzke_css(params), netzke_js_include(params), netzke_js(params)].join("\n"))
       end

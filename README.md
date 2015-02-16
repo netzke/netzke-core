@@ -1,4 +1,4 @@
-### TODO
+## This is a WIP, in transition to Ext JS 5.1
 
 # Netzke Core [![Gem Version](https://fury-badge.herokuapp.com/rb/netzke-core.png)](http://badge.fury.io/rb/netzke-core) [![Build Status](https://travis-ci.org/netzke/netzke-core.png?branch=master)](https://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/github/netzke/netzke-core.png)](https://codeclimate.com/github/netzke/netzke-core)
 
@@ -329,7 +329,7 @@ Netzke provides support for HAML templates in case you don't want to put HTML in
 
 * Ruby >= 2.0.0
 * Rails ~> 4.2.0
-* Ext JS = 4.2.1
+* Ext JS = 5.1.0
 
 ## Installation
 

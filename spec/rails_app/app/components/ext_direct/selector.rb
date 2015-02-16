@@ -7,7 +7,6 @@ module ExtDirect
       c.init_component = <<-JS
         function(){
           this.callParent();
-          this.addEvents('userupdate');
         }
       JS
 
