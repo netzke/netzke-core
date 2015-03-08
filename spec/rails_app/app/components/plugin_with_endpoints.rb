@@ -6,7 +6,7 @@ class PluginWithEndpoints < Netzke::Plugin
 
         // inject a tool into parent
         this.cmp.tools = this.cmp.tools || [];
-        this.cmp.tools = [{id: 'gear', handler: this.onGear, scope: this}];
+        this.cmp.tools = [{type: 'gear', handler: this.onGear, scope: this}];
       }
     JS
 

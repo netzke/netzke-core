@@ -366,6 +366,9 @@ Ext.define(null, {
     if (storedConfig.configOnly) {
       callbackParam = config;
     } else {
+      var currentCmp = Ext.ComponentManager.get(config.id);
+      if (currentCmp) currentCmp.destroy();
+
       var componentInstance = Ext.ComponentManager.create(config);
 
       // there's no sense in adding a window-type components
