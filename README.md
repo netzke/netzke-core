@@ -2,7 +2,7 @@
 
 [RDocs](http://rdoc.info/projects/netzke/netzke-core)
 
-Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/netzke/netzke-basepack) and [netzke-communitypack](http://github.com/netzke/netzke-communitypack).
+Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/netzke/netzke-basepack).
 
 Some knowledge of Sencha Ext JS will be needed in order to fully understand this overview.
 
