@@ -1,3 +1,8 @@
+# v0.12.0.rc1 - 2015-03-13
+
+* More reliable implementation of netzkeGetParentComponent()
+* Callback passed to netzkeLoadComponent() will receive a second parameter with config object passed to netzkeLoadComponent()
+
 # v0.11.0 - 2015-02-05
 
 * Rails 4.2

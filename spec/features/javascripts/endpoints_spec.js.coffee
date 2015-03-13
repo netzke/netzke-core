@@ -45,5 +45,5 @@ describe 'Endpoints component', ->
     click button 'Non existing'
 
     wait ->
-      expectToSee somewhere "Unknown component non_existing_child for endpoints"
+      expectToSee somewhere "Unknown component 'non_existing_child' in 'endpoints'"
       done()

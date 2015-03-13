@@ -1,5 +1,5 @@
 Netzke::Core.setup do |config|
-  config.ext_uri = "http://cdn.sencha.com/ext/gpl/4.2.1" if ENV['EXTJS_SRC'] == 'cdn'
+  config.ext_uri = "http://cdn.sencha.com/ext/gpl/5.1.0" if ENV['EXTJS_SRC'] == 'cdn'
 
   # custom session expiration handling
   config.ext_javascripts << "#{File.dirname(__FILE__)}/javascripts/session_expiration.js"

@@ -185,6 +185,7 @@ Ext.define("Netzke.classes.Core.Mixin", {
         cmpName = cfg.netzkeComponent;
         cmpCfg = this.netzkeComponents[cmpName.camelize(true)];
         if (!cmpCfg) throw "Netzke: unknown component " + cmpName;
+        cmpCfg.netzkeParent = this;
         items[i] = Ext.apply(cmpCfg, cfg);
         delete(item);
 

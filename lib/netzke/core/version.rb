@@ -1,5 +1,5 @@
 module Netzke
   module Core
-    VERSION = "0.12.0.beta"
+    VERSION = "0.12.0.rc1"
   end
 end

@@ -137,7 +137,7 @@ module Netzke::Core
     # Called when the method_missing tries to processes a non-existing component. Override when needed.
     # Note: this should actually never happen unless you mess up with Netzke component loading mechanisms.
     def component_missing(missing_component, params, this)
-      this.netzke_feedback "Unknown component #{missing_component} for #{name}"
+      this.netzke_feedback "Unknown component '#{missing_component}' in '#{name}'"
     end
 
   end

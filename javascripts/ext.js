@@ -363,6 +363,8 @@ Ext.define(null, {
     var storedConfig = this.netzkeUndoLoadingComponent(config.itemId),
         callbackParam;
 
+    config.netzkeParent = this;
+
     if (storedConfig.configOnly) {
       callbackParam = config;
     } else {
@@ -388,7 +390,7 @@ Ext.define(null, {
     }
 
     if (storedConfig.callback) {
-      storedConfig.callback.call(storedConfig.scope || this, callbackParam);
+      storedConfig.callback.call(storedConfig.scope || this, callbackParam, storedConfig);
     }
   },
 
@@ -427,13 +429,7 @@ Ext.define(null, {
   * Returns parent Netzke component
   */
   netzkeGetParentComponent: function(){
-    // simply cutting the last part of the id: some_parent__a_kid__a_great_kid => some_parent__a_kid
-    var idSplit = this.id.split("__");
-    idSplit.pop();
-    var parentId = idSplit.join("__");
-
-    var res = parentId === "" ? null : Ext.getCmp(parentId);
-    return res;
+    return this.netzkeParent;
   },
 
   /**
