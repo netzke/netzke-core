@@ -18,7 +18,7 @@ module Netzke
         def args
           # for backward compatibility, fall back to old data structure (with the endpoint params being in the root of
           # 'data')
-          remoting_args["configs"] ? remoting_args["args"] : remoting_args
+          remoting_args.has_key?("args") ? remoting_args["args"] : remoting_args.reject{|k,v| k == 'configs' }
         end
 
         def client_configs

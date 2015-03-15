@@ -181,6 +181,7 @@ Ext.define(null, {
         var cfgs = this.buildParentClientConfigs();
         var remotingArgs = {args: args, configs: cfgs};
 
+        // Calling Ext.Direct's function
         Netzke.providers[config.id][methodName].call(scope, remotingArgs, function(result, e) {
           var callbackParam = e;
 
