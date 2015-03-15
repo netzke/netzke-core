@@ -34,7 +34,7 @@ module Netzke::Core
 
       # An array of server class config options that should not be passed to the client class. Can be overridden.
       def server_side_config_options
-        [:eager_loading, :klass]
+        [:eager_loading, :klass, :client_config]
       end
     end
 

@@ -366,7 +366,7 @@ Ext.define(null, {
     config.netzkeParent = this;
 
     if (storedConfig.configOnly) {
-      callbackParam = config;
+      callbackParam = Ext.apply(config, storedConfig);
     } else {
       var currentCmp = Ext.ComponentManager.get(config.id);
       if (currentCmp) currentCmp.destroy();
