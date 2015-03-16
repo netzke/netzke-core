@@ -1,5 +1,6 @@
-# v0.12.0.rc1 - 2015-03-13
+# v0.12.0 - 2015-03-16
 
+* ExtJS 5.1
 * More reliable implementation of netzkeGetParentComponent()
 * Callback passed to netzkeLoadComponent() will receive a second parameter with config object passed to netzkeLoadComponent()
 
