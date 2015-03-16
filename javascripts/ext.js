@@ -75,15 +75,6 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
 
       cls[methodName] = this.createHandler(componentPath, method);
     }, this);
-  },
-
-  // HACK: Ext JS 4.0.0 retry mechanism is broken
-  getTransaction: function(opt) {
-    if (opt.$className == "Ext.direct.Transaction") {
-      return opt;
-    } else {
-      return this.callParent([opt]);
-    }
   }
 });
 
