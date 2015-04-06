@@ -138,7 +138,7 @@ module Netzke
       @flash = []
 
       # Make +client_config+ accessible in +configure+ before calling +super+
-      config.client_config = conf.delete(:client_config) || {}
+      config.client_config = (conf.delete(:client_config) || {}).symbolize_keys
 
       # Build complete component configuration
       configure(config)

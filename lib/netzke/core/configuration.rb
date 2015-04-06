@@ -50,13 +50,36 @@ module Netzke::Core
       c.merge!(@passed_config)
     end
 
-    # Complete configuration for server class instance. Can be accessed from within endpoint, component, and action blocks, as well as any other instance method, for example:
+    # Complete configuration for server class instance. Can be accessed from within endpoint, component, and action
+    # blocks, as well as any other instance method, for example:
     #
     #   action :do_something do |c|
     #     c.title = "Do it for #{config.title}"
     #   end
     def config
       @config ||= ActiveSupport::OrderedOptions.new
+    end
+
+    # Config options that have been set on the fly on the client side of the component in the `netzkeClientConfig` object. Can be
+    # used to dynamically change component configuration. Those changes won't affect the way component is rendered, of
+    # course, but can be useful to reconfigure child components, e.g.:
+    #
+    #   // Client
+    #   initConfig: function() {
+    #     this.callParent();
+    #
+    #     this.netzkeGetComponent('authors').on('rowclick', function(grid, record) {
+    #       this.netzkeClientConfig.author_id = record.getId();
+    #       this.netzkeGetComponent('book_grid').getStore().load();
+    #     }
+    #   }
+    #
+    #   # Server
+    #   component :book_grid do |c|
+    #     c.scope = { author_id: client_config.author_id }
+    #   end
+    def client_config
+      ActiveSupport::OrderedOptions.new.merge!(config.client_config)
     end
 
   protected
@@ -70,15 +93,17 @@ module Netzke::Core
     def validate_config(c)
     end
 
-    # During the normalization of config object, +extend_item+ is being called with each item found (recursively) in there.
-    # For example, symbols representing nested child components get replaced with a proper config hash, same goes for actions (see +Composition+ and +Actions+ respectively).
-    # Override to do any additional checks/enhancements. See, for example, +Netzke::Basepack::WrapLazyLoaded+ or +Netzke::Basepack::Fields+.
+    # During the normalization of config object, +extend_item+ is being called with each item found (recursively) in
+    # there.  For example, symbols representing nested child components get replaced with a proper config hash, same
+    # goes for actions (see +Composition+ and +Actions+ respectively).  Override to do any additional
+    # checks/enhancements. See, for example, +Netzke::Basepack::WrapLazyLoaded+ or +Netzke::Basepack::Fields+.
     # @return [Object|nil] normalized item or nil. If nil is returned, this item will be excluded from the config.
     def extend_item(item)
       item.is_a?(Hash) && item[:excluded] ? nil : item
     end
 
-    # Used for detecting actions and components referred by symbols. For example, say, action +do_something+ is declared. Then:
+    # Used for detecting actions and components referred by symbols. For example, say, action +do_something+ is
+    # declared. Then:
     #
     #     item #=> :do_something
     #     item = detect_and_normalize :action, item

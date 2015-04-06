@@ -118,6 +118,8 @@ Ext.define(null, {
 
       // This is where we store the information about components that are currently being loaded with this.loadComponent()
       this.componentsBeingLoaded = {};
+
+      this.netzkeClientConfig = config.clientConfig || {};
     }
 
     this.callOverridden([config]);
@@ -198,17 +200,14 @@ Ext.define(null, {
    * @private
    */
   buildParentClientConfigs: function() {
-    if (!this._parentClientConfig) {
-      this._parentClientConfig = [];
-      var parent = this;
-      while (parent) {
-        var cfg = parent.clientConfig || {};
-        cfg.id = parent.id;
-        this._parentClientConfig.unshift(cfg);
-        parent = parent.netzkeGetParentComponent();
-      }
+    this._parentClientConfig = [];
+    var parent = this;
+    while (parent) {
+      var cfg = Ext.clone(parent.netzkeClientConfig);
+      cfg.id = parent.id;
+      this._parentClientConfig.unshift(cfg);
+      parent = parent.netzkeGetParentComponent();
     }
-
     return this._parentClientConfig;
   },
 

@@ -1,3 +1,8 @@
+# v0.12.1 - WIP
+
+* Add `Base#client_config` shortcut to `config.client_config`, make it ActiveSupport::OrderedOptions
+* Rename `clientConfig` to `netzkeClientConfig` on client
+
 # v0.12.0 - 2015-03-16
 
 * ExtJS 5.1
