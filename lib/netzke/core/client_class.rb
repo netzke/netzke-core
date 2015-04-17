@@ -8,12 +8,12 @@ module Netzke
     #       end
     #     end
     class ClientClass
-      attr_accessor :required_files, :base_class, :properties, :mixins, :translated_properties
+      attr_accessor :required_files, :base_class, :properties, :netzke_mixins, :translated_properties
 
       def initialize(klass)
         @klass = klass
         @required_files = []
-        @mixins = []
+        @netzke_mixins = []
         @properties = {
           extend: extended_class,
           alias: class_alias,
@@ -115,14 +115,14 @@ module Netzke
       #     }
       #
       # Also accepts a string, which will be interpreted as a full path to the file (useful for sharing mixins between classes).
-      # With no parameters, will assume :component_class_name_underscored.
+      # With no parameters, will assume :<component_class_name>.
       #
       # Also, see defining JavaScript prototype properties with {ClientClass#method_missing}.
       def mixin(*args)
         args << @klass.name.split("::").last.underscore.to_sym if args.empty?
         callr = caller.first
         args.each do |a|
-          @mixins << (a.is_a?(Symbol) ? expand_require_path(a, callr) : a)
+          @netzke_mixins << (a.is_a?(Symbol) ? expand_require_path(a, callr) : a)
         end
       end
 
@@ -226,7 +226,7 @@ Netzke.cache.push('#{xtype}');
       end
 
       def mixins_as_string
-        mixins.presence && mixins.map do |f|
+        netzke_mixins.presence && netzke_mixins.map do |f|
           as_string = File.read(f)
           as_string.sub!('{', ' ')
           as_string[as_string.rindex('}')] = ' '
