@@ -10,21 +10,23 @@ describe "Composition component", ->
 
   it "should have properly working nested components", (done) ->
     click button "With response"
-    wait ->
+    wait().then ->
       expectToSee header "Response from server"
       click button "With extended response"
-      wait ->
-        expectToSee header "Response from server plus"
-        done()
+      wait()
+    .then ->
+      expectToSee header "Response from server plus"
+      done()
 
   it "as server, should be able to address (deeply) nested components", (done) ->
     click button "Update west from server"
-    wait ->
+    wait().then ->
       expectToSee header "Here's an update for west panel"
       click button "Update east south from server"
-      wait ->
-        expectToSee header "Here's an update for south panel in east panel"
-        done()
+      wait()
+    .then ->
+      expectToSee header "Here's an update for south panel in east panel"
+      done()
 
   it "should instantiate a pre-loaded component", ->
     expectToNotSee header "Pre-loaded window"

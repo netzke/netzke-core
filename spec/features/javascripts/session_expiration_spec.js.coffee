@@ -1,8 +1,9 @@
 describe 'SessionExpiration component', ->
   it 'informs user that the session has expired', (done) ->
     click button 'Destroy session'
-    wait ->
+    wait().then ->
       click button 'With response'
-      wait ->
-        expectToSee header 'Session expired'
-        done()
+      wait()
+    .then ->
+      expectToSee header 'Session expired'
+      done()
