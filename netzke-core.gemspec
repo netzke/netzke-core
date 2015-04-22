@@ -16,15 +16,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'uglifier'
   s.add_dependency 'execjs'
 
-  s.add_development_dependency 'rails', '~> 4.2.0'
-  s.add_development_dependency 'sqlite3'
-  s.add_development_dependency 'redcarpet'
-  s.add_development_dependency 'yard'
-  s.add_development_dependency 'coffee-script'
-  s.add_development_dependency 'capybara'
-  s.add_development_dependency 'selenium-webdriver'
-  s.add_development_dependency 'rspec-rails'
-  s.add_development_dependency 'netzke-testing', '~> 0.12.2'
-
   s.required_rubygems_version = ">= 1.3.4"
 end
