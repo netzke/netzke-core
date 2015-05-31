@@ -1,4 +1,4 @@
-# v0.12.1 - WIP
+# v0.12.1 - 2015-05-31
 
 * Add `Base#client_config` shortcut to `config.client_config`, make it ActiveSupport::OrderedOptions
 * Rename `clientConfig` to `netzkeClientConfig` on client
