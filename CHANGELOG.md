@@ -1,4 +1,5 @@
 # v0.12.2 - WIP
+* Fix loading multi-instance components
 
 # v0.12.1 - 2015-05-31
 

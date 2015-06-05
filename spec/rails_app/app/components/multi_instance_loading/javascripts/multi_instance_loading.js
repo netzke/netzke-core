@@ -11,6 +11,19 @@
     });
   },
 
+  onLoadHelloUserInPrecreatedTab: function() {
+    this.counter = this.counter || 0;
+    this.counter++;
+    var tab = this.add(Ext.ComponentManager.create({xtype: 'panel', layout: 'fit', title: 'Tab ' + this.counter}));
+    this.setActiveTab(tab);
+    this.netzkeLoadComponent('hello_user', {
+      container: tab,
+      scope: this,
+      clone: true,
+      clientConfig: {user: 'User ' + this.counter}
+    });
+  },
+
   onLoadComposition: function() {
     this.counter = this.counter || 0;
     this.counter++;

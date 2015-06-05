@@ -6,6 +6,7 @@ class MultiInstanceLoading < Netzke::Base
   end
 
   action :load_hello_user
+  action :load_hello_user_in_precreated_tab
   action :load_composition
 
   component :hello_user do |c|
@@ -17,6 +18,6 @@ class MultiInstanceLoading < Netzke::Base
 
   def configure(c)
     super
-    c.bbar = [:load_hello_user, :load_composition]
+    c.bbar = [:load_hello_user, :load_hello_user_in_precreated_tab, :load_composition]
   end
 end

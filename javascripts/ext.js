@@ -338,13 +338,11 @@ Ext.define(null, {
   */
   netzkeComponentDelivered: function(config){
     var storedConfig = this.netzkeUndoLoadingComponent(config.itemId),
-        callbackParam;
+        callbackParam = Ext.apply(config, storedConfig);
 
     config.netzkeParent = this;
 
-    if (storedConfig.configOnly) {
-      callbackParam = Ext.apply(config, storedConfig);
-    } else {
+    if (!storedConfig.configOnly) {
       var currentCmp = Ext.ComponentManager.get(config.id);
       if (currentCmp) currentCmp.destroy();
 
