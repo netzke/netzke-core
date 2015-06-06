@@ -1,6 +1,7 @@
 language: ruby
 rvm:
-  - 2.0.0
+  - 1.9.3
+  - 2.2.0
 before_script: 
   - chmod 777 ./config/ci/before-travis.sh
   - ./config/ci/before-travis.sh
@@ -10,4 +11,3 @@ script:
 branches:
   only:
     - master
-    - 0-9
