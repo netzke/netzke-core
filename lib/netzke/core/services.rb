@@ -119,7 +119,7 @@ module Netzke::Core
 
         if components[child_component]
           client_config = configs.shift || {}
-          js_id = client_config.delete("id")
+          js_id = client_config.delete("component_id")
           cmp_strong_config = {client_config: client_config, js_id: js_id}
           component_instance(child_component, cmp_strong_config).invoke_endpoint(action, params, configs)
         else

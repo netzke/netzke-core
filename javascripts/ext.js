@@ -204,7 +204,7 @@ Ext.define(null, {
     var parent = this;
     while (parent) {
       var cfg = Ext.clone(parent.netzkeClientConfig);
-      cfg.id = parent.id;
+      cfg.component_id = parent.id;
       this._parentClientConfig.unshift(cfg);
       parent = parent.netzkeGetParentComponent();
     }
