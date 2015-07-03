@@ -1,3 +1,4 @@
+require 'active_support/core_ext'
 module Netzke
   module Railz
     # Before each request, Netzke::Base.controller and Netzke::Base.session are set, to be accessible from components.
