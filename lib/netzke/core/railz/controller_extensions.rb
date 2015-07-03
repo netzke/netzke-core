@@ -82,7 +82,7 @@ module Netzke
 
       # Old-way action used at multi-part form submission (endpointUrl)
       def dispatcher
-        endpoint_dispatch(params[:address])
+        endpoint_dispatch(params[:address].deep_symbolize_keys)
       end
 
     protected
