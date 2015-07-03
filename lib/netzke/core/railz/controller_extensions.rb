@@ -83,7 +83,7 @@ module Netzke
 
       # Old-way action used at multi-part form submission (endpointUrl)
       def dispatcher
-        endpoint_dispatch(params[:address].deep_symbolize_keys)
+        endpoint_dispatch(params[:address])
       end
 
     protected
@@ -121,7 +121,8 @@ module Netzke
       # E.g.: some_grid__post_grid_data.
       def endpoint_dispatch(endpoint_path)
         component_name, *sub_components = endpoint_path.split('__')
-        component_instance = Netzke::Base.instance_by_config(session[:netzke_components][component_name.to_sym])
+        components_in_session = session[:netzke_components].try(:deep_symbolize_keys)
+        component_instance = Netzke::Base.instance_by_config(components_in_session[component_name.to_sym])
 
         # We can't do this here; this method is only used for classic form submission, and the response from the server
         # should be the (default) "text/html"
