@@ -27,7 +27,7 @@ module Netzke
         params[:minified] = !Rails.env.development? if params[:minified].nil?
         params[:theme] ||= "crisp"
 
-        raw([netzke_css_include(params), netzke_css(params), netzke_js_include(params), netzke_js(params)].join("\n"))
+        raw([netzke_html, netzke_css_include(params), netzke_css(params), netzke_js_include(params), netzke_js(params)].join("\n"))
       end
 
       # Use this helper in your views to embed Netzke components. E.g.:
@@ -65,6 +65,11 @@ module Netzke
       end
 
       protected
+        def netzke_html
+          %{
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+          }
+        end
 
         # Link tags for all the required stylsheets
         def netzke_css_include(params)
