@@ -1,9 +1,6 @@
-require 'netzke/core/railz/action_view_ext/ext'
 module Netzke
   module Railz
     module ActionViewExt
-      include Ext
-
       # A helper to load Netzke and Ext JS files. Usually used in the layout.
       #
       # Params:
@@ -23,7 +20,6 @@ module Netzke
       #   Whether to include minified JS and styleshetes. By default is +false+ for Rails development env,
       #   +true+ otherwise
       def load_netzke(params = {})
-        Netzke::Core.platform = params[:platform] || :ext
         params[:minified] = !Rails.env.development? if params[:minified].nil?
         params[:theme] ||= "crisp"
 
@@ -64,35 +60,62 @@ module Netzke
         raw(cmp.js_component_html)
       end
 
-      protected
-        def netzke_html
-          %{
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-          }
-        end
+      private
 
-        # Link tags for all the required stylsheets
-        def netzke_css_include(params)
-          send :"netzke_#{Netzke::Core.platform}_css_include", params
-        end
+      def netzke_html
+        %{
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        }
+      end
 
-        # Inline CSS specific for the page
-        def netzke_css(params)
-          %{
-    <style type="text/css" media="screen">
-      #{content_for(:netzke_css)}
-    </style>} if content_for(:netzke_css).present?
-        end
+      # Link tags for all the required stylsheets
+      def netzke_css_include(params)
+        # ExtJS base
+        res = ["#{Netzke::Core.ext_uri}/packages/ext-theme-#{params[:theme]}/build/resources/ext-theme-#{params[:theme]}-all.css"]
 
-        # Script tags for all the required JavaScript
-        def netzke_js_include(params)
-          send :"netzke_#{Netzke::Core.platform}_js_include", params
-        end
+        # Netzke-related dynamic css
+        res << netzke_ext_path
 
-        # Inline JavaScript for all Netzke classes on the page, as well as Ext.onReady, which renders Netzke components in this view after the page is loaded
-        def netzke_js(params = {})
-          send :"netzke_#{Netzke::Core.platform}_js", params
-        end
+        res += Netzke::Core.external_ext_css
+
+        stylesheet_link_tag(*res)
+      end
+
+      # Inline CSS specific for the page
+      def netzke_css(params)
+        %{
+  <style type="text/css" media="screen">
+    #{content_for(:netzke_css)}
+  </style>} if content_for(:netzke_css).present?
+      end
+
+      # Script tags for all the required JavaScript
+      def netzke_js_include(params)
+        res = []
+
+        # ExtJS
+        res << (params[:minified] ? "#{Netzke::Core.ext_uri}/build/ext-all.js" : "#{Netzke::Core.ext_uri}/build/ext-all-debug.js")
+
+        # Ext I18n
+        res << "#{Netzke::Core.ext_uri}/packages/ext-locale/build/ext-locale-#{I18n.locale}" if I18n.locale != :en
+
+        # Netzke-related dynamic JavaScript
+        res << netzke_ext_path
+
+        javascript_include_tag(*res)
+      end
+
+      # Inline JavaScript for all Netzke classes on the page, as well as Ext.onReady, which renders Netzke components in this view after the page is loaded
+      def netzke_js(params = {})
+        res = []
+        res << content_for(:netzke_js_classes)
+
+        res << "Ext.onReady(function(){"
+        res << content_for(:netzke_on_ready)
+        res << "});"
+
+        javascript_tag(res.join("\n"))
+      end
 
     end
 
