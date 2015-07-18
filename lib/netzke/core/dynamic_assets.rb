@@ -1,3 +1,5 @@
+require 'uglifier'
+
 module Netzke
   module Core
     module DynamicAssets
@@ -16,7 +18,7 @@ module Netzke
             res << f.read
           end
 
-          strip_js_comments(res)
+          minify_js(res)
         end
 
         def ext_css
@@ -31,8 +33,12 @@ module Netzke
           res
         end
 
-        def strip_js_comments(js_string)
-          js_string
+        def minify_js(js_string)
+          if ::Rails.env.test? || ::Rails.env.development?
+            js_string
+          else
+            Uglifier.compile(js_string)
+          end
         end
 
       private

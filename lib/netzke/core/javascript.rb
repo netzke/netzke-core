@@ -106,7 +106,7 @@ module Netzke::Core
       code = dependency_classes.inject("") do |r,k|
         cached.include?(k.js_config.xtype) ? r : r + k.js_config.code_with_dependencies
       end
-      code.blank? ? nil : Netzke::Core::DynamicAssets.strip_js_comments(code)
+      code.blank? ? nil : Netzke::Core::DynamicAssets.minify_js(code)
     end
 
   private
