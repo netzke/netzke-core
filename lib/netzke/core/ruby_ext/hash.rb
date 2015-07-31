@@ -19,7 +19,14 @@ class Hash
                   k
                 end
 
-      new_value = v.is_a?(Array) || v.is_a?(Hash) ? v.netzke_jsonify : v
+      new_value = case v
+                  when Array, Hash
+                    v.netzke_jsonify
+                  when Class, Proc
+                    v.to_s
+                  else
+                    v
+                  end
 
       h.merge(new_key => new_value)
     end
