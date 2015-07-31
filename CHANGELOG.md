@@ -61,6 +61,7 @@
 
 * improvements
   * minimize core Ruby class extensions
+      * `String.l` is removed. There is usually no need for this method anymore. Should there be problems though (e.g. a function gets serialized as a String), `ActiveSupport::JSON::Variable.new('function(){...}')` can be used.
   * tests can now be run by simply executing `rake` from the gem's root (thanks @allomov)
   * feedback delay is now globally configurable
   * netzkeFeedback now understands {delay: seconds} as second parameter
