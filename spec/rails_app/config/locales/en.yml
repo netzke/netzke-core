@@ -1,12 +1,12 @@
 en:
   foo:
     actions:
-      foo_action:
+      foo:
         text: 'Foo'
         tooltip: 'Foo!'
   foo_ext:
     actions:
-      foo_action:
+      foo:
         text: 'Foo plus'
         tooltip: 'Foo plus!'
   server_caller:
