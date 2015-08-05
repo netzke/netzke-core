@@ -118,10 +118,26 @@ module Netzke::Core
     end
 
     def extend_item(item)
-      super detect_and_normalize(:action, item)
+      super detect_and_normalize_action(item)
     end
 
   private
+
+    def detect_and_normalize_action(item)
+      item = {action: item} if item.is_a?(Symbol) && actions[item]
+      if item.is_a?(Hash) && action_name = item[:action]
+        cfg = actions[action_name]
+        cfg.merge!(item)
+        if cfg[:excluded]
+          {excluded: true}
+        else
+          item.merge(netzke_action: cfg[:action])
+        end
+      else
+        item
+      end
+    end
+
     def uri_to_icon(icon)
       self.class.uri_to_icon(icon)
     end

@@ -2,6 +2,7 @@
 * Get rid of Ext's viewport warning
 * Uglify components' JS when not in the test/development env
 * Fix stack-overflow issue in certain cases
+* Implement inline nesting of components
 
 # v0.12.2 - 2015-06-06
 * Fix loading multi-instance components

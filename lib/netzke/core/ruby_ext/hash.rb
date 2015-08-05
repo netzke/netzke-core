@@ -7,6 +7,25 @@ class Hash
     end
   end
 
+  def netzke_deep_replace(&block)
+    self.dup.tap do |h|
+      h.each_pair do |k,v|
+        if v.is_a?(Hash)
+          res = yield(v)
+          if res == v # no changes, need to go further down
+            h[k] = v.netzke_deep_replace(&block) if v.respond_to?('netzke_deep_replace')
+          else
+            h[k] = res
+          end
+        else
+          if v.is_a?(Array)
+            h[k] = v.netzke_deep_replace(&block)
+          end
+        end
+      end
+    end
+  end
+
   def netzke_jsonify
     self.inject({}) do |h,(k,v)|
       new_key = if k.is_a?(Netzke::Core::JsonLiteral)

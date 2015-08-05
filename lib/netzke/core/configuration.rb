@@ -102,33 +102,19 @@ module Netzke::Core
       item.is_a?(Hash) && item[:excluded] ? nil : item
     end
 
-    # Used for detecting actions and components referred by symbols. For example, say, action +do_something+ is
-    # declared. Then:
-    #
-    #     item #=> :do_something
-    #     item = detect_and_normalize :action, item
-    #     item #=> {netzke_action: :do_something, text: 'Do it'} # uses action declaration
-    def detect_and_normalize(thing, item)
-      if item.is_a?(Symbol) && thing_config = send(thing.to_s.pluralize)[item]
-        item = {:"netzke_#{thing}" => item, excluded: thing_config[:excluded]}
-      elsif item.is_a?(Hash)
-        # replace `action` key with `netzke_action`, which will be looked for at the JS side
-        item[:"netzke_#{thing}"] = item.delete(thing) if item[thing]
-      end
-      item
-    end
-
     # We'll build a couple of useful instance variables here:
     #
     # +components_in_config+ - an array of components (by name) referred in items
     # +normalized_config+ - a config that has all the config extensions applied
     def normalize_config
+      # @actions = @components = {} # in v1.0 this should replace DSL definition
       @components_in_config = []
+      @implicit_component_index = 0
       c = config.dup
       config.each_pair do |k, v|
         c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
         if v.is_a?(Array)
-          c[k] = v.netzke_deep_map{|el| extend_item(el)}
+          c[k] = v.netzke_deep_replace{|el| extend_item(el)}
         end
       end
       @normalized_config = c

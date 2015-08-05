@@ -75,6 +75,24 @@ class ComponentWithExcluded < Netzke::Base
   end
 end
 
+class InlineNesting < Netzke::Base
+  def configure(c)
+    super
+    c.items = [
+      {
+        klass: ComponentOne,
+        items: [
+          { klass: ComponentOne },
+          { klass: ComponentOne }
+        ]
+      },
+      {
+        klass: ComponentOne
+      }
+    ]
+  end
+end
+
 module Netzke::Core
   describe Composition do
     it "should set item_id to component's name by default" do
@@ -95,6 +113,18 @@ module Netzke::Core
     it "should be impossible to access excluded component config" do
       c = ComponentWithExcluded.new
       c.components[:inaccessible].should == {excluded: true}
+    end
+
+    describe "inline nesting" do
+      it "has correct keys of dynamically added components" do
+        comp = InlineNesting.new
+        expect(comp.js_components.keys).to eql [:component_1, :component_2]
+      end
+
+      it "has correct children keys of dynamically added nested components" do
+        comp = InlineNesting.new
+        child = comp.component_instance(:component_1)
+      end
     end
   end
 end

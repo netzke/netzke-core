@@ -83,6 +83,8 @@ module Netzke::Core
       # Declares Base.component, for declaring child componets, and Base#components, which returns a [Hash] of all component configs by name
       declare_dsl_for :components, config_class: Netzke::Core::ComponentConfig
 
+      attr_accessor :components_in_config
+
       # Loads a component on browser's request. Every Netzke component gets this endpoint.
       # +params+ should contain:
       #   [cache] an array of component classes cached at the browser
@@ -116,29 +118,29 @@ module Netzke::Core
       @eagerly_loaded_components ||= components.select{|k,v| components_in_config.include?(k) || v[:eager_loading]}
     end
 
-    # @return [Array<Symbol>] components (by name) referred in config (and thus, required to be instantiated)
-    def components_in_config
-      @components_in_config || (normalize_config || true) && @components_in_config
-    end
-
     # Instantiates a child component by its name.
     # +params+ can contain:
     #   [client_config] a config hash passed from the client class
     #   [item_id] overridden item_id (used in case of multi-instance loading)
     def component_instance(name, options = {})
-      return nil if !respond_to?("#{name}_component")
+      if respond_to?(:"#{name}_component")
+        cfg = ComponentConfig.new(name, self)
+        cfg.client_config = options[:client_config] || {}
+        cfg.item_id = options[:item_id]
+        cfg.js_id = options[:js_id]
+        send("#{name}_component", cfg)
+        cfg.set_defaults!
+      else
+        cfg = ComponentConfig.new(name, self)
+        cfg.merge!(components[name.to_sym])
+      end
 
-      cfg = ComponentConfig.new(name, self)
-      cfg.client_config = options[:client_config] || {}
-      cfg.item_id = options[:item_id]
-      cfg.js_id = options[:js_id]
-      send("#{name}_component", cfg)
-      cfg.set_defaults!
-      component_instance_from_config(cfg)
+      component_instance_from_config(cfg) if cfg
     end
 
     def component_instance_from_config(c)
-      c.klass.new(c, self)
+      klass = c.klass || c.class_name.constantize
+      klass.new(c, self)
     end
 
     # @return [Array<Class>] All component classes that we depend on (used to render all necessary javascripts and stylesheets)
@@ -154,8 +156,8 @@ module Netzke::Core
     end
 
     def extend_item(item)
-      item = detect_and_normalize(:component, item)
-      @components_in_config << item[:netzke_component] if include_component?(item)
+      item = detect_and_normalize_component(item)
+      components_in_config << item[:netzke_component] if include_component?(item)
       super item
     end
 
@@ -166,6 +168,27 @@ module Netzke::Core
         cmp_config[:netzke_component] &&
         cmp_config[:eager_loading] != false &&
         !cmp_config[:excluded]
+    end
+
+    def detect_and_normalize_component(item)
+      item = {component: item} if item.is_a?(Symbol) && components[item]
+      if item.is_a?(Hash) && component_name = item[:component]
+        cfg = components[component_name]
+        cfg.merge!(item)
+        if cfg[:excluded]
+          {excluded: true}
+        else
+          # cfg.merge(item).merge(netzke_component: item.delete(:component))
+          item.merge(netzke_component: cfg[:component]) # TODO: TEST THIS
+        end
+      elsif item.is_a?(Hash) && (item[:klass] || item[:class_name])
+        # declare component on the fly
+        component_name = :"component_#{@implicit_component_index += 1}"
+        components[component_name] = item.merge(eager_loading: true) unless item[:excluded]
+        {netzke_component: component_name}
+      else
+        item
+      end
     end
   end
 end
