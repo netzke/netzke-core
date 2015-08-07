@@ -3,6 +3,7 @@
 * Uglify components' JS when not in the test/development env
 * Fix stack-overflow issue in certain cases
 * Implement inline nesting of components
+* xtype of Netzke components receives additional "netzke" prefix (can potentially break things if you explicitely refer to xtypes)
 
 # v0.12.2 - 2015-06-06
 * Fix loading multi-instance components
