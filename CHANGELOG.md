@@ -1,9 +1,9 @@
-# v0.12.3 - WIP
+# v0.12.3 - 2015-08-09
 * Get rid of Ext's viewport warning
 * Uglify components' JS when not in the test/development env
-* Fix stack-overflow issue in certain cases
+* Fix stack overflow issue in certain cases
 * Implement inline nesting of components
-* xtype of Netzke components receives additional "netzke" prefix (can potentially break things if you explicitely refer to xtypes)
+* xtype of Netzke components receives additional "netzke" prefix (may potentially break things if you explicitely refer to xtypes)
 
 # v0.12.2 - 2015-06-06
 * Fix loading multi-instance components
