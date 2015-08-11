@@ -217,7 +217,9 @@ Netzke.cache.push('#{xtype}');
 
       # Generates declaration of the JS class as direct extension of a Ext component
       def class_declaration
-%(Ext.define('#{class_name}', #{properties_as_string});)
+%(Ext.define('#{class_name}', #{properties_as_string});
+
+#{overrides_as_string})
       end
 
       # Alias prefix: 'widget' for components, 'plugin' for plugins
@@ -225,17 +227,16 @@ Netzke.cache.push('#{xtype}');
         @klass < Netzke::Plugin ? "plugin" : "widget"
       end
 
-      def mixins_as_string
+      def overrides_as_string
         netzke_mixins.presence && netzke_mixins.map do |f|
           as_string = File.read(f)
-          as_string.sub!('{', ' ')
-          as_string[as_string.rindex('}')] = ' '
-          as_string.rstrip
-        end.join(",\n")
+          as_string.chomp!("\n")
+          %(#{class_name}.override(#{as_string});)
+        end.join("\n\n")
       end
 
       def properties_as_string
-        [properties.netzke_jsonify.to_json.chop,  mixins_as_string].compact.join(",\n") + "}"
+        [properties.netzke_jsonify.to_json.chop].compact.join(",\n") + "}"
       end
 
       # Default extended class
