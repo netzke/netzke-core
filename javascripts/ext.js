@@ -111,8 +111,6 @@ Ext.define(null, {
 
       this.netzkeNormalizeConfig(config);
 
-      this.netzkeNormalizeTools(config);
-
       // This is where the references to different callback functions will be stored
       this.callbackHash = {};
 
@@ -217,21 +215,6 @@ Ext.define(null, {
    */
   onDirectException: function(e) {
     Netzke.warning("Server error. Override onDirectException to handle this.");
-  },
-
-  /**
-   * @private
-   */
-  netzkeNormalizeTools: function(config) {
-    if (config.tools) {
-      var normTools = [];
-      Ext.each(config.tools, function(tool){
-        var handler = Ext.Function.bind(this.netzkeToolHandler, this, [tool]);
-        normTools.push({type : tool, handler : handler, scope : this});
-      }, this);
-      this.tools = normTools;
-      delete config.tools;
-    }
   },
 
   /**
@@ -487,19 +470,6 @@ Ext.define(null, {
 
       // call the handler passing it the triggering component
       this[methodName](comp);
-    }
-  },
-
-  /**
-   * Common handler for tools
-   * @private
-   */
-  netzkeToolHandler: function(tool){
-    // If firing corresponding event doesn't return false, call the handler
-    if (this.fireEvent(tool.id+'click')) {
-      var methodName = "on"+tool.camelize();
-      if (!this[methodName]) {throw "Netzke: handler for tool '"+tool+"' is undefined"}
-      this[methodName]();
     }
   },
 

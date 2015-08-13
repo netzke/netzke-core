@@ -1,11 +1,14 @@
 class Tools < Netzke::Base
   def configure(c)
     super
-    c.tools = [:refresh, :gear]
+    c.tools = [
+      { type: :refresh, handler: f(:handle_refresh) },
+      { type: :gear, handler: f(:on_gear) }
+    ]
   end
 
   js_configure do |c|
-    c.on_refresh = <<-JS
+    c.handle_refresh = <<-JS
       function(){
         this.setTitle("Refresh tool clicked");
       }
