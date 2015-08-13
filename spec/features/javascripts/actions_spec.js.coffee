@@ -8,3 +8,7 @@ describe "Actions component", ->
 
   it "should not show buttons for excluded actions", ->
     expectToNotSee button "Excluded action"
+
+  it "handles actionless button click", ->
+    click button "Actionless button"
+    expectToSee header "Actionless button was clicked"

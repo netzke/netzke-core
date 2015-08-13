@@ -21,7 +21,7 @@ class Actions < Netzke::Base
   def configure(c)
     super
     c.title = "Panel that has actions"
-    c.bbar = [:simple_action, :another_action, :action_with_custom_handler, :excluded_action]
+    c.bbar = [:simple_action, :another_action, :action_with_custom_handler, :excluded_action, {text: 'Actionless button', handler: f(:handle_action_less_click)}]
     c.tbar = [{
       :xtype =>  'buttongroup',
       :columns => 3,
@@ -67,6 +67,12 @@ class Actions < Netzke::Base
     c.custom_action_handler = <<-JS
       function(){
         this.update("Custom action handler was called");
+      }
+    JS
+
+    c.handle_action_less_click = <<-JS
+      function(){
+        this.setTitle("Actionless button was clicked");
       }
     JS
   end

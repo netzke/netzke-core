@@ -109,7 +109,27 @@ module Netzke::Core
       code.blank? ? nil : Netzke::Core::DynamicAssets.minify_js(code)
     end
 
-  private
+    protected
+
+    # Allows referring to client-side function that will be called in the scope of the component. Handy to specify
+    # handlers for tools/actions, or any other functions that have to be passed as configuration to different Ext JS
+    # components. Usage:
+    #
+    #   class MyComponent < Netzke::Base
+    #     def configure(c)
+    #       super
+    #       c.bbar = [{text: 'Export', handler: f(:handle_export)}]
+    #     end
+    #   end
+    #
+    #   As a result, `MyComponent`'s client-side `handleExport` function will be called in the component's scope, receiving all the
+    #   usual handler parameters from Ext JS.
+    #   Read more on how to define client-side functions in `Netzke::Core::ClientClass`.
+    def f(name)
+      Netzke::Core::JsonLiteral.new("function(){var c=Ext.getCmp('#{js_id}'); return c.#{name.to_s.camelize(:lower)}.apply(c, arguments);}")
+    end
+
+    private
 
     # Merges all the translations in the class hierarchy
     # Note: this method can't be moved out to ClientClass, because I18n is loaded only once, when other Ruby classes are evaluated; so, this must remain at instance level.
