@@ -49,7 +49,7 @@ module Netzke::Core
   # The callback function provided at the moment of calling an endpoint will receive as its only argument the result of
   # the `endpoint` block execution:
   #
-  #     endpoint :getTheAnswer do
+  #     endpoint :get_the_answer do
   #       # ... do the thing
   #       42
   #     end
