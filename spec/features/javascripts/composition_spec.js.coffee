@@ -11,11 +11,11 @@ describe "Composition component", ->
   it "should have properly working nested components", (done) ->
     click button "With response"
     wait().then ->
-      expectToSee header "Response from server"
+      expectToSee header "Hello world"
       click button "With extended response"
       wait()
     .then ->
-      expectToSee header "Response from server plus"
+      expectToSee header "Hello world plus"
       done()
 
   it "as server, should be able to address (deeply) nested components", (done) ->

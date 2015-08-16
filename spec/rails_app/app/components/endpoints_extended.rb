@@ -19,8 +19,8 @@ class EndpointsExtended < Endpoints
   end
 
   # Overriding the :whats_up endpoint from ServerCaller
-  endpoint :whats_up do |params, this|
-    super(params, this)
+  endpoint :whats_up do |greeting|
+    super greeting
 
     this.set_title(this.set_title[0] + " plus")
   end

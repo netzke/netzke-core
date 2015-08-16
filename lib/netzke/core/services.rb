@@ -5,7 +5,7 @@ module Netzke::Core
   #
   # An endpoint is defined through the +endpoint+ class method on the Ruby class:
   #
-  #     endpoint :do_something do |params, this|
+  #     endpoint :do_something do
   #       # ...
   #     end
   #
@@ -28,7 +28,7 @@ module Netzke::Core
   #
   # An endpoint, after doing some useful job at the server, is able to instruct the client side of the component to call multiple methods (preserving the call order) with provided arguments. It's done by using the second parameter of the endpoint block (which is illustratively called 'this'):
   #
-  #     endpoint :do_something do |params, this|
+  #     endpoint :do_something do
   #       # ... do the thing
   #       this.set_title("New title")
   #       this.add_class("some-extra-css")
@@ -38,7 +38,7 @@ module Netzke::Core
   #
   # Besides "calling" methods on the current component itself, it's also possible to address its instantiated children at any level of the hierarchy:
   #
-  #     endpoint :do_something do |params, this|
+  #     endpoint :do_something do
   #       # ... do the thing
   #       this.east_panel_component.set_title("New east panel title")
   #       this.east_panel_component.deep_nested_component.do_something_very_special("With", "some", "arguments")
@@ -46,32 +46,33 @@ module Netzke::Core
   #
   # == Providing arguments to the callback function
   #
-  # The callback function provided at the moment of calling an endpoint may receive an argument set by the endpoint by "calling" the special +netzke_set_result+ method. :
+  # The callback function provided at the moment of calling an endpoint will receive as its only argument the result of
+  # the `endpoint` block execution:
   #
-  #     endpoint :do_something do |params, this|
+  #     endpoint :getTheAnswer do
   #       # ... do the thing
-  #       this.netzke_set_result(42)
+  #       42
   #     end
   #
   # By calling the endpoint from the client side like this:
   #
-  #     this.doSomething({}, function(result){ console.debug(result); });
+  #     this.getTheAnswer(function(result){ console.debug(result); });
   #
-  # ... the value of +result+ after the execution of the endpoint will be set to 42. Using this mechanism can be seen as doing an asyncronous call to a function at the server, which returns a value.
+  # ... the value of +result+ after the execution of the endpoint will be set to 42. Using this mechanism can be seen as doing an asyncronous call to a server-side function that returns a value.
   #
   # == Overriding an endpoint
   #
   # When overriding an endpoint, you can call the original endpoint by using +super+ and explicitely providing the block parameters to it:
   #
-  #     endpoint :do_something do |params, this|
-  #       super(params, this)
+  #     endpoint :do_something do |params|
+  #       super(params)
   #       this.doMore
   #     end
   #
   # If you want to reuse the original arguments set in +super+, you can access them from the +this+ object. Provided we are overriding the +do_something+ endpoint from the example in "Envoking JavaScript methods from the server", we will have:
   #
-  #     endpoint :do_something do |params, this|
-  #       super(params, this)
+  #     endpoint :do_something do |params|
+  #       super(params)
   #       original_arguments_for_set_title = this.set_title # => ["New title"]
   #       original_arguments_for_add_class = this.add_class # => ["some-extra-css"]
   #     end
@@ -79,9 +80,12 @@ module Netzke::Core
     extend ActiveSupport::Concern
 
     included do
-       # Returns all endpoints as a hash
+      # Returns all endpoints as a hash
       class_attribute :endpoints
       self.endpoints = {}
+
+      # instance of EndpointResponse
+      attr_accessor :this
     end
 
     module ClassMethods
@@ -99,16 +103,18 @@ module Netzke::Core
       end
     end
 
-    # Invokes an endpoint call
+    # Invokes an endpoint
+    #
     # +endpoint+ may contain the path to the endpoint in a component down the hierarchy, e.g.:
+    # +params+ contains an Array of parameters to pass to the endpoint
     #
     #     invoke_endpoint(:users__center__get_data, params)
     def invoke_endpoint(endpoint, params, configs = [])
-      endpoint_response = Netzke::Core::EndpointResponse.new
-
+      self.this = Netzke::Core::EndpointResponse.new
       if has_endpoint?(endpoint)
-        send("#{endpoint}_endpoint", params, endpoint_response)
-        endpoint_response
+        this.tap do |this|
+          this.netzke_set_result(send("#{endpoint}_endpoint", *params))
+        end
       else
         # Let's try to find it recursively in a component down the hierarchy
         child_component, *action = endpoint.to_s.split('__')
@@ -123,9 +129,9 @@ module Netzke::Core
           cmp_strong_config = {client_config: client_config, js_id: js_id}
           component_instance(child_component, cmp_strong_config).invoke_endpoint(action, params, configs)
         else
-          # component_missing can be overridden if necessary
-          component_missing(child_component, params, endpoint_response)
-          endpoint_response
+          this.tap do |this|
+            this.netzke_set_result(component_missing(child_component, *params))
+          end
         end
       end
     end
@@ -136,9 +142,8 @@ module Netzke::Core
 
     # Called when the method_missing tries to processes a non-existing component. Override when needed.
     # Note: this should actually never happen unless you mess up with Netzke component loading mechanisms.
-    def component_missing(missing_component, params, this)
+    def component_missing(missing_component, *params)
       this.netzke_feedback "Unknown component '#{missing_component}' in '#{name}'"
     end
-
   end
 end

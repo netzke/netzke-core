@@ -42,19 +42,19 @@ class Persistence < Netzke::Base
     JS
   end
 
-  endpoint :server_set_state do |params, this|
+  endpoint :server_set_state do
     state[:title] = "Title from state"
   end
 
-  endpoint :server_reset_state do |params,this|
+  endpoint :server_reset_state do
     state.clear
   end
 
-  endpoint :server_set_session_variable do |params,this|
+  endpoint :server_set_session_variable do
     component_session[:some_variable] = "set"
   end
 
-  endpoint :server_retrieve_session_variable do |params,this|
+  endpoint :server_retrieve_session_variable do
     this.netzke_set_result(component_session[:some_variable] || "not set")
   end
 end

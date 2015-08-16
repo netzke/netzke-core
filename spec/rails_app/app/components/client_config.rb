@@ -5,8 +5,8 @@ class ClientConfig < Netzke::Base
     c.bbar = [:show_option_one, :show_option_two]
   end
 
-  endpoint :server_request_some_option do |params, this|
-    this.netzke_set_result(config.some_option)
+  endpoint :server_request_some_option do
+    config.some_option
   end
 
   action :show_option_one do |c|
@@ -23,7 +23,7 @@ class ClientConfig < Netzke::Base
     c.on_show_option = <<-JS
       function(action) {
         this.netzkeClientConfig.some_option = action.option;
-        this.serverRequestSomeOption(null, function(res){this.setTitle(res);}, this);
+        this.serverRequestSomeOption(null, function(res){this.setTitle(res);});
       }
     JS
   end

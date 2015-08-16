@@ -16,33 +16,33 @@ class ServerCounter < Netzke::Base
     c.title = "Server Counter"
   end
 
-  endpoint :count do |params, this|
+  endpoint :count do |params|
     component_session[:count] ||= 0
     component_session[:count] += params[:how_many]
     this.set_title("I am at " + component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : ''))
   end
 
-  endpoint :successing_endpoint do |params, this|
+  endpoint :successing_endpoint do
     this.set_title("Something successed ")
   end
 
-  endpoint :failing_endpoint do |params, this|
+  endpoint :failing_endpoint do
     throw "something happened"
   end
 
-  endpoint :first_ep do |params, this|
+  endpoint :first_ep do
     component_session[:count2]||=0
     component_session[:count2]+=1
     this.set_title("First. "+ component_session[:count2].to_s)
   end
 
-  endpoint :second_ep do |params, this|
+  endpoint :second_ep do
     component_session[:count2]||=0
     component_session[:count2]+=1
     this.set_title("Second. "+ component_session[:count2].to_s)
   end
 
-  endpoint :fail_two_out_of_five do |count, this|
+  endpoint :fail_two_out_of_five do |count|
     component_session[:count] ||= 0
     component_session[:count] += 1
 

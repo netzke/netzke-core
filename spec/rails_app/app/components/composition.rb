@@ -96,11 +96,11 @@ class Composition < Netzke::Base
     c.modal = true
   end
 
-  endpoint :update_east_south do |params, this|
+  endpoint :update_east_south do
     this.east_south_panel.set_title("Here's an update for south panel in east panel")
   end
 
-  endpoint :update_west do |params, this|
+  endpoint :update_west do
     this.west_panel.set_title("Here's an update for west panel")
   end
 end

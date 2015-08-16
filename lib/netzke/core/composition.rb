@@ -90,7 +90,7 @@ module Netzke::Core
       #   [cache] an array of component classes cached at the browser
       #   [name] name of the child component to be loaded
       #   [index] clone index of the loaded component
-      endpoint :deliver_component do |params, this|
+      endpoint :deliver_component do |params|
         cache = params[:cache].split(",") # array of cached xtypes
         component_name = params[:name].underscore.to_sym
 

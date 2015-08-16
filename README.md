@@ -156,38 +156,52 @@ By defining an endpoint like this:
 
 ```ruby
 class SimpleComponent < Netzke::Base
-  endpoint :whats_up_server do |params, this|
+  endpoint :whats_up_server do |greeting|
   # ...
   end
 end
 ```
 
-...the client class will obtain a method called `whatsUpServer`:
+...the client class will obtain a method called `whatsUpServer`, that can be called like this:
 
 ```javascript
-this.whatsUpServer(params, callback, scope);
+this.whatsUpServer(greeting, callback, scope);
 ```
 
-Parameters:
+The last 2 params are optional:
 
-* `params` will be passed to the endpoint block as the first parameter
-* `callback` (optional) receives a function to be called after the server successfully processes the endpoint call
-* `scope` (optional) is the scope in which the callback function will be called
+* `callback` - function to be called after the server successfully processes the endpoint call; the function will receive, as its only argument, the result of the `endpoint` block execution
+* `scope` - context in which the callback function will be called; defaults to the component's instance
 
-### Calling client class methods from endpoint
+As of version 1.0, the endpoint may receive an arbitrary number of arguments, for example:
 
-An endpoint can instruct the client class to execute a set of methods after its execution, passing those methods arbitrary parameters. For example:
+```javascript
+this.serverDoSomething('value 1', true, callback, scope);
+```
 
 ```ruby
 class SimpleComponent < Netzke::Base
-  endpoint :whats_up_server do |params, this|
+  endpoint :server_do_something do |arg_1, arg_2|
+    # arg_1 == 'value 1'
+    # arg_2 == true
+  end
+end
+```
+
+### Calling client class methods from endpoint
+
+An endpoint can instruct the client instance of the component to execute a set of methods in response, passing those methods arbitrary parameters, by using the magical `this` variable. For example:
+
+```ruby
+class SimpleComponent < Netzke::Base
+  endpoint :whats_up_server do
     this.set_title("Response from server")
     this.my_method
   end
 end
 ```
 
-Here the client class will call its `setTitle` method (defined in `Ext.panel.Panel`) with parameter passed from the endpoint. Then a custom method `myMethod` will be called with no parameters.
+Here the client class will first call its `setTitle` method (defined in `Ext.panel.Panel`) with parameter passed from the endpoint. Then a custom method `myMethod` will be called with no parameters.
 
 For more details on client-server communication see [Netzke::Core::Services]("http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Services").
 

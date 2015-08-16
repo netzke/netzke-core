@@ -8,5 +8,5 @@ describe "RubyModules component", ->
     click tab "Endpoints"
     click button "With response"
     wait ->
-      expectToSee tab "Response from server"
+      expectToSee tab "Hello world"
       done()

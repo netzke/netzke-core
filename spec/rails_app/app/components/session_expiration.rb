@@ -15,7 +15,7 @@ class SessionExpiration < Endpoints
     c.bbar << :destroy_session
   end
 
-  endpoint :server_destroy_session do |params,this|
+  endpoint :server_destroy_session do
     Netzke::Base.session.delete(:netzke_components)
   end
 end

@@ -1,6 +1,6 @@
 module ExtDirect
   class Details < Netzke::Base
-    endpoint :update do |params, this|
+    endpoint :update do
       this.set_title title
     end
 

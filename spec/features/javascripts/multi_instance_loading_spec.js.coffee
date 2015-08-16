@@ -34,7 +34,7 @@ describe 'MultiInstanceLoading component', ->
       click button 'With extended response'
       wait()
     .then ->
-      expectToSee header 'Response from server plus'
+      expectToSee header 'Hello world plus'
 
       # and once more
       click button 'Load composition'
@@ -44,5 +44,5 @@ describe 'MultiInstanceLoading component', ->
       click button 'With extended response'
       wait()
     .then ->
-      expectToSee header 'Response from server plus'
+      expectToSee header 'Hello world plus'
       done()

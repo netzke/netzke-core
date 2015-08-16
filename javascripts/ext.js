@@ -55,72 +55,29 @@ Ext.define('Netzke.FeedbackGhost', {
 
 Ext.define('Netzke.classes.NetzkeRemotingProvider', {
   extend: 'Ext.direct.RemotingProvider',
-
+  type: 'netzkeremoting',
+  alias:  'direct.netzkeremotingprovider',
   getPayload: function(t){
     return {
       path: t.action,
       endpoint: t.method,
-      data: t.data,
+      data: {configs: this.netzkeOwner.buildParentClientConfigs(), args: t.data[0]},
       tid: t.id,
       type: 'rpc'
     }
   },
-
-  addEndpointsForComponent: function(componentPath, componentId, endpoints) {
-    var cls = this.namespace[componentId] || (this.namespace[componentId] = {});
-
-    Ext.Array.each(endpoints, function(ep) {
-      var methodName = ep.camelize(true),
-          method = Ext.create('Ext.direct.RemotingMethod', {name: methodName, len: 1});
-
-      cls[methodName] = this.createHandler(componentPath, method);
-    }, this);
-  }
-});
-
-Netzke.directProvider = new Netzke.classes.NetzkeRemotingProvider({
-  type: "remoting",       // create a Ext.direct.RemotingProvider
-  url: Netzke.ControllerUrl + "direct/", // url to connect to the Ext.Direct server-side router.
-  namespace: "Netzke.providers", // Netzke.providers will have a key per Netzke component, each mapped to a hash with a RemotingMethod per endpoint
-  actions: {},
   maxRetries: Netzke.core.directMaxRetries,
-  enableBuffer: true, // buffer/batch requests within 10ms timeframe
-  timeout: 30000 // 30s timeout per request
+  url: Netzke.ControllerUrl + 'direct/',
 });
-
-Ext.Direct.addProvider(Netzke.directProvider);
 
 // Override Ext.Component's constructor to enable Netzke features
 Ext.define(null, {
   override: 'Ext.Component',
   constructor: function(config) {
     if (this.isNetzke) {
-      // component loading index
-      this.netzkeLoadingIndex = 0;
-
-      this.netzkeComponents = config.netzkeComponents;
-      this.passedConfig = config;
-
-      // process and get rid of endpoints config
-      this.netzkeProcessEndpoints(config);
-
-      // process and get rid of plugins config
-      this.netzkeProcessPlugins(config);
-
-      this.netzkeNormalizeActions(config);
-
-      this.netzkeNormalizeConfig(config);
-
-      // This is where the references to different callback functions will be stored
-      this.callbackHash = {};
-
-      // This is where we store the information about components that are currently being loaded with this.loadComponent()
-      this.componentsBeingLoaded = {};
-
-      this.netzkeClientConfig = config.clientConfig || {};
+      this.netzkeInitialize(config);
     }
-
-    this.callOverridden([config]);
+    this.callParent([config]);
   }
 });
 
@@ -128,6 +85,45 @@ Ext.define(null, {
 Ext.define(null, {
   override: 'Netzke.classes.Core.Mixin',
   feedbackGhost: Ext.create("Netzke.FeedbackGhost"),
+
+  netzkeInitialize: function(config){
+    // component loading index
+    this.netzkeLoadingIndex = 0;
+
+    this.netzkeComponents = config.netzkeComponents;
+
+    // TODO: needed?
+    this.passedConfig = config;
+
+    // process and get rid of endpoints config
+    this.netzkeProcessEndpoints(config);
+
+    // process and get rid of plugins config
+    this.netzkeProcessPlugins(config);
+
+    this.netzkeNormalizeActions(config);
+
+    this.netzkeNormalizeConfig(config);
+
+    // This is where the references to different callback functions will be stored
+    this.callbackHash = {};
+
+    // This is where we store the information about components that are currently being loaded with this.loadComponent()
+    this.componentsBeingLoaded = {};
+
+    this.netzkeClientConfig = config.clientConfig || {};
+  },
+
+  netzkeInitializeDirectProvider: function(actions){
+    this.nzDirect = {}; // namespace for direct functions
+
+    Ext.direct.Manager.addProvider({
+      netzkeOwner: this,
+      type: 'netzkeremoting',
+      namespace: this.nzDirect,
+      actions: actions
+    });
+  },
 
   /*
   Mask shown during loading of a component. Set to false to not mask. Pass config for Ext.LoadMask for configuring msg/cls, etc.
@@ -156,41 +152,48 @@ Ext.define(null, {
     var endpoints = config.endpoints || [];
     endpoints.push('deliver_component'); // all Netzke components get this endpoint
 
-    Netzke.directProvider.addEndpointsForComponent(config.path, config.id, endpoints);
-
-    var that = this;
+    var epActions = [], actions = {}, that = this;
+    actions[config.path] = epActions;
 
     Ext.each(endpoints, function(ep){
       var methodName = ep.camelize(true);
+      epActions.push({name: methodName, len: 1});
 
-      /* add endpoint method to `this` */
-      this[methodName] = function(args, callback, scope) {
-        Netzke.runningRequests++;
+      this[methodName] = function(){
+        var args = Array.prototype.slice.call(arguments), callback, serverConfigs, scope = that;
 
-        scope = scope || that;
+        if (Ext.isFunction(args[args.length - 2])) {
+          scope = args.pop();
+          callback = args.pop();
+        }
 
-        var cfgs = this.buildParentClientConfigs();
-        var remotingArgs = {args: args, configs: cfgs};
+        if (Ext.isFunction(args[args.length - 1])) {
+          callback = args.pop();
+        }
 
-        // Calling Ext.Direct's function
-        Netzke.providers[config.id][methodName].call(scope, remotingArgs, function(result, e) {
-          var callbackParam = e;
+        this.netzkeGetDirectFunction(methodName, config).call(this, args, function(result, event){
+          var callbackParam = event;
 
-          if (Ext.getClass(e) == Ext.direct.RemotingEvent) { // means we didn't get an exception
+          if (Ext.getClass(event) == Ext.direct.RemotingEvent) { // means we didn't get an exception
             that.netzkeBulkExecute(result); // invoke the endpoint result on the calling component
             callbackParam = that.latestResult;
           }
 
-          if (typeof callback == "function" && !scope.netzkeSessionIsExpired) {
-            callback.call(scope, callbackParam); // invoke the callback on the provided scope, or on the calling component if no scope set. Pass latestResult to callback in case of success, or the Ext.direct.ExceptionEvent otherwise
+          if (callback && !that.netzkeSessionIsExpired) {
+            // Invoke the callback on the provided scope, or on the calling component if no scope set.
+            // Pass latestResult to callback in case of success, or the Ext.direct.ExceptionEvent otherwise.
+            callback.call(scope, callbackParam);
           }
-
-          Netzke.runningRequests--;
         });
       }
     }, this);
 
-    delete config.endpoints;
+    this.netzkeInitializeDirectProvider(actions);
+  },
+
+  netzkeGetDirectFunction: function(methodName, config) {
+    config = config || this;
+    return this.nzDirect[config.path][methodName];
   },
 
   /**
@@ -312,7 +315,7 @@ Ext.define(null, {
       if (Ext.getClass(e) == Ext.direct.ExceptionEvent) {
         this.netzkeUndoLoadingComponent(params.name);
       }
-    }, this);
+    });
   },
 
   /**
@@ -398,11 +401,32 @@ Ext.define(null, {
     var parent = this.netzkeGetParentComponent();
 
     if (parent) {
-      var name = this.netzkeLocalId(parent);
-      parent.netzkeLoadComponent(name, {container: this.getRefOwner().id});
+      parent.netzkeReloadChild(this);
     } else {
       window.location.reload();
     }
+  },
+
+  /**
+   * WIP
+   */
+  netzkeReloadChild: function(child, clientConfig){
+    clientConfig = clientConfig || {};
+    this.netzkeLoadComponent(child.name, {
+      configOnly: true,
+      callback: function(cfg) {
+        this.netzkeReplaceChild(child, cfg);
+      }
+    });
+  },
+
+  /**
+   * WIP
+   */
+  netzkeReplaceChild: function(child, config){
+    var index = this.items.indexOf(child);
+    this.remove(child);
+    this.insert(index, config);
   },
 
   /**

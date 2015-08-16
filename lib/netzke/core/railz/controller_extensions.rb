@@ -15,10 +15,10 @@ module Netzke
           @params[:endpoint].underscore
         end
 
+        # arguments for endpoint call
         def args
-          # for backward compatibility, fall back to old data structure (with the endpoint params being in the root of
-          # 'data')
-          remoting_args.has_key?("args") ? remoting_args["args"] : remoting_args.reject{|k,v| k == 'configs' }
+          res = remoting_args["args"]
+          res.is_a?(Array) ? res : [res].compact # need to wrap into array to normalize
         end
 
         def client_configs
@@ -33,8 +33,9 @@ module Netzke
 
       private
 
+        # raw arguments from the client
         def remoting_args
-          @_remoting_args ||= @params[:data].first
+          @_remoting_args ||= @params[:data]
         end
       end
 
@@ -111,7 +112,7 @@ module Netzke
           component_instance = Netzke::Base.instance_by_config(cmp_config)
           component_instance.invoke_endpoint((sub_components + [request.endpoint]).join("__"), request.args, request.client_configs)
         else
-          {netzke_session_expired: []}
+          { netzke_session_expired: [] }
         end
       end
 

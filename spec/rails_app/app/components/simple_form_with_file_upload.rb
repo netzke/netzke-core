@@ -38,7 +38,7 @@ class SimpleFormWithFileUpload < Netzke::Base
     c.bbar = [:submit]
   end
 
-  endpoint :server_submit do |params, this|
+  endpoint :server_submit do
     # because this endpoint wasn't called in the normal way, we cannot do anything like this (it won't have any effect):
     # this.set_title('File uploaded')
 

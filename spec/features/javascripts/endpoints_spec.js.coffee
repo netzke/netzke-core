@@ -3,7 +3,7 @@ describe 'Endpoints component', ->
     click button 'With response'
 
     wait ->
-      expectToSee header 'Response from server'
+      expectToSee header 'Hello world'
       done()
 
   it "calls an endpoint without response", (done) ->
@@ -14,7 +14,7 @@ describe 'Endpoints component', ->
       done()
 
   it "calls an endpoint that calls back with multiple arguments", (done) ->
-    click button 'Multiple arguments'
+    click button 'Multiple argument response'
 
     wait ->
       expect(currentPanelTitle()).to.eql('Called a function with two arguments: First argument, Second argument')
@@ -46,4 +46,22 @@ describe 'Endpoints component', ->
 
     wait ->
       expectToSee somewhere "Unknown component 'non_existing_child' in 'endpoints'"
+      done()
+
+  it "calls an endpoint with multiple argmuments", (done) ->
+    click button 'Multiple arguments'
+    wait ->
+      expect(currentPanelTitle()).to.eql('Returned value: one, two, three')
+      done()
+
+  it "calls an endpoint with a hash argument", (done) ->
+    click button 'Hash argument'
+    wait ->
+      expect(currentPanelTitle()).to.eql('Returned value: one, two')
+      done()
+
+  it "issues a batch call", (done) ->
+    click button 'Batched call'
+    wait ->
+      expect(currentPanelTitle()).to.eql('foo bar')
       done()

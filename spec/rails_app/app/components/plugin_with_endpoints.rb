@@ -23,7 +23,7 @@ class PluginWithEndpoints < Netzke::Plugin
     JS
   end
 
-  endpoint :server_on_gear do |params, this|
+  endpoint :server_on_gear do
     this.process_gear_callback("Response from server side of PluginWithEndpoints")
   end
 end

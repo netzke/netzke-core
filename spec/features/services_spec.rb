@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class TestComponent < Netzke::Base
-  endpoint :some_action do |params, this|
+  endpoint :some_action do
   end
 end
 

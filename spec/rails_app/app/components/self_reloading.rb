@@ -1,4 +1,3 @@
-# For demo purposes. Not used for testing.
 class SelfReloading < Netzke::Base
   action :reload
 
@@ -12,7 +11,7 @@ class SelfReloading < Netzke::Base
     state[:loaded_times] ||= 0
     state[:loaded_times] += 1
 
-    c.title = "Loaded #{state[:loaded_times]} time(s)"
+    c.title ||= "Loaded #{state[:loaded_times]} time(s)"
   end
 
   js_configure do |c|
