@@ -1,4 +1,3 @@
-# For demo purposes. Not used for testing.
 class HelloWorld < Netzke::Base
   # Configure clint class
   js_configure do |c|
@@ -17,7 +16,7 @@ class HelloWorld < Netzke::Base
   end
 
   # Endpoint callable from client class
-  endpoint :greet_the_world do |params,this|
+  endpoint :greet_the_world do
     # call client class' method showGreeting
     this.show_greeting("Hello World!")
   end
