@@ -1,115 +1,14 @@
-// This file has stuff related to Ext JS (as apposed to Touch)
-
-// Because of Netzke's double-underscore notation, Ext.TabPanel should have a different id-delimiter (yes, this should be in netzke-core)
-Ext.TabPanel.prototype.idDelimiter = "___";
-
-// Enable quick tips
-Ext.QuickTips.init();
-
-// Checking Ext JS version: both major and minor versions must be the same
-(function(){
-  var requiredVersionMajor = 5,
-      requiredVersionMinor = 1,
-      extVersion = Ext.getVersion('extjs'),
-      currentVersionMajor = extVersion.getMajor(),
-      currentVersionMinor = extVersion.getMinor(),
-      requiredString = "" + requiredVersionMajor + "." + requiredVersionMinor + ".x";
-
-  if (requiredVersionMajor != currentVersionMajor || requiredVersionMinor != currentVersionMinor) {
-    Netzke.warning("Ext JS " + requiredString + " required (you have " + extVersion.toString() + ").");
-  }
-})();
-
-// FeedbackGhost is a little class that displays unified feedback from Netzke components.
-Ext.define('Netzke.FeedbackGhost', {
-  showFeedback: function(msg, options){
-    options = options || {};
-    options.delay = options.delay || Netzke.core.FeedbackDelay;
-    if (Ext.isObject(msg)) {
-      this.msg(msg.level.camelize(), msg.msg, options.delay);
-    } else if (Ext.isArray(msg)) {
-      Ext.each(msg, function(m) { this.showFeedback(m); }, this);
-    } else {
-      this.msg(null, msg, options.delay); // no header for now
-    }
-  },
-
-  msg: function(title, format, delay){
-      if(!this.msgCt){
-          this.msgCt = Ext.core.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
-      }
-      var s = Ext.String.format.apply(String, Array.prototype.slice.call(arguments, 1));
-      var m = Ext.core.DomHelper.append(this.msgCt, this.createBox(title, s), true);
-      m.hide();
-      m.slideIn('t').ghost("t", { delay: delay, remove: true});
-  },
-
-  createBox: function(t, s){
-    if (t) {
-      return '<div class="msg"><h3>' + t + '</h3><p>' + s + '</p></div>';
-    } else {
-      return '<div class="msg"><p>' + s + '</p></div>';
-    }
-  }
-});
-
-Ext.define('Netzke.classes.NetzkeRemotingProvider', {
-  extend: 'Ext.direct.RemotingProvider',
-  type: 'netzkeremoting',
-  alias:  'direct.netzkeremotingprovider',
-
-  maxRetries: Netzke.core.directMaxRetries,
-  url: Netzke.ControllerUrl + 'direct/',
-
-  callBuffer: [], // call buffer shared between instances
-
-  // override
-  constructor: function(){
-    this.callParent(arguments);
-    this.callBuffer = this.getSharedCallBuffer();
-  },
-
-  // override
-  getPayload: function(t){
-    return {
-      path: t.action,
-      endpoint: t.method,
-      data: {configs: this.netzkeOwner.buildParentClientConfigs(), args: t.data[0]},
-      tid: t.id,
-      type: 'rpc'
-    }
-  },
-
-  getSharedCallBuffer: function(){
-    return Object.getPrototypeOf(this).callBuffer;
-  },
-
-  // override
-  combineAndSend: function() {
-    this.callParent();
-    if (this.callBuffer != this.getSharedCallBuffer() && this.callBuffer.length == 0) {
-      // prevent parent from referencing to the *new* empty callBuffer
-      this.callBuffer = this.getSharedCallBuffer();
-      this.callBuffer.length = 0;
-    }
-  }
-});
-
 // Override Ext.Component's constructor to enable Netzke features
 Ext.define(null, {
   override: 'Ext.Component',
   constructor: function(config) {
-    if (this.isNetzke) {
-      this.netzkeInitialize(config);
-    }
+    if (this.isNetzke) this.netzkeInitialize(config);
     this.callParent([config]);
   }
 });
 
-// Methods/properties that each and every Netzke component will have
-Ext.define(null, {
-  override: 'Netzke.classes.Core.Mixin',
-  feedbackGhost: Ext.create("Netzke.FeedbackGhost"),
+Ext.define("Netzke.classes.Core.Mixin", {
+  isNetzke: true, // to distinguish Netzke components from regular Ext components
 
   netzkeInitialize: function(config){
     // component loading index
@@ -137,6 +36,162 @@ Ext.define(null, {
     this.componentsBeingLoaded = {};
 
     this.netzkeClientConfig = config.clientConfig || {};
+  },
+
+  feedbackGhost: Ext.create("Netzke.FeedbackGhost"),
+
+  /**
+  * Evaluates CSS
+  * @private
+  */
+  netzkeEvalCss : function(code){
+    var head = Ext.fly(document.getElementsByTagName('head')[0]);
+    Ext.core.DomHelper.append(head, {
+      tag: 'style',
+      type: 'text/css',
+      html: code
+    });
+  },
+
+  /**
+  * Evaluates JS
+  * @private
+  */
+  netzkeEvalJs : function(code){
+    eval(code);
+  },
+
+  /**
+  * Gets id in the context of provided parent.
+  * For example, the components "properties", being a child of "books" has global id "books__properties", which *is* its component's real id. This methods, with the instance of "books" passed as parameter, returns "properties".
+  * @private
+  */
+  netzkeLocalId : function(parent){
+    return this.id.replace(parent.id + "__", "");
+  },
+
+  /**
+  Executes a bunch of methods. This method is called almost every time a communication to the server takes place.
+  Thus the server side of a component can provide any set of commands to its client side.
+  Args:
+    - instructions: can be
+      1) a hash of instructions, where the key is the method name, and value - the argument that method will be called with (thus, these methods are expected to *only* receive 1 argument). In this case, the methods will be executed in no particular order.
+      2) an array of hashes of instructions. They will be executed in order.
+      Arrays and hashes may be nested at will.
+      If the key in the instructions hash refers to a child Netzke component, netzkeBulkExecute will be called on that component with the value passed as the argument.
+
+  Examples of the arguments:
+      // same as this.feedback("Your order is accepted");
+      {feedback: "You order is accepted"}
+
+      // same as: this.setTitle('Suprise!'); this.setDisabled(true);
+      [{setTitle:'Suprise!'}, {setDisabled:true}]
+
+      // the same as this.netzkeGetComponent('users').netzkeBulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}]);
+      {users: [{setTitle:'Suprise!'}, {setDisabled:true}] }
+  @private
+  */
+  netzkeBulkExecute : function(instructions){
+    if (Ext.isArray(instructions)) {
+      Ext.each(instructions, function(instruction){ this.netzkeBulkExecute(instruction)}, this);
+    } else {
+      for (var instr in instructions) {
+        var args = instructions[instr];
+        if(args instanceof Object && (Ext.Object.getSize(args)==0))
+          args = [];
+
+        if (Ext.isFunction(this[instr])) {
+          // Executing the method.
+          this[instr].apply(this, args);
+        } else {
+          var childComponent = this.netzkeGetComponent(instr);
+          if (childComponent) {
+            childComponent.netzkeBulkExecute(args);
+          } else if (Ext.isArray(args)) { // only consider those calls that have arguments wrapped in an array; the only (probably) case when they are not, is with 'success' property set to true in a non-ajax form submit - silently ignore that
+            throw "Netzke: Unknown method or child component '" + instr + "' in component '" + this.id + "'"
+          }
+        }
+      }
+    }
+  },
+
+  /**
+   * @private
+   */
+  netzkeSetResult: function(result) {
+    this.latestResult = result;
+  },
+
+  /**
+  * This method gets called by the server when the component to which an endpoint call was directed to, is not in the session anymore.
+  * @private
+  */
+  netzkeSessionExpired: function() {
+    this.netzkeSessionIsExpired = true;
+    this.onNetzkeSessionExpired();
+  },
+
+  /**
+   * Override this method to handle session expiration. E.g. you may want to inform the user that they will be redirected to the login page.
+   * @private
+   */
+  onNetzkeSessionExpired: function() {
+    Netzke.warning("Component not in session. Override `onNetzkeSessionExpired` to handle this.");
+  },
+
+  /**
+   * Returns a URL for old-fashion requests (used at multi-part form non-AJAX submissions)
+   * @private
+   */
+  netzkeEndpointUrl: function(endpoint){
+    return Netzke.ControllerUrl + "dispatcher?address=" + this.id + "__" + endpoint;
+  },
+
+  /**
+   * @private
+   */
+  netzkeNormalizeConfigArray: function(items){
+    var cfg, ref, cmpName, cmpCfg, actName, actCfg;
+
+    Ext.each(items, function(item, i){
+      cfg = item;
+
+      // potentially, referencing a component or action with a string
+      if (Ext.isString(item)) {
+        ref = item.camelize(true);
+        if ((this.netzkeComponents || {})[ref]) cfg = {netzkeComponent: ref};
+        else if ((this.actions || {})[ref]) cfg = {netzkeAction: ref};
+      }
+
+      if (cfg.netzkeAction) {
+        // replace with action instance
+        actName = cfg.netzkeAction.camelize(true);
+        if (!this.actions[actName]) throw "Netzke: unknown action " + cfg.netzkeAction;
+        items[i] = this.actions[actName];
+        delete(item);
+
+      } else if (cfg.netzkeComponent) {
+        // replace with component config
+        cmpName = cfg.netzkeComponent;
+        cmpCfg = this.netzkeComponents[cmpName.camelize(true)];
+        if (!cmpCfg) throw "Netzke: unknown component " + cmpName;
+        cmpCfg.netzkeParent = this;
+        items[i] = Ext.apply(cmpCfg, cfg);
+        delete(item);
+
+      } else if (Ext.isString(cfg) && Ext.isFunction(this[cfg.camelize(true)+"Config"])) { // replace with config referred to on the Ruby side as a symbol
+        // pre-built config
+        items[i] = Ext.apply(this[cfg.camelize(true)+"Config"](this.passedConfig), {netzkeParent: this});
+
+      } else {
+        // recursion
+        for (key in cfg) {
+          if (Ext.isArray(cfg[key])) {
+            this.netzkeNormalizeConfigArray(cfg[key]);
+          }
+        }
+      }
+    }, this);
   },
 
   netzkeInitializeDirectProvider: function(actions){

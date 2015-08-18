@@ -3,14 +3,13 @@ require 'uglifier'
 module Netzke
   module Core
     module DynamicAssets
+      CORE_FILES = %w[js_extensions core notifications remoting_provider component]
+
       class << self
         def ext_js(form_authenticity_token)
           res = initial_dynamic_javascript(form_authenticity_token) << "\n"
 
-          include_base_js(res)
-
-          # Ext-specific JavaScript
-          res << File.new(File.expand_path("../../../../javascripts/ext.js", __FILE__)).read
+          include_core_js(res)
 
           # Pluggable JavaScript (used by other Netzke-powered gems like netzke-basepack)
           Netzke::Core.ext_javascripts.each do |path|
@@ -59,14 +58,11 @@ module Netzke
           res.join("\n")
         end
 
-        def include_base_js(arry)
-          # JavaScript extensions
-          arry << File.new(File.expand_path("../../../../javascripts/js_extensions.js", __FILE__)).read
-
-          # Base Netzke component JavaScript
-          arry << File.new(File.expand_path("../../../../javascripts/base.js", __FILE__)).read
+        def include_core_js(arry)
+          CORE_FILES.each do |script|
+            arry << File.new(File.expand_path("../../../../javascripts/#{script}.js", __FILE__)).read
+          end
         end
-
       end
     end
   end
