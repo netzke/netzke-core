@@ -1,36 +1,39 @@
+*   BACKWARD INCOMPATIBLE. Internal rework of component loading, which also changes some API and behavior.
+    *   If the loaded component is a window, the show() method is called on it by Netzke. This can be prevented by the callback function returning `false` (which will also prevent other types of loaded components to be inserted in the container).
+    *   On the client, the clientConfig config option renamed to serverConfig.
+
 *   BACKWARD INCOMPATIBLE. Changes to how the endpoints API.
-*
     *   Droped the `this` parameter from endpoint block on server side. It's still possible to call client-side methods as before, but `this` is declared in the class.
 
     *   Endpoint calls now accept any number of arguments (including 0), with client-side signature matching the server-side `endpoint` block, for example:
 
-        # server side
-        endpoint :assign_user do |user_id, table_id|
-        end
+          # server side
+          endpoint :assign_user do |user_id, table_id|
+          end
 
-        // client side
-        this.assignUser(userId, tableId)
+          // client side
+          this.assignUser(userId, tableId)
 
-        ####
+          ---
 
-        # server side
-        endpoint :clear_data do
-        end
+          # server side
+          endpoint :clear_data do
+          end
 
-        // client side
-        this.clearData()
+          // client side
+          this.clearData()
 
     *   Whatever endpoint's server-side block returns will become the argument for the client-side callback function, for example:
 
-        # server side
-        endpoint :get_data do |params|
-          [1, 2, 3]
-        end
+          # server side
+          endpoint :get_data do |params|
+            [1, 2, 3]
+          end
 
-        // client side
-        this.getData(params, function(result) {
-          // result == [1, 2, 3]
-        })
+          // client side
+          this.getData(params, function(result) {
+            // result == [1, 2, 3]
+          })
 
 *   BACKWARD INCOMPATIBLE. Drop listing header tools merely as symbols, as this was too limiting (e.g. Netzke was overriding the handler signature). As of now, use the Base#f method to specify the handler (will no longer be automatically set for you); see `spec/rails_app/app/components/tools.rb` for an example. Just reducing entropy, you know.
 

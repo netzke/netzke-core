@@ -1,7 +1,6 @@
 {
   // handler for the ping_server action
   onPingServer: function(){
-    // calling greet_the_world endpoint
     this.greetTheWorld();
   },
 

@@ -153,7 +153,7 @@ module Netzke
       # Builds this component's xtype
       # E.g.: netzkebasepackwindow, netzkebasepackgridpanel
       def xtype
-        "netzke" + @klass.name.gsub("::", "").downcase
+        @klass.name.gsub("::", "").downcase
       end
 
       # Component's JavaScript class declaration.

@@ -5,6 +5,11 @@ describe 'DynamicLoading component', ->
       expect(header('SimpleComponent')).to.be.ok()
       done()
 
+  it "should load component repeatively", (done) ->
+    click button('Load component')
+    wait ->
+      done()
+
   it "should load component in a window", (done) ->
     click button('Load in window')
     wait ->

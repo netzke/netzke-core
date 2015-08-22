@@ -1,4 +1,12 @@
 {
+  initComponent: function(){
+    this.callParent();
+
+    Netzke.GlobalEvents.on('endpointexception', function(exception){
+      this.setTitle(exception.type + ": " + exception.msg);
+    }, this);
+  },
+
   onWithResponse: function(){
     this.whatsUp('world');
   },
@@ -39,12 +47,15 @@
   },
 
   onNonExisting: function(){
-    this.serverNonExisting();
+    this.serverNonExisting( function(error, success){
+      this.setTitle("Error: " + error.type + ", message: " + error.msg);
+      return false; // prevent default endpointexception exception handler
+    });
   },
 
   onReturnValue: function() {
-    this.getAnswer(function(answer) {
-      this.setTitle("Returned value: " + answer);
+    this.getAnswer(function(answer, success) {
+      this.setTitle("Returned value: " + answer + ", success: " + success);
     });
   },
 
@@ -67,5 +78,17 @@
 
   appendTitle: function(str){
     this.setTitle(this.getTitle() + " " + str);
+  },
+
+  onRaiseException: function(){
+    this.serverRaise( function(res, success){
+      console.log("res ", res);
+      this.setTitle("Response status: " + res.xhr.status + ", success: " + success);
+      return false;
+    });
+  },
+
+  onReturnError: function(){
+    this.serverReturnError();
   }
 }

@@ -94,7 +94,7 @@ module Netzke::Core
         cache = params[:cache].split(",") # array of cached xtypes
         component_name = params[:name].underscore.to_sym
 
-        item_id = "#{component_name}#{params[:index]}"
+        item_id = params[:item_id]
 
         cmp_instance = components[component_name] &&
           !components[component_name][:excluded] &&
@@ -102,12 +102,9 @@ module Netzke::Core
 
         if cmp_instance
           js, css = cmp_instance.js_missing_code(cache), cmp_instance.css_missing_code(cache)
-          this.netzke_eval_js(js) if js.present?
-          this.netzke_eval_css(css) if css.present?
-
-          this.netzke_component_delivered(cmp_instance.js_config);
+          { js: js, css: css, config: cmp_instance.js_config }
         else
-          this.netzke_component_delivery_failed(item_id: item_id, msg: "Couldn't load component '#{item_id}'")
+          { error: "Couldn't load component '#{component_name}'" }
         end
       end
 

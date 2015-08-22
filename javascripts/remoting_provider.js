@@ -19,7 +19,7 @@ Ext.define('Netzke.classes.NetzkeRemotingProvider', {
     return {
       path: t.action,
       endpoint: t.method,
-      data: {configs: this.netzkeOwner.buildParentClientConfigs(), args: t.data[0]},
+      data: {configs: this.netzkeOwner.netzkeBuildParentConfigs(), args: t.data[0]},
       tid: t.id,
       type: 'rpc'
     }

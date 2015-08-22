@@ -38,14 +38,14 @@ describe 'Endpoints component', ->
     click button 'Return value'
 
     wait ->
-      expect(currentPanelTitle()).to.eql('Returned value: 42')
+      expect(currentPanelTitle()).to.eql('Returned value: 42, success: true')
       done()
 
   it "gets informed about calling endpoint on non-existing child", (done) ->
     click button 'Non existing'
 
     wait ->
-      expectToSee somewhere "Unknown component 'non_existing_child' in 'endpoints'"
+      expect(currentPanelTitle()).to.eql("Error: UNKNOWN_COMPONENT, message: Component 'Endpoints' does not have component 'non_existing_child'")
       done()
 
   it "calls an endpoint with multiple argmuments", (done) ->
@@ -64,4 +64,11 @@ describe 'Endpoints component', ->
     click button 'Batched call'
     wait ->
       expect(currentPanelTitle()).to.eql('foo bar')
+      done()
+
+  # Client-side test passes, but server exception makes RSpec conclude it's a failure; needs a work-around
+  xit "informs about exception", (done) ->
+    click button 'Raise exception'
+    wait ->
+      expect(currentPanelTitle()).to.eql('Response status: 500, success: false')
       done()

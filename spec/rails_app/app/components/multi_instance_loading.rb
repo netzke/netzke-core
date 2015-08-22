@@ -11,7 +11,7 @@ class MultiInstanceLoading < Netzke::Base
 
   component :hello_user do |c|
     # client_config is accessible here
-    c.user = c.client_config[:user]
+    c.user = c.client_config[:user_name]
   end
 
   component :composition

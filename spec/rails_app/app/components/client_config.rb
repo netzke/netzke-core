@@ -22,7 +22,7 @@ class ClientConfig < Netzke::Base
   js_configure do |c|
     c.on_show_option = <<-JS
       function(action) {
-        this.netzkeClientConfig.some_option = action.option;
+        this.serverConfig.some_option = action.option;
         this.serverRequestSomeOption(null, function(res){this.setTitle(res);});
       }
     JS

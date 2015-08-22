@@ -60,7 +60,7 @@ module Netzke::Core
       @config ||= ActiveSupport::OrderedOptions.new
     end
 
-    # Config options that have been set on the fly on the client side of the component in the `netzkeClientConfig` object. Can be
+    # Config options that have been set on the fly on the client side of the component in the `serverConfig` object. Can be
     # used to dynamically change component configuration. Those changes won't affect the way component is rendered, of
     # course, but can be useful to reconfigure child components, e.g.:
     #
@@ -69,7 +69,7 @@ module Netzke::Core
     #     this.callParent();
     #
     #     this.netzkeGetComponent('authors').on('rowclick', function(grid, record) {
-    #       this.netzkeClientConfig.author_id = record.getId();
+    #       this.serverConfig.author_id = record.getId();
     #       this.netzkeGetComponent('book_grid').getStore().load();
     #     }
     #   }

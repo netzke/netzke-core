@@ -88,6 +88,7 @@ module Netzke
 
     protected
 
+      # Receives DirectRequest and result of invoke_endpoint, returns hash understood by client-side's Direct function
       def direct_response(request, endpoint_response)
         component_name, *sub_components = request.cmp_path.split('__')
 
@@ -102,6 +103,7 @@ module Netzke
         }
       end
 
+      # Receives DirectRequest, returns an array/hash of methods for the client side (consumed by netzkeBulkExecute)
       def invoke_endpoint(request)
         component_name, *sub_components = request.cmp_path.split('__')
         components_in_session = session[:netzke_components].try(:symbolize_keys)

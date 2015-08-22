@@ -38,14 +38,11 @@ Netzke.exception = function(msg) {
   }
 })();
 
-// Used in testing
-if( Netzke._pendingRequests == undefined ){
-  Netzke._pendingRequests=0;
-  Ext.Ajax.on('beforerequest',    function(conn, opt) { Netzke._pendingRequests += 1; });
-  Ext.Ajax.on('requestcomplete',  function(conn, opt) { Netzke._pendingRequests -= 1; });
-  Ext.Ajax.on('requestexception', function(conn, opt) { Netzke._pendingRequests -= 1; });
-  Netzke.ajaxIsLoading = function() { return Netzke._pendingRequests > 0; };
-}
+// Netzke global event emitter
+Ext.define('Netzke.GlobalEvents', {
+    extend: 'Ext.mixin.Observable',
+    singleton: true
+});
 
 // xtypes of cached Netzke classes
 Netzke.cache = [];
@@ -55,3 +52,12 @@ Ext.TabPanel.prototype.idDelimiter = "___";
 
 // Enable quick tips
 Ext.QuickTips.init();
+
+// Used in testing
+if( Netzke._pendingRequests == undefined ){
+  Netzke._pendingRequests=0;
+  Ext.Ajax.on('beforerequest',    function(conn, opt) { Netzke._pendingRequests += 1; });
+  Ext.Ajax.on('requestcomplete',  function(conn, opt) { Netzke._pendingRequests -= 1; });
+  Ext.Ajax.on('requestexception', function(conn, opt) { Netzke._pendingRequests -= 1; });
+  Netzke.ajaxIsLoading = function() { return Netzke._pendingRequests > 0; };
+}

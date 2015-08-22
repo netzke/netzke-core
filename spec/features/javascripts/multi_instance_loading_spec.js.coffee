@@ -11,6 +11,7 @@ describe 'MultiInstanceLoading component', ->
       wait()
     .then ->
       expectToSee tab 'Configured with user User 2'
+      click tab 'Configured with user User 2'
       click button 'Ping server'
       wait()
     .then ->

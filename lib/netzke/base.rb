@@ -134,7 +134,7 @@ module Netzke
       @js_id = conf[:js_id]
       @js_id ||= parent.nil? ? @item_id : [parent.js_id, @item_id].join("__")
 
-      # TODO: get rid of this in 0.9
+      # TODO: get rid of this
       @flash = []
 
       # Make +client_config+ accessible in +configure+ before calling +super+

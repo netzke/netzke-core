@@ -8,6 +8,8 @@ class Endpoints < Netzke::Base
   action :multiple_arguments
   action :hash_argument
   action :batched_call
+  action :raise_exception
+  action :return_error
 
   # this action is using generic endpoint callback with scope
   action :callback_and_scope
@@ -20,7 +22,7 @@ class Endpoints < Netzke::Base
   def configure(c)
     super
     c.bbar = [:with_response, :no_response, :multiple_argument_response, :array_as_argument, :callback_and_scope, :return_value, :non_existing, :multiple_arguments]
-    c.tbar = [:hash_argument, :batched_call]
+    c.tbar = [:hash_argument, :batched_call, :raise_exception, :return_error]
   end
 
   endpoint :whats_up do |greeting|
@@ -61,6 +63,14 @@ class Endpoints < Netzke::Base
 
   endpoint :server_append_bar do
     this.appendTitle('bar')
+  end
+
+  endpoint :server_raise do
+    raise "Exception in endpoint"
+  end
+
+  endpoint :server_return_error do
+    { error: {type: 'CUSTOM_ERROR', msg: 'Error returned by endpoint'} }
   end
 
   def invoke_endpoint(ep, *params, configs)
