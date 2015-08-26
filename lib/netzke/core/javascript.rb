@@ -71,9 +71,8 @@ module Netzke::Core
       self.class.js_config.class_alias
     end
 
-    # Endpoints (besides the default "deliver_component" - JavaScript side already knows about it)
     def js_endpoints
-      self.class.endpoints.keys - [:deliver_component]
+      self.class.endpoints.keys.map{ |p| p.to_s.camelcase(:lower) }
     end
 
     def js_netzke_plugins

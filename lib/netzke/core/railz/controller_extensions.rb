@@ -4,6 +4,7 @@ module Netzke
     module ControllerExtensions
       class DirectRequest
         def initialize(params)
+          ::Rails.logger.debug "\n!!! params: #{params.inspect}\n"
           @params = params
         end
 
@@ -17,13 +18,11 @@ module Netzke
 
         # arguments for endpoint call
         def args
-          res = remoting_args["args"]
+          res = remoting_args.has_key?("args") ? remoting_args["args"] : remoting_args
           res.is_a?(Array) ? res : [res].compact # need to wrap into array to normalize
         end
 
         def client_configs
-          # if no configs are provided, the behavior is the old one, and thus all instances the same child component
-          # will be treated as one
           remoting_args["configs"] || []
         end
 

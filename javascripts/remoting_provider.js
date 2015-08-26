@@ -1,41 +1,29 @@
-Ext.define('Netzke.classes.NetzkeRemotingProvider', {
+Ext.define('Netzke.NetzkeRemotingProvider', {
+
   extend: 'Ext.direct.RemotingProvider',
-  type: 'netzkeremoting',
-  alias:  'direct.netzkeremotingprovider',
-
+  url: Netzke.ControllerUrl + "direct/", // url to connect to the Ext.Direct server-side router.
+  namespace: "Netzke.remotingMethods", // will have a key per Netzke component, each mapped to a hash with a RemotingMethod per endpoint
   maxRetries: Netzke.core.directMaxRetries,
-  url: Netzke.ControllerUrl + 'direct/',
+  enableBuffer: true, // buffer/batch requests within 10ms timeframe
+  timeout: 30000, // 30s timeout per request
 
-  callBuffer: [], // call buffer shared between instances
-
-  // override
-  constructor: function(){
-    this.callParent(arguments);
-    this.callBuffer = this.getSharedCallBuffer();
-  },
-
-  // override
   getPayload: function(t){
     return {
       path: t.action,
       endpoint: t.method,
-      data: {configs: this.netzkeOwner.netzkeBuildParentConfigs(), args: t.data[0]},
+      data: t.data[0],
       tid: t.id,
       type: 'rpc'
     }
   },
 
-  getSharedCallBuffer: function(){
-    return Object.getPrototypeOf(this).callBuffer;
-  },
-
-  // override
-  combineAndSend: function() {
-    this.callParent();
-    if (this.callBuffer != this.getSharedCallBuffer() && this.callBuffer.length == 0) {
-      // prevent parent from referencing to the *new* empty callBuffer
-      this.callBuffer = this.getSharedCallBuffer();
-      this.callBuffer.length = 0;
-    }
+  // Adds remoting method to component
+  addRemotingMethodToComponent: function(componentConfig, methodName) {
+    var cls = this.namespace[componentConfig.id] || (this.namespace[componentConfig.id] = {});
+    var method = Ext.create('Ext.direct.RemotingMethod', {name: methodName, len: 1});
+    cls[methodName] = this.createHandler(componentConfig.path, method);
   }
 });
+
+Netzke.directProvider = Ext.create(Netzke.NetzkeRemotingProvider);
+Ext.Direct.addProvider(Netzke.directProvider);

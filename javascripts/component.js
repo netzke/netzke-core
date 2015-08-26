@@ -171,21 +171,6 @@ Ext.define("Netzke.classes.Core.Mixin", {
   },
 
   /**
-   * @private
-   * Sets up this component's Direct provider, which powers endpoint calls
-   */
-  netzkeInitializeDirectProvider: function(actions){
-    this.nzDirect = {}; // namespace for direct functions
-
-    Ext.direct.Manager.addProvider({
-      netzkeOwner: this,
-      type: 'netzkeremoting',
-      namespace: this.nzDirect,
-      actions: actions
-    });
-  },
-
-  /**
    * Runs through initial config options and does the following:
    *
    * * detects component placeholders and replaces them with full component config found in netzkeComponents
@@ -203,15 +188,10 @@ Ext.define("Netzke.classes.Core.Mixin", {
   * @private
   */
   netzkeProcessEndpoints: function(config){
-    var endpoints = config.endpoints || [];
-    endpoints.push('deliver_component'); // all Netzke components get this endpoint
+    var endpoints = config.endpoints || [], that = this;
 
-    var epActions = [], actions = {}, that = this;
-    actions[config.path] = epActions;
-
-    Ext.each(endpoints, function(ep){
-      var methodName = ep.camelize(true);
-      epActions.push({name: methodName, len: 1});
+    Ext.each(endpoints, function(methodName){
+      Netzke.directProvider.addRemotingMethodToComponent(config, methodName);
 
       // define endpoint function
       this[methodName] = function(){
@@ -226,14 +206,15 @@ Ext.define("Netzke.classes.Core.Mixin", {
           callback = args.pop();
         }
 
+        var cfgs = this.netzkeBuildParentConfigs();
+        var remotingArgs = {args: args, configs: cfgs};
+
         // call Direct function
-        this.netzkeGetDirectFunction(methodName, config).call(this, args, function(response, event){
+        this.netzkeGetDirectFunction(methodName).call(scope, remotingArgs, function(response, event) {
           this.netzkeProcessDirectResponse(response, event, callback, scope);
         }, this);
       }
     }, this);
-
-    this.netzkeInitializeDirectProvider(actions);
   },
 
   netzkeProcessDirectResponse: function(response, event, callback, scope){
@@ -289,12 +270,13 @@ Ext.define("Netzke.classes.Core.Mixin", {
   },
 
   /**
-   * Returns direct function by endpoint name and component's config
+   * Returns direct function by endpoint name and optional component's config (if not provided, component's instance
+   * will be used instead)
    * @private
    */
   netzkeGetDirectFunction: function(methodName, config) {
     config = config || this;
-    return this.nzDirect[config.path][methodName];
+    return Netzke.remotingMethods[config.id][methodName];
   },
 
   /**

@@ -118,21 +118,27 @@ module Netzke::Core
     # Instantiates a child component by its name.
     # +params+ can contain:
     #   [client_config] a config hash passed from the client class
-    #   [item_id] overridden item_id (used in case of multi-instance loading)
+    #   [item_id] overridden item_id, used in case of loading multiple instances of the same child component
     def component_instance(name, options = {})
+      name = name.to_sym
+
+      @_instance_hash ||= {}
+      return @_instance_hash[name] if @_instance_hash.has_key?(name)
+
+      cfg = ComponentConfig.new(name, self)
+      cfg.client_config = options[:client_config] || {}
+      cfg.item_id = options[:item_id]
+
       if respond_to?(:"#{name}_component")
-        cfg = ComponentConfig.new(name, self)
-        cfg.client_config = options[:client_config] || {}
-        cfg.item_id = options[:item_id]
-        cfg.js_id = options[:js_id]
+        # component declared with DSL
         send("#{name}_component", cfg)
         cfg.set_defaults!
       else
-        cfg = ComponentConfig.new(name, self)
+        # component is declared inline
         cfg.merge!(components[name.to_sym])
       end
 
-      component_instance_from_config(cfg) if cfg
+      @_instance_hash[name] = component_instance_from_config(cfg)
     end
 
     def component_instance_from_config(c)

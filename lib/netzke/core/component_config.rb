@@ -6,8 +6,8 @@ module Netzke::Core
     end
 
     def set_defaults!
-      self.item_id ||= name # default item_id
-      self.klass ||= self.class_name.try(:constantize) || name.camelize.constantize # default klass
+      self.item_id ||= name
+      self.klass ||= self.class_name.try(:constantize) || name.camelize.constantize
     end
   end
 end
