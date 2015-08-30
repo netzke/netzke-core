@@ -59,6 +59,11 @@ module Netzke::Core
       end
     end
 
+    it "extends action config" do
+      actions = SomeComponent.new.actions
+      expect(actions[:action_one].keys).to include(:name, :text, :tooltip)
+    end
+
     it "should auto collect actions from both js_methods and config" do
       component = SomeComponent.new
       component.actions[:action_one][:text].should == "Action one"
@@ -94,6 +99,5 @@ module Netzke::Core
       component.actions[:action_two][:disabled].should == false
       component.actions[:action_two][:text].should == "Action two, extended"
     end
-
   end
 end
