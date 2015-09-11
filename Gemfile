@@ -17,5 +17,5 @@ end
 group :development, :test do
   gem 'web-console', '~> 2.0'
   gem 'pry-rails'
-  gem 'netzke-testing', github: 'netzke/netzke-testing', branch: 'master'
+  gem 'netzke-testing', github: 'netzke/netzke-testing', branch: '0-12'
 end
