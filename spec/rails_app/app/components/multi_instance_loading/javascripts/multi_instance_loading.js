@@ -27,5 +27,16 @@
       itemId: "hello_user_" + this.counter,
       serverConfig: {title: 'Composition ' + this.counter}
     });
+  },
+
+  onLoadConfigOnly: function(){
+    this.counter++;
+    this.netzkeLoadComponent('composition', {
+      configOnly: true,
+      itemId: "custom_item_id",
+      callback: function(config){
+        this.setTitle("Loaded itemId: " + config.itemId);
+      }
+    });
   }
 }

@@ -34,8 +34,13 @@ module Netzke::Core
 
       # An array of server class config options that should not be passed to the client class. Can be overridden.
       def server_side_config_options
-        [:eager_loading, :klass, :client_config]
+        [:klass, :client_config]
       end
+    end
+
+    included do
+      # Config that has all the config extensions applied (via `extend_item`)
+      attr_accessor :normalized_config
     end
 
     # Override to auto-configure components. Example:
@@ -104,12 +109,13 @@ module Netzke::Core
 
     # We'll build a couple of useful instance variables here:
     #
-    # +components_in_config+ - an array of components (by name) referred in items
+    # +components_in_config+ - an array of components (by name) referred in `configure`
+    # +inline_components+ - a hash with configs of components defined inline in `configure`
     # +normalized_config+ - a config that has all the config extensions applied
     def normalize_config
-      # @actions = @components = {} # in v1.0 this should replace DSL definition
       @components_in_config = []
       @implicit_component_index = 0
+      @inline_components = {}
       c = config.dup
       config.each_pair do |k, v|
         c.delete(k) if self.class.server_side_config_options.include?(k.to_sym)
@@ -118,12 +124,6 @@ module Netzke::Core
         end
       end
       @normalized_config = c
-    end
-
-    # @return [Hash] config with all placeholders (like child components referred by symbols) expanded
-    def normalized_config
-      # make sure we call normalize_config first
-      @normalized_config || (normalize_config || true) && @normalized_config
     end
   end
 end

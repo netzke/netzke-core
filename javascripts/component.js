@@ -288,7 +288,6 @@ Ext.define("Netzke.classes.Core.Mixin", {
         parent = this;
     while (parent) {
       var cfg = Ext.clone(parent.serverConfig);
-      cfg.component_id = parent.id;
       res.unshift(cfg);
       parent = parent.netzkeGetParentComponent();
     }

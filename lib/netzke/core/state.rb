@@ -19,8 +19,6 @@ module Netzke::Core
         @key = key.to_s
         Netzke::Base.session ||= {}
         Netzke::Base.session[:netzke_states] ||= {}
-        # @session = Netzke::Base.session[:netzke_sessions][@component_id] ||= {}
-        # @session = {}
       end
 
       # Delegate everything to session

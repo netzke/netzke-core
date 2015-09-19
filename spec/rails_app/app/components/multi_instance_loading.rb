@@ -8,6 +8,7 @@ class MultiInstanceLoading < Netzke::Base
   action :load_hello_user
   action :load_hello_user_in_precreated_tab
   action :load_composition
+  action :load_config_only
 
   component :hello_user do |c|
     # client_config is accessible here
@@ -18,6 +19,6 @@ class MultiInstanceLoading < Netzke::Base
 
   def configure(c)
     super
-    c.bbar = [:load_hello_user, :load_hello_user_in_precreated_tab, :load_composition]
+    c.bbar = [:load_hello_user, :load_hello_user_in_precreated_tab, :load_composition, :load_config_only]
   end
 end

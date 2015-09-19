@@ -58,6 +58,11 @@ module Netzke::Core
       @path
     end
 
+    # Global id in the component tree, following the double-underscore notation, e.g. +books__config_panel__form+
+    def js_id
+      @js_id ||= parent.nil? ? @item_id : [parent.js_id, @item_id].join("__")
+    end
+
     def js_xtype
       self.class.js_config.xtype
     end
@@ -92,7 +97,7 @@ module Netzke::Core
 
     # Hash containing configuration for all child components to be instantiated at the JS side
     def js_components
-      @js_components ||= eagerly_loaded_components.inject({}) do |out, (name, config)|
+      @js_components ||= eagerly_loaded_components.inject({}) do |out, name|
         instance = component_instance(name.to_sym)
         out.merge(name => instance.js_config)
       end

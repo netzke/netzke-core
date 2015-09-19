@@ -12,11 +12,8 @@ module Netzke::Core
       # Defines a plugin
       def plugin(name, &block)
         register_plugin(name)
-        component name do |c|
+        component name, eager_loading: true do |c|
           block.call(c) if block_given?
-
-          # plugins are *always* eagerly loaded
-          c.eager_loading = true
         end
       end
 

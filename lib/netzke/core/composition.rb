@@ -63,9 +63,8 @@ module Netzke::Core
   #
   # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `netzkeLoadComponent` (see {Netzke::Core::Javascript}). Referring a component in the layout (the `items` property) automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `eager_loading` can be set to true:
   #
-  #     component :eagerly_loaded_window do |c|
+  #     component :eagerly_loaded_window, eager_loading: true do |c|
   #       c.klass = SomeWindowComponent
-  #       c.eager_loading = true
   #     end
   #
   # == Dynamic component loading
@@ -79,11 +78,21 @@ module Netzke::Core
   module Composition
     extend ActiveSupport::Concern
 
-    included do
-      # Declares Base.component, for declaring child componets, and Base#components, which returns a [Hash] of all component configs by name
-      declare_dsl_for :components, config_class: Netzke::Core::ComponentConfig
+    module ClassMethods
+      def component(name, options = {}, &block)
+        define_method :"#{name}_component", &(block || ->(c){c})
+        # NOTE: "<<" won't work here as this will mutate the array shared between classes
+        self.eagerly_loaded_dsl_components += [name] if options[:eager_loading]
+      end
+    end
 
-      attr_accessor :components_in_config
+    included do
+      # Hash of components declared inline in the config
+      attr_accessor :inline_components
+
+      # Components declared in DSL and marked with `eager_loading: true`
+      class_attribute :eagerly_loaded_dsl_components
+      self.eagerly_loaded_dsl_components = []
 
       # Loads a component on browser's request. Every Netzke component gets this endpoint.
       # +params+ should contain:
@@ -95,10 +104,7 @@ module Netzke::Core
         component_name = params[:name].underscore.to_sym
 
         item_id = params[:item_id]
-
-        cmp_instance = components[component_name] &&
-          !components[component_name][:excluded] &&
-          component_instance(component_name, {item_id: item_id, client_config: params[:client_config]})
+        cmp_instance = component_instance(component_name, {item_id: item_id, client_config: params[:client_config]})
 
         if cmp_instance
           js, css = cmp_instance.js_missing_code(cache), cmp_instance.css_missing_code(cache)
@@ -107,50 +113,50 @@ module Netzke::Core
           { error: "Couldn't load component '#{component_name}'" }
         end
       end
-
     end # included
 
-    # @return [Hash] configs of eagerly loaded components by name
+    # @return [Array] names of eagerly loaded components
     def eagerly_loaded_components
-      @eagerly_loaded_components ||= components.select{|k,v| components_in_config.include?(k) || v[:eager_loading]}
+      self.class.eagerly_loaded_dsl_components + @components_in_config
     end
 
     # Instantiates a child component by its name.
     # +params+ can contain:
     #   [client_config] a config hash passed from the client class
     #   [item_id] overridden item_id, used in case of loading multiple instances of the same child component
-    def component_instance(name, options = {})
-      name = name.to_sym
-
-      @_instance_hash ||= {}
-      return @_instance_hash[name] if @_instance_hash.has_key?(name)
-
-      cfg = ComponentConfig.new(name, self)
-      cfg.client_config = options[:client_config] || {}
-      cfg.item_id = options[:item_id]
-
-      if respond_to?(:"#{name}_component")
-        # component declared with DSL
-        send("#{name}_component", cfg)
-        cfg.set_defaults!
-      else
-        # component is declared inline
-        cfg.merge!(components[name.to_sym])
-      end
-
-      @_instance_hash[name] = component_instance_from_config(cfg)
+    def component_instance(name, overrides = {})
+      cfg = component_config(name, overrides)
+      return nil if cfg.nil? || cfg[:excluded]
+      klass = cfg.klass || cfg.class_name.constantize
+      klass.new(cfg, self)
     end
 
-    def component_instance_from_config(c)
-      klass = c.klass || c.class_name.constantize
-      klass.new(c, self)
+    # @return [Hash] Given component's name and overrides, returns complete component's config, ready for
+    # instantiation
+    def component_config(component_name, overrides = {})
+      component_name = component_name.to_sym
+
+      ComponentConfig.new(component_name, self).tap do |cfg|
+        cfg.client_config = overrides[:client_config] || {}
+        cfg.item_id = overrides[:item_id]
+
+        if respond_to?(:"#{component_name}_component")
+          send("#{component_name}_component", cfg)
+        elsif inline_components[component_name]
+          cfg.merge!(inline_components[component_name])
+        else
+          return nil
+        end
+
+        cfg.set_defaults!
+      end
     end
 
     # @return [Array<Class>] All component classes that we depend on (used to render all necessary javascripts and stylesheets)
     def dependency_classes
       res = []
 
-      eagerly_loaded_components.keys.each do |aggr|
+      eagerly_loaded_components.each do |aggr|
         res += component_instance(aggr).dependency_classes
       end
 
@@ -159,36 +165,28 @@ module Netzke::Core
     end
 
     def extend_item(item)
-      item = detect_and_normalize_component(item)
-      components_in_config << item[:netzke_component] if include_component?(item)
-      super item
+      super detect_and_normalize_component(item)
     end
 
   private
 
-    def include_component?(cmp_config)
-      cmp_config.is_a?(Hash) &&
-        cmp_config[:netzke_component] &&
-        cmp_config[:eager_loading] != false &&
-        !cmp_config[:excluded]
-    end
-
     def detect_and_normalize_component(item)
-      item = {component: item} if item.is_a?(Symbol) && components[item]
-      if item.is_a?(Hash) && component_name = item[:component]
-        cfg = components[component_name]
-        cfg.merge!(item)
-        if cfg[:excluded]
-          {excluded: true}
-        else
-          # cfg.merge(item).merge(netzke_component: item.delete(:component))
-          item.merge(netzke_component: cfg[:component]) # TODO: TEST THIS
-        end
-      elsif item.is_a?(Hash) && (item[:klass] || item[:class_name])
-        # declare component on the fly
-        component_name = :"component_#{@implicit_component_index += 1}"
-        components[component_name] = item.merge(eager_loading: true) unless item[:excluded]
-        {netzke_component: component_name}
+      item = {component: item} if item.is_a?(Symbol) && respond_to?(:"#{item}_component")
+      return item unless item.is_a?(Hash)
+      return nil if item[:excluded]
+
+      if item[:klass] || item[:class_name]
+        # declared inline
+        item_id = item[:item_id] || :"component_#{@implicit_component_index}"
+        @implicit_component_index += 1
+        # components[item_id] = item
+        inline_components[item_id.to_sym] = item
+        @components_in_config << item_id
+        {netzke_component: item_id}
+      elsif item_id = item[:component]
+        return nil if component_config(item_id)[:excluded]
+        @components_in_config << item_id
+        item.merge(netzke_component: item_id)
       else
         item
       end

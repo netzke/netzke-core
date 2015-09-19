@@ -4,7 +4,6 @@ module Netzke
     module ControllerExtensions
       class DirectRequest
         def initialize(params)
-          ::Rails.logger.debug "\n!!! params: #{params.inspect}\n"
           @params = params
         end
 

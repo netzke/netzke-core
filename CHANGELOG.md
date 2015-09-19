@@ -1,6 +1,20 @@
 *   BACKWARD INCOMPATIBLE. Internal rework of component loading, which also changes some API and behavior.
     *   If the loaded component is a window, the show() method is called on it by Netzke. This can be prevented by the callback function returning `false` (which will also prevent other types of loaded components to be inserted in the container).
     *   On the client, the clientConfig config option renamed to serverConfig.
+    *   To specify that a child component is eagerly loaded, the option is moved to the DSL `component` method itself:
+
+          # BEFORE
+          component :foo do |c|
+            c.eager_loading = true
+            ...
+          end
+
+          # NOW
+          component :foo, eager_loading: true do |c|
+            ...
+          end
+
+       Unless a component is declared as eagerly loaded, its config is no longer accessible on the client side (which means component is meant to be dynamically loadable).
 
 *   BACKWARD INCOMPATIBLE. Changes to how the endpoints API.
     *   Droped the `this` parameter from endpoint block on server side. It's still possible to call client-side methods as before, but `this` is declared in the class.

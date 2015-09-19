@@ -1,129 +1,94 @@
 require 'spec_helper'
+require_relative './composition_spec_components'
 
-class SomeComposite < Netzke::Base
-  component :nested_one do |c|
-    c.klass = NestedComponentOne
-  end
-
-  component :nested_two do |c|
-    c.klass = NestedComponentTwo
-  end
-end
-
-class NestedComponentOne < Netzke::Base
-end
-
-class NestedComponentTwo < Netzke::Base
-  component :nested do |c|
-    c.klass = DeepNestedComponent
-  end
-end
-
-class DeepNestedComponent < Netzke::Base
-  component :nested do |c|
-    c.klass = VeryDeepNestedComponent
-  end
-end
-
-class VeryDeepNestedComponent < Netzke::Base
-end
-
-class ComponentOne < Netzke::Base
-end
-
-class ::ComponentTwo < Netzke::Base
-end
-
-class BaseComposite < Netzke::Base
-  component :component_one do |c|
-    c.klass = ComponentOne
-    c.title = "My Cool Component"
-  end
-
-  component :first_component_two do |c|
-    c.klass = ComponentTwo
-  end
-
-  component :second_component_two do |c|
-    c.klass = ComponentTwo
-  end
-
-  def configure(c)
-    super
-    c.items = [ :first_component_two, :second_component_two ]
-  end
-end
-
-class ExtendedComposite < BaseComposite
-  component :component_one do |c|
-    super c
-    c.title = c.title + ", extended"
-  end
-
-  component :component_two do |c|
-    c.title = "Another Nested Component"
-  end
-end
-
-class ComponentWithExcluded < Netzke::Base
-  component :accessible do |c|
-    c.klass = Netzke::Core::Panel
-  end
-  component :inaccessible do |c|
-    c.klass = Netzke::Core::Panel
-    c.excluded = true
-  end
-end
-
-class InlineNesting < Netzke::Base
-  def configure(c)
-    super
-    c.items = [
-      {
-        klass: ComponentOne,
-        items: [
-          { klass: ComponentOne },
-          { klass: ComponentOne }
-        ]
-      },
-      {
-        klass: ComponentOne
-      }
-    ]
-  end
-end
-
+# Test components are declared in composition_spec_components.rb
 module Netzke::Core
   describe Composition do
-    it "should set item_id to component's name by default" do
-      component = SomeComposite.new(:name => 'some_composite')
-      component.components[:nested_one][:item_id].should == "nested_one"
+    describe "#component_instance" do
+      it "returns component instance by symbol or string" do
+        composite = BaseComposite.new
+        expect(composite.component_instance(:component_one)).to be_a(ComponentOne)
+        expect(composite.component_instance("component_one")).to be_a(ComponentOne)
+      end
     end
 
-    it "should be possible to override the superclass's declaration of a component" do
+    describe "#dependency_classes" do
+      it "returns classes for components that our JS instance depends on" do
+        subj = SuperComposite.new.dependency_classes
+        expect(subj).to include(SuperComposite, ComponentTwo, ExtendedComposite, BaseComposite)
+      end
+    end
+
+    it "derrives component's class from its name by default" do
+      expect(BaseComposite.new.component_instance(:component_one)).to be_a(ComponentOne)
+    end
+
+    it "sets item_id to component's name by default" do
+      component = BaseComposite.new
+      expect(component.component_instance(:first_component_two).item_id).to eql "first_component_two"
+    end
+
+    it "allows overriding superclass's declaration of a component" do
       composite = BaseComposite.new
-      composite.components[:component_one][:title].should == "My Cool Component"
+      component_one = composite.component_instance(:component_one)
+      expect(component_one.js_config[:title]).to eql "My Cool Component"
 
       extended_composite = ExtendedComposite.new
-      extended_composite.components[:component_one][:title].should == "My Cool Component, extended"
-      extended_composite.components[:component_one][:klass].should == ComponentOne
-      extended_composite.components[:component_two][:title].should == "Another Nested Component"
+      expect(extended_composite.component_instance(:component_one).js_config[:title]).to eql "My Cool Component, extended"
+      expect(extended_composite.component_instance(:component_one).class).to eql ComponentOne
+      expect(extended_composite.component_instance(:component_two).js_config[:title]).to eql "Another Nested Component"
     end
 
-    it "should be impossible to access excluded component config" do
+    xit "does not allow accessing excluded component's config" do
       c = ComponentWithExcluded.new
-      c.components[:inaccessible].should == {excluded: true}
+      inaccessible = c.component_instance(:inaccessible)
+      puts "\n!!! inaccessible: #{inaccessible.js_config.inspect}"
+      # c.components[:inaccessible].should == {excluded: true}
     end
 
     describe "inline nesting" do
       it "has correct keys of dynamically added components" do
         comp = InlineNesting.new
-        expect(comp.js_components.keys).to eql [:component_1, :component_2]
+        expect(comp.js_components.keys).to eql [:component_0, :component_1]
       end
 
       it "has correct children keys of dynamically added nested components" do
         comp = InlineNesting.new
-        child = comp.component_instance(:component_1)
+        child = comp.component_instance(:component_0)
+        expect(child.js_components.keys).to eql [:component_0, :component_1]
+      end
+
+      it "marks inline-defined components as egarly loaded" do
+        comp = InlineNesting.new
+        expect(comp.eagerly_loaded_components).to include(:component_0, :component_1)
+      end
+    end
+
+    describe "#component_config" do
+      it "returns config for components declared with DSL" do
+        comp = SomeComposite.new
+        expect(comp.component_config(:nested_one)[:klass]).to eql NestedComponentOne
+      end
+
+      it "returns config for components declared inline in config" do
+        comp = InlineComposite.new
+        config = comp.component_config(:one)
+        expect(config[:klass]).to eql ComponentOne
+        expect(config[:title]).to eql 'Declared inline'
+      end
+
+      it "returns inline component config by symbol or string" do
+        comp = InlineComposite.new
+        expect(comp.component_config(:one)).to be_a(Hash)
+        expect(comp.component_config("one")).to be_a(Hash)
+      end
+    end
+
+    describe "#eagerly_loaded_components" do
+      it "returns eagerly loaded component names" do
+        comp = HybridComposite.new
+        subj = comp.eagerly_loaded_components
+        expect(subj).to include(:eagerly_loaded, :component_one, :component_0)
       end
     end
   end

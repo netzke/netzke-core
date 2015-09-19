@@ -13,10 +13,9 @@ class PluginWithComponents < Netzke::Plugin
     JS
   end
 
-  component :simple_window do |c|
+  component :simple_window, eager_loading: true do |c|
     c.width = 300
     c.height = 200
     c.title = "Window added by PluginWithComponents"
-    c.eager_loading = true
   end
 end

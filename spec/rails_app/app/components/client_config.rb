@@ -9,6 +9,7 @@ class ClientConfig < Netzke::Base
     c.defaults = { height: "100%" }
     c.some_option = client_config.some_option
     c.bbar = [:show_option_one, :show_option_two]
+
     child_config = { klass: HelloUser, flex: 1 }
     c.items = [child_config.merge(item_id: 'left'), child_config.merge(item_id: 'right')]
   end

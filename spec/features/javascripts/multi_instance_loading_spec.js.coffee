@@ -47,3 +47,9 @@ describe 'MultiInstanceLoading component', ->
     .then ->
       expectToSee header 'Hello world plus'
       done()
+
+  it 'loads child component config', (done) ->
+    click button 'Load config only'
+    wait().then ->
+      expectToSee header 'Loaded itemId: custom_item_id'
+      done()

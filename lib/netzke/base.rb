@@ -73,9 +73,6 @@ module Netzke
     # Name that the parent can reference us by
     attr_reader :name
 
-    # Global id in the component tree, following the double-underscore notation, e.g. +books__config_panel__form+
-    attr_reader :js_id
-
     # JS id in the context of the parent
     attr_reader :item_id
 
@@ -129,10 +126,6 @@ module Netzke
       # JS id in the scope of the parent component. Auto-generated when using multiple instance loading.
       # Full JS id will be built using these along the +@path+
       @item_id = conf[:item_id] || @name
-
-      # JS full ID. Similar to +path+, but composed of item_id's. Differs from @path when multiple instances are being loaded.
-      @js_id = conf[:js_id]
-      @js_id ||= parent.nil? ? @item_id : [parent.js_id, @item_id].join("__")
 
       # TODO: get rid of this
       @flash = []

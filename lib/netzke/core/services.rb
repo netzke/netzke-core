@@ -118,18 +118,16 @@ module Netzke::Core
         this.netzke_set_result(send("#{endpoint}_endpoint", *params))
         this
       else
-        # Let's try to find it recursively in a component down the hierarchy
+        # Let's try to find it in a component down the tree
         child_component, *action = endpoint.to_s.split('__')
         action = !action.empty? && action.join("__").to_sym
 
         return unknown_endpoint_exception(endpoint) if !action
-        return unknown_component_exception(child_component) if components[child_component.to_sym].nil?
+        return unknown_component_exception(child_component) if component_config(child_component.to_sym).nil?
 
         client_config = configs.shift || {}
-        js_id = client_config.delete("component_id")
-        cmp_strong_config = {client_config: client_config, js_id: js_id}
+        cmp_strong_config = {client_config: client_config}
 
-        # recursive
         component_instance(child_component.to_sym, cmp_strong_config).invoke_endpoint(action, params, configs)
       end
     end

@@ -7,8 +7,6 @@ module Netzke::Core
         @component_id = component_id.to_s
         Netzke::Base.session ||= {}
         Netzke::Base.session[:netzke_sessions] ||= {}
-        # @session = Netzke::Base.session[:netzke_sessions][@component_id] ||= {}
-        # @session = {}
       end
 
       # Delegate everything to session
