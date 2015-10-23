@@ -1,7 +1,6 @@
 class MulticontainerLoading < Netzke::Base
-  js_configure do |c|
+  client_class do |c|
     c.layout = :hbox
-    c.mixin
   end
 
   action :replace_tab_in_left

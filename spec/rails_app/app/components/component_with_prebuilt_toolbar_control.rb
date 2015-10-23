@@ -1,7 +1,5 @@
 class ComponentWithPrebuiltToolbarControl < Netzke::Base
-  js_configure do |c|
-    c.mixin
-  end
+  js_configure
 
   action :some_action
 

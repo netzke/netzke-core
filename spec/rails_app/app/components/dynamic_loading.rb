@@ -1,8 +1,4 @@
 class DynamicLoading < Netzke::Base
-  js_configure do |c|
-    c.mixin
-  end
-
   component :simple_component
 
   component :component_loaded_in_window do |c|

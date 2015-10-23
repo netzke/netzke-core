@@ -1,8 +1,4 @@
 class ClientConfig < Netzke::Base
-  js_configure do |c|
-    c.mixin
-  end
-
   def configure(c)
     super
     c.layout = :hbox

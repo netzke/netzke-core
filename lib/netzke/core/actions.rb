@@ -112,7 +112,7 @@ module Netzke::Core
       end
     end
 
-    def js_configure(c)
+    def configure_client(c)
       super
       c.actions = actions
     end

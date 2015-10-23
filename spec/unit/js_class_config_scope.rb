@@ -18,7 +18,7 @@ module Netzke
   end
 end
 
-describe Netzke::Core::ClientClass do
+describe Netzke::Core::ClientClassConfig do
   it "should build scope based on component scope" do
     SomeComponent.js_config.scope.should == "Netzke.classes"
     MyCompanyComponents::SomeComponent.js_config.scope.should == "Netzke.classes.MyCompanyComponents"

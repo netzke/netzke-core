@@ -1,6 +1,6 @@
 {
   initComponent: function(){
     this.callParent();
-    this.title = "One";
+    this.title = this.title + " One";
   }
 }

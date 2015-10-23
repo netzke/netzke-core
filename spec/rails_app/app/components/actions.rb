@@ -51,7 +51,7 @@ class Actions < Netzke::Base
     c.docked_items = [{xtype: :toolbar, dock: :left, items: [:simple_action]}]
   end
 
-  js_configure do |c|
+  client_class do |c|
     c.on_simple_action = <<-JS
       function(){
         this.setTitle("Simple action triggered");

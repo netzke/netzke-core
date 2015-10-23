@@ -5,7 +5,7 @@ module Netzke
       # Will render an HTML template found in +{component_location}/html/+ For example:
       #
       #     class MyComponent < Netzke::Base
-      #       def js_configure(c)
+      #       def configure_client(c)
       #         super
       #         c.html = render(:body)
       #       end

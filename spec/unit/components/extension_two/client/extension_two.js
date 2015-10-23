@@ -1,0 +1,4 @@
+{
+  extensionTwoMethod: function(){
+  }
+}

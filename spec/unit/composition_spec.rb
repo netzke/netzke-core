@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative './composition_spec_components'
+require_relative './components/composition_spec_components'
 
 # Test components are declared in composition_spec_components.rb
 module Netzke::Core

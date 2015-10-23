@@ -1,6 +1,6 @@
 module ExtDirect
   class Composite < Netzke::Base
-    js_configure do |c|
+    client_class do |c|
       c.layout = :border
       c.border = true
       c.init_component = <<-JS

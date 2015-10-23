@@ -1,5 +1,5 @@
 class SimpleTabPanel < Netzke::Base
-  js_configure do |c|
+  client_class do |c|
     c.extend = "Ext.tab.Panel"
     c.active_tab = 0
   end

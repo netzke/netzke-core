@@ -1,6 +1,6 @@
 # Used in DynamicLoading
 class WindowWithSimpleComponent < SimpleWindow
-  js_configure do |c|
+  client_class do |c|
     c.layout = :fit
   end
 

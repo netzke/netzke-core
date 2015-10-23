@@ -14,7 +14,7 @@ class Persistence < Netzke::Base
     c.title = state[:title] || "Default title"
   end
 
-  js_configure do |c|
+  client_class do |c|
     c.on_set_state = <<-JS
       function(){
         this.serverSetState();

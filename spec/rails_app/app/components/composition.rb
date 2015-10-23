@@ -1,5 +1,5 @@
 class Composition < Netzke::Base
-  js_configure do |c|
+  client_class do |c|
     c.height = 400
     c.layout = :border
 

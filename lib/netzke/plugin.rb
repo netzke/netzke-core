@@ -1,6 +1,6 @@
 module Netzke
   class Plugin < Base
-    js_configure do |c|
+    client_class do |c|
       c.extend = "Ext.Component"
       c.init = <<-JS
         function(cmp){

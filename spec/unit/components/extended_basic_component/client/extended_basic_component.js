@@ -1,0 +1,4 @@
+{
+  extendedMethod: function(){
+  }
+}

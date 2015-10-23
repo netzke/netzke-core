@@ -1,7 +1,7 @@
 class HamlPanel < Netzke::Base
   action :ping_server
 
-  def js_configure(c)
+  def configure_client(c)
     super
 
     c.title = "Haml panel"
@@ -13,7 +13,7 @@ class HamlPanel < Netzke::Base
     c.bbar = [:ping_server]
   end
 
-  js_configure do |c|
+  client_class do |c|
     c.on_ping_server = <<-JS
       function(){
         this.whatsUp();

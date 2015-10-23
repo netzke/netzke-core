@@ -1,6 +1,6 @@
 module ExtDirect
   class Selector < Netzke::Base
-    js_configure do |c|
+    client_class do |c|
       c.extend = "Ext.FormPanel"
       c.body_padding = 5
 

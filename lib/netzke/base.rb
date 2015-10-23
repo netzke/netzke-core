@@ -1,7 +1,7 @@
 require 'active_support/core_ext'
 require 'netzke/core/ruby_ext'
 require 'netzke/core/dsl_support'
-require 'netzke/core/javascript'
+require 'netzke/core/client_code'
 require 'netzke/core/stylesheets'
 require 'netzke/core/services'
 require 'netzke/core/composition'
@@ -15,7 +15,7 @@ require 'netzke/core/html' if Module.const_defined?(:Haml)
 
 module Netzke
   # The base class for every Netzke component. Its main responsibilities include:
-  # * JavaScript class generation and inheritance (using Ext JS class system) which reflects the Ruby class inheritance (see {Netzke::Core::Javascript})
+  # * Client class generation and inheritance (using Ext JS class system) which reflects the Ruby class inheritance (see {Netzke::Core::ClientCode})
   # * Nesting and dynamic loading of child components (see {Netzke::Core::Composition})
   # * Ruby-side action declaration (see {Netzke::Actions})
   # * I18n
@@ -49,7 +49,7 @@ module Netzke
     include Core::Session
     include Core::State
     include Core::Configuration
-    include Core::Javascript
+    include Core::ClientCode
     include Core::Services
     include Core::Composition
     include Core::Plugins
@@ -80,6 +80,8 @@ module Netzke
     attr_reader :path
 
     class << self
+      attr_accessor :called_from
+
       # Instance of component by config
       def instance_by_config(config)
         klass = config[:klass] || config[:class_name].constantize
@@ -144,6 +146,20 @@ module Netzke
 
     def i18n_id
       self.class.i18n_id
+    end
+
+    # Inspired by Rails railties code
+    def self.inherited(base)
+      base.called_from = begin
+        cllr = if Kernel.respond_to?(:caller_locations)
+          location = caller_locations.first
+          location.absolute_path || location.path
+        else
+          caller.first
+        end
+
+        cllr.split(".rb").first
+      end
     end
 
   private

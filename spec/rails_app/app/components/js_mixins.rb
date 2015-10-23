@@ -1,6 +1,5 @@
 class JsMixins < Netzke::Base
-  js_configure do |c|
-    c.foo = 100
+  client_class do |c|
     c.mixin :one
     c.mixin :two
   end

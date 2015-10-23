@@ -5,7 +5,7 @@ class LoadedCssInclusion < Netzke::Base
 
   component :css_inclusion
 
-  js_configure do |c|
+  client_class do |c|
     c.layout = :fit
     c.title = "LoadedCssInclusion component"
     c.on_load = <<-JS

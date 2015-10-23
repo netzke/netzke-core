@@ -6,10 +6,6 @@ class ServerCounter < Netzke::Base
   action :do_ordered # used for test if call order is preserved
   action :fail_two_out_of_five # sends 5 requests, 2 will fail, but the request should be processed in order
 
-  js_configure do |c|
-    c.mixin
-  end
-
   def configure(c)
     super
     c.bbar = [:count_one_time, :count_seven_times, :count_eight_times_special, :fail_in_the_middle, :do_ordered, :fail_two_out_of_five]

@@ -1,8 +1,7 @@
 # Subsequent loading of tabs should result in functional "tab" component instances
 class MultiInstanceLoading < Netzke::Base
-  js_configure do |c|
+  client_class do |c|
     c.extend = "Ext.tab.Panel"
-    c.mixin
   end
 
   action :load_hello_user

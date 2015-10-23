@@ -33,7 +33,7 @@ your_web_app
 
 ## Client class
 
-The generated client class is *inherited* (as defined by the Ext JS [class system]("http://docs.sencha.com/ext-js/4-1/#!/guide/class_system")) from an Ext JS class, which by default is [Ext.panel.Panel]("http://docs.sencha.com/ext-js/4-1/#!/api/Ext.panel.Panel"). For example, a component defined like this:
+The generated client class is *inherited* (as defined by the Ext JS class system) from an Ext JS class, which by default is `Ext.panel.Panel`. For example, a component defined like this:
 
 ```ruby
 class HelloWorld < Netzke::Base
@@ -61,18 +61,23 @@ will have the following client class generated (simplified):
 Ext.define('Netzke.classes.HelloNewWorld', {"extend":"Netzke.classes.HelloWorld"});
 ```
 
-The configuration of a client-class is done by using the `Netzke::Base.js_configure`. For example, in order to inherit from a different Ext JS component, and to mix in the methods defined in an external JavaScript class:
+Configuration of the client-class can be done by using the `Netzke::Base.client_class`. For example, in order to inherit from a different Ext JS component, and to mix in the methods defined in the `client` subfolder:
 
 ```ruby
 class MyTabPanel < Netzke::Base
-  js_configure do |c|
+  client_class do |c|
     c.extend = "Ext.tab.Panel"
     c.mixin :extra_functionality
   end
 end
 ```
 
-For more details on defining the client class, refer to [Netzke::Core::ClientClass](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/ClientClass).
+The code above will set the `extend` property to "Ext.tab.Panel", and will mix in the following scripts:
+
+  * `app/components/my_tab_panel/client/my_tab_panel.js` (if that exists)
+  * `app/components/my_tab_panel/client/extra_functionality.js`
+
+For more details on defining the client class, refer to [Netzke::Core::ClientClassConfig](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/ClientClassConfig).
 
 ## Composition
 

@@ -1,0 +1,4 @@
+{
+  basicMethod: function(){
+  }
+}

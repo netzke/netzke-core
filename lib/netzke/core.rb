@@ -23,7 +23,7 @@ module Netzke
     autoload :EndpointResponse, 'netzke/core/endpoint_response'
     autoload :Version, 'netzke/core/version'
     autoload :DynamicAssets, 'netzke/core/dynamic_assets'
-    autoload :ClientClass, 'netzke/core/client_class'
+    autoload :ClientClassConfig, 'netzke/core/client_class_config'
     autoload :CssConfig, 'netzke/core/css_config'
     autoload :ConfigToDslDelegator, 'netzke/core/config_to_dsl_delegator'
     autoload :JsonLiteral, 'netzke/core/json_literal'

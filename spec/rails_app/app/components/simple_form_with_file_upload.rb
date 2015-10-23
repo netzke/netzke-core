@@ -1,6 +1,6 @@
 # For demo purposes. Not used in testing.
 class SimpleFormWithFileUpload < Netzke::Base
-  js_configure do |c|
+  client_class do |c|
     c.extend = "Ext.form.Panel"
     c.body_padding = 10
     c.on_submit = <<-JS

@@ -1,8 +1,7 @@
 class HelloWorld < Netzke::Base
   # Configure clint class
-  js_configure do |c|
+  client_class do |c|
     c.title = "Hello World component"
-    c.mixin # mix in methods from hello_world/javascripts/hello_world.js
   end
 
   # Actions are used by Ext JS to share functionality and state b/w buttons and menu items

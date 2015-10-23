@@ -2,7 +2,7 @@
 class SessionExpiration < Endpoints
   action :destroy_session
 
-  js_configure do |c|
+  client_class do |c|
     c.on_destroy_session = <<-JS
       function(){
         this.serverDestroySession();

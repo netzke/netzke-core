@@ -9,7 +9,7 @@ class SimpleAuthenticationComponent < Netzke::Base
     c.tbar = signed_in? ? [current_user_info, "->", :sign_out] : ["->", :sign_in]
   end
 
-  js_configure do |c|
+  client_class do |c|
     c.on_sign_in = <<-JS
       function(){
         this.signIn();

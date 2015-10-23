@@ -7,7 +7,7 @@ class Feedback < Netzke::Base
     c.bbar = [:feedback, :server_feedback]
   end
 
-  js_configure do |c|
+  client_class do |c|
     c.on_feedback = <<-JS
       function(){
         this.netzkeFeedback('Local feedback'); // uses global delay config

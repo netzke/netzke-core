@@ -5,7 +5,7 @@ module Netzke::Core
   #     class_attribute :title
   #     self.title = "Title for all descendants of MyComponent"
   #
-  #     js_configure do |c|
+  #     client_class do |c|
   #       c.title = title
   #     end
   #   end

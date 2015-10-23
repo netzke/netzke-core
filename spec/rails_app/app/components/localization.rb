@@ -11,7 +11,7 @@ class Localization < Netzke::Base
   # Displayes localized JS properties in the header
   action :show_properties
 
-  js_configure do |c|
+  client_class do |c|
     c.translate :property_one, :property_two
 
     c.on_show_properties = <<-JS

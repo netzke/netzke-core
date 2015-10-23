@@ -1,19 +1,20 @@
 module Netzke
   module Core
-    # This class is responsible of creation of the client (JavaScript) class. It is passed as block parameter to the `js_configure` DSL method:
+    # This class is responsible of creation of the client (JavaScript) class. It is passed as block parameter to the `client_class` DSL method:
     #
     #     class MyComponent < Netzke::Base
-    #       js_configure do |c|
+    #       client_class do |c|
     #         c.extend = "Ext.form.Panel"
     #       end
     #     end
-    class ClientClass
-      attr_accessor :required_files, :base_class, :properties, :netzke_mixins, :translated_properties
+    class ClientClassConfig
+      attr_accessor :base_class, :properties, :translated_properties, :dir, :requires_as_string
 
-      def initialize(klass)
+      def initialize(klass, called_from)
         @klass = klass
-        @required_files = []
-        @netzke_mixins = []
+        @called_from = called_from
+        @requires_as_string = ""
+        @explicit_override_paths = []
         @properties = {
           extend: extended_class,
           alias: class_alias,
@@ -25,7 +26,7 @@ module Netzke
       # Allows assigning JavaScript prototype properties, including functions:
       #
       #     class MyComponent < Netzke::Base
-      #       js_configure do |c|
+      #       client_class do |c|
       #         # this will result in the +title+ property defined on the client class prototype
       #         c.title = "My cool component"
       #
@@ -38,19 +39,19 @@ module Netzke
       #       end
       #     end
       #
-      # An alternative way to define prototype properties is by using "mixins", see {ClientClass#mixin}
+      # An alternative way to define prototype properties is by using "mixins", see {ClientClassConfig#mixin}
       #
-      # Class attributes are accessible from inside +js_configure+:
+      # As attributes are accessible from inside +client_class+:
       #
       #     class MyComponent < Netzke::Base
       #       class_attribute :title
       #       self.title = "Some default title"
-      #       js_configure do |c|
+      #       client_class do |c|
       #         c.title = self.title
       #       end
       #     end
       #
-      # Now you can configure your component on a class level like this:
+      # ... you can configure your component on a class level like this:
       #
       #     # e.g. in Rails initializers
       #     MyComponent.title = "New title for all MyComponents"
@@ -76,22 +77,23 @@ module Netzke
       # Symbols will be expanded following a convention, e.g.:
       #
       #     class MyComponent < Netzke::Base
-      #       js_configure do |c|
+      #       client_class do |c|
       #         c.require :some_library
       #       end
       #     end
       #
-      # This will "require" a JavaScript file +{component_location}/my_component/javascripts/some_library.js+
+      # This will "require" a JavaScript file +{component_location}/my_component/client/some_library.js+
       #
       # Strings will be interpreted as full paths to the required JavaScript file:
       #
-      #     js_configure do |c|
+      #     client_class do |c|
       #       c.require "#{File.dirname(__FILE__)}/my_component/one.js", "#{File.dirname(__FILE__)}/my_component/two.js"
       #     end
-      def require(*args)
-        callr = caller.first
-
-        @required_files |= args.map{ |a| a.is_a?(Symbol) ? expand_require_path(a, callr) : a }
+      def require(*refs)
+        raise(ArgumentError, "wrong number of arguments (0 for 1 or more)") if refs.empty?
+        refs.each do |ref|
+          @requires_as_string << require_from_file(normalize_filepath(ref))
+        end
       end
 
       # Use it to "mixin" JavaScript objects defined in a separate file. It may accept one or more symbols or strings.
@@ -99,13 +101,13 @@ module Netzke
       # Symbols will be expanded following a convention, e.g.:
       #
       #     class MyComponent < Netzke::Base
-      #       js_configure do |c|
+      #       client_class do |c|
       #         c.mixin :some_functionality
       #         #...
       #       end
       #     end
       #
-      # This will "mixin" a JavaScript object defined in a file named +{component_location}/my_component/javascripts/some_functionality.js+, which way contain something like this:
+      # This will "mixin" a JavaScript object defined in a file named +{component_location}/my_component/client/some_functionality.js+, which way contain something like this:
       #
       #     {
       #       someProperty: 100,
@@ -117,12 +119,12 @@ module Netzke
       # Also accepts a string, which will be interpreted as a full path to the file (useful for sharing mixins between classes).
       # With no parameters, will assume :<component_class_name>.
       #
-      # Also, see defining JavaScript prototype properties with {ClientClass#method_missing}.
-      def mixin(*args)
-        args << @klass.name.split("::").last.underscore.to_sym if args.empty?
-        callr = caller.first
-        args.each do |a|
-          @netzke_mixins << (a.is_a?(Symbol) ? expand_require_path(a, callr) : a)
+      # Also, see defining JavaScript prototype properties with {ClientClassConfig#method_missing}.
+      def mixin(*refs)
+        raise(ArgumentError, "wrong number of arguments (0 for 1 or more)") if refs.empty?
+
+        refs.each do |ref|
+          @explicit_override_paths << normalize_filepath(ref)
         end
       end
 
@@ -137,7 +139,7 @@ module Netzke
       # E.g.:
       #
       #   class MyComponent < Netzke::Base
-      #     js_configure do |c|
+      #     client_class do |c|
       #       c.translate :overwrite_confirm, :overwrite_confirm_title, :delete_confirm, :delete_confirm_title
       #     end
       #   end
@@ -195,24 +197,9 @@ Netzke.cache.push('#{xtype}');
         @klass.superclass == Netzke::Base
       end
 
-      # Returns all required JavaScript files as a string
-      def required
-        res = ""
-
-        # Prevent re-including code that was already required by the parent
-        # (thus, only require those JS files when require_js was defined in the current class, not in its ancestors)
-        # FIXME!
-        ((@klass.singleton_methods(false).map(&:to_sym).include?(:include_js) ? include_js : []) + required_files).each do |path|
-          f = File.new(path)
-          res << f.read << "\n"
-        end
-
-        res
-      end
-
       # JavaScript code needed for this particulaer class. Includes external JS code and the JS class definition for self.
       def code_with_dependencies
-        [required, class_code].join("\n")
+        [requires_as_string, class_code].join("\n")
       end
 
       # Generates declaration of the JS class as direct extension of a Ext component
@@ -227,26 +214,47 @@ Netzke.cache.push('#{xtype}');
         @klass < Netzke::Plugin ? "plugin" : "widget"
       end
 
-      def overrides_as_string
-        netzke_mixins.presence && netzke_mixins.map do |f|
-          as_string = File.read(f)
-          as_string.chomp!("\n")
-          %(#{class_name}.override(#{as_string});)
-        end.join("\n\n")
-      end
-
       def properties_as_string
         [properties.netzke_jsonify.to_json.chop].compact.join(",\n") + "}"
       end
 
       # Default extended class
       def extended_class
-        extending_extjs_component? ? "Ext.panel.Panel" : @klass.superclass.js_config.class_name
+        extending_extjs_component? ? "Ext.panel.Panel" : @klass.superclass.client_class_config.class_name
       end
 
-    private
-      def expand_require_path(sym, callr)
-        %Q(#{callr.split(".rb:").first}/javascripts/#{sym}.js)
+      def expand_client_code_path(ref)
+        "#{@dir}/client/#{ref}.js"
+      end
+
+      def override_paths
+        return @override_paths if @override_paths
+
+        @override_paths = @explicit_override_paths
+        @dir = @called_from
+        default_override_path = expand_client_code_path(@dir.split("/").last)
+        @override_paths.prepend(default_override_path) if File.exist?(default_override_path)
+        @override_paths
+      end
+
+      def overrides_as_string
+        override_paths.inject("") { |res, path| res << mixin_from_file(path) }
+      end
+
+      private
+
+      def mixin_from_file(path)
+        str = File.read(path)
+        str.chomp!("\n")
+        %(#{class_name}.override(#{str});)
+      end
+
+      def require_from_file(path)
+        File.new(path).read + "\n"
+      end
+
+      def normalize_filepath(ref)
+        ref.is_a?(Symbol) ? expand_client_code_path(ref) : ref
       end
     end
   end

@@ -9,7 +9,7 @@ module Netzke::Core
 
     module ClassMethods
       # Configures JS class
-      def css_configure &block
+      def client_styles &block
         block.call(css_config)
       end
 
@@ -29,7 +29,7 @@ module Netzke::Core
         res = ""
 
         # include the base-class javascript if doing JS inheritance
-        res << superclass.css_code << "\n" if !js_config.extending_extjs_component? && !cached.include?(superclass.name)
+        res << superclass.css_code << "\n" if !client_class_config.extending_extjs_component? && !cached.include?(superclass.name)
 
         res << css_included << "\n"
 
@@ -39,7 +39,7 @@ module Netzke::Core
 
     def css_missing_code(cached = [])
       code = dependency_classes.inject("") do |r,k|
-        cached.include?(k.js_config.xtype) ? r : r + k.css_code(cached)
+        cached.include?(k.client_class_config.xtype) ? r : r + k.css_code(cached)
       end
       code.blank? ? nil : code
     end

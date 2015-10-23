@@ -1,5 +1,5 @@
 class PluginWithEndpoints < Netzke::Plugin
-  js_configure do |c|
+  client_class do |c|
     c.init = <<-JS
       function(){
         this.callParent(arguments);

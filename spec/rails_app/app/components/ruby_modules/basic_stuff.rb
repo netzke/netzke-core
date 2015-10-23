@@ -7,7 +7,7 @@ class RubyModules < Netzke::Base
       action :some_action
       action :another_action
 
-      js_configure do |c|
+      client_class do |c|
         c.extend = "Ext.tab.Panel"
         c.active_tab = 0
 

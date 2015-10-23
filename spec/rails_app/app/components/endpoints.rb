@@ -14,9 +14,8 @@ class Endpoints < Netzke::Base
   # this action is using generic endpoint callback with scope
   action :callback_and_scope
 
-  js_configure do |c|
+  client_class do |c|
     c.title = "Endpoints"
-    c.mixin
   end
 
   def configure(c)

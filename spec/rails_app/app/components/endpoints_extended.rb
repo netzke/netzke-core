@@ -8,7 +8,7 @@ class EndpointsExtended < Endpoints
     c.text = "With extended response"
   end
 
-  js_configure do |c|
+  client_class do |c|
     c.on_bug_server = <<-JS
       function(){
         this.callParent();

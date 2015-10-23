@@ -7,7 +7,7 @@ class Tools < Netzke::Base
     ]
   end
 
-  js_configure do |c|
+  client_class do |c|
     c.handle_refresh = <<-JS
       function(){
         this.setTitle("Refresh tool clicked");
