@@ -12,7 +12,7 @@ module Netzke
 
       def initialize(klass, called_from)
         @klass = klass
-        @called_from = called_from
+        @called_from = @dir = called_from
         @requires_as_string = ""
         @explicit_override_paths = []
         @properties = {

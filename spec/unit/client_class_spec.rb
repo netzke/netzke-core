@@ -6,13 +6,13 @@ require_relative './components/component_with_extensions'
 
 class MyComponent < Netzke::Base
   client_class do |c|
-    c.title = "My stupid component"
+    c.title = "My component"
   end
 end
 
 describe Netzke::Core::ClientClassConfig do
   it "should allow reading class-level properties" do
-    MyComponent.client_class_config.title.should == "My stupid component"
+    MyComponent.client_class_config.title.should == "My component"
   end
 
   it "should return nil when non-existing property is requested" do
@@ -37,8 +37,8 @@ describe Netzke::Core::ClientClassConfig do
 
   describe "#properties_as_string" do
     it "allows specifying class properties" do
-      res = BasicComponent.client_class_config.properties_as_string
-      expect(res).to include "propOne"
+      res = MyComponent.client_class_config.properties_as_string
+      expect(res).to include "My component"
     end
   end
 
@@ -62,9 +62,9 @@ describe Netzke::Core::ClientClassConfig do
 
   describe "#overrides_as_string" do
     it "includes default override" do
-      subject = BasicComponent.client_class_config
+      subject = ComponentWithExtensions.client_class_config
       res = subject.overrides_as_string
-      expect(res).to include "basicMethod"
+      expect(res).to include "defaultOverrideMethod"
     end
 
     it "allows having no override scripts" do
