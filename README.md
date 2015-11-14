@@ -232,6 +232,26 @@ Netzke Core will automatically include Ext JS localization files based on curren
 
 Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke::Core::Actions](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
 
+## Routing
+
+Any Netzke component can react on a specific hash-route in the URL, which can be achieved by specifying `netzkeRoutes`
+hash on the client class, similarly to how Ext JS handles routes in its controllers:
+
+    // e.g. in my_component/client/my_component.js
+    {
+      netzkeRoutes: {
+        'users': 'handleUsers',
+        'users/:id': 'handleUser'
+      },
+
+      handleUsers: function() {},
+
+      handleUser: function(userId) {},
+    }
+
+If a component gets loaded dynamically and it figures out that one of its routes is currently active, it'll trigger the
+corresponding handler after being rendered.
+
 ## HAML support (experimental)
 
 Netzke provides support for HAML templates in case you don't want to put HTML into Ruby files.

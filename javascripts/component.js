@@ -2,18 +2,23 @@
 Ext.define(null, {
   override: 'Ext.Component',
   constructor: function(config) {
-    if (this.isNetzke) this.netzkeInitialize(config);
-    this.callParent([config]);
+    if (this.isNetzke) {
+      this.netzkeBeforeConstructor(config);
+      this.callParent(arguments);
+      this.netzkeAfterConstructor();
+    } else {
+      this.callParent(arguments);
+    }
   }
 });
 
 Ext.define("Netzke.classes.Core.Mixin", {
-  isNetzke: true, // to distinguish Netzke components from regular Ext components
+  isNetzke: true, // distinguish Netzke components from regular Ext components
 
   // Component that used for notifications (to be reworked)
   feedbackGhost: Ext.create("Netzke.FeedbackGhost"),
 
-  netzkeInitialize: function(config){
+  netzkeBeforeConstructor: function(config){
     this.netzkeComponents = config.netzkeComponents;
     this.passedConfig = config;
     this.netzkeProcessEndpoints(config);
@@ -21,6 +26,13 @@ Ext.define("Netzke.classes.Core.Mixin", {
     this.netzkeNormalizeActions(config);
     this.netzkeNormalizeConfig(config);
     this.serverConfig = config.clientConfig || {};
+  },
+
+  /**
+   * Callback method called after Component's constructor finished execution.
+   * Override if needed.
+   */
+  netzkeAfterConstructor: function(config){
   },
 
   /**
