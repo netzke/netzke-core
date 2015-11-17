@@ -46,7 +46,7 @@ module Netzke::Core
   #       ]
   #     end
   #
-  # If an extra (layout) configuration should be provided, a component can be referred to by using the +component+ key in the configuration hash (this can be useful when overriding a layout of a child component):
+  # If extra (layout) configuration is needed, a component can be referred to by using the +component+ key in the configuration hash (this can be useful when overriding a layout of a child component):
   #
   #     component :tab_one # ...
   #     component :tab_two # ...

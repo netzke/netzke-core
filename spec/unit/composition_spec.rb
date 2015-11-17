@@ -90,6 +90,12 @@ module Netzke::Core
         subj = comp.eagerly_loaded_components
         expect(subj).to include(:eagerly_loaded, :component_one, :component_0)
       end
+
+      it "returns eagerly loaded components extended inline" do
+        comp = ExtendChildrenConfig.new
+        subj = comp.eagerly_loaded_components
+        expect(subj).to include(:component_one)
+      end
     end
   end
 end

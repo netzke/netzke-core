@@ -127,3 +127,12 @@ class HybridComposite < Netzke::Base
     c.items = [:component_one, {klass: ComponentOne}]
   end
 end
+
+class ExtendChildrenConfig < Netzke::Base
+  component :component_one
+
+  def configure(c)
+    super
+    c.items = [{foo: 'bar', component: :component_one}]
+  end
+end
