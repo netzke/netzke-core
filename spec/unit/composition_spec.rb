@@ -65,6 +65,11 @@ module Netzke::Core
     end
 
     describe "#component_config" do
+      it "returns nil is nil is given as component_name" do
+        comp = SomeComposite.new
+        expect(comp.component_config(nil)).to be_nil
+      end
+
       it "returns config for components declared with DSL" do
         comp = SomeComposite.new
         expect(comp.component_config(:nested_one)[:klass]).to eql NestedComponentOne

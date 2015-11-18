@@ -134,6 +134,8 @@ module Netzke::Core
     # @return [Hash] Given component's name and overrides, returns complete component's config, ready for
     # instantiation
     def component_config(component_name, overrides = {})
+      return nil if component_name.nil?
+
       component_name = component_name.to_sym
 
       ComponentConfig.new(component_name, self).tap do |cfg|
