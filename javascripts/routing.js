@@ -1,19 +1,18 @@
 Ext.define(null, {
   override: 'Netzke.classes.Core.Mixin',
 
-  netzkeAfterConstructor: function(){
-    if (this.netzkeRoutes) this.netzkeSetRouting();
+  netzkeAfterInitComponent: function(){
+    if (this.netzkeRoutes) {
+      var routes = this.netzkeGetRoutes();
+      this.netzkeRouter = Ext.create('Ext.app.Controller', { routes: this.netzkeGetRoutes() });
+      this.on('beforedestroy', this.netzkeCleanRoutes, this);
+
+      this.on('render', function(){
+        this.netzkeTriggerInitialRoute();
+      });
+    }
+
     this.callParent();
-  },
-
-  netzkeSetRouting: function(){
-    var routes = this.netzkeGetRoutes();
-    this.netzkeRouter = Ext.create('Ext.app.Controller', { routes: this.netzkeGetRoutes() });
-    this.on('beforedestroy', this.netzkeCleanRoutes, this);
-
-    this.on('render', function(){
-      this.netzkeTriggerInitialRoute();
-    });
   },
 
   netzkeNavigateTo: function(route, options){

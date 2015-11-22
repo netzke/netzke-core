@@ -1,23 +1,25 @@
-// Override Ext.Component's constructor to enable Netzke features
-Ext.define(null, {
-  override: 'Ext.Component',
-  constructor: function(config) {
-    if (this.isNetzke) {
-      this.netzkeBeforeConstructor(config);
-      this.callParent(arguments);
-      this.netzkeAfterConstructor();
-    } else {
-      this.callParent(arguments);
-    }
-  }
-});
-
 Ext.define("Netzke.classes.Core.Mixin", {
-  isNetzke: true, // distinguish Netzke components from regular Ext components
+  extend: 'Ext.Mixin',
+
+  mixinConfig: {
+    before: {
+      constructor: 'netzkeBeforeConstructor',
+      initComponent: 'netzkeBeforeInitComponent'
+    },
+
+    after: {
+      constructor: 'netzkeAfterConstructor',
+      initComponent: 'netzkeAfterInitComponent'
+    }
+  },
+
+  // Set Netzke components apart
+  isNetzke: true,
 
   // Component that used for notifications (to be reworked)
   feedbackGhost: Ext.create("Netzke.FeedbackGhost"),
 
+  // Template method
   netzkeBeforeConstructor: function(config){
     this.netzkeComponents = config.netzkeComponents;
     this.passedConfig = config;
@@ -28,11 +30,16 @@ Ext.define("Netzke.classes.Core.Mixin", {
     this.serverConfig = config.clientConfig || {};
   },
 
-  /**
-   * Callback method called after Component's constructor finished execution.
-   * Override if needed.
-   */
+  // Template method
   netzkeAfterConstructor: function(config){
+  },
+
+  // Template method
+  netzkeBeforeInitComponent: function(){
+  },
+
+  // Template method
+  netzkeAfterInitComponent: function(){
   },
 
   /**

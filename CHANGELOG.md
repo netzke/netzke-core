@@ -1,3 +1,7 @@
+### New stuff
+
+* Routing
+
 ### Backward incompatible changes
 
 *   A component's subfolders for client-class scripts and stylesheets have been consolidated from
