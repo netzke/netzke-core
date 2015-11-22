@@ -9,8 +9,7 @@
 
 Ext.ns('Ext.netzke'); // namespace for extensions that depend on Ext JS
 Ext.ns('Netzke.page'); // namespace for all component instances on the page
-Ext.ns('Netzke.classes'); // namespace for component classes
-Ext.ns('Netzke.classes.Core'); // namespace for Core mixins
+Ext.ns('Netzke.Core'); // namespace for Core mixins
 
 Netzke.warning = function(msg){
   if (typeof console != 'undefined') {

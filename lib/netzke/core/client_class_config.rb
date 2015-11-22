@@ -19,7 +19,7 @@ module Netzke
           extend: extended_class,
           alias: class_alias,
         }
-        @properties[:mixins] = ['Netzke.classes.Core.Mixin'] if extending_extjs_component?
+        @properties[:mixins] = ['Netzke.Core.Mixin'] if extending_extjs_component?
         @translated_properties = []
       end
 
@@ -159,7 +159,7 @@ module Netzke
       end
 
       # Component's JavaScript class declaration.
-      # It gets stored in the JS class cache storage (Netzke.classes) at the client side to be reused at the moment of component instantiation.
+      # It gets stored in the JS class cache storage (Netzke.cache) at the client side to be reused at the moment of component instantiation.
       def class_code
         res = []
         # Defining the scope if it isn't known yet
@@ -181,13 +181,13 @@ Netzke.cache.push('#{xtype}');
       end
 
       # Returns the scope of this component
-      # e.g. "Netzke.classes.Netzke.Basepack"
+      # e.g. "Netzke.Basepack"
       def scope
         [default_scope, *@klass.name.split("::")[0..-2]].join(".")
       end
 
-      # Returns the full name of the JavaScript class, including the scopes *and* the common scope, which is 'Netzke.classes'.
-      # E.g.: "Netzke.classes.Netzke.Basepack.GridPanel"
+      # Returns the full name of the JavaScript class, including the scopes *and* the common scope, which is 'Netzke'.
+      # E.g.: "Netzke.Basepack.GridPanel"
       def class_name
         [scope, @klass.name.split("::").last].join(".")
       end

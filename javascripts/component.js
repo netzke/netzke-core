@@ -1,4 +1,4 @@
-Ext.define("Netzke.classes.Core.Mixin", {
+Ext.define("Netzke.Core.Mixin", {
   extend: 'Ext.Mixin',
 
   mixinConfig: {
