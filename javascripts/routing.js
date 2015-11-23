@@ -1,5 +1,5 @@
 Ext.define(null, {
-  override: 'Netzke.Core.Mixin',
+  override: 'Netzke.Core.Component',
 
   netzkeAfterInitComponent: function(){
     if (this.netzkeRoutes) {
