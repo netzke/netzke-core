@@ -185,7 +185,7 @@ module Netzke::Core
         inline_components[item_id.to_sym] = item
         @components_in_config << item_id
         {netzke_component: item_id}
-      elsif item_id = item[:component]
+      elsif item_id = item.delete(:component)
         return nil if component_config(item_id)[:excluded]
         @components_in_config << item_id
         item.merge(netzke_component: item_id)

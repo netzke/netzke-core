@@ -6,6 +6,11 @@ class SomeComposite < Netzke::Base
   component :nested_two do |c|
     c.klass = NestedComponentTwo
   end
+
+  def configure(c)
+    super
+    c.items = [:nested_one, {component: :nested_two}]
+  end
 end
 
 class NestedComponentOne < Netzke::Base

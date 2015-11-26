@@ -102,5 +102,15 @@ module Netzke::Core
         expect(subj).to include(:component_one)
       end
     end
+
+    describe "#extend_item" do
+      it "converts 'component' key to 'netzke_component'" do
+        client_config = SomeComposite.new.js_config[:items]
+        expect(client_config[0]).to have_key(:netzke_component)
+        expect(client_config[0]).to_not have_key(:component)
+        expect(client_config[1]).to have_key(:netzke_component)
+        expect(client_config[1]).to_not have_key(:component)
+      end
+    end
   end
 end
