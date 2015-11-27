@@ -129,9 +129,6 @@ module Netzke
       # Full JS id will be built using these along the +@path+
       @item_id = conf[:item_id] || @name
 
-      # TODO: get rid of this
-      @flash = []
-
       # Make +client_config+ accessible in +configure+ before calling +super+
       config.client_config = (conf.delete(:client_config) || {}).symbolize_keys
 
@@ -161,15 +158,5 @@ module Netzke
         cllr.split(".rb").first
       end
     end
-
-  private
-
-    # TODO: get rid of this in 0.9
-    def flash(flash_hash)
-      level = flash_hash.keys.first
-      raise "Unknown message level for flash" unless %(notice warning error).include?(level.to_s)
-      @flash << {:level => level, :msg => flash_hash[level]}
-    end
-
   end
 end
