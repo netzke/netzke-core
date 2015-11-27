@@ -28,6 +28,11 @@ module Netzke::Core
     #     config.enable_awesome_feature = true
     #   end
     module ClassMethods
+      # Do class-level config of a component, e.g.:
+      #
+      #   Netzke::Basepack::GridPanel.setup do |c|
+      #     c.rows_reordering_available = false
+      #   end
       def setup
         yield self
       end
@@ -35,6 +40,12 @@ module Netzke::Core
       # An array of server class config options that should not be passed to the client class. Can be overridden.
       def server_side_config_options
         [:klass, :client_config]
+      end
+
+      # Instance of component by config
+      def instance_by_config(config)
+        klass = config[:klass] || config[:class_name].constantize
+        klass.new(config)
       end
     end
 

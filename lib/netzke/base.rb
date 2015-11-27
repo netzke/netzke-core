@@ -11,6 +11,7 @@ require 'netzke/core/state'
 require 'netzke/core/embedding'
 require 'netzke/core/actions'
 require 'netzke/core/session'
+require 'netzke/core/core_i18n'
 require 'netzke/core/html' if Module.const_defined?(:Haml)
 
 module Netzke
@@ -56,6 +57,7 @@ module Netzke
     include Core::Stylesheets
     include Core::Embedding
     include Core::Actions
+    include Core::CoreI18n
     include Core::Html if const_defined? :Haml
 
     # TODO: get rid of it
@@ -81,26 +83,6 @@ module Netzke
 
     class << self
       attr_accessor :called_from
-
-      # Instance of component by config
-      def instance_by_config(config)
-        klass = config[:klass] || config[:class_name].constantize
-        klass.new(config)
-      end
-
-      # The ID used to locate this component's block in locale files
-      def i18n_id
-        name.split("::").map{|c| c.underscore}.join(".")
-      end
-
-      # Do class-level config of a component, e.g.:
-      #
-      #   Netzke::Basepack::GridPanel.setup do |c|
-      #     c.rows_reordering_available = false
-      #   end
-      def self.setup
-        yield self
-      end
 
       # Ancestor classes in the Netzke class hierarchy up to (and excluding) +Netzke::Base+, including self; in comparison to Ruby's own Class.ancestors, the order is reversed.
       def netzke_ancestors
@@ -139,10 +121,6 @@ module Netzke
 
       # Check whether the config is valid
       validate_config(config)
-    end
-
-    def i18n_id
-      self.class.i18n_id
     end
 
     # Inspired by Rails railties code
