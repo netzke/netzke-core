@@ -60,11 +60,7 @@ module Netzke
     include Core::CoreI18n
     include Core::Html if const_defined? :Haml
 
-    # TODO: get rid of it
-    class_attribute :default_instance_config
-    self.default_instance_config = {}
-
-    # set during initializations
+    # These are set during initialization
     mattr_accessor :session
     mattr_accessor :controller
     mattr_accessor :logger
@@ -75,7 +71,7 @@ module Netzke
     # Name that the parent can reference us by
     attr_reader :name
 
-    # JS id in the context of the parent
+    # Ext' itemId for this component
     attr_reader :item_id
 
     # Component's path in the component tree
