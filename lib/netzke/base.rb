@@ -63,21 +63,9 @@ module Netzke
     include Core::Html if const_defined? :Haml
 
     # These are set during initialization
-    mattr_accessor :session
-    mattr_accessor :controller
-    mattr_accessor :logger
+    mattr_accessor :session, :controller, :logger
 
-    # Parent component
-    attr_reader :parent
-
-    # Name that the parent can reference us by
-    attr_reader :name
-
-    # Ext' itemId for this component
-    attr_reader :item_id
-
-    # Component's path in the component tree
-    attr_reader :path
+    attr_reader :parent, :name, :item_id, :path
 
     # Instantiates a component instance. A parent can optionally be provided.
     def initialize(conf = {}, parent = nil)
