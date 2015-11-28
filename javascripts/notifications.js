@@ -2,7 +2,7 @@
 Ext.define('Netzke.FeedbackGhost', {
   showFeedback: function(msg, options){
     options = options || {};
-    options.delay = options.delay || Netzke.core.FeedbackDelay;
+    options.delay = options.delay || Netzke.Core.FeedbackDelay;
     if (Ext.isObject(msg)) {
       this.msg(msg.level.camelize(), msg.msg, options.delay);
     } else if (Ext.isArray(msg)) {

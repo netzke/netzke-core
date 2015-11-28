@@ -44,18 +44,15 @@ module Netzke
 
         # Generates initial javascript code that is dependent on Rails settings
         def initial_dynamic_javascript(form_authenticity_token)
-          res = []
-          res << %(Ext.Ajax.setExtraParams({authenticity_token: '#{form_authenticity_token}'}); // Rails' forgery protection)
-          res << %{Ext.ns('Netzke');}
-          res << %{Ext.ns('Netzke.core');}
-          res << %{Netzke.RelativeUrlRoot = '#{ActionController::Base.config.relative_url_root}';}
-          res << %{Netzke.ControllerUrl = '#{ActionController::Base.config.relative_url_root}#{Rails.application.routes.url_helpers.netzke_path}/';}
-          res << %{Netzke.RelativeExtUrl = '#{ActionController::Base.config.relative_url_root}#{Netzke::Core.ext_uri}';}
-
-          res << %{Netzke.core.directMaxRetries = #{Netzke::Core.js_direct_max_retries};}
-          res << %{Netzke.core.FeedbackDelay = #{Netzke::Core.js_feedback_delay};}
-
-          res.join("\n")
+          url_root = ActionController::Base.config.relative_url_root
+          %(Ext.Ajax.setExtraParams({authenticity_token: '#{form_authenticity_token}'});
+Ext.ns('Netzke.Core');
+Netzke.RelativeUrlRoot = '#{url_root}';
+Netzke.ControllerUrl = '#{url_root}#{Rails.application.routes.url_helpers.netzke_path}/';
+Netzke.RelativeExtUrl = '#{url_root}#{Netzke::Core.ext_uri}';
+Netzke.Core.directMaxRetries = #{Netzke::Core.js_direct_max_retries};
+Netzke.Core.FeedbackDelay = #{Netzke::Core.js_feedback_delay};
+)
         end
 
         def include_core_js(arry)

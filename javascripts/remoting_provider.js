@@ -3,7 +3,7 @@ Ext.define('Netzke.NetzkeRemotingProvider', {
   extend: 'Ext.direct.RemotingProvider',
   url: Netzke.ControllerUrl + "direct/", // url to connect to the Ext.Direct server-side router.
   namespace: "Netzke.remotingMethods", // will have a key per Netzke component, each mapped to a hash with a RemotingMethod per endpoint
-  maxRetries: Netzke.core.directMaxRetries,
+  maxRetries: Netzke.Core.directMaxRetries,
   enableBuffer: true, // buffer/batch requests within 10ms timeframe
   timeout: 30000, // 30s timeout per request
 
