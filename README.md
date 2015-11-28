@@ -23,11 +23,10 @@ your_web_app
       my_component.rb             <-- the Ruby class
       my_component
         some_module.rb            <-- optional extra Ruby code
-        javascripts
+        client
           some_dependency.js      <-- optional external JS library
-          init_component.js       <-- optional mixins to the client class
-          extra_functionality.js  <-- more mixins (mixin-in may depend on component class configuration)
-        stylesheets
+          init_component.js       <-- optional override ("include") to the client class
+          extra_functionality.js  <-- more override
           my_special_button.css    <-- optional custom CSS
 ```
 
@@ -67,7 +66,7 @@ Configuration of the client-class can be done by using the `Netzke::Base.client_
 class MyTabPanel < Netzke::Base
   client_class do |c|
     c.extend = "Ext.tab.Panel"
-    c.mixin :extra_functionality
+    c.include :extra_functionality
   end
 end
 ```

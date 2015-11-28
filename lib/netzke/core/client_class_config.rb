@@ -39,7 +39,7 @@ module Netzke
       #       end
       #     end
       #
-      # An alternative way to define prototype properties is by using "mixins", see {ClientClassConfig#mixin}
+      # An alternative way to define prototype properties is by using {ClientClassConfig#include}
       #
       # As attributes are accessible from inside +client_class+:
       #
@@ -96,18 +96,18 @@ module Netzke
         end
       end
 
-      # Use it to "mixin" JavaScript objects defined in a separate file. It may accept one or more symbols or strings.
+      # Use it to "include" JavaScript methods defined in a separate file. Behind the scenes it uses `Ext.Class.override` It may accept one or more symbols or strings.
       #
       # Symbols will be expanded following a convention, e.g.:
       #
       #     class MyComponent < Netzke::Base
       #       client_class do |c|
-      #         c.mixin :some_functionality
+      #         c.include :some_functionality
       #         #...
       #       end
       #     end
       #
-      # This will "mixin" a JavaScript object defined in a file named +{component_location}/my_component/client/some_functionality.js+, which way contain something like this:
+      # This will "include" a JavaScript object defined in the file named +{component_location}/my_component/client/some_functionality.js+, which way contain something like this:
       #
       #     {
       #       someProperty: 100,
@@ -116,11 +116,10 @@ module Netzke
       #       }
       #     }
       #
-      # Also accepts a string, which will be interpreted as a full path to the file (useful for sharing mixins between classes).
-      # With no parameters, will assume :<component_class_name>.
+      # Strings will be interpreted as a full path to the "included" file (useful for sharing client code between components).
       #
       # Also, see defining JavaScript prototype properties with {ClientClassConfig#method_missing}.
-      def mixin(*refs)
+      def include(*refs)
         raise(ArgumentError, "wrong number of arguments (0 for 1 or more)") if refs.empty?
 
         refs.each do |ref|
@@ -238,12 +237,12 @@ Netzke.cache.push('#{xtype}');
       end
 
       def overrides_as_string
-        override_paths.map { |path| mixin_from_file(path) }.join("\n\n")
+        override_paths.map { |path| override_from_file(path) }.join("\n\n")
       end
 
       private
 
-      def mixin_from_file(path)
+      def override_from_file(path)
         str = File.read(path)
         str.chomp!("\n")
         %(#{class_name}.override(#{str});)

@@ -33,7 +33,7 @@ module Netzke
   #       c.tbar = [:do_something, :date_selector]
   #     end
   #
-  # While :do_something here is referring to a usual Netzke action, :date_selector is not declared in actions. If our JavaScript mixin file contains a method called `dateSelectorConfig`, it will be executed at the moment of configuring `tbar` at client side, and it's result, a config object, will substitute `date_selector`:
+  # While :do_something here is referring to a usual Netzke action, :date_selector is not declared in actions. If our JavaScript include file contains a method called `dateSelectorConfig`, it will be executed at the moment of configuring `tbar` at client side, and it's result, a config object, will substitute `date_selector`:
   #
   #     {
   #       dateSelectorConfig: function(config){

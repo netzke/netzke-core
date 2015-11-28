@@ -14,6 +14,8 @@
 *   `Base.js_configure` has been renamed to `Base.client_class`. There's also no longer need to call
     it to include the default mixin (which is now `<component_name>/client/<component_name>.js`).
 
+*   The `mixin` method in the former `js_configure` block (now `client_class`) has been renamed to `include`.
+
 *   Internal rework of component loading, which also changes some API and behavior.
     *   If the loaded component is a window, the show() method is called on it by Netzke. This can be prevented by the callback function returning `false` (which will also prevent other types of loaded components to be inserted in the container).
     *   On the client, the clientConfig config option renamed to serverConfig.

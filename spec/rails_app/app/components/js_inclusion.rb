@@ -1,7 +1,7 @@
 class JsInclusion < Netzke::Base
   client_class do |c|
     c.require :extra_one, :extra_two
-    c.mixin :method_set_one, :method_set_two
+    c.include :method_set_one, :method_set_two
   end
 
   action :action_one
