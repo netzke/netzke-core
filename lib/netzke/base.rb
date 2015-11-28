@@ -13,7 +13,6 @@ require 'netzke/core/actions'
 require 'netzke/core/session'
 require 'netzke/core/core_i18n'
 require 'netzke/core/inheritance'
-require 'netzke/core/html' if Module.const_defined?(:Haml)
 
 module Netzke
   # The base class for every Netzke component. Its main responsibilities include:
@@ -60,7 +59,6 @@ module Netzke
     include Core::Actions
     include Core::CoreI18n
     include Core::Inheritance
-    include Core::Html if const_defined? :Haml
 
     # These are set during initialization
     mattr_accessor :session, :controller, :logger

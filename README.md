@@ -252,10 +252,6 @@ hash on the client class, similarly to how Ext JS handles routes in its controll
 If a component gets loaded dynamically and it figures out that one of its routes is currently active, it'll trigger the
 corresponding handler after being rendered.
 
-## HAML support (experimental)
-
-Netzke provides support for HAML templates in case you don't want to put HTML into Ruby files.
-
 ## Requirements
 
 * Ruby >= 2.0.0

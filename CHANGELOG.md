@@ -4,6 +4,8 @@
 
 ### Backward incompatible changes
 
+*   Experimental support for HAML removed
+
 *   A component's subfolders for client-class scripts and stylesheets have been consolidated from
     `javascripts`/`stylesheets` into `client`
 
