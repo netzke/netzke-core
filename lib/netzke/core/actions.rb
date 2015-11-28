@@ -100,15 +100,35 @@ module Netzke::Core
     extend ActiveSupport::Concern
 
     included do
-      # Declares Base.action, for declaring actions, and Base#actions, which returns a [Hash] of all action configs by name
-      declare_dsl_for :actions, config_class: Netzke::Core::ActionConfig
+      class_attribute :_declared_actions
+      self._declared_actions = []
     end
 
     module ClassMethods
-      # Must stay public, used from ActionConfig
+      # Declares an action
+      def action(name, &block)
+        define_method :"#{name}_action", &(block || ->(c){c})
+        # NOTE: "<<" won't work here as this will mutate the array shared between classes
+        self._declared_actions += [name]
+      end
+
       # @return [String|nil] full URI to an icon file by its name (provided we have a controller)
+      # NOTE: must stay public, used from ActionConfig
       def uri_to_icon(icon)
         Netzke::Core.with_icons ? [(controller && controller.config.relative_url_root), Netzke::Core.icons_uri, '/', icon.to_s, ".png"].join : nil
+      end
+    end
+
+    def actions
+      return @actions if @actions
+
+      @actions = {}.tap do |res|
+        self.class._declared_actions.each do |name|
+          cfg = Netzke::Core::ActionConfig.new(name, self)
+          send("#{name}_action", cfg)
+          cfg.set_defaults!
+          res[name.to_sym] = cfg.excluded ? {excluded: true} : cfg
+        end
       end
     end
 
