@@ -122,32 +122,14 @@ module Netzke::Core
         child_component, *action = endpoint.to_s.split('__')
         action = !action.empty? && action.join("__").to_sym
 
-        return unknown_endpoint_exception(endpoint) if !action
-        return unknown_component_exception(child_component) if component_config(child_component.to_sym).nil?
+        return unknown_exception(:endpoint, endpoint) if !action
+        return unknown_exception(:component, child_component) if component_config(child_component.to_sym).nil?
 
         client_config = configs.shift || {}
         cmp_strong_config = {client_config: client_config}
 
         component_instance(child_component.to_sym, cmp_strong_config).invoke_endpoint(action, params, configs)
       end
-    end
-
-    def unknown_endpoint_exception(endpoint)
-      this.netzke_set_result(error: {
-        type: "UNKNOWN_ENDPOINT",
-        msg: "Component '#{self.class.name}' does not have endpoint '#{endpoint}'"
-      })
-
-      this
-    end
-
-    def unknown_component_exception(component)
-      this.netzke_set_result(error: {
-        type: "UNKNOWN_COMPONENT",
-        msg: "Component '#{self.class.name}' does not have component '#{component}'"
-      })
-
-      this
     end
 
     def has_endpoint?(endpoint)
@@ -158,6 +140,17 @@ module Netzke::Core
     # Note: this should actually never happen unless you mess up with Netzke component loading mechanisms.
     def component_missing(missing_component, *params)
       this.netzke_feedback "Unknown component '#{missing_component}' in '#{name}'"
+    end
+
+    private
+
+    def unknown_exception(entity_name, entity)
+      this.netzke_set_result(error: {
+        type: "UNKNOWN_#{entity_name.to_s.upcase}",
+        msg: "Component '#{self.class.name}' does not have #{entity_name} '#{entity}'"
+      })
+
+      this
     end
   end
 end

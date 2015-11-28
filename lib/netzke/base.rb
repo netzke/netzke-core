@@ -12,6 +12,7 @@ require 'netzke/core/embedding'
 require 'netzke/core/actions'
 require 'netzke/core/session'
 require 'netzke/core/core_i18n'
+require 'netzke/core/inheritance'
 require 'netzke/core/html' if Module.const_defined?(:Haml)
 
 module Netzke
@@ -58,6 +59,7 @@ module Netzke
     include Core::Embedding
     include Core::Actions
     include Core::CoreI18n
+    include Core::Inheritance
     include Core::Html if const_defined? :Haml
 
     # These are set during initialization
@@ -76,19 +78,6 @@ module Netzke
 
     # Component's path in the component tree
     attr_reader :path
-
-    class << self
-      attr_accessor :called_from
-
-      # Ancestor classes in the Netzke class hierarchy up to (and excluding) +Netzke::Base+, including self; in comparison to Ruby's own Class.ancestors, the order is reversed.
-      def netzke_ancestors
-        if self == Netzke::Base
-          []
-        else
-          superclass.netzke_ancestors + [self]
-        end
-      end
-    end
 
     # Instantiates a component instance. A parent can optionally be provided.
     def initialize(conf = {}, parent = nil)
@@ -117,20 +106,6 @@ module Netzke
 
       # Check whether the config is valid
       validate_config(config)
-    end
-
-    # Inspired by Rails railties code
-    def self.inherited(base)
-      base.called_from = begin
-        cllr = if Kernel.respond_to?(:caller_locations)
-          location = caller_locations.first
-          location.absolute_path || location.path
-        else
-          caller.first
-        end
-
-        cllr.split(".rb").first
-      end
     end
   end
 end
