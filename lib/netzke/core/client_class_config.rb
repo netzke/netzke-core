@@ -238,7 +238,7 @@ Netzke.cache.push('#{xtype}');
       end
 
       def overrides_as_string
-        override_paths.inject("") { |res, path| res << mixin_from_file(path) }
+        override_paths.map { |path| mixin_from_file(path) }.join("\n\n")
       end
 
       private
