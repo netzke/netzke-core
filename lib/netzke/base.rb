@@ -86,10 +86,10 @@ module Netzke
       # Build complete component configuration
       configure(config)
 
-      normalize_config
-
-      # Check whether the config is valid
+      # Check whether the config is valid (as specified in a custom override)
       validate_config(config)
+
+      normalize_config
     end
   end
 end

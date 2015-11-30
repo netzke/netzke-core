@@ -98,13 +98,14 @@ module Netzke::Core
       ActiveSupport::OrderedOptions.new.merge!(config.client_config)
     end
 
-  protected
+    protected
 
-    # Override to validate configuration and raise eventual exceptions
+    # Override to validate or enforce certain configuration options
     # E.g.:
     #
     #     def validate_config(c)
     #       raise ArgumentError, "Grid requires a model" if c.model.nil?
+    #       c.paging = true if c.edit_inline
     #     end
     def validate_config(c)
     end
