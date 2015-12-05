@@ -4,7 +4,7 @@ module Netzke::Core
   describe Configuration do
     describe "#validate_config" do
       it "can override config" do
-        class Foo < Netzke::Base
+        class OverridingConfig < Netzke::Base
           def configure(c)
             super
             c.foo = "bar"
@@ -14,7 +14,7 @@ module Netzke::Core
           end
         end
 
-        expect(Foo.new.js_config[:foo]).to eql('baz')
+        expect(OverridingConfig.new.js_config[:foo]).to eql('baz')
       end
     end
   end
