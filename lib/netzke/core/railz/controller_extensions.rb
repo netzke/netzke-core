@@ -101,7 +101,7 @@ module Netzke
         }
       end
 
-      # Receives DirectRequest, returns an array/hash of methods for the client side (consumed by netzkeBulkExecute)
+      # Receives DirectRequest, returns an array/hash of methods for the client side (consumed by nzBulkExecute)
       def invoke_endpoint(request)
         component_name, *sub_components = request.cmp_path.split('__')
         components_in_session = session[:netzke_components].try(:symbolize_keys)
@@ -112,7 +112,7 @@ module Netzke
           component_instance = Netzke::Base.instance_by_config(cmp_config)
           component_instance.invoke_endpoint((sub_components + [request.endpoint]).join("__"), request.args, request.client_configs)
         else
-          { netzke_session_expired: [] }
+          { nz_session_expired: [] }
         end
       end
 

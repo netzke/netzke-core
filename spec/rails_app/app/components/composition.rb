@@ -29,7 +29,7 @@ class Composition < Netzke::Base
 
     c.on_show_hidden_window = <<-JS
       function(){
-        this.netzkeInstantiateComponent('hidden_window').show();
+        this.nzInstantiateComponent('hidden_window').show();
       }
     JS
   end

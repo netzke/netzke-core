@@ -12,10 +12,10 @@ module ExtDirect
             Netzke.connectionCount++;
           });
 
-          this.netzkeGetComponent('selector').on('userupdate', function(user){
+          this.nzGetComponent('selector').on('userupdate', function(user){
             this.setUser(user);
-            this.netzkeGetComponent('details').update();
-            this.netzkeGetComponent('statistics').update();
+            this.nzGetComponent('details').update();
+            this.nzGetComponent('statistics').update();
           }, this);
         }
       JS

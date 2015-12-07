@@ -20,7 +20,7 @@ class DynamicLoading < Netzke::Base
 
   component :self_reloading
 
-  # this action is using netzkeLoadComponent "special" callback
+  # this action is using nzLoadComponent "special" callback
   action :load_with_feedback
 
   action :load_component

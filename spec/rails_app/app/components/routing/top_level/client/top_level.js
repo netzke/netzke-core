@@ -1,7 +1,7 @@
 {
   layout: 'fit',
 
-  netzkeRoutes: {
+  nzRoutes: {
     'one': 'handleOne',
     'two': 'handleTwo',
 
@@ -10,28 +10,28 @@
   },
 
   handleOne: function(){
-    if (this.netzkeGetComponent('one')) return;
-    this.netzkeLoadComponent('one');
+    if (this.nzGetComponent('one')) return;
+    this.nzLoadComponent('one');
   },
 
   handleTwo: function(){
-    if (this.netzkeGetComponent('two')) return;
-    this.netzkeLoadComponent('two');
+    if (this.nzGetComponent('two')) return;
+    this.nzLoadComponent('two');
   },
 
   onLoadOne: function(){
-    this.netzkeNavigateTo('one');
+    this.nzNavigateTo('one');
   },
 
   onLoadTwo: function(){
-    this.netzkeNavigateTo('two');
+    this.nzNavigateTo('two');
   },
 
   onLoadOneOne: function(){
-    this.netzkeNavigateTo('one/one');
+    this.nzNavigateTo('one/one');
   },
 
   onLoadOneTwo: function(){
-    this.netzkeNavigateTo('one/two');
+    this.nzNavigateTo('one/two');
   }
 }

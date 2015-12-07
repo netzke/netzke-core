@@ -4,9 +4,9 @@ module Netzke::Core
   # == JavaScript instance methods
   #
   # The following public JavaScript methods are defined on (mixed-in into) all Netzke components (for detailed documentation on them see the inline documentation in javascript/base.js and javascript/ext.js files):
-  # * netzkeLoadComponent - dynamically loads a child Netzke component
-  # * netzkeInstantiateComponent - instantiates and returns a Netzke component by its item_id
-  # * netzkeFeedback - shows a feedback message
+  # * nzLoadComponent - dynamically loads a child Netzke component
+  # * nzInstantiateComponent - instantiates and returns a Netzke component by its item_id
+  # * nzFeedback - shows a feedback message
   # * componentNotInSession - gets called when the session that the component is defined in gets expired. Override it to do whatever is appropriate.
   module ClientCode
     extend ActiveSupport::Concern

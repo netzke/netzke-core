@@ -84,9 +84,9 @@ module Netzke::Core
     #   initConfig: function() {
     #     this.callParent();
     #
-    #     this.netzkeGetComponent('authors').on('rowclick', function(grid, record) {
+    #     this.nzGetComponent('authors').on('rowclick', function(grid, record) {
     #       this.serverConfig.author_id = record.getId();
-    #       this.netzkeGetComponent('book_grid').getStore().load();
+    #       this.nzGetComponent('book_grid').getStore().load();
     #     }
     #   }
     #
