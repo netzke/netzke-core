@@ -13,19 +13,6 @@ class Localization < Netzke::Base
 
   client_class do |c|
     c.translate :property_one, :property_two
-
-    c.on_show_properties = <<-JS
-      function(ct){
-        this.setTitle(this.i18n.propertyOne + " - " + this.i18n.propertyTwo);
-      }
-    JS
-
-    c.on_action_three = <<-JS
-      function(){
-        var mask = new Ext.LoadMask(this.body);
-        mask.show();
-      }
-    JS
   end
 
   def configure(c)

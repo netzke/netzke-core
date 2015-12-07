@@ -14,34 +14,6 @@ class Persistence < Netzke::Base
     c.title = state[:title] || "Default title"
   end
 
-  client_class do |c|
-    c.on_set_state = <<-JS
-      function(){
-        this.server.setState();
-      }
-    JS
-
-    c.on_reset_state = <<-JS
-      function(){
-        this.server.resetState();
-      }
-    JS
-
-    c.on_set_session_variable = <<-JS
-      function(){
-        this.server.setSessionVariable();
-      }
-    JS
-
-    c.on_retrieve_session_variable = <<-JS
-      function(){
-        this.server.retrieveSessionVariable(null, function(result){
-          this.setTitle("Session variable: " + result);
-        })
-      }
-    JS
-  end
-
   endpoint :set_state do
     state[:title] = "Title from state"
   end

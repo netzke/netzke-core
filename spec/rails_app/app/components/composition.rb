@@ -1,39 +1,4 @@
 class Composition < Netzke::Base
-  client_class do |c|
-    c.height = 400
-    c.layout = :border
-
-    c.on_update_west_panel = <<-JS
-      function(){
-        this.getComponent('west_panel').body.update('West Panel Body Updated');
-      }
-    JS
-
-    c.on_update_center_panel = <<-JS
-      function(){
-        this.getComponent('center_panel').body.update('Center Panel Body Updated');
-      }
-    JS
-
-    c.on_update_east_south_from_server = <<-JS
-      function(){
-        this.server.updateEastSouth();
-      }
-    JS
-
-    c.on_update_west_from_server = <<-JS
-      function(){
-        this.server.updateWest();
-      }
-    JS
-
-    c.on_show_hidden_window = <<-JS
-      function(){
-        this.nzInstantiateComponent('hidden_window').show();
-      }
-    JS
-  end
-
   action :update_center_panel, :update_west_panel, :update_west_from_server, :update_east_south_from_server
 
   action :show_hidden_window do |c|

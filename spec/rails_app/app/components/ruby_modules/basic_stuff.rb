@@ -9,17 +9,6 @@ class RubyModules < Netzke::Base
 
       client_class do |c|
         c.extend = "Ext.tab.Panel"
-        c.active_tab = 0
-
-        # Calling main class' methods is simple
-        c.on_some_action = <<-JS
-          function(){ this.items.last().setTitle("Action triggered"); }
-        JS
-
-        # Another way of defining a JS method
-        c.on_another_action = <<-JS
-          function(){ this.items.first().setTitle("Another action triggered"); }
-        JS
       end
     end
 
@@ -28,6 +17,5 @@ class RubyModules < Netzke::Base
       c.bbar = [:some_action, :another_action]
       c.items = [{:title => "Panel One"}, {:title => "Panel Two"}]
     end
-
   end
 end

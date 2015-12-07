@@ -1,26 +1,5 @@
 module ExtDirect
   class Composite < Netzke::Base
-    client_class do |c|
-      c.layout = :border
-      c.border = true
-      c.init_component = <<-JS
-        function(){
-          this.callParent();
-
-          Ext.Ajax.on('beforerequest',function (conn, options ) {
-            Netzke.connectionCount = Netzke.connectionCount || 0;
-            Netzke.connectionCount++;
-          });
-
-          this.nzGetComponent('selector').on('userupdate', function(user){
-            this.server.setUser(user);
-            this.nzGetComponent('details').server.update();
-            this.nzGetComponent('statistics').server.update();
-          }, this);
-        }
-      JS
-    end
-
     component :selector do |c|
       c.klass = ExtDirect::Selector # a form that will allow us to select a user
     end

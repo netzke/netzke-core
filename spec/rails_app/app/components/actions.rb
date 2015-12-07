@@ -50,30 +50,4 @@ class Actions < Netzke::Base
 
     c.docked_items = [{xtype: :toolbar, dock: :left, items: [:simple_action]}]
   end
-
-  client_class do |c|
-    c.on_simple_action = <<-JS
-      function(){
-        this.setTitle("Simple action triggered");
-      }
-    JS
-
-    c.on_another_action = <<-JS
-      function(){
-        this.update("Another action was triggered");
-      }
-    JS
-
-    c.custom_action_handler = <<-JS
-      function(){
-        this.update("Custom action handler was called");
-      }
-    JS
-
-    c.handle_action_less_click = <<-JS
-      function(){
-        this.setTitle("Actionless button was clicked");
-      }
-    JS
-  end
 end
