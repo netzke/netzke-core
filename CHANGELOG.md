@@ -28,7 +28,7 @@
 
     *   On the client, the `clientConfig` config option has been renamed to `serverConfig`.
 
-    *   To specify that a child component is eagerly loaded, the option is moved out of the block into the DSL `component` method parameter:
+    *   To specify that a child component is eagerly loaded, the option is moved out of the block into the DSL `component` method parameter (also renamed to `eager_load`):
 
             # BEFORE
             component :foo do |c|
@@ -37,7 +37,7 @@
             end
 
             # NOW
-            component :foo, eager_loading: true do |c|
+            component :foo, eager_load: true do |c|
               ...
             end
 

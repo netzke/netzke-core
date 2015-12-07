@@ -51,7 +51,7 @@ class Composition < Netzke::Base
   end
 
   # Eagerly loaded Netzke component that only requires instantiating at client
-  component :hidden_window, eager_loading: true do |c|
+  component :hidden_window, eager_load: true do |c|
     c.klass = SimpleWindow
     c.title = "Pre-loaded window"
     c.width = 300

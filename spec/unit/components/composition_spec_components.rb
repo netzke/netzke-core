@@ -69,7 +69,7 @@ end
 
 # Includes composite component
 class SuperComposite < Netzke::Base
-  component :extended_composite, eager_loading: true
+  component :extended_composite, eager_load: true
 end
 
 class ComponentWithExcluded < Netzke::Base
@@ -123,7 +123,7 @@ class HybridComposite < Netzke::Base
   component :component_one
   component :component_two
 
-  component :eagerly_loaded, eager_loading: true do |c|
+  component :eagerly_loaded, eager_load: true do |c|
     c.klass = ComponentOne
   end
 

@@ -61,9 +61,9 @@ module Netzke::Core
   #
   # == Lazily vs eagerly loaded components
   #
-  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `nzLoadComponent` (see {Netzke::Core::ClientCode}). Referring a component in the layout (the `items` property) automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `eager_loading` can be set to true:
+  # By default, if a component is not used in the layout, it is lazily loaded, which means that the code for this component is not loaded in the browser until the moment the component gets dynamically loaded by the JavaScript method `nzLoadComponent` (see {Netzke::Core::ClientCode}). Referring a component in the layout (the `items` property) automatically makes it eagerly loaded. Sometimes it's desired to eagerly load a component without using it directly in the layout (an example can be a window that we need to render instantly without requesting the server). In this case an option `eager_load` can be set to true:
   #
-  #     component :eagerly_loaded_window, eager_loading: true do |c|
+  #     component :eagerly_loaded_window, eager_load: true do |c|
   #       c.klass = SomeWindowComponent
   #     end
   #
@@ -82,7 +82,7 @@ module Netzke::Core
       def component(name, options = {}, &block)
         define_method :"#{name}_component", &(block || ->(c){c})
         # NOTE: "<<" won't work here as this will mutate the array shared between classes
-        self.eagerly_loaded_dsl_components += [name] if options[:eager_loading]
+        self.eagerly_loaded_dsl_components += [name] if options[:eager_load]
       end
     end
 
@@ -90,7 +90,7 @@ module Netzke::Core
       # Hash of components declared inline in the config
       attr_accessor :inline_components
 
-      # Components declared in DSL and marked with `eager_loading: true`
+      # Components declared in DSL and marked with `eager_load: true`
       class_attribute :eagerly_loaded_dsl_components
       self.eagerly_loaded_dsl_components = []
 
