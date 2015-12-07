@@ -27,7 +27,13 @@ describe 'Endpoints component', ->
       expect(currentPanelTitle()).to.eql("Called a function with array as arguments: ['Element 1', 'Element 2']")
       done()
 
-  it "calls an endpoint with callback and scope", (done) ->
+  it "issues callback in component's scope by default", (done) ->
+    click button 'Callback'
+    wait ->
+      expect(currentPanelTitle()).to.eql('Callback invoked')
+      done()
+
+  it "issues callback in specified scope", (done) ->
     click button 'Callback and scope'
 
     wait ->

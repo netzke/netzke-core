@@ -24,6 +24,6 @@ class PluginWithEndpoints < Netzke::Plugin
   end
 
   endpoint :on_gear do
-    this.process_gear_callback("Response from server side of PluginWithEndpoints")
+    client.process_gear_callback("Response from server side of PluginWithEndpoints")
   end
 end

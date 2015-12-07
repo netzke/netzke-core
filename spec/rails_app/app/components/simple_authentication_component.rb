@@ -29,12 +29,12 @@ class SimpleAuthenticationComponent < Netzke::Base
 
   endpoint :sign_in do |params,this|
     session[:user_id] = 1
-    this.reload_page
+    client.reload_page
   end
 
   endpoint :sign_out do |params,this|
     session.delete(:user_id)
-    this.reload_page
+    client.reload_page
   end
 
   def current_user_info

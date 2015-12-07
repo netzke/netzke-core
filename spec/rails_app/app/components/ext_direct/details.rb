@@ -1,7 +1,7 @@
 module ExtDirect
   class Details < Netzke::Base
     endpoint :update do
-      this.set_title title
+      client.set_title title
     end
 
     def title

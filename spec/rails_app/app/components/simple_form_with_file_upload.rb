@@ -43,6 +43,6 @@ class SimpleFormWithFileUpload < Netzke::Base
     # this.set_title('File uploaded')
 
     # But this will define whether the client is informed about success or not:
-    this.success = true
+    client.success = true
   end
 end

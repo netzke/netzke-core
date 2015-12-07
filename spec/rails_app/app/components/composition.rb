@@ -96,10 +96,10 @@ class Composition < Netzke::Base
   end
 
   endpoint :update_east_south do
-    this.east_south_panel.set_title("Here's an update for south panel in east panel")
+    client.east_south_panel.set_title("Here's an update for south panel in east panel")
   end
 
   endpoint :update_west do
-    this.west_panel.set_title("Here's an update for west panel")
+    client.west_panel.set_title("Here's an update for west panel")
   end
 end

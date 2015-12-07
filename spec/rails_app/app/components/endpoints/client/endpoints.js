@@ -34,6 +34,12 @@
     this.setTitle("Called a function with array as arguments: " + arryAsString);
   },
 
+  onCallback: function(){
+    this.server.doNothing(function() {
+      this.setTitle('Callback invoked');
+    });
+  },
+
   onCallbackAndScope: function() {
     var that = this;
     var fancyScope = {

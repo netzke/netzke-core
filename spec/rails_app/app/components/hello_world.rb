@@ -17,6 +17,6 @@ class HelloWorld < Netzke::Base
   # Endpoint callable from client class
   endpoint :greet_the_world do
     # call client class' method showGreeting
-    this.show_greeting("Hello World!")
+    client.show_greeting("Hello World!")
   end
 end

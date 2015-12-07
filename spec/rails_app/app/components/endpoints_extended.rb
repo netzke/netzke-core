@@ -12,6 +12,6 @@ class EndpointsExtended < Endpoints
   endpoint :whats_up do |greeting|
     super greeting
 
-    this.set_title(this.set_title[0] + " plus")
+    client.set_title(client.set_title[0] + " plus")
   end
 end

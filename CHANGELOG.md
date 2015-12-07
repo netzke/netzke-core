@@ -39,7 +39,11 @@
 
 *   Changes to endpoints API.
 
-    *   Droped the `this` parameter from endpoint block on server side. It's still possible to call client-side methods as before, but `this` is declared in the class.
+    *   Droped the `this` parameter from endpoint block on server side. It's still possible to call client-side methods as before, by using the `client` accessor, implicitely defined for you, for example:
+
+            endpoint :do_something do |arg1|
+              client.set_title("Recieved #{arg1}")
+            end
 
     *   Endpoint calls now accept any number of arguments (including zero), with client-side signature matching the server-side `endpoint` block, for example:
 
@@ -48,7 +52,7 @@
             end
 
             // client side
-            this.assignUser(userId, tableId)
+            this.server.assignUser(userId, tableId)
 
             ---
 
@@ -57,7 +61,7 @@
             end
 
             // client side
-            this.clearData()
+            this.server.clearData()
 
     *   Whatever endpoint's server-side block returns will become the argument for the client-side callback function, for example:
 
@@ -67,7 +71,7 @@
             end
 
             // client side
-            this.getData(params, function(result) {
+            this.server.getData(params, function(result) {
               // result == [1, 2, 3]
             })
 

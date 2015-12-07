@@ -199,8 +199,8 @@ An endpoint can instruct the client instance of the component to execute a set o
 ```ruby
 class SimpleComponent < Netzke::Base
   endpoint :whats_up_server do
-    this.set_title("Response from server")
-    this.my_method
+    client.set_title("Response from server")
+    client.my_method
   end
 end
 ```

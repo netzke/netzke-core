@@ -14,6 +14,8 @@ class Endpoints < Netzke::Base
   # this action is using generic endpoint callback with scope
   action :callback_and_scope
 
+  action :callback
+
   client_class do |c|
     c.title = "Endpoints"
   end
@@ -21,20 +23,20 @@ class Endpoints < Netzke::Base
   def configure(c)
     super
     c.bbar = [:with_response, :no_response, :multiple_argument_response, :array_as_argument, :callback_and_scope, :return_value, :non_existing, :multiple_arguments]
-    c.tbar = [:hash_argument, :batched_call, :raise_exception, :return_error]
+    c.tbar = [:hash_argument, :batched_call, :raise_exception, :return_error, :callback]
   end
 
   endpoint :whats_up do |greeting|
-    this.set_title("Hello #{greeting}")
+    client.set_title("Hello #{greeting}")
     "Hello from the server!"
   end
 
   endpoint :multiple_argument_response do
-    this.take_two_arguments("First argument", "Second argument")
+    client.take_two_arguments("First argument", "Second argument")
   end
 
   endpoint :array_as_argument do
-    this.take_array_as_argument(['Element 1', 'Element 2'])
+    client.take_array_as_argument(['Element 1', 'Element 2'])
   end
 
   endpoint :do_nothing do
@@ -57,11 +59,11 @@ class Endpoints < Netzke::Base
   end
 
   endpoint :set_foo do
-    this.setTitle('foo')
+    client.setTitle('foo')
   end
 
   endpoint :append_bar do
-    this.appendTitle('bar')
+    client.appendTitle('bar')
   end
 
   endpoint :raise do

@@ -6,6 +6,6 @@ class HelloUser < HelloWorld
   end
 
   endpoint :greet_the_world do
-    this.show_greeting("Hello #{config.user}!")
+    client.show_greeting("Hello #{config.user}!")
   end
 end

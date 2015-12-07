@@ -1,3 +1,4 @@
+# NOT USED?
 class Feedback < Netzke::Base
   action :feedback
   action :server_feedback
@@ -15,12 +16,12 @@ class Feedback < Netzke::Base
     JS
     c.on_server_feedback = <<-JS
       function(){
-        this.serverFeedback();
+        this.server.feedback();
       }
     JS
   end
 
-  endpoint :server_feedback do |params,this|
-    this.netzke_feedback("Server feedback", delay: 3000)
+  endpoint :feedback do |params,this|
+    client.nz_feedback("Server feedback", delay: 3000)
   end
 end

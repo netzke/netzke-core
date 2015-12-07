@@ -15,11 +15,11 @@ class ServerCounter < Netzke::Base
   endpoint :count do |params|
     component_session[:count] ||= 0
     component_session[:count] += params[:how_many]
-    this.set_title("I am at " + component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : ''))
+    client.set_title("I am at " + component_session[:count].to_s + (params[:special] ? ' and i was invoked specially' : ''))
   end
 
   endpoint :successing_endpoint do
-    this.set_title("Something successed ")
+    client.set_title("Something successed ")
   end
 
   endpoint :failing_endpoint do
@@ -29,13 +29,13 @@ class ServerCounter < Netzke::Base
   endpoint :first_ep do
     component_session[:count2]||=0
     component_session[:count2]+=1
-    this.set_title("First. "+ component_session[:count2].to_s)
+    client.set_title("First. "+ component_session[:count2].to_s)
   end
 
   endpoint :second_ep do
     component_session[:count2]||=0
     component_session[:count2]+=1
-    this.set_title("Second. "+ component_session[:count2].to_s)
+    client.set_title("Second. "+ component_session[:count2].to_s)
   end
 
   endpoint :fail_two_out_of_five do |count|
@@ -49,7 +49,7 @@ class ServerCounter < Netzke::Base
     end
 
     component_session[:is_retry] = false
-    this.append_to_title(count)
+    client.append_to_title(count)
   end
 
 end
