@@ -1,10 +1,9 @@
 {
-  init: function(){
-    this.callParent(arguments);
-
+  init: function(cmp){
+    this.cmp = cmp;
     // inject a tool into parent
-    this.cmp.tools = this.cmp.tools || [];
-    this.cmp.tools = [{type: 'gear', handler: this.onGear, scope: this}];
+    cmp.tools = cmp.tools || [];
+    cmp.tools = [{type: 'gear', handler: this.onGear, scope: this}];
   },
 
   onGear: function(){

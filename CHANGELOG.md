@@ -2,13 +2,15 @@
 
 *   Routing (see README)
 
+*   `Base::Plugin` won't set `this.cmp` for you any longer, but rather receive it as a parameter for `init()`
+
 *   The `action` DSL method now also accepts a list of endpoints, e.g.:
 
             action :action_one, :action_two
 
 ### Backward incompatible changes
 
-*   The client methods for endpoints are now created on the `this.server` object, so, you need to prefix the endpoint calls with `.server`, e.g. `this.server.doSomething()`. For details, see the updated "Client-server interation" section in the README.
+*   The client methods for endpoints are now created on the `this.server` object, so, you need to prefix the endpoint calls with `.server`, e.g. `this.server.doSomething()`. For details, see the updated "Client-server interaction" section in the README.
 
 *   Experimental support for HAML removed
 

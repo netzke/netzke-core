@@ -1,9 +1,8 @@
 {
-  init: function(){
-    this.callParent(arguments);
-
+  init: function(cmp){
+    this.cmp = cmp;
     // add a button to parent's toolbar
-    this.cmp.addDocked({
+    cmp.addDocked({
       dock: 'bottom',
       xtype: 'toolbar',
       items: [this.actions.updateTitle]
