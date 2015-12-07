@@ -13,9 +13,9 @@ module ExtDirect
           });
 
           this.nzGetComponent('selector').on('userupdate', function(user){
-            this.setUser(user);
-            this.nzGetComponent('details').update();
-            this.nzGetComponent('statistics').update();
+            this.server.setUser(user);
+            this.nzGetComponent('details').server.update();
+            this.nzGetComponent('statistics').server.update();
           }, this);
         }
       JS

@@ -152,7 +152,7 @@ For more details on composition refer to [Netzke::Core::Actions](http://rdoc.inf
 
 ## Client-server interaction
 
-Communication between the client class and the corresponding server class is done by means of defining *endpoints*. By defining an endpoint on the server, the client class automatically gets a method that is used to call the server.
+Communication between the client class and the corresponding server class is done by means of defining *endpoints*. By defining an endpoint on the server, the client class automatically gets access to an equally named method that calls the server.
 
 ### Calling an endpoint from client class
 
@@ -160,16 +160,16 @@ By defining an endpoint like this:
 
 ```ruby
 class SimpleComponent < Netzke::Base
-  endpoint :whats_up_server do |greeting|
+  endpoint :whats_up do |greeting|
   # ...
   end
 end
 ```
 
-...the client class will obtain a method called `whatsUpServer`, that can be called like this:
+...the client class will obtain a method called `whatsUp`, that can be called on the `this.server` object like this:
 
 ```javascript
-this.whatsUpServer(greeting, callback, scope);
+this.server.whatsUp(greeting, callback, scope);
 ```
 
 The last 2 params are optional:
@@ -180,12 +180,12 @@ The last 2 params are optional:
 As of version 1.0, the endpoint may receive an arbitrary number of arguments, for example:
 
 ```javascript
-this.serverDoSomething('value 1', true, callback, scope);
+this.server.doSomething('value 1', true, callback, scope);
 ```
 
 ```ruby
 class SimpleComponent < Netzke::Base
-  endpoint :server_do_something do |arg_1, arg_2|
+  endpoint :do_something do |arg_1, arg_2|
     # arg_1 == 'value 1'
     # arg_2 == true
   end

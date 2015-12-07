@@ -12,7 +12,7 @@ class PluginWithEndpoints < Netzke::Plugin
 
     c.on_gear = <<-JS
       function(){
-        this.serverOnGear();
+        this.server.onGear();
       }
     JS
 
@@ -23,7 +23,7 @@ class PluginWithEndpoints < Netzke::Plugin
     JS
   end
 
-  endpoint :server_on_gear do
+  endpoint :on_gear do
     this.process_gear_callback("Response from server side of PluginWithEndpoints")
   end
 end

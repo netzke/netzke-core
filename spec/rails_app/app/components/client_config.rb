@@ -10,7 +10,7 @@ class ClientConfig < Netzke::Base
     c.items = [child_config.merge(item_id: 'left'), child_config.merge(item_id: 'right')]
   end
 
-  endpoint :server_request_some_option do
+  endpoint :request_some_option do
     config.some_option
   end
 

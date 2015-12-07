@@ -1,8 +1,10 @@
 ### New stuff
 
-*   Routing
+*   Routing (see README)
 
 ### Backward incompatible changes
+
+*   The client methods for endpoints are now created on the `this.server` object, so, you need to prefix the endpoint calls with `.server`, e.g. `this.server.doSomething()`. For details, see the updated "Client-server interation" section in the README.
 
 *   Experimental support for HAML removed
 

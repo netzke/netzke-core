@@ -5,7 +5,7 @@ class SessionExpiration < Endpoints
   client_class do |c|
     c.on_destroy_session = <<-JS
       function(){
-        this.serverDestroySession();
+        this.server.destroySession();
       }
     JS
   end
@@ -15,7 +15,7 @@ class SessionExpiration < Endpoints
     c.bbar << :destroy_session
   end
 
-  endpoint :server_destroy_session do
+  endpoint :destroy_session do
     Netzke::Base.session.delete(:netzke_components)
   end
 end

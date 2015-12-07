@@ -1,7 +1,7 @@
 {
   onShowOption: function(action) {
     this.serverConfig.some_option = action.option;
-    this.serverRequestSomeOption(null, function(res){this.setTitle(res);});
+    this.server.requestSomeOption(null, function(res){this.setTitle(res);});
 
     var left = this.nzGetComponent('left');
     var right = this.nzGetComponent('right');

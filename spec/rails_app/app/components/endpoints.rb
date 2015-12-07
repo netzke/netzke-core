@@ -44,36 +44,36 @@ class Endpoints < Netzke::Base
     42
   end
 
-  endpoint :server_non_existing do
+  endpoint :non_existing do
     # won't get here
   end
 
-  endpoint :server_multiple_arguments do |one, two, three|
+  endpoint :multiple_arguments do |one, two, three|
     [one, two, three].join(', ')
   end
 
-  endpoint :server_hash_argument do |hash|
+  endpoint :hash_argument do |hash|
     [hash["one"], hash["two"]].join(', ')
   end
 
-  endpoint :server_set_foo do
+  endpoint :set_foo do
     this.setTitle('foo')
   end
 
-  endpoint :server_append_bar do
+  endpoint :append_bar do
     this.appendTitle('bar')
   end
 
-  endpoint :server_raise do
+  endpoint :raise do
     raise "Exception in endpoint"
   end
 
-  endpoint :server_return_error do
+  endpoint :return_error do
     { error: {type: 'CUSTOM_ERROR', msg: 'Error returned by endpoint'} }
   end
 
   def invoke_endpoint(ep, *params, configs)
-    if ep == "server_non_existing"
+    if ep == "non_existing"
       ep = "non_existing_child__endpoint"
     end
 

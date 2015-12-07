@@ -21,6 +21,7 @@ Ext.define("Netzke.Core.Component", {
 
   // Template method
   nzBeforeConstructor: function(config){
+    this.server = {}; // namespace for endpoint functions
     this.netzkeComponents = config.netzkeComponents;
     this.passedConfig = config;
     this.nzProcessEndpoints(config);
@@ -213,7 +214,7 @@ Ext.define("Netzke.Core.Component", {
       Netzke.directProvider.addRemotingMethodToComponent(config, methodName);
 
       // define endpoint function
-      this[methodName] = function(){
+      this.server[methodName] = function(){
         var args = Array.prototype.slice.call(arguments), callback, serverConfigs, scope = that;
 
         if (Ext.isFunction(args[args.length - 2])) {
@@ -225,13 +226,13 @@ Ext.define("Netzke.Core.Component", {
           callback = args.pop();
         }
 
-        var cfgs = this.nzBuildParentConfigs();
+        var cfgs = that.nzBuildParentConfigs();
         var remotingArgs = {args: args, configs: cfgs};
 
         // call Direct function
-        this.nzGetDirectFunction(methodName).call(scope, remotingArgs, function(response, event) {
-          this.nzProcessDirectResponse(response, event, callback, scope);
-        }, this);
+        that.nzGetDirectFunction(methodName).call(scope, remotingArgs, function(response, event) {
+          that.nzProcessDirectResponse(response, event, callback, scope);
+        }, that);
       }
     }, this);
   },
@@ -379,7 +380,7 @@ Ext.define("Netzke.Core.Component", {
     this.nzShowLoadingMask(container);
 
     // Call the endpoint
-    this.deliverComponent(serverParams, function(result, success) {
+    this.server.deliverComponent(serverParams, function(result, success) {
       this.nzHideLoadingMask(container);
 
       if (success) {

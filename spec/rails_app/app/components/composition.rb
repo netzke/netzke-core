@@ -17,13 +17,13 @@ class Composition < Netzke::Base
 
     c.on_update_east_south_from_server = <<-JS
       function(){
-        this.updateEastSouth();
+        this.server.updateEastSouth();
       }
     JS
 
     c.on_update_west_from_server = <<-JS
       function(){
-        this.updateWest();
+        this.server.updateWest();
       }
     JS
 

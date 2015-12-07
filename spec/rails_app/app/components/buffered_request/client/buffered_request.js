@@ -1,6 +1,6 @@
 {
   onBufferedCall: function(){
-    this.nzGetComponent('jim').greetTheWorld();
-    this.nzGetComponent('bill').greetTheWorld();
+    this.nzGetComponent('jim').server.greetTheWorld();
+    this.nzGetComponent('bill').server.greetTheWorld();
   }
 }

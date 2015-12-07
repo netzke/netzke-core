@@ -1,6 +1,6 @@
 {
   onCountOneTime: function(){
-    this.count({how_many: 1});
+    this.server.count({how_many: 1});
   },
 
   initComponent: function () {
@@ -14,25 +14,25 @@
 
   onCountSevenTimes: function(){
     for(var i=0; i<7; i++) {
-      this.count({how_many: 1});
+      this.server.count({how_many: 1});
     }
   },
 
   onCountEightTimesSpecial: function(){
     for(var i=0;i<8;i++) {
-      this.count({how_many: 1, special: true});
+      this.server.count({how_many: 1, special: true});
     }
   },
 
   onFailInTheMiddle: function() {
-    this.successingEndpoint();
-    this.failingEndpoint();
-    this.successingEndpoint();
+    this.server.successingEndpoint();
+    this.server.failingEndpoint();
+    this.server.successingEndpoint();
   },
 
   onDoOrdered: function () {
-    this.firstEp();
-    this.secondEp();
+    this.server.firstEp();
+    this.server.secondEp();
   },
 
   updateContent: function(html){
@@ -40,14 +40,14 @@
   },
 
   appendToTitle: function(html){
-    this.titl += " " + html;
-    this.setTitle(this.titl)
+    this.title += " " + html;
+    this.setTitle(this.title)
   },
 
   onFailTwoOutOfFive: function(){
-    this.titl = "0";
+    this.title = "0";
     for(var i=1; i<=5; i++) {
-      this.failTwoOutOfFive(i);
+      this.server.failTwoOutOfFive(i);
     }
   }
 }

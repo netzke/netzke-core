@@ -17,44 +17,44 @@ class Persistence < Netzke::Base
   client_class do |c|
     c.on_set_state = <<-JS
       function(){
-        this.serverSetState();
+        this.server.setState();
       }
     JS
 
     c.on_reset_state = <<-JS
       function(){
-        this.serverResetState();
+        this.server.resetState();
       }
     JS
 
     c.on_set_session_variable = <<-JS
       function(){
-        this.serverSetSessionVariable();
+        this.server.setSessionVariable();
       }
     JS
 
     c.on_retrieve_session_variable = <<-JS
       function(){
-        this.serverRetrieveSessionVariable(null, function(result){
+        this.server.retrieveSessionVariable(null, function(result){
           this.setTitle("Session variable: " + result);
         })
       }
     JS
   end
 
-  endpoint :server_set_state do
+  endpoint :set_state do
     state[:title] = "Title from state"
   end
 
-  endpoint :server_reset_state do
+  endpoint :reset_state do
     state.clear
   end
 
-  endpoint :server_set_session_variable do
+  endpoint :set_session_variable do
     component_session[:some_variable] = "set"
   end
 
-  endpoint :server_retrieve_session_variable do
+  endpoint :retrieve_session_variable do
     this.nz_set_result(component_session[:some_variable] || "not set")
   end
 end

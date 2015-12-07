@@ -7,14 +7,14 @@ class SimpleComponent < Netzke::Base
     super
   end
 
-  endpoint :server_hello do
+  endpoint :hello do
     "hi!"
   end
 
   client_class do |c|
     c.on_hello = <<-JS
       function() {
-        this.serverHello(function(response) { this.setTitle("Server says: " + response); });
+        this.server.hello(function(response) { this.setTitle("Server says: " + response); });
       }
     JS
   end
