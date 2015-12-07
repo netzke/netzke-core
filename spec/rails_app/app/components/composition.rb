@@ -34,17 +34,16 @@ class Composition < Netzke::Base
     JS
   end
 
-  action :update_center_panel
-  action :update_west_panel
-  action :update_west_from_server
-  action :update_east_south_from_server
+  action :update_center_panel, :update_west_panel, :update_west_from_server, :update_east_south_from_server
+
   action :show_hidden_window do |c|
     c.text = "Show pre-loaded window"
   end
 
   def configure(c)
     super
-    c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server, :show_hidden_window ]
+    c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server,
+               :show_hidden_window ]
     c.title = c.client_config[:title] || "Composition"
     c.items = [
       :north_panel,

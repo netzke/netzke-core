@@ -1,20 +1,6 @@
 class Endpoints < Netzke::Base
-  action :with_response
-  action :no_response
-  action :multiple_argument_response
-  action :array_as_argument
-  action :return_value
-  action :non_existing
-  action :multiple_arguments
-  action :hash_argument
-  action :batched_call
-  action :raise_exception
-  action :return_error
-
-  # this action is using generic endpoint callback with scope
-  action :callback_and_scope
-
-  action :callback
+  action :with_response, :no_response, :multiple_argument_response, :array_as_argument, :return_value, :non_existing,
+    :multiple_arguments, :hash_argument, :batched_call, :raise_exception, :return_error, :callback_and_scope, :callback
 
   client_class do |c|
     c.title = "Endpoints"
@@ -22,7 +8,8 @@ class Endpoints < Netzke::Base
 
   def configure(c)
     super
-    c.bbar = [:with_response, :no_response, :multiple_argument_response, :array_as_argument, :callback_and_scope, :return_value, :non_existing, :multiple_arguments]
+    c.bbar = [:with_response, :no_response, :multiple_argument_response, :array_as_argument, :callback_and_scope,
+              :return_value, :non_existing, :multiple_arguments]
     c.tbar = [:hash_argument, :batched_call, :raise_exception, :return_error, :callback]
   end
 

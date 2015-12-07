@@ -106,7 +106,11 @@ module Netzke::Core
 
     module ClassMethods
       # Declares an action
-      def action(name, &block)
+      def action(*args, &block)
+        args.each{|name| action(name)} if args.length > 1
+
+        name = args.first
+
         define_method :"#{name}_action", &(block || ->(c){c})
         # NOTE: "<<" won't work here as this will mutate the array shared between classes
         self._declared_actions += [name]
