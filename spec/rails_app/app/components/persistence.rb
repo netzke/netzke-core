@@ -27,6 +27,6 @@ class Persistence < Netzke::Base
   end
 
   endpoint :retrieve_session_variable do
-    client.nz_set_result(component_session[:some_variable] || "not set")
+    component_session[:some_variable] || "not set"
   end
 end

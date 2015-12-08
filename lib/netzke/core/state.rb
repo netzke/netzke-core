@@ -14,7 +14,7 @@ module Netzke::Core
   # Note that the provided persistence_key has effect on _application_ level, _not_ only within the view.
   # By default +persistence_key+ is set to component's +js_id+. Thus, _two components named equally will share the state even being used in different Rails views_.
   module State
-    class StateProxy < Object
+    class StateProxy
       def initialize(key)
         @key = key.to_s
         Netzke::Base.session ||= {}
@@ -25,20 +25,26 @@ module Netzke::Core
       def method_missing(method, *args)
         session_data = to_hash
         session_data.send(method, *args).tap do |d|
-          Netzke::Base.session[:netzke_states] = {@key => session_data}
+          Netzke::Base.session[:netzke_states] = state_session.merge(@key => session_data)
         end
       end
 
       def to_hash
-        ActiveSupport::HashWithIndifferentAccess.new(Netzke::Base.session[:netzke_states][@key] || {})
+        ActiveSupport::HashWithIndifferentAccess.new(state_session[@key] || {})
       end
 
       def clear
-        Netzke::Base.session[:netzke_states].delete(@key)
+        state_session.delete(@key)
+      end
+
+      private
+
+      def state_session
+        Netzke::Base.session[:netzke_states]
       end
     end
     # A string which identifies the component. Can be passed as +persistence_key+ config option. Two components with the same +persistence_key+ will be sharing the state.
-    # If +persistence_key+ is passed, use it. Otherwise use js_id.
+    # If +persistence_key+ is passed in the config, use it. Otherwise use js_id.
     def persistence_key
       (config.persistence_key || js_id).to_sym
     end
@@ -57,8 +63,6 @@ module Netzke::Core
     # * clear
     def state
       @state_proxy ||= StateProxy.new(persistence_key)
-      # session[:netzke_states] ||= {}
-      # session[:netzke_states][persistence_key] ||= {}
     end
   end
 end
