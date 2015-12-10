@@ -340,7 +340,7 @@ Ext.define("Netzke.Core.Component", {
    *   'append' - if set to +true+, do not clear the container before adding the loaded component
    *   'configOnly' - if set to +true+, do not instantiate/insert the component, instead pass its config to the callback function
    *   'itemId' - specify this unique (per child component) ID in case you want to load multiple instances of the same component; later you can access nested Netzke component by providing +itemId+ to +nzGetComponent+.
-   *   'serverConfig' - config accessible in the component as +client_config+; this allows reconfiguring components from the client side
+   *   'serverConfig' - config accessible in the component as +client_config+; this allows reconfiguring components by the client-side code
    *   'callback' - function that gets called after the component is loaded; it receives the component's instance (or component config if +configOnly+ is set) as parameter; if the function returns +false+, the loaded component will not be automatically inserted or (in case of window) shown.
    *   'scope' - scope for the callback; defaults to the instance of the component.
    *

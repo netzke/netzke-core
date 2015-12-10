@@ -51,5 +51,9 @@
 
   onLoadCssInclusion: function() {
     this.nzLoadComponent('css_inclusion');
-  }
+  },
+
+  onLoadDynamicChild: function(){
+    this.nzLoadComponent('dynamic_child', {serverConfig: {klass: "Endpoints"}});
+  },
 }

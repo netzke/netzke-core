@@ -124,8 +124,8 @@ module Netzke::Core
     # +params+ can contain:
     #   [client_config] a config hash passed from the client class
     #   [item_id] overridden item_id, used in case of loading multiple instances of the same child component
-    def component_instance(name, overrides = {})
-      cfg = component_config(name, overrides)
+    def component_instance(name_or_config, overrides = {})
+      cfg = name_or_config.is_a?(Hash) ? name_or_config : component_config(name_or_config, overrides)
       return nil if cfg.nil? || cfg[:excluded]
       klass = cfg.klass || cfg.class_name.constantize
       klass.new(cfg, self)

@@ -120,15 +120,16 @@ module Netzke::Core
       else
         # Let's try to find it in a component down the tree
         child_component, *action = endpoint.to_s.split('__')
-        action = !action.empty? && action.join("__").to_sym
 
+        action = !action.empty? && action.join("__").to_sym
         return unknown_exception(:endpoint, endpoint) if !action
-        return unknown_exception(:component, child_component) if component_config(child_component.to_sym).nil?
 
         client_config = configs.shift || {}
-        cmp_strong_config = {client_config: client_config}
+        child_config = component_config(child_component.to_sym, client_config: client_config)
 
-        component_instance(child_component.to_sym, cmp_strong_config).invoke_endpoint(action, params, configs)
+        return unknown_exception(:component, child_component) if child_config.nil?
+
+        component_instance(child_config).invoke_endpoint(action, params, configs)
       end
     end
 

@@ -18,32 +18,21 @@ class DynamicLoading < Netzke::Base
     c.excluded = true
   end
 
+  component :dynamic_child do |c|
+    c.klass = c.client_config[:klass].constantize
+  end
+
   component :self_reloading
-
-  # this action is using nzLoadComponent "special" callback
-  action :load_with_feedback
-
-  action :load_component
-
-  action :load_in_window
-
-  action :load_window_with_simple_component
-
-  action :load_with_params
-
-  action :config_only
 
   action :non_existing_component do |a|
     a.text = "Non-existing component"
   end
 
-  action :inaccessible
-
-  action :load_self_reloading
+  action :load_with_feedback, :load_component, :load_in_window, :load_window_with_simple_component, :load_with_params, :config_only, :inaccessible, :load_self_reloading, :load_dynamic_child
 
   def configure(c)
     super
     c.tbar = [:load_component, :load_in_window, :load_with_feedback, :load_window_with_simple_component, :load_with_params]
-    c.bbar = [:non_existing_component, :inaccessible, :config_only, :load_self_reloading]
+    c.bbar = [:non_existing_component, :inaccessible, :config_only, :load_self_reloading, :load_dynamic_child]
   end
 end

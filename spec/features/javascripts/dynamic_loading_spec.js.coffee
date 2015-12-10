@@ -63,3 +63,13 @@ describe 'DynamicLoading component', ->
       wait ->
         expect(header('Loaded 2 time(s)')).to.be.ok()
         done()
+
+  it 'loads components with its class specified by client side', (done) ->
+    click button 'Load dynamic child'
+    wait().then ->
+      expectToSee header 'Endpoints'
+      click button 'With response'
+      wait()
+    .then ->
+      expectToSee header 'Hello world'
+      done()
