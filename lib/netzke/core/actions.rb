@@ -96,6 +96,11 @@ module Netzke::Core
   # == Interfering with action events in client class
   #
   # For each action Netzke creates an event on the level of the parent component following the convention '<action_name>click'. The handler receives the component itself as a parameter. If the handler returns +false+, the action event is not further propagated.
+  #
+  # == Preventing name clashing with child components
+  #
+  # If a component has an action and a child component defined with the same name, referring to them by symbols in the
+  # configuration will result in a name clash. See +Core::Composition+ on how to address that.
   module Actions
     extend ActiveSupport::Concern
 

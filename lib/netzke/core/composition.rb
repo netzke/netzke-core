@@ -75,6 +75,23 @@ module Netzke::Core
   #
   # You can make a child component inavailable for dynamic loading by using the +excluded+ option. When an excluded component is used in the layout, it will be skipped.
   # This can be used for authorization.
+  #
+  # == Preventing name clashing with actions
+  #
+  # If a component has an action and a child component sharing the name, referring to them by symbols in the
+  # configuration will result in a name clash. In that case refer to the child component by a hash, e.g.:
+  #
+  #     class Dashboard < Netzke::Base
+  #       action :users
+  #
+  #       component :users
+  #
+  #       def configure(c)
+  #         super
+  #         c.bbar = [:users]
+  #         c.items = [{component: :users}]
+  #       end
+  #     end
   module Composition
     extend ActiveSupport::Concern
 

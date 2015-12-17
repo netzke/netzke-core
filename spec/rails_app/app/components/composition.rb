@@ -1,5 +1,8 @@
 class Composition < Netzke::Base
-  action :update_center_panel, :update_west_panel, :update_west_from_server, :update_east_south_from_server
+  action :update_center_panel, :update_west_from_server, :update_east_south_from_server
+
+  # Intentionally has the same name as a component
+  action :west_panel
 
   action :show_hidden_window do |c|
     c.text = "Show pre-loaded window"
@@ -7,13 +10,18 @@ class Composition < Netzke::Base
 
   def configure(c)
     super
-    c.bbar = [ :update_west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server,
+    c.bbar = [ :west_panel, :update_center_panel, :update_west_from_server, :update_east_south_from_server,
                :show_hidden_window ]
     c.title = c.client_config[:title] || "Composition"
     c.items = [
       :north_panel,
       :center_panel,
-      { region: :west, width: 300, split: true, component: :west_panel },
+
+      # This won't work, as it'll get confused with the equally named action
+      # :west_panel,
+      # Instead, we are explicit on that it's a component:
+      { component: :west_panel },
+
       { layout: :border, region: :east, width: 500, split: true, items: [
         { region: :center, component: :east_center_panel },
         { region: :south, height: 200, split: true, component: :east_south_panel }
@@ -28,6 +36,9 @@ class Composition < Netzke::Base
 
   component :west_panel do |c|
     c.klass = EndpointsExtended
+    c.width = 300
+    c.split = true
+    c.region = :west
   end
 
   component :north_panel do |c|

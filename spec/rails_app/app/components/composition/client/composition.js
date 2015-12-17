@@ -1,7 +1,7 @@
 {
   layout: 'border',
 
-  onUpdateWestPanel: function(){
+  onWestPanel: function(){
     this.getComponent('west_panel').body.update('West Panel Body Updated');
   },
 
