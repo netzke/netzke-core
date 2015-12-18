@@ -39,11 +39,10 @@ module Netzke::Core
       expect(extended_composite.component_instance(:component_two).js_config[:title]).to eql "Another Nested Component"
     end
 
-    xit "does not allow accessing excluded component's config" do
+    it "does not allow instantiating excluded components" do
       c = ComponentWithExcluded.new
-      inaccessible = c.component_instance(:inaccessible)
-      puts "\n!!! inaccessible: #{inaccessible.js_config.inspect}"
-      # c.components[:inaccessible].should == {excluded: true}
+      expect(c.component_instance(:inaccessible)).to be_nil
+      expect(c.js_config[:items].size).to eql 1
     end
 
     describe "inline nesting" do
