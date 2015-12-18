@@ -7,7 +7,7 @@ module Netzke::Core
   # * nzLoadComponent - dynamically loads a child Netzke component
   # * nzInstantiateComponent - instantiates and returns a Netzke component by its item_id
   # * nzFeedback - shows a feedback message
-  # * componentNotInSession - gets called when the session that the component is defined in gets expired. Override it to do whatever is appropriate.
+  # * nzSessionExpired - gets called when the session that the component is defined in gets expired. Override it to do whatever is appropriate.
   module ClientCode
     extend ActiveSupport::Concern
 
