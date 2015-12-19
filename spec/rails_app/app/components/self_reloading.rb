@@ -17,7 +17,7 @@ class SelfReloading < Netzke::Base
   client_class do |c|
     c.on_reload = <<-JS
       function(){
-        this.nzReload();
+        this.netzkeReload();
       }
     JS
   end

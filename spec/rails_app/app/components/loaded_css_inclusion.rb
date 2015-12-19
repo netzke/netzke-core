@@ -10,7 +10,7 @@ class LoadedCssInclusion < Netzke::Base
     c.title = "LoadedCssInclusion component"
     c.on_load = <<-JS
       function(){
-        this.nzLoadComponent('css_inclusion');
+        this.netzkeLoadComponent('css_inclusion');
       }
     JS
   end

@@ -18,6 +18,6 @@
   },
 
   onShowHiddenWindow: function(){
-    this.nzInstantiateComponent('hidden_window').show();
+    this.netzkeInstantiateComponent('hidden_window').show();
   }
 }

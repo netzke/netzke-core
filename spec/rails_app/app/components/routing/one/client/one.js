@@ -1,14 +1,14 @@
 {
-  nzRoutes: {
+  netzkeRoutes: {
     'one/one': 'handleOne',
     'one/two': 'handleTwo',
   },
 
   handleOne: function(){
-    this.nzLoadComponent('one_one');
+    this.netzkeLoadComponent('one_one');
   },
 
   handleTwo: function(){
-    this.nzLoadComponent('one_two');
+    this.netzkeLoadComponent('one_two');
   }
 }

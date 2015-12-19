@@ -4,7 +4,7 @@
       xtype: 'datefield',
       listeners: {
         select: function(){
-          this.nzParent.body.update('Hi');
+          this.netzkeParent.body.update('Hi');
         }
       }
     }

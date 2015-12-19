@@ -9,10 +9,10 @@
       Netzke.connectionCount++;
     });
 
-    this.nzGetComponent('selector').on('userupdate', function(user){
+    this.netzkeGetComponent('selector').on('userupdate', function(user){
       this.server.setUser(user);
-      this.nzGetComponent('details').server.update();
-      this.nzGetComponent('statistics').server.update();
+      this.netzkeGetComponent('details').server.update();
+      this.netzkeGetComponent('statistics').server.update();
     }, this);
   }
 }

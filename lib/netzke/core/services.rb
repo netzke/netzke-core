@@ -115,7 +115,7 @@ module Netzke::Core
       self.client = Netzke::Core::EndpointResponse.new
 
       if has_endpoint?(endpoint)
-        client.nz_set_result(send("#{endpoint}_endpoint", *params))
+        client.netzke_set_result(send("#{endpoint}_endpoint", *params))
         client
       else
         # Let's try to find it in a component down the tree
@@ -146,7 +146,7 @@ module Netzke::Core
     private
 
     def unknown_exception(entity_name, entity)
-      client.nz_set_result(error: {
+      client.netzke_set_result(error: {
         type: "UNKNOWN_#{entity_name.to_s.upcase}",
         msg: "Component '#{self.class.name}' does not have #{entity_name} '#{entity}'"
       })

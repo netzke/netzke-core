@@ -1,44 +1,44 @@
 Ext.define(null, {
   override: 'Netzke.Core.Component',
 
-  nzAfterInitComponent: function(){
-    if (this.nzRoutes) {
-      var routes = this.nzGetRoutes();
-      this.nzRouter = Ext.create('Ext.app.Controller', { routes: this.nzGetRoutes() });
-      this.on('beforedestroy', this.nzCleanRoutes, this);
+  netzkeAfterInitComponent: function(){
+    if (this.netzkeRoutes) {
+      var routes = this.netzkeGetRoutes();
+      this.netzkeRouter = Ext.create('Ext.app.Controller', { routes: this.netzkeGetRoutes() });
+      this.on('beforedestroy', this.netzkeCleanRoutes, this);
 
       this.on('render', function(){
-        this.nzTriggerInitialRoute();
+        this.netzkeTriggerInitialRoute();
       });
     }
 
     this.callParent();
   },
 
-  nzNavigateTo: function(route, options){
+  netzkeNavigateTo: function(route, options){
     options = options || {};
     var newRoute = route;
     if (options.append) {
       newRoute = Ext.util.History.getToken() + "/" + newRoute;
     }
-    this.nzRouter.redirectTo(newRoute);
+    this.netzkeRouter.redirectTo(newRoute);
   },
 
   // private
 
-  nzCleanRoutes: function(){
-    this.nzRouter.destroy();
+  netzkeCleanRoutes: function(){
+    this.netzkeRouter.destroy();
   },
 
-  nzTriggerInitialRoute: function(){
+  netzkeTriggerInitialRoute: function(){
     var initToken = Ext.util.History.getToken();
-    if (initToken) this.nzRouter.redirectTo(initToken, true);
+    if (initToken) this.netzkeRouter.redirectTo(initToken, true);
   },
 
-  nzGetRoutes: function(){
+  netzkeGetRoutes: function(){
     var out = {};
-    for (var route in this.nzRoutes) {
-      var handlerName = this.nzRoutes[route],
+    for (var route in this.netzkeRoutes) {
+      var handlerName = this.netzkeRoutes[route],
           handler = this[handlerName];
       if (!handler) throw("Netzke: route handler " + handlerName + " is not defined");
       out[route] = handler.bind(this);

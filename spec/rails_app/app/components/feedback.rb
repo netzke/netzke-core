@@ -11,7 +11,7 @@ class Feedback < Netzke::Base
   client_class do |c|
     c.on_feedback = <<-JS
       function(){
-        this.nzFeedback('Local feedback'); // uses global delay config
+        this.netzkeFeedback('Local feedback'); // uses global delay config
       }
     JS
     c.on_server_feedback = <<-JS
@@ -22,6 +22,6 @@ class Feedback < Netzke::Base
   end
 
   endpoint :feedback do |params,this|
-    client.nz_feedback("Server feedback", delay: 3000)
+    client.netzke_feedback("Server feedback", delay: 3000)
   end
 end

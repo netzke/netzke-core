@@ -110,9 +110,9 @@ end
 
 ### Dynamic loading of components
 
-Next to being statically nested in the layout, a child component can also be dynamically loaded by using client class' `nzLoadComponent` method:
+Next to being statically nested in the layout, a child component can also be dynamically loaded by using client class' `netzkeLoadComponent` method:
 
-    this.nzLoadComponent('users');
+    this.netzkeLoadComponent('users');
 
 this will load the "users" component and [add](http://docs.sencha.com/ext-js/4-1/#!/api/Ext.container.Container-method-add) it to the current container.
 
@@ -233,12 +233,12 @@ Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke
 
 ## Routing
 
-Any Netzke component can react on a specific hash-route in the URL, which can be achieved by specifying `nzRoutes`
+Any Netzke component can react on a specific hash-route in the URL, which can be achieved by specifying `netzkeRoutes`
 hash on the client class, similarly to how Ext JS handles routes in its controllers:
 
     // e.g. in my_component/client/my_component.js
     {
-      nzRoutes: {
+      netzkeRoutes: {
         'users': 'handleUsers',
         'users/:id': 'handleUser'
       },
