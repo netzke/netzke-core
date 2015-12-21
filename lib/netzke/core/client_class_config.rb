@@ -174,21 +174,21 @@ Netzke.cache.push('#{xtype}');
         res.join("\n")
       end
 
-      # Top level scope which will be used to scope out Netzke classes
+      # Additional scope for your Netzke components.
       def default_scope
-        "Netzke.classes"
+        ""
       end
 
       # Returns the scope of this component
       # e.g. "Netzke.Basepack"
       def scope
-        [default_scope, *@klass.name.split("::")[0..-2]].join(".")
+        [default_scope.presence, *@klass.name.split("::")[0..-2]].compact.join(".")
       end
 
       # Returns the full name of the JavaScript class, including the scopes *and* the common scope, which is 'Netzke'.
       # E.g.: "Netzke.Basepack.GridPanel"
       def class_name
-        [scope, @klass.name.split("::").last].join(".")
+        [scope.presence, @klass.name.split("::").last].compact.join(".")
       end
 
       # Whether we have to inherit from an Ext JS component, or a Netzke component
