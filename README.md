@@ -302,7 +302,7 @@ If you feel particularily generous, you can support the author by donating a cou
 ## Useful links
 
 * [Project website](http://netzke.org)
-* [Live demo](http://netzke-demo.herokuapp.com) (features [Netzke Basepack](https://github.com/netzke/netzke-basepack), with sample code)
+* [Live demo](http://demo.netzke.org) (features [Netzke Basepack](https://github.com/netzke/netzke-basepack), with sample code)
 * [Twitter](http://twitter.com/netzke) - latest news about the framework
 
 ---
