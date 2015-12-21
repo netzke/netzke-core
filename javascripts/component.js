@@ -123,15 +123,15 @@ Ext.define("Netzke.Core.Component", {
   */
   netzkeSessionExpired: function() {
     this.netzkeSessionIsExpired = true;
-    this.onNetzkeSessionExpired();
+    this.handleSessionExpired();
   },
 
   /**
    * Override this method to handle session expiration. E.g. you may want to inform the user that they will be redirected to the login page.
    * @private
    */
-  onNetzkeSessionExpired: function() {
-    Netzke.warning("Component not in session. Override `onNetzkeSessionExpired` to handle this.");
+  handleSessionExpired: function() {
+    Netzke.warning("Component not in session. Override `handleSessionExpired` to handle this.");
   },
 
   /**
@@ -152,19 +152,9 @@ Ext.define("Netzke.Core.Component", {
     Ext.each(items, function(item, i){
       cfg = item;
 
-      // potentially, referencing a component or action with a string
-      if (Ext.isString(item)) {
-        ref = item.camelize(true);
-        if ((this.netzkeComponents || {})[ref]) cfg = {netzkeComponent: ref};
-        else if ((this.actions || {})[ref]) cfg = {netzkeAction: ref};
-      }
-
-      if (cfg.netzkeAction) {
-        // replace with action instance
-        actName = cfg.netzkeAction.camelize(true);
-        if (!this.actions[actName]) throw "Netzke: unknown action " + cfg.netzkeAction;
-        items[i] = this.actions[actName];
-        delete(item);
+      if (cfg.action) {
+        if (!this.actions[cfg.action]) throw "Netzke: unknown action " + cfg.action;
+        items[i] = this.actions[cfg.action];
 
       } else if (cfg.netzkeComponent) {
         // replace with component config
@@ -173,7 +163,6 @@ Ext.define("Netzke.Core.Component", {
         if (!cmpCfg) throw "Netzke: unknown component " + cmpName;
         cmpCfg.netzkeParent = this;
         items[i] = Ext.apply(cmpCfg, cfg);
-        delete(item);
 
       } else if (Ext.isString(cfg) && Ext.isFunction(this[cfg.camelize(true)+"Config"])) { // replace with config referred to on the Ruby side as a symbol
         // pre-built config
@@ -326,6 +315,8 @@ Ext.define("Netzke.Core.Component", {
       actionConfig.customHandler = actionConfig.handler;
       actionConfig.handler = Ext.Function.bind(this.netzkeActionHandler, this); // handler common for all actions
       actionConfig.name = name;
+
+      // instantiate Ext.Action
       normActions[name] = new Ext.Action(actionConfig);
     }
     this.actions = normActions;
@@ -601,7 +592,7 @@ Ext.define("Netzke.Core.Component", {
     if (this.fireEvent(actionName+'click', comp)) {
       var action = this.actions[actionName];
       var customHandler = action.initialConfig.customHandler;
-      var methodName = (customHandler && customHandler.camelize(true)) || "on" + actionName.camelize();
+      var methodName = (customHandler && customHandler.camelize(true)) || "handle" + actionName.camelize();
       if (!this[methodName]) {throw "Netzke: handler '" + methodName + "' is undefined in '" + this.id + "'";}
 
       // call the handler passing it the triggering component

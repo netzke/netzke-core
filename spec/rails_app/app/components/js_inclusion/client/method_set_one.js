@@ -1,6 +1,6 @@
 {
   // Some comments should be fine here
-  onActionTwo: function() {
+  handleActionTwo: function() {
     this.setTitle(actionTwoMessage);
   }
 }

@@ -9,7 +9,7 @@
     });
   },
 
-  onUpdateTitle: function(){
+  handleUpdateTitle: function(){
     this.cmp.setTitle('Title updated by PluginWithActions');
   }
 }

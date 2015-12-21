@@ -1,5 +1,5 @@
 {
-  onActionOne: function() {
+  handleActionOne: function() {
     this.setTitle(actionOneMessage);
   }
 }

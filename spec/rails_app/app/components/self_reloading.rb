@@ -1,5 +1,7 @@
 class SelfReloading < Netzke::Base
-  action :reload
+  action :reload do |c|
+    c.handler = :netzke_reload
+  end
 
   def configure(c)
     super
@@ -12,13 +14,5 @@ class SelfReloading < Netzke::Base
     state[:loaded_times] += 1
 
     c.title ||= "Loaded #{state[:loaded_times]} time(s)"
-  end
-
-  client_class do |c|
-    c.on_reload = <<-JS
-      function(){
-        this.netzkeReload();
-      }
-    JS
   end
 end

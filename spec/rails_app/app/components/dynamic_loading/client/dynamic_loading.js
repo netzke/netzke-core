@@ -3,27 +3,27 @@
 
   layout: "fit",
 
-  onLoadComponent: function() {
+  handleLoadComponent: function() {
     this.netzkeLoadComponent('simple_component');
   },
 
-  onLoadWithFeedback: function() {
+  handleLoadWithFeedback: function() {
     this.netzkeLoadComponent('simple_component', { callback: function() { this.setTitle("Callback invoked!"); } });
   },
 
-  onLoadWindowWithSimpleComponent: function(params) {
+  handleLoadWindowWithSimpleComponent: function(params) {
     this.netzkeLoadComponent('window_with_simple_component');
   },
 
-  onLoadWithParams: function(params) {
+  handleLoadWithParams: function(params) {
     this.netzkeLoadComponent("simple_component", { serverConfig: { title: "Simple Component with modified title" } });
   },
 
-  onNonExistingComponent: function() {
+  handleNonExistingComponent: function() {
     this.netzkeLoadComponent('non_existing_component');
   },
 
-  onLoadInWindow: function() {
+  handleLoadInWindow: function() {
     var w = new Ext.window.Window({
       width: 500, height: 400, modal: false, layout:'fit', title: 'A window'
     });
@@ -32,11 +32,11 @@
     w.show();
   },
 
-  onInaccessible: function() {
+  handleInaccessible: function() {
     this.netzkeLoadComponent('inaccessible');
   },
 
-  onConfigOnly: function() {
+  handleConfigOnly: function() {
     this.netzkeLoadComponent('simple_component', { configOnly: true, callback: function(config) {
       this.removeAll();
       config.title = config.title + " (overridden)";
@@ -45,15 +45,15 @@
     } });
   },
 
-  onLoadSelfReloading: function() {
+  handleLoadSelfReloading: function() {
     this.netzkeLoadComponent('self_reloading');
   },
 
-  onLoadCssInclusion: function() {
+  handleLoadCssInclusion: function() {
     this.netzkeLoadComponent('css_inclusion');
   },
 
-  onLoadDynamicChild: function(){
+  handleLoadDynamicChild: function(){
     this.netzkeLoadComponent('dynamic_child', {serverConfig: {klass: "Endpoints"}});
   },
 }

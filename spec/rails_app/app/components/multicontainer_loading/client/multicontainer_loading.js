@@ -1,5 +1,5 @@
 {
-  onReplaceTabInLeft: function(){
+  handleReplaceTabInLeft: function(){
     var leftTabOne = this.getComponent('left').getComponent('one');
     this.netzkeLoadComponent('hello_user', {
       replace: leftTabOne,
@@ -8,7 +8,7 @@
     });
   },
 
-  onLoadInRight: function(){
+  handleLoadInRight: function(){
     var right = this.getComponent('right');
     this.netzkeLoadComponent('hello_user', {
       container: right,

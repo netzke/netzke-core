@@ -154,17 +154,21 @@ module Netzke::Core
 
     def detect_and_normalize_action(item)
       item = {action: item} if item.is_a?(Symbol) && actions[item]
-      if item.is_a?(Hash) && action_name = item[:action]
-        cfg = actions[action_name]
-        cfg.merge!(item)
-        if cfg[:excluded]
+
+      if action_name = action_name_if_action(item)
+        action_config = actions[action_name]
+        if action_config[:excluded]
           {excluded: true}
         else
-          item.merge(netzke_action: cfg[:action])
+          {action: action_name.to_s.camelize(:lower)}
         end
       else
         item
       end
+    end
+
+    def action_name_if_action(item)
+      item.is_a?(Hash) && item[:action]
     end
 
     def uri_to_icon(icon)

@@ -1,9 +1,9 @@
 {
-  onSimpleAction: function(){
+  handleSimpleAction: function(){
     this.setTitle("Simple action triggered");
   },
 
-  onAnotherAction: function(){
+  handleAnotherAction: function(){
     this.update("Another action was triggered");
   },
 

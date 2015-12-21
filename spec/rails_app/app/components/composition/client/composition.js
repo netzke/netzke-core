@@ -1,23 +1,23 @@
 {
   layout: 'border',
 
-  onWestPanel: function(){
+  handleWestPanel: function(){
     this.getComponent('west_panel').body.update('West Panel Body Updated');
   },
 
-  onUpdateCenterPanel: function(){
+  handleUpdateCenterPanel: function(){
     this.getComponent('center_panel').body.update('Center Panel Body Updated');
   },
 
-  onUpdateEastSouthFromServer: function(){
+  handleUpdateEastSouthFromServer: function(){
     this.server.updateEastSouth();
   },
 
-  onUpdateWestFromServer: function(){
+  handleUpdateWestFromServer: function(){
     this.server.updateWest();
   },
 
-  onShowHiddenWindow: function(){
+  handleShowHiddenWindow: function(){
     this.netzkeInstantiateComponent('hidden_window').show();
   }
 }

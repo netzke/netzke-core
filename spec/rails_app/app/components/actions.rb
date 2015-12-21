@@ -3,7 +3,7 @@ class Actions < Netzke::Base
     a.icon = Netzke::Core.icons_uri + "/tick.png" # specify full icon uri
   end
 
-  action :another_action do |a|
+  action :disabled_action do |a|
     a.disabled = true
     a.text = "Disabled action"
     a.icon = :accept # accept.png icon will be looked for in Netzke::Core.icons_uri
@@ -21,7 +21,7 @@ class Actions < Netzke::Base
   def configure(c)
     super
     c.title = "Panel that has actions"
-    c.bbar = [:simple_action, :another_action, :action_with_custom_handler, :excluded_action, {text: 'Actionless button', handler: f(:handle_action_less_click)}]
+    c.bbar = [:simple_action, :disabled_action, :action_with_custom_handler, :excluded_action, {text: 'Actionless button', handler: f(:handle_action_less_click)}]
     c.tbar = [{
       :xtype =>  'buttongroup',
       :columns => 3,
@@ -41,8 +41,8 @@ class Actions < Netzke::Base
           :arrowAlign => 'bottom',
           :menu => [:simple_action]
       },{
-          :xtype => 'splitbutton', :text => 'Cut', :menu => [:another_action]
-      }, :another_action,
+          :xtype => 'splitbutton', :text => 'Cut', :menu => [:disabled_action]
+      }, :disabled_action,
       {
           :menu => [:simple_action], :text => 'Format'
       }]

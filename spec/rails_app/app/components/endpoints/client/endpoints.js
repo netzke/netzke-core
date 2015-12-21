@@ -7,17 +7,17 @@
     }, this);
   },
 
-  onWithResponse: function(){
+  handleWithResponse: function(){
     this.server.whatsUp('world');
   },
 
-  onNoResponse: function(){
+  handleNoResponse: function(){
     this.server.doNothing(function(){
       this.setTitle('Successfully called endpoint with no response (this is a callback)');
     });
   },
 
-  onMultipleArgumentResponse: function(){
+  handleMultipleArgumentResponse: function(){
     this.server.multipleArgumentResponse();
   },
 
@@ -25,7 +25,7 @@
     this.setTitle("Called a function with two arguments: " + first + ", " + second);
   },
 
-  onArrayAsArgument: function() {
+  handleArrayAsArgument: function() {
     this.server.arrayAsArgument();
   },
 
@@ -34,13 +34,13 @@
     this.setTitle("Called a function with array as arguments: " + arryAsString);
   },
 
-  onCallback: function(){
+  handleCallback: function(){
     this.server.doNothing(function() {
       this.setTitle('Callback invoked');
     });
   },
 
-  onCallbackAndScope: function() {
+  handleCallbackAndScope: function() {
     var that = this;
     var fancyScope = {
       setFancyTitle: function() {
@@ -52,32 +52,32 @@
     }, fancyScope);
   },
 
-  onNonExisting: function(){
+  handleNonExisting: function(){
     this.server.nonExisting( function(error, success){
       this.setTitle("Error: " + error.type + ", message: " + error.msg);
       return false; // prevent default endpointexception exception handler
     });
   },
 
-  onReturnValue: function() {
+  handleReturnValue: function() {
     this.server.getAnswer(function(answer, success) {
       this.setTitle("Returned value: " + answer + ", success: " + success);
     });
   },
 
-  onMultipleArguments: function(){
+  handleMultipleArguments: function(){
     this.server.multipleArguments('one', 'two', 'three', function(response){
       this.setTitle("Returned value: " + response);
     });
   },
 
-  onHashArgument: function(){
+  handleHashArgument: function(){
     this.server.hashArgument({one: 'one', two: 'two'}, function(response){
       this.setTitle("Returned value: " + response);
     });
   },
 
-  onBatchedCall: function(){
+  handleBatchedCall: function(){
     this.server.setFoo();
     this.server.appendBar();
   },
@@ -86,7 +86,7 @@
     this.setTitle(this.getTitle() + " " + str);
   },
 
-  onRaiseException: function(){
+  handleRaiseException: function(){
     this.server.raise( function(res, success){
       console.log("res ", res);
       this.setTitle("Response status: " + res.xhr.status + ", success: " + success);
@@ -94,7 +94,7 @@
     });
   },
 
-  onReturnError: function(){
+  handleReturnError: function(){
     this.server.returnError();
   }
 }

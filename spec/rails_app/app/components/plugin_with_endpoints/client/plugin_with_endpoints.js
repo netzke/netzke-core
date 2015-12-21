@@ -3,10 +3,10 @@
     this.cmp = cmp;
     // inject a tool into parent
     cmp.tools = cmp.tools || [];
-    cmp.tools = [{type: 'gear', handler: this.onGear, scope: this}];
+    cmp.tools = [{type: 'gear', handler: this.handleGear, scope: this}];
   },
 
-  onGear: function(){
+  handleGear: function(){
     this.server.onGear();
   },
 

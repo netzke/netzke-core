@@ -19,19 +19,19 @@
     this.netzkeLoadComponent('two');
   },
 
-  onLoadOne: function(){
+  handleLoadOne: function(){
     this.netzkeNavigateTo('one');
   },
 
-  onLoadTwo: function(){
+  handleLoadTwo: function(){
     this.netzkeNavigateTo('two');
   },
 
-  onLoadOneOne: function(){
+  handleLoadOneOne: function(){
     this.netzkeNavigateTo('one/one');
   },
 
-  onLoadOneTwo: function(){
+  handleLoadOneTwo: function(){
     this.netzkeNavigateTo('one/two');
   }
 }

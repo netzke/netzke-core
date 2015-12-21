@@ -1,6 +1,6 @@
 {
   // handler for the ping_server action
-  onPingServer: function(){
+  handlePingServer: function(){
     this.server.greetTheWorld();
   },
 

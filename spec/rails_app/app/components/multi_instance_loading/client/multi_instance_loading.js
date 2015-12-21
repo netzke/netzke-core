@@ -1,7 +1,7 @@
 {
   counter: 0,
 
-  onLoadHelloUser: function() {
+  handleLoadHelloUser: function() {
     this.counter++;
     this.netzkeLoadComponent('hello_user', {
       itemId: "hello_user_" + this.counter,
@@ -10,7 +10,7 @@
     });
   },
 
-  onLoadHelloUserInPrecreatedTab: function() {
+  handleLoadHelloUserInPrecreatedTab: function() {
     this.counter++;
     var tab = this.add(Ext.ComponentManager.create({xtype: 'panel', layout: 'fit', title: 'Tab ' + this.counter}));
     this.setActiveTab(tab);
@@ -21,7 +21,7 @@
     });
   },
 
-  onLoadComposition: function() {
+  handleLoadComposition: function() {
     this.counter++;
     this.netzkeLoadComponent('composition', {
       itemId: "hello_user_" + this.counter,
@@ -29,7 +29,7 @@
     });
   },
 
-  onLoadConfigOnly: function(){
+  handleLoadConfigOnly: function(){
     this.counter++;
     this.netzkeLoadComponent('composition', {
       configOnly: true,

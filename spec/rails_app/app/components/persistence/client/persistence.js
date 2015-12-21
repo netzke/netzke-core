@@ -1,17 +1,17 @@
 {
-  onSetState: function(){
+  handleSetState: function(){
     this.server.setState();
   },
 
-  onResetState: function(){
+  handleResetState: function(){
     this.server.resetState();
   },
 
-  onSetSessionVariable: function(){
+  handleSetSessionVariable: function(){
     this.server.setSessionVariable();
   },
 
-  onRetrieveSessionVariable: function(){
+  handleRetrieveSessionVariable: function(){
     this.server.retrieveSessionVariable(null, function(result){
       this.setTitle("Session variable: " + result);
     });

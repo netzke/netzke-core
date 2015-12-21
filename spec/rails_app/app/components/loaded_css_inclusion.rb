@@ -8,11 +8,6 @@ class LoadedCssInclusion < Netzke::Base
   client_class do |c|
     c.layout = :fit
     c.title = "LoadedCssInclusion component"
-    c.on_load = <<-JS
-      function(){
-        this.netzkeLoadComponent('css_inclusion');
-      }
-    JS
   end
 
   def configure(c)

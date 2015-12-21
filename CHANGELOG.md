@@ -6,9 +6,14 @@
 
 *   The `action` DSL method now also accepts a list of endpoints, e.g.:
 
-            action :action_one, :action_two
+            action :do_something, :do_something_else
 
 ### Backward incompatible changes
+
+*   Default handler name for actions is now prefixed with `handle` instead of `on`. E.g., for `action :do_something`, the handler
+    must be called `handleDoSomething`.
+
+*   `onNetzkeSessionExpired` has been renamed to `handleSessionExpired`
 
 *   The client methods for endpoints are now created on the `this.server` object, so, you need to prefix the endpoint calls with `.server`, e.g. `this.server.doSomething()`. For details, see the updated "Client-server interaction" section in the README.
 
