@@ -1,10 +1,16 @@
-# Netzke Core [![Gem Version](https://fury-badge.herokuapp.com/rb/netzke-core.png)](http://badge.fury.io/rb/netzke-core) [![Build Status](https://travis-ci.org/netzke/netzke-core.png?branch=master)](https://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/github/netzke/netzke-core.png)](https://codeclimate.com/github/netzke/netzke-core)
+# Netzke Core [![Build Status](https://travis-ci.org/netzke/netzke-core.svg?branch=master)](https://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/github/netzke/netzke-core/badges/gpa.svg)](https://codeclimate.com/github/netzke/netzke-core)
 
 [RDocs](http://rdoc.info/projects/netzke/netzke-core)
 
 Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/netzke/netzke-basepack).
 
-For rationale and mini-tutorial, refer to the meta gem's [README](https://github.com/netzke/netzke). Current README explains the Netzke architecture in some detail. Some knowledge of Sencha Ext JS (and Ruby, for that matter) may be required to fully understand this overview.
+*Notes on versioning:*
+
+* The latest *released* version is: [![Gem Version](https://badge.fury.io/rb/netzke-basepack.svg)](https://badge.fury.io/rb/netzke-basepack)
+* The version under development (master): [version.rb](https://github.com/netzke/netzke-core/blob/master/lib/netzke/core/version.rb)
+* For other versions check corresponding [branches](https://github.com/netzke/netzke-core/branches)
+
+For rationale and mini-tutorial, refer to the meta gem's [README](https://github.com/netzke/netzke). The README you're reading explains the Netzke architecture in detail. Some knowledge of Sencha Ext JS may be required to fully understand this overview.
 
 ## What is a Netzke component
 
