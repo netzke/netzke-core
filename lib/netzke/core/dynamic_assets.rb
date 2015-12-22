@@ -34,7 +34,7 @@ module Netzke
 
         def minify_js(js_string)
           if ::Rails.env.test? || ::Rails.env.development?
-            js_string
+            js_string.gsub(/\/\*\*[^*]*\*+(?:[^*\/][^*]*\*+)*\//, '') # strip docs
           else
             Uglifier.compile(js_string)
           end
