@@ -90,6 +90,8 @@ module Netzke
       validate_config(config)
 
       normalize_config
+
+      config.deep_freeze
     end
   end
 end
