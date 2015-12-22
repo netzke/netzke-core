@@ -1,3 +1,7 @@
+/**
+ * Main Netzke mixin. The following methods are accessible to each Netzke component.
+ * @class Netzke.Core.Component
+ */
 Ext.define("Netzke.Core.Component", {
   extend: 'Ext.Mixin',
 
@@ -13,13 +17,22 @@ Ext.define("Netzke.Core.Component", {
     }
   },
 
-  // Set Netzke components apart
+  /**
+   * This distinguishes Netzke components from regular Ext JS components.
+   * @property isNetzke
+   * @type boolean
+   * @default true
+   */
   isNetzke: true,
 
-  // Component that used for notifications (to be reworked)
+  // Component used for notifications (to be reworked)
   feedbackGhost: Ext.create("Netzke.FeedbackGhost"),
 
-  // Template method
+  /**
+   * Called before constructor. Implements all kinds of Netzke component initializations. Override as needed.
+   * @method netzkeBeforeConstructor
+   * @param config {Object} Passed configuration
+   */
   netzkeBeforeConstructor: function(config){
     this.server = {}; // namespace for endpoint functions
     this.netzkeComponents = config.netzkeComponents;
@@ -31,21 +44,32 @@ Ext.define("Netzke.Core.Component", {
     this.serverConfig = config.clientConfig || {};
   },
 
-  // Template method
+  /**
+   * Called after constructor. Override as needed.
+   * @method netzkeAfterConstructor
+   * @param config {Object} Passed configuration
+   */
   netzkeAfterConstructor: function(config){
   },
 
-  // Template method
+  /**
+   * Called before `initComponent`. Override as needed.
+   * @method netzkeBeforeInitComponent
+   */
   netzkeBeforeInitComponent: function(){
   },
 
-  // Template method
+  /**
+   * Called after `initComponent`. Override as needed.
+   * @method netzkeAfterInitComponent
+   */
   netzkeAfterInitComponent: function(){
   },
 
   /**
-  * Evaluates CSS
-  * @private
+  * Evaluates CSS passed from the server.
+  * @method netzkeEvalCss
+  * @param code {String} CSS code
   */
   netzkeEvalCss : function(code){
     var head = Ext.fly(document.getElementsByTagName('head')[0]);
@@ -57,33 +81,36 @@ Ext.define("Netzke.Core.Component", {
   },
 
   /**
-  * Evaluates JS
-  * @private
+  * Evaluates Javascript passed from the server.
+  * @method netzkeEvalJs
+  * @param code {String} Javascript code
   */
   netzkeEvalJs : function(code){
     eval(code);
   },
 
-  /**
-  Executes a bunch of methods. This method is called almost every time a communication to the server takes place.
-  Thus the server side of a component can provide any set of commands to its client side.
-  Args:
-    - instructions: can be
-      1) a hash of instructions, where the key is the method name, and value - the argument that method will be called with (thus, these methods are expected to *only* receive 1 argument). In this case, the methods will be executed in no particular order.
-      2) an array of hashes of instructions. They will be executed in order.
-      Arrays and hashes may be nested at will.
-      If the key in the instructions hash refers to a child Netzke component, netzkeBulkExecute will be called on that component with the value passed as the argument.
+ /**
+  * Executes a bunch of methods. This method is called almost every time a communication to the server takes place.
+  * Thus the server side of a component can provide any set of commands to its client side.
+  *
+  * @method netzkeBulkExecute
+  *
+  * @param {Array|Object} instructions
+  *  1) a hash of instructions, where the key is the method name, and value - the argument that method will be called with (thus, these methods are expected to *only* receive 1 argument). In this case, the methods will be executed in no particular order.
+  *  2) an array of hashes of instructions. They will be executed in order.
+  *  Arrays and hashes may be nested at will.
+  *  If the key in the instructions hash refers to a child Netzke component, netzkeBulkExecute will be called on that component with the value passed as the argument.
 
-  Examples of the arguments:
-      // executes as this.feedback("Your order is accepted");
-      {feedback: "You order is accepted"}
+  *  @example
+  *
+  *      // executes as this.feedback("Your order is accepted");
+  *      {feedback: "You order is accepted"}
 
-      // executes as: this.setTitle('Suprise!'); this.setDisabled(true);
-      [{setTitle:'Suprise!'}, {setDisabled:true}]
+  *      // executes as: this.setTitle('Suprise!'); this.setDisabled(true);
+  *      [{setTitle:'Suprise!'}, {setDisabled:true}]
 
-      // executes as: this.netzkeGetComponent('users').netzkeBulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}]);
-      {users: [{setTitle:'Suprise!'}, {setDisabled:true}] }
-  @private
+  *      // executes as: this.netzkeGetComponent('users').netzkeBulkExecute([{setTitle:'Suprise!'}, {setDisabled:true}]);
+  *      {users: [{setTitle:'Suprise!'}, {setDisabled:true}] }
   */
   netzkeBulkExecute : function(instructions){
     if (Ext.isArray(instructions)) {
@@ -111,7 +138,9 @@ Ext.define("Netzke.Core.Component", {
 
   /**
    * Called by the server side to set the return value of an endpoint call; to be reworked.
-   * @protected
+   * @method netzkeSetResult
+   * @param result {Any}
+   * @private
    */
   netzkeSetResult: function(result) {
     this.latestResult = result;
@@ -119,31 +148,36 @@ Ext.define("Netzke.Core.Component", {
 
   /**
   * Called by the server when the component to which an endpoint call was directed to, is not in the session anymore.
+  * @method netzkeSessionExpired
   * @private
   */
-  netzkeSessionExpired: function() {
+  handleSessionExpired: function() {
     this.netzkeSessionIsExpired = true;
-    this.handleSessionExpired();
+    this.netzkeOnSessionExpired();
   },
 
   /**
    * Override this method to handle session expiration. E.g. you may want to inform the user that they will be redirected to the login page.
+   * @method onSessionExpired
    * @private
    */
-  handleSessionExpired: function() {
+  netzkeOnSessionExpired: function() {
     Netzke.warning("Component not in session. Override `handleSessionExpired` to handle this.");
   },
 
   /**
-   * Returns a URL for old-fashion requests (used at multi-part form non-AJAX submissions)
-   * @private
+   * Returns a URL for old-fashion requests (used at multi-part form non-AJAX submissions).
+   * @method netzkeEndpointUrl
+   * @param endpoint {String}
    */
   netzkeEndpointUrl: function(endpoint){
     return Netzke.ControllerUrl + "dispatcher?address=" + this.id + "__" + endpoint;
   },
 
   /**
-   * Processes items
+   * Processes items.
+   * @method netzkeNormalizeConfigArray
+   * @param items {Array} Items
    * @private
    */
   netzkeNormalizeConfigArray: function(items){
@@ -182,9 +216,10 @@ Ext.define("Netzke.Core.Component", {
   /**
    * Runs through initial config options and does the following:
    *
-   * * detects component placeholders and replaces them with full component config found in netzkeComponents
-   * * detects action placeholders and replaces them with instances of Ext actions found in this.actions
-   * @private
+   * * detects component placeholders and replaces them with full component config found in `netzkeComponents`
+   * * detects action placeholders and replaces them with instances of Ext actions found in `this.actions`
+   *
+   * @param config {Object}
    */
   netzkeNormalizeConfig: function(config) {
     for (key in config) {
@@ -194,7 +229,8 @@ Ext.define("Netzke.Core.Component", {
 
   /**
   * Dynamically creates methods for endpoints, so that we could later call them like: this.myEndpointMethod()
-  * @private
+  * @method netzkeProcessEndpoints
+  * @param config {Object}
   */
   netzkeProcessEndpoints: function(config){
     var endpoints = config.endpoints || [], that = this;
@@ -226,6 +262,14 @@ Ext.define("Netzke.Core.Component", {
     }, this);
   },
 
+  /**
+   * TODO
+   * @method netzkeProcessDirectResponse
+   * @param response {Object}
+   * @param event {Object}
+   * @param callback {Function}
+   * @param scope {Object}
+   */
   netzkeProcessDirectResponse: function(response, event, callback, scope){
     var callbackParams,
         result; // endpoint response
@@ -251,6 +295,10 @@ Ext.define("Netzke.Core.Component", {
     }
   },
 
+  /**
+   * TODO
+   * @method netzkeHandleEndpointError
+   */
   netzkeHandleEndpointError: function(callback, result){
     var shouldFireGlobalEvent = true;
 
@@ -263,6 +311,12 @@ Ext.define("Netzke.Core.Component", {
     }
   },
 
+  /**
+   * TODO
+   * @method netzkeHandleDirectError
+   * @param callback {Function}
+   * @param event {Object}
+   */
   netzkeHandleDirectError: function(callback, event){
     var shouldFireGlobalEvent = true;
 
@@ -281,7 +335,9 @@ Ext.define("Netzke.Core.Component", {
   /**
    * Returns direct function by endpoint name and optional component's config (if not provided, component's instance
    * will be used instead)
-   * @private
+   * @method netzkeGetDirectFunction
+   * @param methodName {String}
+   * @param {Object} [config]
    */
   netzkeGetDirectFunction: function(methodName, config) {
     config = config || this;
@@ -289,8 +345,8 @@ Ext.define("Netzke.Core.Component", {
   },
 
   /**
-   * Array of client configs for each parent component down the tree
-   * @private
+   * Reversed array of server configs for each parent component up the tree
+   * @method netzkeBuildParentConfigs
    */
   netzkeBuildParentConfigs: function() {
     var res = [],
@@ -305,7 +361,8 @@ Ext.define("Netzke.Core.Component", {
 
   /**
     * Replaces actions configs with Ext.Action instances, assigning default handler to them
-    * @private
+    * @method netzkeNormalizeActions
+    * @param config {Object}
     */
   netzkeNormalizeActions : function(config){
     var normActions = {};
@@ -324,42 +381,59 @@ Ext.define("Netzke.Core.Component", {
   },
 
   /**
-   * Dynamically loads nested Netzke component.
-   * @param {String} name
-   * @param {Object} config Can contain the following keys:
-   *   'container' - if specified, the instance (or id) of a panel with the 'fit' layout where the loaded component will be added to; the previously existing component will be destroyed
-   *   'append' - if set to +true+, do not clear the container before adding the loaded component
-   *   'configOnly' - if set to +true+, do not instantiate/insert the component, instead pass its config to the callback function
-   *   'itemId' - specify this unique (per child component) ID in case you want to load multiple instances of the same component; later you can access nested Netzke component by providing +itemId+ to +netzkeGetComponent+.
-   *   'serverConfig' - config accessible in the component as +client_config+; this allows reconfiguring components by the client-side code
-   *   'callback' - function that gets called after the component is loaded; it receives the component's instance (or component config if +configOnly+ is set) as parameter; if the function returns +false+, the loaded component will not be automatically inserted or (in case of window) shown.
-   *   'scope' - scope for the callback; defaults to the instance of the component.
+   * Dynamically loads child Netzke component
+   * @method netzkeLoadComponent
+   * @param {String} name Component name as declared in the Ruby class with `component` DSL
+   * @param {Object} [config] May contain the following optional keys:
+   *   * **container** {Ext.container.Container|Integer}
    *
-   * == Examples
+   *     The instance (or id) of a container with the "fit" layout where the loaded component will be added to; the previously existing component will be destroyed
    *
-   * Loads 'info' and adds it to +this+ container, removing anything from it first:
+   *   * **append** {Boolean}
    *
-   *    this.netzkeLoadComponent('info');
+   *     If set to `true`, do not clear the container before adding the loaded component
    *
-   * Loads 'info' and adds it to +win+ container, envoking a callback in +this+ scope, passing it an instance of 'info':
+   *   * **configOnly** {Boolean}
    *
-   *    this.netzkeLoadComponent('info', { container: win, callback: function(instance){} });
+   *     If set to `true`, do not instantiate/insert the component, instead pass its config to the callback function
    *
-   * Loads configuration for the 'info' component, envoking a callback in +this+ scope, passing it the loaded config for 'info'.
+   *   * **serverConfig** {Object}
    *
-   *    this.netzkeLoadComponent('info', { configOnly: true, callback: function(config){} });
+   *     Config accessible inside the `component` DSL block as `client_config`; this allows reconfiguring child components by the client-side code
+   *
+   *   * **callback** {Function}
+   *
+   *     Function that gets called after the component is loaded; it receives the component's instance (or component config if `configOnly` is set) as parameter; if the function returns `false`, the loaded component will not be automatically inserted or (in case of window) shown.
+   *
+   *   * **scope** {Object}
+   *
+   *     Scope for the callback; defaults to the instance of the component.
+   *
+   * @example
+   *
+   * Loads 'info' and adds it to `this` container, removing anything from it first:
+   *
+   *     this.netzkeLoadComponent('info');
+   *
+   * Loads 'info' and adds it to `win` container, envoking a callback in `this` scope, passing it an instance of 'info':
+   *
+   *     this.netzkeLoadComponent('info', { container: win, callback: function(instance){} });
+   *
+   * Loads configuration for the 'info' component, envoking a callback in `this` scope, passing it the loaded config for 'info'.
+   *
+   *     this.netzkeLoadComponent('info', { configOnly: true, callback: function(config){} });
    *
    * Loads two 'info' instances in different containers and with different configurations:
    *
-   *    this.netzkeLoadComponent('info', {
-   *      container: 'tab1',
-   *      serverConfig: { user: 'john' } // on the server: client_config[:user] == 'john'
-   *    });
+   *     this.netzkeLoadComponent('info', {
+   *       container: 'tab1',
+   *       serverConfig: { user: 'john' } // on the server: client_config[:user] == 'john'
+   *     });
    *
-   *    this.netzkeLoadComponent('info', {
-   *      container: 'tab2',
-   *      serverConfig: { user: 'bill' } // on the server: client_config[:user] == 'bill'
-   *    });
+   *     this.netzkeLoadComponent('info', {
+   *       container: 'tab2',
+   *       serverConfig: { user: 'bill' } // on the server: client_config[:user] == 'bill'
+   *     });
    */
   netzkeLoadComponent: function(name, params){
     var container, serverParams, containerEl;
@@ -384,14 +458,15 @@ Ext.define("Netzke.Core.Component", {
 
   /**
    * Handles loading error
-   * @protected
+   * @method netzkeHandleLoadingError
    */
   netzkeHandleLoadingError: function(error){
     this.netzkeFeedback(error);
   },
 
   /**
-   * @private
+   * TODO
+   * @method netzkeBuildServerLoadingParams
    */
   netzkeBuildServerLoadingParams: function(name, params) {
     return Ext.apply(params.serverParams || {}, {
@@ -403,8 +478,9 @@ Ext.define("Netzke.Core.Component", {
   },
 
   /**
-   * Decides, based on params passed to netzkeLoadComponent, what container the component should be loaded into.
-   * @protected
+   * Decides, based on params passed to `netzkeLoadComponent`, what container the component should be loaded into.
+   * @method netzkeChooseContainer
+   * @param params Object
    */
   netzkeChooseContainer: function(params) {
     if (!params.container) return this;
@@ -413,7 +489,7 @@ Ext.define("Netzke.Core.Component", {
 
   /**
    * Handles regular server response (may include error)
-   * @private
+   * @method netzkeHandleLoadingResponse
    */
   netzkeHandleLoadingResponse: function(container, result, params){
     if (result.error) {
@@ -425,7 +501,7 @@ Ext.define("Netzke.Core.Component", {
 
   /**
    * Processes delivered component
-   * @private
+   * @method netzkeProcessDeliveredComponent
    */
   netzkeProcessDeliveredComponent: function(container, result, params){
     var config = result.config, instance, doNotInsert, currentInstance;
@@ -463,16 +539,16 @@ Ext.define("Netzke.Core.Component", {
   },
 
   /**
-   * Mask container in which a child component is being loaded
-   * @protected
+   * Masks container in which a child component is being loaded
+   * @method netzkeShowLoadingMask
    */
   netzkeShowLoadingMask: function(container){
     if (container.rendered) container.body.mask();
   },
 
   /**
-   * Unmask loading container
-   * @protected
+   * Unmasks loading container
+   * @method netzkeHideLoadingMask
    */
   netzkeHideLoadingMask: function(container){
     if (container.rendered) container.body.unmask();
@@ -480,16 +556,16 @@ Ext.define("Netzke.Core.Component", {
 
   /**
    * Returns parent Netzke component
-   * @private
+   * @method netzkeGetParentComponent
    */
   netzkeGetParentComponent: function(){
     return this.netzkeParent;
   },
 
   /**
-   * Reloads itself by instructing the parent to call +netzkeLoadComponent+.
+   * Reloads itself by instructing the parent to call `netzkeLoadComponent`.
    * Note: in order for this to work, the component must be nested in a container with the 'fit' layout.
-   * @private
+   * @method netzkeReload
    */
   netzkeReload: function(){
     var parent = this.netzkeGetParentComponent();
@@ -503,7 +579,9 @@ Ext.define("Netzke.Core.Component", {
 
   /**
    * Given child component and new serverConfig, reloads the component
-   * @protected
+   * @method netzkeReloadChild
+   * @param child Netzke.Base
+   * @param serverConfig Object
    */
   netzkeReloadChild: function(child, serverConfig){
     this.netzkeLoadComponent(child.name, {
@@ -519,7 +597,9 @@ Ext.define("Netzke.Core.Component", {
    * Replaces given (Netzke or Ext JS) component and new config, replaces former with latter, by instructing the parent
    * component to re-insert the component at the same index. Override if you need something more fancy (e.g. active tab
    * when it gets re-inserted)
-   * @protected
+   * @method netzkeReplaceChild
+   * @param child {Netzke.Base}
+   * @param config {Obect}
    */
   netzkeReplaceChild: function(child, config){
     var parent = child.up();
@@ -534,7 +614,8 @@ Ext.define("Netzke.Core.Component", {
 
   /**
   * Instantiates and returns a Netzke component by its name.
-  * @private
+  * @method netzkeInstantiateComponent
+  * @param name {String} Child component's name/itemId
   */
   netzkeInstantiateComponent: function(name) {
     name = name.camelize(true);
@@ -544,7 +625,8 @@ Ext.define("Netzke.Core.Component", {
 
   /**
   * Returns *instantiated* child component by its relative path, which may contain the 'parent' part to walk _up_ the hierarchy
-  * @private
+  * @method netzkeGetComponent
+  * @param id {String} If empty, returns `this`
   */
   netzkeGetComponent: function(id){
     if (id === "") {return this};
@@ -562,7 +644,8 @@ Ext.define("Netzke.Core.Component", {
 
   /**
   * Provides a visual feedback.
-  * msg can be a string, an array of strings, an object in form {msg: 'Message'}, or an array of such objects.
+  * @method netzkeFeedback
+  * @param {String|Array|Object} msg Can be a string, an array of strings, an object in form {msg: 'Message'}, or an array of such objects.
   */
   netzkeFeedback: function(msg, options){
     if (this.initialConfig && this.initialConfig.quiet) return false;
@@ -583,8 +666,9 @@ Ext.define("Netzke.Core.Component", {
   },
 
   /**
-  * Common handler for all netzke's actions. <tt>comp</tt> is the Component that triggered the action (e.g. button or menu item)
-  * @private
+  * Common handler for all netzke's actions.
+  * @method netzkeActionHandler
+  * @param {Ext.Component} comp Component that triggered the action (e.g. button or menu item)
   */
   netzkeActionHandler: function(comp){
     var actionName = comp.name;
@@ -601,7 +685,8 @@ Ext.define("Netzke.Core.Component", {
   },
 
   /**
-   * @private
+   * TODO
+   * @method netzkeProcessPlugins
    */
   netzkeProcessPlugins: function(config) {
     if (config.netzkePlugins) {
