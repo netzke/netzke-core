@@ -9,6 +9,10 @@
             action :do_something, :do_something_else
 
 ### Backward incompatible changes
+*   `js_configure` method has been renamed to `configure_client`
+
+*   Specifying bbar and other toolbars in `configure_client` (former `js_configure`) no longer works. Move this to
+    `configure`.
 
 *   Default handler name for actions is now prefixed with `handle` instead of `on`. E.g., for `action :do_something`, the handler
     must be called `handleDoSomething`.
