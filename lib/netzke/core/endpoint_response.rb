@@ -1,6 +1,12 @@
 module Netzke::Core
-  # Represents the endpoint response at the server side.
-  # An instance of it is passed as the second parameter to the +endpoint+ block.
+  # Represents the endpoint response at the server side. Collects instructions for the client-side object. Accessible as
+  # the `client` in the endpoint calls, e.g.:
+  #
+  #       class SimpleComponent < Netzke::Base
+  #         endpoint :whats_up_server do
+  #           client.set_title("Response from server")
+  #         end
+  #       end
   class EndpointResponse < ::Hash
     def method_missing(name, *params)
       if name.to_s =~ /(.+)=$/
