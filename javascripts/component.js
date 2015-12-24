@@ -543,7 +543,7 @@ Ext.define("Netzke.Core.Component", {
    * @method netzkeShowLoadingMask
    */
   netzkeShowLoadingMask: function(container){
-    if (container.rendered) container.body.mask();
+    if (container.rendered) container.mask();
   },
 
   /**
@@ -551,7 +551,7 @@ Ext.define("Netzke.Core.Component", {
    * @method netzkeHideLoadingMask
    */
   netzkeHideLoadingMask: function(container){
-    if (container.rendered) container.body.unmask();
+    if (container.rendered) container.unmask();
   },
 
   /**
