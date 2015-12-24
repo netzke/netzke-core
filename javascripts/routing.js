@@ -21,7 +21,7 @@ Ext.define(null, {
     if (options.append) {
       newRoute = Ext.util.History.getToken() + "/" + newRoute;
     }
-    this.netzkeRouter.redirectTo(newRoute);
+    Ext.util.History.add(newRoute);
   },
 
   // private
@@ -40,7 +40,7 @@ Ext.define(null, {
     for (var route in this.netzkeRoutes) {
       var handlerName = this.netzkeRoutes[route],
           handler = this[handlerName];
-      if (!handler) throw("Netzke: route handler " + handlerName + " is not defined");
+      if (!handler) Netzke.exception("Route handler " + handlerName + " is not defined");
       out[route] = handler.bind(this);
     }
     return out;
