@@ -1,5 +1,4 @@
 class RubyModules < Netzke::Base
-  # Note the use of ActiveSupport::Concern module
   module BasicStuff
     extend ActiveSupport::Concern
 
@@ -9,6 +8,7 @@ class RubyModules < Netzke::Base
 
       client_class do |c|
         c.extend = "Ext.tab.Panel"
+        c.include :basic_stuff # we must be explicit in modules
       end
     end
 
