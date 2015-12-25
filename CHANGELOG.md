@@ -8,7 +8,13 @@
 
             action :do_something, :do_something_else
 
+*   `netzkeNotify` (former `netzkeFeedback`) may now accept the `title` option
+
 ### Backward incompatible changes
+*   `netzkeFeedback` has been renamed to `netzkeNotify`
+
+*   `Core.js_feedback_delay` has been renamed to `Core.client_notification_delay`
+
 *   `js_configure` method has been renamed to `configure_client`
 
 *   Specifying bbar and other toolbars in `configure_client` (former `js_configure`) no longer works. Move this to

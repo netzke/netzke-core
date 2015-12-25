@@ -55,8 +55,8 @@ module Netzke
     @@js_direct_max_retries = 0
 
     # Amount of time feedback delay is being shown
-    mattr_accessor :js_feedback_delay
-    @@js_feedback_delay = 2000
+    mattr_accessor :client_notification_delay
+    @@client_notification_delay = 2000
 
     mattr_accessor :with_icons
 

@@ -51,7 +51,7 @@ Netzke.RelativeUrlRoot = '#{url_root}';
 Netzke.ControllerUrl = '#{url_root}#{Rails.application.routes.url_helpers.netzke_path}/';
 Netzke.RelativeExtUrl = '#{url_root}#{Netzke::Core.ext_uri}';
 Netzke.Core.directMaxRetries = #{Netzke::Core.js_direct_max_retries};
-Netzke.Core.FeedbackDelay = #{Netzke::Core.js_feedback_delay};
+Netzke.Core.NotificationDelay = #{Netzke::Core.client_notification_delay};
 )
         end
 

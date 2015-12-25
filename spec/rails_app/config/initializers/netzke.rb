@@ -5,7 +5,7 @@ Netzke::Core.setup do |config|
   config.ext_javascripts << "#{File.dirname(__FILE__)}/javascripts/session_expiration.js"
 
   # feedback delay
-  # config.js_feedback_delay = 2000
+  # config.client_notification_delay = 2000
 end
 
 ConfigurableOnClassLevel.title = "Overridden"

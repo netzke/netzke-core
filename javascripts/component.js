@@ -18,15 +18,18 @@ Ext.define("Netzke.Core.Component", {
   },
 
   /**
-   * This distinguishes Netzke components from regular Ext JS components.
+   * This is `true` for all Netzke components.
    * @property isNetzke
    * @type boolean
-   * @default true
    */
   isNetzke: true,
 
-  // Component used for notifications (to be reworked)
-  feedbackGhost: Ext.create("Netzke.FeedbackGhost"),
+  /**
+   * Override this property globally if you to use a custom notifier class.
+   * @property netzkeNotifier
+   * @type Netzke.Notifier
+   */
+  netzkeNotifier: Ext.create('Netzke.Notifier'),
 
   /**
    * Called before constructor. Implements all kinds of Netzke component initializations. Override as needed.
@@ -384,7 +387,7 @@ Ext.define("Netzke.Core.Component", {
    * Dynamically loads child Netzke component
    * @method netzkeLoadComponent
    * @param {String} name Component name as declared in the Ruby class with `component` DSL
-   * @param {Object} [config] May contain the following optional keys:
+   * @param {Object} [params] May contain the following optional keys:
    *   * **container** {Ext.container.Container|Integer}
    *
    *     The instance (or id) of a container with the "fit" layout where the loaded component will be added to; the previously existing component will be destroyed
@@ -461,7 +464,7 @@ Ext.define("Netzke.Core.Component", {
    * @method netzkeHandleLoadingError
    */
   netzkeHandleLoadingError: function(error){
-    this.netzkeFeedback(error);
+    this.netzkeNotify(error);
   },
 
   /**
@@ -493,7 +496,7 @@ Ext.define("Netzke.Core.Component", {
    */
   netzkeHandleLoadingResponse: function(container, result, params){
     if (result.error) {
-      this.netzkeFeedback(result.error);
+      this.netzkeNotify(result.error);
     } else {
       this.netzkeProcessDeliveredComponent(container, result, params);
     }
@@ -624,45 +627,33 @@ Ext.define("Netzke.Core.Component", {
   },
 
   /**
-  * Returns *instantiated* child component by its relative path, which may contain the 'parent' part to walk _up_ the hierarchy
+  * Returns *instantiated* child component by its relative path
   * @method netzkeGetComponent
-  * @param id {String} If empty, returns `this`
+  * @param path {String} Component path, which may contain the 'parent' for walking up the hierarchy, e.g.
+  * `parent__sibling`. If this is empty, the method will return `this`.
   */
-  netzkeGetComponent: function(id){
-    if (id === "") {return this};
-    id = id.underscore();
-    var split = id.split("__"), res;
+  netzkeGetComponent: function(path){
+    if (path === "") {return this};
+    path = path.underscore();
+    var split = path.split("__"), res;
     if (split[0] === 'parent') {
       split.shift();
       var childInParentScope = split.join("__");
       res = this.netzkeGetParentComponent().netzkeGetComponent(childInParentScope);
     } else {
-      res = Ext.getCmp(this.id+"__"+id);
+      res = Ext.getCmp(this.id+"__"+path);
     }
     return res;
   },
 
   /**
-  * Provides a visual feedback.
-  * @method netzkeFeedback
-  * @param {String|Array|Object} msg Can be a string, an array of strings, an object in form {msg: 'Message'}, or an array of such objects.
+  * Triggers a notification unless `quiet` config option is `true`.
+  * @method netzkeNotify
+  * @param {String} msg Notification body
+  * @param {Object} options Notification options (such as `title`, `delay`)
   */
-  netzkeFeedback: function(msg, options){
-    if (this.initialConfig && this.initialConfig.quiet) return false;
-
-    options = options || {};
-
-    if (typeof msg == 'string'){ msg = [msg]; }
-
-    var feedback = "";
-
-    Ext.each(msg, function(m){
-      feedback += (m.msg || m) + "<br/>"
-    });
-
-    if (feedback != "") {
-      this.feedbackGhost.showFeedback(feedback, {delay: options.delay});
-    }
+  netzkeNotify: function(msg, options){
+    if (this.quiet !== true) this.netzkeNotifier.msg(msg, options);
   },
 
   /**
