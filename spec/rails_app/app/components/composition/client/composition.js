@@ -1,23 +1,23 @@
 {
   layout: 'border',
 
-  handleWestPanel: function(){
+  netzkeOnWestPanel: function(){
     this.getComponent('west_panel').body.update('West Panel Body Updated');
   },
 
-  handleUpdateCenterPanel: function(){
+  netzkeOnUpdateCenterPanel: function(){
     this.getComponent('center_panel').body.update('Center Panel Body Updated');
   },
 
-  handleUpdateEastSouthFromServer: function(){
+  netzkeOnUpdateEastSouthFromServer: function(){
     this.server.updateEastSouth();
   },
 
-  handleUpdateWestFromServer: function(){
+  netzkeOnUpdateWestFromServer: function(){
     this.server.updateWest();
   },
 
-  handleShowHiddenWindow: function(){
+  netzkeOnShowHiddenWindow: function(){
     this.netzkeInstantiateComponent('hidden_window').show();
   }
 }

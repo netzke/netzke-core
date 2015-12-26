@@ -1,14 +1,14 @@
 {
   netzkeRoutes: {
-    'one/one': 'handleOne',
-    'one/two': 'handleTwo',
+    'one/one': 'onOne',
+    'one/two': 'onTwo',
   },
 
-  handleOne: function(){
+  onOne: function(){
     this.netzkeLoadComponent('one_one');
   },
 
-  handleTwo: function(){
+  onTwo: function(){
     this.netzkeLoadComponent('one_two');
   }
 }

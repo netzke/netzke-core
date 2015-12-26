@@ -15,12 +15,12 @@ class ClientConfig < Netzke::Base
   end
 
   action :show_option_one do |c|
-    c.handler = :handle_show_option
+    c.handler = :on_show_option
     c.option = 'One'
   end
 
   action :show_option_two do |c|
-    c.handler = :handle_show_option
+    c.handler = :on_show_option
     c.option = 'Two'
   end
 end

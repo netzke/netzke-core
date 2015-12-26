@@ -132,11 +132,11 @@ module Netzke::Core
     #   class MyComponent < Netzke::Base
     #     def configure(c)
     #       super
-    #       c.bbar = [{text: 'Export', handler: f(:handle_export)}]
+    #       c.bbar = [{text: 'Export', handler: f(:do_export)}]
     #     end
     #   end
     #
-    #   As a result, `MyComponent`'s client-side `handleExport` function will be called in the component's scope, receiving all the
+    #   As a result, `MyComponent`'s client-side `doExport` function will be called in the component's scope, receiving all the
     #   usual handler parameters from Ext JS.
     #   Read more on how to define client-side functions in `Netzke::Core::ClientClassConfig`.
     def f(name)

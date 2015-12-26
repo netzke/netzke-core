@@ -1,9 +1,9 @@
 {
-  handleShowProperties: function(ct){
+  netzkeOnShowProperties: function(ct){
     this.setTitle(this.i18n.propertyOne + " - " + this.i18n.propertyTwo);
   },
 
-  handleActionThree: function(){
+  netzkeOnActionThree: function(){
     var mask = new Ext.LoadMask(this.body);
     mask.show();
   }

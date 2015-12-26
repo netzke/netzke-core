@@ -9,7 +9,7 @@
     });
   },
 
-  handleUpdateTitle: function(){
+  netzkeOnUpdateTitle: function(){
     this.cmp.setTitle('Title updated by PluginWithActions');
   }
 }

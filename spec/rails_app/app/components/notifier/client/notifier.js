@@ -1,13 +1,13 @@
 {
-  handleNotify: function(){
+  netzkeOnNotify: function(){
     this.netzkeNotify('Local' + ' feedback', {title: 'Local' + ' notification'});
   },
 
-  handleServerNotify: function(){
+  netzkeOnServerNotify: function(){
     this.server.notify();
   },
 
-  handleMultipleNotify: function(){
+  netzkeOnMultipleNotify: function(){
     this.netzkeNotify(['Line' + ' one', 'Line' + ' two']);
   }
 }

@@ -1,6 +1,6 @@
 {
   // handler for the ping_server action
-  handlePingServer: function(){
+  netzkeOnPingServer: function(){
     this.server.greetTheWorld();
   },
 

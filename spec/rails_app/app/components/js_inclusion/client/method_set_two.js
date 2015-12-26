@@ -1,5 +1,5 @@
 {
-  handleActionOne: function() {
+  netzkeOnActionOne: function() {
     this.setTitle(actionOneMessage);
   }
 }

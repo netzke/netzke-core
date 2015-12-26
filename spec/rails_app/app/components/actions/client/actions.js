@@ -1,9 +1,9 @@
 {
-  handleSimpleAction: function(){
+  netzkeOnSimpleAction: function(){
     this.setTitle("Simple action triggered");
   },
 
-  handleAnotherAction: function(){
+  netzkeOnAnotherAction: function(){
     this.update("Another action was triggered");
   },
 
@@ -11,7 +11,7 @@
     this.update("Custom action handler was called");
   },
 
-  handleActionLessClick: function(){
+  onActionlessClick: function(){
     this.setTitle("Actionless button was clicked");
   }
 }

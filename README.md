@@ -245,13 +245,13 @@ hash on the client class, similarly to how Ext JS handles routes in its controll
     // e.g. in my_component/client/my_component.js
     {
       netzkeRoutes: {
-        'users': 'handleUsers',
-        'users/:id': 'handleUser'
+        'users': 'onUsers',
+        'users/:id': 'onUser'
       },
 
-      handleUsers: function() {},
+      onUsers: function() {},
 
-      handleUser: function(userId) {},
+      onUser: function(userId) {},
     }
 
 If a component gets loaded dynamically and it figures out that one of its routes is currently active, it'll trigger the

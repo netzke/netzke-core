@@ -154,7 +154,7 @@ Ext.define("Netzke.Core.Component", {
   * @method netzkeSessionExpired
   * @private
   */
-  handleSessionExpired: function() {
+  netzkeOnSessionExpired: function() {
     this.netzkeSessionIsExpired = true;
     this.netzkeOnSessionExpired();
   },
@@ -165,7 +165,7 @@ Ext.define("Netzke.Core.Component", {
    * @private
    */
   netzkeOnSessionExpired: function() {
-    Netzke.warning("Component not in session. Override `handleSessionExpired` to handle this.");
+    Netzke.warning("Component not in session. Override `netzkeOnSessionExpired` to handle this.");
   },
 
   /**
@@ -667,7 +667,7 @@ Ext.define("Netzke.Core.Component", {
     if (this.fireEvent(actionName+'click', comp)) {
       var action = this.actions[actionName];
       var customHandler = action.initialConfig.customHandler;
-      var methodName = (customHandler && customHandler.camelize(true)) || "handle" + actionName.camelize();
+      var methodName = (customHandler && customHandler.camelize(true)) || "netzkeOn" + actionName.camelize();
       if (!this[methodName]) {throw "Netzke: handler '" + methodName + "' is undefined in '" + this.id + "'";}
 
       // call the handler passing it the triggering component

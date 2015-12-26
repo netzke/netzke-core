@@ -2,36 +2,36 @@
   layout: 'fit',
 
   netzkeRoutes: {
-    'one': 'handleOne',
-    'two': 'handleTwo',
+    'one': 'onOne',
+    'two': 'onTwo',
 
-    'one/one': 'handleOne',
-    'one/two': 'handleOne'
+    'one/one': 'onOne',
+    'one/two': 'onOne'
   },
 
-  handleOne: function(){
+  onOne: function(){
     if (this.netzkeGetComponent('one')) return;
     this.netzkeLoadComponent('one');
   },
 
-  handleTwo: function(){
+  onTwo: function(){
     if (this.netzkeGetComponent('two')) return;
     this.netzkeLoadComponent('two');
   },
 
-  handleLoadOne: function(){
+  netzkeOnLoadOne: function(){
     this.netzkeNavigateTo('one');
   },
 
-  handleLoadTwo: function(){
+  netzkeOnLoadTwo: function(){
     this.netzkeNavigateTo('two');
   },
 
-  handleLoadOneOne: function(){
+  netzkeOnLoadOneOne: function(){
     this.netzkeNavigateTo('one/one');
   },
 
-  handleLoadOneTwo: function(){
+  netzkeOnLoadOneTwo: function(){
     this.netzkeNavigateTo('one/two');
   }
 }

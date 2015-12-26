@@ -21,7 +21,7 @@ class Actions < Netzke::Base
   def configure(c)
     super
     c.title = "Panel that has actions"
-    c.bbar = [:simple_action, :disabled_action, :action_with_custom_handler, :excluded_action, {text: 'Actionless button', handler: f(:handle_action_less_click)}]
+    c.bbar = [:simple_action, :disabled_action, :action_with_custom_handler, :excluded_action, {text: 'Actionless button', handler: f(:on_actionless_click)}]
     c.tbar = [{
       :xtype =>  'buttongroup',
       :columns => 3,

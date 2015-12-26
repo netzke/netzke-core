@@ -1,6 +1,6 @@
 {
   // Some comments should be fine here
-  handleActionTwo: function() {
+  netzkeOnActionTwo: function() {
     this.setTitle(actionTwoMessage);
   }
 }

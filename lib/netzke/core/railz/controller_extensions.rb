@@ -110,7 +110,7 @@ module Netzke
           component_instance = Netzke::Base.instance_by_config(cmp_config)
           component_instance.invoke_endpoint((sub_components + [request.endpoint]).join("__"), request.args, request.client_configs)
         else
-          { handle_session_expired: [] }
+          { netzke_on_session_expired: [] }
         end
       end
 
@@ -126,7 +126,7 @@ module Netzke
 
           render text: component_instance.invoke_endpoint(sub_components.join("__"), [params]).netzke_jsonify.to_json, layout: false
         else
-          render text: { handle_session_expired: [] }.to_json, layout: false
+          render text: { netzke_on_session_expired: [] }.to_json, layout: false
         end
       end
 

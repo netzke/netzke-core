@@ -1,5 +1,5 @@
 {
-  handleActionThree: function() {
+  netzkeOnActionThree: function() {
     this.setTitle("Modified action three triggered");
   }
 }

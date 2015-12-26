@@ -3,27 +3,27 @@
 
   layout: "fit",
 
-  handleLoadComponent: function() {
+  netzkeOnLoadComponent: function() {
     this.netzkeLoadComponent('simple_component');
   },
 
-  handleLoadWithFeedback: function() {
+  netzkeOnLoadWithFeedback: function() {
     this.netzkeLoadComponent('simple_component', { callback: function() { this.setTitle("Callback invoked!"); } });
   },
 
-  handleLoadWindowWithSimpleComponent: function(params) {
+  netzkeOnLoadWindowWithSimpleComponent: function(params) {
     this.netzkeLoadComponent('window_with_simple_component');
   },
 
-  handleLoadWithParams: function(params) {
+  netzkeOnLoadWithParams: function(params) {
     this.netzkeLoadComponent("simple_component", { serverConfig: { title: "Simple Component with modified title" } });
   },
 
-  handleNonExistingComponent: function() {
+  netzkeOnNonExistingComponent: function() {
     this.netzkeLoadComponent('non_existing_component');
   },
 
-  handleLoadInWindow: function() {
+  netzkeOnLoadInWindow: function() {
     var w = new Ext.window.Window({
       width: 500, height: 400, modal: false, layout:'fit', title: 'A window'
     });
@@ -32,11 +32,11 @@
     w.show();
   },
 
-  handleInaccessible: function() {
+  netzkeOnInaccessible: function() {
     this.netzkeLoadComponent('inaccessible');
   },
 
-  handleConfigOnly: function() {
+  netzkeOnConfigOnly: function() {
     this.netzkeLoadComponent('simple_component', { configOnly: true, callback: function(config) {
       this.removeAll();
       config.title = config.title + " (overridden)";
@@ -45,15 +45,15 @@
     } });
   },
 
-  handleLoadSelfReloading: function() {
+  netzkeOnLoadSelfReloading: function() {
     this.netzkeLoadComponent('self_reloading');
   },
 
-  handleLoadCssInclusion: function() {
+  netzkeOnLoadCssInclusion: function() {
     this.netzkeLoadComponent('css_inclusion');
   },
 
-  handleLoadDynamicChild: function(){
+  netzkeOnLoadDynamicChild: function(){
     this.netzkeLoadComponent('dynamic_child', {serverConfig: {klass: "Endpoints"}});
   },
 }

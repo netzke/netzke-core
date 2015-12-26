@@ -7,17 +7,17 @@
     }, this);
   },
 
-  handleWithResponse: function(){
+  netzkeOnWithResponse: function(){
     this.server.whatsUp('world');
   },
 
-  handleNoResponse: function(){
+  netzkeOnNoResponse: function(){
     this.server.doNothing(function(){
       this.setTitle('Successfully called endpoint with no response (this is a callback)');
     });
   },
 
-  handleMultipleArgumentResponse: function(){
+  netzkeOnMultipleArgumentResponse: function(){
     this.server.multipleArgumentResponse();
   },
 
@@ -25,7 +25,7 @@
     this.setTitle("Called a function with two arguments: " + first + ", " + second);
   },
 
-  handleArrayAsArgument: function() {
+  netzkeOnArrayAsArgument: function() {
     this.server.arrayAsArgument();
   },
 
@@ -34,13 +34,13 @@
     this.setTitle("Called a function with array as arguments: " + arryAsString);
   },
 
-  handleCallback: function(){
+  netzkeOnCallback: function(){
     this.server.doNothing(function() {
       this.setTitle('Callback invoked');
     });
   },
 
-  handleCallbackAndScope: function() {
+  netzkeOnCallbackAndScope: function() {
     var that = this;
     var fancyScope = {
       setFancyTitle: function() {
@@ -52,32 +52,32 @@
     }, fancyScope);
   },
 
-  handleNonExisting: function(){
+  netzkeOnNonExisting: function(){
     this.server.nonExisting( function(error, success){
       this.setTitle("Error: " + error.type + ", message: " + error.msg);
       return false; // prevent default endpointexception exception handler
     });
   },
 
-  handleReturnValue: function() {
+  netzkeOnReturnValue: function() {
     this.server.getAnswer(function(answer, success) {
       this.setTitle("Returned value: " + answer + ", success: " + success);
     });
   },
 
-  handleMultipleArguments: function(){
+  netzkeOnMultipleArguments: function(){
     this.server.multipleArguments('one', 'two', 'three', function(response){
       this.setTitle("Returned value: " + response);
     });
   },
 
-  handleHashArgument: function(){
+  netzkeOnHashArgument: function(){
     this.server.hashArgument({one: 'one', two: 'two'}, function(response){
       this.setTitle("Returned value: " + response);
     });
   },
 
-  handleBatchedCall: function(){
+  netzkeOnBatchedCall: function(){
     this.server.setFoo();
     this.server.appendBar();
   },
@@ -86,7 +86,7 @@
     this.setTitle(this.getTitle() + " " + str);
   },
 
-  handleRaiseException: function(){
+  netzkeOnRaiseException: function(){
     this.server.raise( function(res, success){
       console.log("res ", res);
       this.setTitle("Response status: " + res.xhr.status + ", success: " + success);
@@ -94,7 +94,7 @@
     });
   },
 
-  handleReturnError: function(){
+  netzkeOnReturnError: function(){
     this.server.returnError();
   }
 }

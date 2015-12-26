@@ -1,5 +1,5 @@
 {
-  handleDestroySession: function(){
+  netzkeOnDestroySession: function(){
     this.server.destroySession();
   }
 }

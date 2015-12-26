@@ -1,9 +1,9 @@
 {
   active_tab: 0,
-  handleSomeAction: function(){
+  netzkeOnSomeAction: function(){
     this.items.last().setTitle("Action triggered");
   },
-  handleAnotherAction: function(){
+  netzkeOnAnotherAction: function(){
     this.items.first().setTitle("Another action triggered");
   }
 }

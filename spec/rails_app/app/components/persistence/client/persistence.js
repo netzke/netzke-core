@@ -1,17 +1,17 @@
 {
-  handleSetState: function(){
+  netzkeOnSetState: function(){
     this.server.setState();
   },
 
-  handleResetState: function(){
+  netzkeOnResetState: function(){
     this.server.resetState();
   },
 
-  handleSetSessionVariable: function(){
+  netzkeOnSetSessionVariable: function(){
     this.server.setSessionVariable();
   },
 
-  handleRetrieveSessionVariable: function(){
+  netzkeOnRetrieveSessionVariable: function(){
     this.server.retrieveSessionVariable(null, function(result){
       this.setTitle("Session variable: " + result);
     });

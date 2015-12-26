@@ -27,7 +27,7 @@ module Netzke::Core
   #   When set to +true+, renders this action as disabled
   #
   # [handler]
-  #   A symbol that represents the JavaScript public method (snake-cased), which will be called in the scope of the component instance. Defaults to +handle_{action_name}+, which on JavaScript side will result in a call to +handle{ActionName}+
+  #   A symbol that represents the JavaScript public method (snake-cased), which will be called in the scope of the component instance. Defaults to +netzke_on_{action_name}+, which on JavaScript side will result in a call to +netzkeOn{ActionName}+
   #
   # [+excluded+]
   #   When set to true, gets the action excluded from menus and toolbars
@@ -40,7 +40,7 @@ module Netzke::Core
   #
   #     action :my_cool_action do |c|
   #       c.text = c.tooltip = "My cool action"
-  #       c.handler = :handle_my_cool_action
+  #       c.handler = :on_my_cool_action
   #     end
   #
   # == Accessing component configuration from action block
