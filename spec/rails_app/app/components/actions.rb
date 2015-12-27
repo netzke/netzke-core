@@ -6,7 +6,8 @@ class Actions < Netzke::Base
   action :disabled_action do |a|
     a.disabled = true
     a.text = "Disabled action"
-    a.icon = :accept # accept.png icon will be looked for in Netzke::Core.icons_uri
+
+    a.merge!(icon: :accept) # accept.png icon will be looked for in Netzke::Core.icons_uri
   end
 
   action :action_with_custom_handler do |c|

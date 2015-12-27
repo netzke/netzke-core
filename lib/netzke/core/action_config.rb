@@ -22,12 +22,8 @@ module Netzke::Core
       self.icon = @icon.to_sym if @icon.present?
     end
 
-    def icon=(path)
-      self[:icon] = path.is_a?(Symbol) ? Netzke::Base.uri_to_icon(path) : path
-    end
-
-    # later
     def set_defaults!
+      self[:icon] = icon.is_a?(Symbol) ? Netzke::Base.uri_to_icon(icon) : icon
     end
 
   private
