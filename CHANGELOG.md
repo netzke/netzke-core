@@ -10,32 +10,57 @@
 
 *   `netzkeNotify` (former `netzkeFeedback`) may now accept the `title` option
 
-### Backward incompatible changes
-*   `netzkeFeedback` has been renamed to `netzkeNotify`
-
-*   `Core.js_feedback_delay` has been renamed to `Core.client_notification_delay`
-
-*   `js_configure` method has been renamed to `configure_client`
-
-*   Specifying bbar and other toolbars in `configure_client` (former `js_configure`) no longer works. Move this to
-    `configure`.
-
-*   Default handler name for actions is now prefixed with `handle` instead of `on`. E.g., for `action :do_something`, the handler
-    must be called `netzkeOnDoSomething`.
-
-*   `onNetzkeSessionExpired` has been renamed to `netzkeOnSessionExpired`
-
-*   The client methods for endpoints are now created on the `this.server` object, so, you need to prefix the endpoint calls with `.server`, e.g. `this.server.doSomething()`. For details, see the updated "Client-server interaction" section in the README.
-
-*   Experimental support for HAML removed
+### Breaking changes
 
 *   A component's subfolders for client-class scripts and stylesheets have been consolidated from `javascripts`/`stylesheets` into `client`
 
-*   `Base.css_configure` has been renamed to `Base.client_styles`.
+*   The client methods for endpoints are now created on the `this.server` object, so, you need to prefix the endpoint calls with `.server`, e.g. `this.server.doSomething()`. For details, see the updated "Client-server interaction" section in the README.
+
+*   `Base#js_configure` has been renamed to `Base#configure_client`
 
 *   `Base.js_configure` has been renamed to `Base.client_class`. There's also no longer need to call it just for the purpose of including the default mixin (which is now `<component_name>/client/<component_name>.js`).
 
+*   `Base.css_configure` has been renamed to `Base.client_styles`.
+
 *   The `mixin` method in the former `js_configure` block (now `client_class`) has been renamed to `include`.
+
+*   Changes to endpoints API.
+
+    *   Droped the `this` parameter from endpoint block on server side. Instead, use the `client` accessor, implicitely defined for you, for example:
+
+            endpoint :do_something do |arg1|
+              client.set_title("Recieved #{arg1}")
+            end
+
+    *   Endpoint calls now accept any number of arguments (including zero), with client-side signature matching the server-side `endpoint` block, for example:
+
+            # server side
+            endpoint :assign_user do |user_id, table_id|
+            end
+
+            // client side
+            this.server.assignUser(userId, tableId)
+
+            ---
+
+            # server side (0 arguments)
+            endpoint :clear_data do
+            end
+
+            // client side
+            this.server.clearData()
+
+    *   Whatever endpoint's server-side block returns will become the argument for the client-side callback function, for example:
+
+            # server side
+            endpoint :get_data do |params|
+              [1, 2, 3]
+            end
+
+            // client side
+            this.server.getData(params, function(result) {
+              // result equals [1, 2, 3]
+            })
 
 *   Internal rework of component loading, which also changes some API and behavior.
 
@@ -58,45 +83,20 @@
 
         Unless a component is declared as eagerly loaded, its config is no longer accessible on the client side (which means component is meant to be dynamically loadable).
 
-*   Changes to endpoints API.
+*   Specifying `bbar` and other toolbars in `configure_client` (former `js_configure`) no longer works. Move them to the main `configure` method.
 
-    *   Droped the `this` parameter from endpoint block on server side. It's still possible to call client-side methods as before, by using the `client` accessor, implicitely defined for you, for example:
+*   Default handler name for actions is now prefixed with `netzkeOn` instead of `on`. E.g., for `action :do_something`, the handler
+    must be called `netzkeOnDoSomething`.
 
-            endpoint :do_something do |arg1|
-              client.set_title("Recieved #{arg1}")
-            end
+*   `netzkeFeedback` has been renamed to `netzkeNotify`
 
-    *   Endpoint calls now accept any number of arguments (including zero), with client-side signature matching the server-side `endpoint` block, for example:
+*   `Core.js_feedback_delay` has been renamed to `Core.client_notification_delay`
 
-            # server side
-            endpoint :assign_user do |user_id, table_id|
-            end
+*   `onNetzkeSessionExpired` has been renamed to `netzkeOnSessionExpired`
 
-            // client side
-            this.server.assignUser(userId, tableId)
+*   Experimental support for HAML removed
 
-            ---
-
-            # server side
-            endpoint :clear_data do
-            end
-
-            // client side
-            this.server.clearData()
-
-    *   Whatever endpoint's server-side block returns will become the argument for the client-side callback function, for example:
-
-            # server side
-            endpoint :get_data do |params|
-              [1, 2, 3]
-            end
-
-            // client side
-            this.server.getData(params, function(result) {
-              // result == [1, 2, 3]
-            })
-
-*   Drop listing header tools merely as symbols, as this was too limiting (e.g. Netzke was overriding the handler signature). As of now, use the `Base#f` method to specify the handler (will no longer be automatically set for you); see `spec/rails_app/app/components/tools.rb` for an example. Just fighting entropy.
+*   Drop possibility to list panel tools merely as symbols, as this was too limiting (e.g. Netzke was overriding the handler signature). As of now, use the `Base#f` method to specify the handler (will no longer be automatically set for you); see `spec/rails_app/app/components/tools.rb` for an example.
 
 ### Other changes
 
