@@ -1,8 +1,8 @@
 /**
- * Main Netzke mixin. The following methods are accessible to each Netzke component.
- * @class Netzke.Core.Component
+ * Client-side code for [Netzke::Base](http://www.rubydoc.info/github/netzke/netzke-core/Netzke/Base)
+ * @class Netzke.Base
  */
-Ext.define("Netzke.Core.Component", {
+Ext.define("Netzke.Base", {
   extend: 'Ext.Mixin',
 
   mixinConfig: {

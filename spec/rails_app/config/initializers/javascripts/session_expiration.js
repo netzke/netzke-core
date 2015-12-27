@@ -1,5 +1,5 @@
 Ext.define(null, {
-  override: "Netzke.Core.Component",
+  override: "Netzke.Base",
   netzkeOnSessionExpired: function() {
     this.setTitle('Session expired');
   }

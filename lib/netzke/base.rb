@@ -22,6 +22,8 @@ module Netzke
   # * Client-server communication (see {Netzke::Core::Services})
   # * Session-based persistence (see {Netzke::Core::State})
   #
+  # Client-side methods are documented [here](http://api.netzke.org/client/classes/Netzke.Base.html).
+  #
   # == Referring to JavaScript configuration methods from Ruby
   #
   # Netzke allows use Ruby symbols for referring to pre-defined pieces of configuration. Let's say for example, that a toolbar needs to nest a control more complex than a button (say, a date field), and a component should still make it possible to make it's presence and position in the toolbar configurable. We can implement it like this:

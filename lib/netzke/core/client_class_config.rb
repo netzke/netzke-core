@@ -19,7 +19,7 @@ module Netzke
           extend: extended_class,
           alias: class_alias,
         }
-        @properties[:mixins] = ['Netzke.Core.Component'] if extending_extjs_component?
+        @properties[:mixins] = ['Netzke.Base'] if extending_extjs_component?
         @translated_properties = []
       end
 
