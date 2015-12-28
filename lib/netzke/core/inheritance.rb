@@ -24,7 +24,7 @@ module Netzke
               caller.first
             end
 
-            cllr.split(".rb").first
+            cllr[0..-4]
           end
         end
       end
