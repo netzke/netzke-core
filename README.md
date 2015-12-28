@@ -1,6 +1,6 @@
 # Netzke Core [![Build Status](https://travis-ci.org/netzke/netzke-core.svg?branch=master)](https://travis-ci.org/netzke/netzke-core) [![Code Climate](https://codeclimate.com/github/netzke/netzke-core/badges/gpa.svg)](https://codeclimate.com/github/netzke/netzke-core)
 
-[RDocs](http://rdoc.info/projects/netzke/netzke-core)
+[RDocs](http://www.rubydoc.info/projects/netzke/netzke-core)
 
 Netzke Core is the bare bones of the [Netzke framework](http://netzke.org). For pre-built full-featured components (like grids, forms, tab/accordion panels, etc), see [netzke-basepack](http://github.com/netzke/netzke-basepack).
 
@@ -82,7 +82,7 @@ The code above will set the `extend` property to "Ext.tab.Panel", and will mix i
   * `app/components/my_tab_panel/client/my_tab_panel.js` (if that exists)
   * `app/components/my_tab_panel/client/extra_functionality.js`
 
-For more details on defining the client class, refer to [Netzke::Core::ClientClassConfig](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/ClientClassConfig).
+For more details on defining the client class, refer to [Netzke::Core::ClientClassConfig](http://www.rubydoc.info/github/netzke/netzke-core/Netzke/Core/ClientClassConfig).
 
 ## Composition
 
@@ -120,15 +120,15 @@ Next to being statically nested in the layout, a child component can also be dyn
 
     this.netzkeLoadComponent('users');
 
-this will load the "users" component and [add](http://docs.sencha.com/ext-js/4-1/#!/api/Ext.container.Container-method-add) it to the current container.
+this will load the "users" component and add it to the current container.
 
-For more details on dynamic component loading refer to inline docs of [javascript/ext.js](https://github.com/netzke/netzke-core/blob/master/javascripts/ext.js).
+For more details on dynamic component loading refer to [netzkeLoadComponent docs](http://api.netzke.org/client/classes/Netzke.Base.html#method_netzkeLoadComponent).
 
-For more details on composition refer to [Netzke::Core::Composition](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Composition).
+For more details on composition refer to [Netzke::Core::Composition](http://www.rubydoc.info/github/netzke/netzke-core/Netzke/Core/Composition).
 
 ## Actions, toolbars, and menus
 
-Actions are [used by Ext JS]("http://docs.sencha.com/ext-js/4-1/#!/api/Ext.Action") to share functionality and state among multiple buttons and menu items. Define actions with the `action` class method:
+Actions are used by Ext JS to share functionality and state among multiple buttons and menu items. Define actions with the `action` class method:
 
 ```ruby
 action :show_report do |c|
@@ -154,7 +154,7 @@ Actions can also be referred to is submenus:
   c.tbar = [{text: 'Menu', menu: {items: [:show_report]}}]
 ```
 
-For more details on composition refer to [Netzke::Core::Actions](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
+For more details on composition refer to [Netzke::Core::Actions](http://www.rubydoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
 
 ## Client-server interaction
 
@@ -200,7 +200,7 @@ end
 
 ### Calling client class methods from endpoint
 
-An endpoint can instruct the client instance of the component to execute a set of methods in response, passing those methods arbitrary parameters, by using the magical `this` variable. For example:
+An endpoint can instruct the client instance of the component to execute a set of methods in response, passing those methods arbitrary parameters, by using the `client` method. For example:
 
 ```ruby
 class SimpleComponent < Netzke::Base
@@ -213,7 +213,7 @@ end
 
 Here the client class will first call its `setTitle` method (defined in `Ext.panel.Panel`) with parameter passed from the endpoint. Then a custom method `myMethod` will be called with no parameters.
 
-For more details on client-server communication see [Netzke::Core::Services]("http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Services").
+For more details on client-server communication see [Netzke::Core::Services]("http://www.rubydoc.info/github/netzke/netzke-core/Netzke/Core/Services").
 
 ## Icons support
 
@@ -229,13 +229,13 @@ end
 
 The logout action will be configured with `public/assets/icons/door.png` as icon.
 
-For more details on using icons refer to [Netzke::Core::Actions]("http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions").
+For more details on using icons refer to [Netzke::Core::Actions]("http://www.rubydoc.info/github/netzke/netzke-core/Netzke/Core/Actions").
 
 ## I18n
 
 Netzke Core will automatically include Ext JS localization files based on current `I18n.locale`.
 
-Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke::Core::Actions](http://rdoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
+Also, Netzke Core uses some conventions for localizing actions. Refer to [Netzke::Core::Actions](http://www.rubydoc.info/github/netzke/netzke-core/Netzke/Core/Actions).
 
 ## Routing
 
