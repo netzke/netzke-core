@@ -21,7 +21,7 @@ module Netzke
               location = caller_locations.first
               location.absolute_path || location.path
             else
-              caller.first
+              caller.first.sub(/:\d+.*/, '')
             end
 
             cllr[0..-4]
