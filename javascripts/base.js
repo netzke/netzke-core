@@ -222,6 +222,7 @@ Ext.define("Netzke.Base", {
    * * detects component placeholders and replaces them with full component config found in `netzkeComponents`
    * * detects action placeholders and replaces them with instances of Ext actions found in `this.actions`
    *
+   * @method netzkeNormalizeConfig
    * @param config {Object}
    */
   netzkeNormalizeConfig: function(config) {
