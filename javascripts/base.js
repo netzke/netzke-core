@@ -387,7 +387,7 @@ Ext.define("Netzke.Base", {
    * Dynamically loads child Netzke component
    * @method netzkeLoadComponent
    * @param {String} name Component name as declared in the Ruby class with `component` DSL
-   * @param {Object} [params] May contain the following optional keys:
+   * @param {Object} [options] May contain the following optional keys:
    *   * **container** {Ext.container.Container|Integer}
    *
    *     The instance (or id) of a container with the "fit" layout where the loaded component will be added to; the previously existing component will be destroyed
@@ -438,12 +438,12 @@ Ext.define("Netzke.Base", {
    *       serverConfig: { user: 'bill' } // on the server: client_config[:user] == 'bill'
    *     });
    */
-  netzkeLoadComponent: function(name, params){
+  netzkeLoadComponent: function(name, options){
     var container, serverParams, containerEl;
-    params = params || {};
+    options = options || {};
 
-    container = this.netzkeChooseContainer(params);
-    serverParams = this.netzkeBuildServerLoadingParams(name, params);
+    container = this.netzkeChooseContainer(options);
+    serverParams = this.netzkeBuildServerLoadingParams(name, options);
 
     this.netzkeShowLoadingMask(container);
 
@@ -452,7 +452,7 @@ Ext.define("Netzke.Base", {
       this.netzkeHideLoadingMask(container);
 
       if (success) {
-        this.netzkeHandleLoadingResponse(container, result, params);
+        this.netzkeHandleLoadingResponse(container, result, options);
       } else {
         this.netzkeHandleLoadingError(result);
       }

@@ -1,4 +1,8 @@
-Ext.define(null, {
+/**
+ * Routing override for Netzke.Base.
+ * @class Netzke.Core.Routing
+ */
+Ext.define('Netzke.Core.Routing', {
   override: 'Netzke.Base',
 
   netzkeAfterInitComponent: function(){
@@ -15,6 +19,17 @@ Ext.define(null, {
     this.callParent();
   },
 
+  /**
+   * Navigate to new hash route.
+   * @method netzkeNavigateTo
+   * @param route {String} Route
+   * @param {Object} [options] Options:
+   *   * **append** {Boolean} append to the current route
+   *
+   * @example
+   *
+   *     this.netzkeNavigateTo('user/1', {append: true})
+   */
   netzkeNavigateTo: function(route, options){
     options = options || {};
     var newRoute = route;
