@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.summary     = "Client-server GUI components with Sencha Ext JS and Ruby on Rails"
   s.description = "Build complex web GUI in a modular way"
 
-  s.files         = Dir["{app,javascripts,lib,stylesheets,tasks}/**/*", "[A-Z]*", "init.rb"] - ["Gemfile.lock"]
+  s.files         = Dir["{app,javascripts,lib,stylesheets,tasks}/**/*", "[A-Z]*", "init.rb"] - ["Gemfile.lock", "spec/rails_app/public/extjs"]
   s.test_files    = Dir["{test}/**/*"]
   s.require_paths = ["lib"]
 
