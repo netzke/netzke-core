@@ -10,19 +10,19 @@ class SimpleAuthenticationComponent < Netzke::Base
   end
 
   client_class do |c|
-    c.on_sign_in = <<-JS
+    c.on_sign_in = l(<<-JS)
       function(){
         this.signIn();
       }
     JS
 
-    c.on_sign_out = <<-JS
+    c.on_sign_out = l(<<-JS)
       function(){
         this.signOut();
       }
     JS
 
-    c.reload_page = <<-JS
+    c.reload_page = l(<<-JS)
       function(){window.location = window.location;}
     JS
   end

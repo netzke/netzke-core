@@ -50,6 +50,12 @@ module Netzke::Core
       def dir(cllr)
         %Q(#{cllr.split(".rb:").first})
       end
+
+      # Converts given string to a string that returns itself as its JSON-encoded form for given string. See
+      # {ClientCode#l}
+      def l(str)
+       Netzke::Core::JsonLiteral.new(str)
+      end
     end
 
     # Builds {#js_config} used for instantiating a client class. Override it when you need to extend/modify the config for the JS component intance. It's *not* being called when the *server* class is being instantiated (e.g. to process an endpoint call). With other words, it's only being called before a component is first being loaded in the browser. so, it's ok to do heavy stuf fhere, like building a tree panel nodes from the database.
@@ -125,6 +131,18 @@ module Netzke::Core
 
     protected
 
+    # Converts given string to a string that returns itself as its JSON-encoded form for given string. Can sometimes be hande, for example, to pass simple client-side handler inline in the Ruby code:
+    #
+    #     def configure(c)
+    #       super
+    #       c.tools = [
+    #         { type: :refresh, handler: l("function(){alert('Refresh clicked')}") }
+    #       ]
+    #     end
+    def l(str)
+      self.class.l(str)
+    end
+
     # Allows referring to client-side function that will be called in the scope of the component. Handy to specify
     # handlers for tools/actions, or any other functions that have to be passed as configuration to different Ext JS
     # components. Usage:
@@ -136,11 +154,11 @@ module Netzke::Core
     #     end
     #   end
     #
-    #   As a result, `MyComponent`'s client-side `doExport` function will be called in the component's scope, receiving all the
+    #   As a result, `MyComponent`'s client-side `doExport` function will be called *in the component's scope*, receiving all the
     #   usual handler parameters from Ext JS.
     #   Read more on how to define client-side functions in `Netzke::Core::ClientClassConfig`.
     def f(name)
-      Netzke::Core::JsonLiteral.new("function(){var c=Ext.getCmp('#{js_id}'); return c.#{name.to_s.camelize(:lower)}.apply(c, arguments);}")
+      l("function(){var c=Ext.getCmp('#{js_id}'); return c.#{name.to_s.camelize(:lower)}.apply(c, arguments);}")
     end
 
     private

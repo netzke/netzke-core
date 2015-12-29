@@ -8,13 +8,13 @@ class Tools < Netzke::Base
   end
 
   client_class do |c|
-    c.on_refresh = <<-JS
+    c.on_refresh = l(<<-JS)
       function(){
         this.setTitle("Refresh tool clicked");
       }
     JS
 
-    c.on_gear = <<-JS
+    c.on_gear = l(<<-JS)
       function(){
         this.setTitle("Gear tool clicked")
       }

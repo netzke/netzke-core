@@ -31,7 +31,7 @@ module Netzke
       #         c.title = "My cool component"
       #
       #         # this will result in the +onButtonPress+ function defined on the client class prototype
-      #         c.on_button_press = <<-JS
+      #         c.on_button_press = l(<<-JS)
       #           function(){
       #             // ...
       #           }
@@ -39,7 +39,7 @@ module Netzke
       #       end
       #     end
       #
-      # An alternative way to define prototype properties is by using {ClientClassConfig#include}
+      # An better way to define prototype properties though is by using {ClientClassConfig#include}
       #
       # As attributes are accessible from inside +client_class+:
       #
@@ -51,7 +51,7 @@ module Netzke
       #       end
       #     end
       #
-      # ... you can configure your component on a class level like this:
+      # ...you can configure your component on a class level like this:
       #
       #     # e.g. in Rails initializers
       #     MyComponent.title = "New title for all MyComponents"
@@ -64,7 +64,7 @@ module Netzke
       def method_missing(name, *args)
         if name =~ /(.+)=$/
           value = args.first
-          @properties[$1.to_sym] = value.is_a?(String) && value =~ /^\s*function/ ? Netzke::Core::JsonLiteral.new(value) : value
+          @properties[$1.to_sym] = value
         else
           @properties[name.to_sym]
         end

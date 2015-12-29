@@ -20,6 +20,17 @@
 
 *   `Base.js_configure` has been renamed to `Base.client_class`. There's also no longer need to call it just for the purpose of including the default mixin (which is now `<component_name>/client/<component_name>.js`).
 
+*   Assigning inline JS functions inside the `client_class` (former `js_configure`) block no longer makes a JSON literal
+    of them; instead, wrap it with the `l` method accessible for all components:
+
+            client_class do |c|
+              c.on_refresh = l(<<-JS)
+                function(){
+                  this.setTitle("Refresh tool clicked");
+                }
+              JS
+            end
+
 *   `Base.css_configure` has been renamed to `Base.client_styles`.
 
 *   The `mixin` method in the former `js_configure` block (now `client_class`) has been renamed to `include`.

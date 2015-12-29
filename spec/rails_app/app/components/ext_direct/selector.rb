@@ -4,7 +4,7 @@ module ExtDirect
       c.extend = "Ext.FormPanel"
       c.body_padding = 5
 
-      c.on_update = <<-JS
+      c.on_update = l(<<-JS)
         function(){
           this.fireEvent('userupdate', this.getForm().findField('user').getValue());
         }
