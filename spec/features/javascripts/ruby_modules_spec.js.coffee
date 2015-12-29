@@ -1,10 +1,10 @@
 describe "RubyModules component", ->
-  it "should contain declared tabs", ->
+  it "contains declared tabs", ->
     expectToSee tab "Panel One"
     expectToSee tab "Panel Two"
     expectToSee tab "Endpoints"
 
-  it "should have a functional Netzke component", (done) ->
+  it "has a functional Netzke component", (done) ->
     click tab "Endpoints"
     click button "With response"
     wait ->

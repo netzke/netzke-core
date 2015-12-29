@@ -7,10 +7,10 @@ end
 
 describe Netzke::Core::Services do
   it "should be able to register endpoints" do
-    TestComponent.endpoints.should include :some_action
+    expect(TestComponent.endpoints).to include :some_action
   end
 
   it "should have deliver_component endpoint" do
-    TestComponent.endpoints.should include :deliver_component
+    expect(TestComponent.endpoints).to include :deliver_component
   end
 end

@@ -1,5 +1,5 @@
 describe 'ClientConfig component', ->
-  it "should pass client config to server side", (done) ->
+  it "passes client config to server side", (done) ->
     click button "Show option one"
     wait()
     .then ->

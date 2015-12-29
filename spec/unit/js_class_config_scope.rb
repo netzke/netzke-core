@@ -19,19 +19,19 @@ module Netzke
 end
 
 describe Netzke::Core::ClientClassConfig do
-  it "should build scope based on component scope" do
-    SomeComponent.js_config.scope.should == "Netzke.classes"
-    MyCompanyComponents::SomeComponent.js_config.scope.should == "Netzke.classes.MyCompanyComponents"
+  it "builds scope based on component scope" do
+    expect(SomeComponent.js_config.scope).to eql "Netzke.classes"
+    expect(MyCompanyComponents::SomeComponent.js_config.scope).to eql "Netzke.classes.MyCompanyComponents"
   end
 
-  it "should properly detect whether we are extending a Netzke component" do
-    SomeComponent.js_config.extending_extjs_component?.should be_true
-    InheritedComponent.js_config.extending_extjs_component?.should be_false
+  it "detects whether we are extending a Netzke component" do
+    expect(SomeComponent.js_config.extending_extjs_component?).to be_true
+    expect(InheritedComponent.js_config.extending_extjs_component?).to be_false
   end
 
-  it "should build full client class name based on class name" do
-    SomeComponent.js_config.class_name.should == "Netzke.classes.SomeComponent"
-    MyCompanyComponents::SomeComponent.js_config.class_name.should == "Netzke.classes.MyCompanyComponents.SomeComponent"
-    Netzke::Basepack::GridPanel.js_config.class_name.should == "Netzke.classes.Netzke.Basepack.GridPanel"
+  it "builds full client class name based on class name" do
+    expect(SomeComponent.js_config.class_name).to eql "Netzke.classes.SomeComponent"
+    expect(MyCompanyComponents::SomeComponent.js_config.class_name).to eql "Netzke.classes.MyCompanyComponents.SomeComponent"
+    expect(Netzke::Basepack::GridPanel.js_config.class_name).to eql "Netzke.classes.Netzke.Basepack.GridPanel"
   end
 end

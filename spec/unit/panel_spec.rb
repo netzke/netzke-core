@@ -6,6 +6,6 @@ end
 describe Netzke::Core::Panel do
   it "should set default title based on its name" do
     panel = MyPanel.new(name: 'just_panel')
-    panel.config.title.should == "Just panel"
+    expect(panel.config.title).to eql "Just panel"
   end
 end

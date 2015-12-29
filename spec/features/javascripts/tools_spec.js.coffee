@@ -1,5 +1,5 @@
 describe "Tools component", ->
-  it "should handle clicking a tool", ->
+  it "handles clicking a tool", ->
     click tool 'gear'
     expectToSee header "Gear tool clicked"
 

@@ -1,5 +1,5 @@
 describe "JsInclusion component", ->
-  it "should be able to run included/mixed-in JS code", ->
+  it "runs included/mixed-in JS code", ->
     click button 'Action one'
     expectToSee header "Action one triggered"
 

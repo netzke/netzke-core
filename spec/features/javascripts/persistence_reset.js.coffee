@@ -1,5 +1,5 @@
 describe "Persistence", ->
-  it "should reset persistent title", (done) ->
+  it "resets persistent title", (done) ->
     expectToSee header "Title from state"
     click button "Reset state"
     wait ->

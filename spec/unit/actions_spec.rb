@@ -64,40 +64,40 @@ module Netzke::Core
       expect(actions[:action_one].keys).to include(:name, :text, :tooltip)
     end
 
-    it "should auto collect actions from both js_methods and config" do
+    it "autos collect actions from both js_methods and config" do
       component = SomeComponent.new
-      component.actions[:action_one][:text].should == "Action one"
-      component.actions[:action_two][:text].should == "Action two"
-      component.actions[:action_three][:text].should == "Action three"
-      component.actions[:action_four][:text].should == "Action 4"
-      component.actions[:action_five][:text].should == "Action 5"
-      component.actions[:action_six][:text].should == "Action six text"
+      expect(component.actions[:action_one][:text]).to eql "Action one"
+      expect(component.actions[:action_two][:text]).to eql "Action two"
+      expect(component.actions[:action_three][:text]).to eql "Action three"
+      expect(component.actions[:action_four][:text]).to eql "Action 4"
+      expect(component.actions[:action_five][:text]).to eql "Action 5"
+      expect(component.actions[:action_six][:text]).to eql "Action six text"
     end
 
-    it "should not override previous actions when reconfiguring bars in child class" do
+    it "does not override previous actions when reconfiguring bars in child class" do
       component = ExtendedComponent.new
-      component.actions[:action_one][:text].should == "Action one"
-      component.actions[:action_two][:text].should == "Action two"
-      component.actions[:action_three][:text].should == "Action three"
-      component.actions[:action_four][:text].should == "Action 4"
-      component.actions[:action_five][:text].should == "Action 5"
+      expect(component.actions[:action_one][:text]).to eql "Action one"
+      expect(component.actions[:action_two][:text]).to eql "Action two"
+      expect(component.actions[:action_three][:text]).to eql "Action three"
+      expect(component.actions[:action_four][:text]).to eql "Action 4"
+      expect(component.actions[:action_five][:text]).to eql "Action 5"
     end
 
-    it "should be possible to override actions in child class" do
+    it "does not override actions in child class" do
       component = AnotherExtendedComponent.new
-      component.actions[:action_one][:text].should == "Action 1"
-      component.actions[:action_five][:text].should == "Action Five"
+      expect(component.actions[:action_one][:text]).to eql "Action 1"
+      expect(component.actions[:action_five][:text]).to eql "Action Five"
 
-      component.actions[:action_two][:text].should == "Action two, extended"
-      component.actions[:action_two][:disabled].should == true
+      expect(component.actions[:action_two][:text]).to eql "Action two, extended"
+      expect(component.actions[:action_two][:disabled]).to eql true
 
-      component.actions[:action_three][:text].should == "Action 3"
+      expect(component.actions[:action_three][:text]).to eql "Action 3"
     end
 
     it "should only override the specified actions" do
       component = YetAnotherExtendedComponent.new
-      component.actions[:action_two][:disabled].should == false
-      component.actions[:action_two][:text].should == "Action two, extended"
+      expect(component.actions[:action_two][:disabled]).to eql false
+      expect(component.actions[:action_two][:text]).to eql "Action two, extended"
     end
   end
 end

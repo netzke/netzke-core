@@ -11,12 +11,12 @@ class MyComponent < Netzke::Base
 end
 
 describe Netzke::Core::ClientClassConfig do
-  it "should allow reading class-level properties" do
-    MyComponent.client_class_config.title.should == "My component"
+  it "allows reading class-level properties" do
+    expect(MyComponent.client_class_config.title).to eql "My component"
   end
 
-  it "should return nil when non-existing property is requested" do
-    MyComponent.client_class_config.foo.should be_nil
+  it "returns nil when non-existing property is requested" do
+    expect(MyComponent.client_class_config.foo).to be_nil
   end
 
   describe "#expand_client_code_path" do

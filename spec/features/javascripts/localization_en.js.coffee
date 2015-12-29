@@ -1,11 +1,11 @@
 describe "Localization component", ->
-  it "should display title", ->
+  it "display title", ->
     expectToSee header "Localized Panel"
 
-  it "should display buttons", ->
+  it "displays buttons", ->
     expectToSee button "First action"
     expectToSee button "Second action"
 
-  it "should display body", ->
+  it "displays body", ->
     click button 'Show properties'
     expectToSee header "First property - Second property"

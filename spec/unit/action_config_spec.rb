@@ -9,14 +9,14 @@ end
 
 module Netzke::Core
   describe ActionConfig do
-    it "should preserve localized attributes from superclass if those are not overridden" do
+    it "preserves localized attributes from superclass if those are not overridden" do
       sc = Foo.new
       esc = FooExt.new
-      sc.actions[:foo].text.should == "Foo"
-      esc.actions[:foo].text.should == "Foo plus"
+      expect(sc.actions[:foo].text).to eql "Foo"
+      expect(esc.actions[:foo].text).to eql "Foo plus"
 
-      sc.actions[:foo].tooltip.should == "Foo!"
-      esc.actions[:foo].tooltip.should == "Foo plus!"
+      expect(sc.actions[:foo].tooltip).to eql "Foo!"
+      expect(esc.actions[:foo].tooltip).to eql "Foo plus!"
     end
   end
 end

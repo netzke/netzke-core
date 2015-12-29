@@ -1,3 +1,3 @@
 describe "Scoping component", ->
-  it "should render properly", ->
+  it "renders properly", ->
     expectToSee header "Scoping component"

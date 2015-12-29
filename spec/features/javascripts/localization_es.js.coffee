@@ -1,11 +1,11 @@
 describe "Localization component in Spanish", ->
-  it "should display title", ->
+  it "displays title", ->
     expectToSee header "Panel Localizada"
 
-  it "should display buttons", ->
+  it "displays buttons", ->
     expectToSee button "Primera acción"
     expectToSee button "Segunda acción"
 
-  it "should display body", ->
+  it "displays body", ->
     click button 'Muestra propriedades'
     expectToSee header "Primera propriedad - Segunda propriedad"
