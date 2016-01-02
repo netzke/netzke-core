@@ -257,6 +257,11 @@ hash on the client class, similarly to how Ext JS handles routes in its controll
 If a component gets loaded dynamically and it figures out that one of its routes is currently active, it'll trigger the
 corresponding handler after being rendered.
 
+## Authentication and authorization
+
+You can access the instance of the Netzke controller via `Netzke::Base.controller`. As it inherits from
+`ApplicationController`, it also has the access to the `current_user` if that is defined.
+
 ## Requirements
 
 * Ruby >= 2.0.0
