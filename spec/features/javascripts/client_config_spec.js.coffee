@@ -1,5 +1,5 @@
 describe 'ClientConfig component', ->
-  it "passes client config to server side", (done) ->
+  it "passes client config to server side",  ->
     click button "Show option one"
     wait()
     .then ->
@@ -12,4 +12,3 @@ describe 'ClientConfig component', ->
       expectToSee header "Two"
       expectToSee header "Server says: Hello Two Left!"
       expectToSee header "Server says: Hello Two Right!"
-      done()

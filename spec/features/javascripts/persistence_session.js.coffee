@@ -1,5 +1,5 @@
 describe "Persistence component", ->
-  it "sets and retrieve a session variable", (done) ->
+  it "sets and retrieve a session variable", ->
     click button "Retrieve session variable"
     wait().then ->
       expectToSee header "Session variable: not set"
@@ -10,4 +10,3 @@ describe "Persistence component", ->
       wait()
     .then ->
       expectToSee header "Session variable: set"
-      done()

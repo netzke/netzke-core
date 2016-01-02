@@ -11,9 +11,8 @@ describe "RubyModules component", ->
       expectToSee tab "Hello world"
       done()
 
-  it "executes client methods from BasicStuff module", (done) ->
+  it "executes client methods from BasicStuff module", ->
     click button "Some action"
     expectToSee tab "Action triggered"
     click button "Another action"
     expectToSee tab "Another action triggered"
-    done()

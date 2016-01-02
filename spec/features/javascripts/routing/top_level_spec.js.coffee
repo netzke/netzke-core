@@ -1,5 +1,5 @@
 describe "Routing::TopLevel component", ->
-  it "loads nested component via routing", (done) ->
+  it "loads nested component via routing", ->
     click button "Load one one"
     wait().then ->
       expectToSee header "TopLevel"
@@ -11,4 +11,3 @@ describe "Routing::TopLevel component", ->
       expectToSee header "TopLevel"
       expectToSee header "One"
       expectToSee header "OneTwo"
-      done()

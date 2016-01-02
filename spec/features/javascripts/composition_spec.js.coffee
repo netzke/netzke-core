@@ -8,7 +8,7 @@ describe "Composition component", ->
   it "does not show excluded component", ->
     expectToNotSee header "Should not be seen"
 
-  it "has properly working nested components", (done) ->
+  it "has properly working nested components", ->
     click button "With response"
     wait().then ->
       expectToSee header "Hello world"
@@ -16,9 +16,8 @@ describe "Composition component", ->
       wait()
     .then ->
       expectToSee header "Hello world plus"
-      done()
 
-  it "as server, addresses (deeply) nested components", (done) ->
+  it "as server, addresses (deeply) nested components", ->
     click button "Update west from server"
     wait().then ->
       expectToSee header "Here's an update for west panel"
@@ -26,7 +25,6 @@ describe "Composition component", ->
       wait()
     .then ->
       expectToSee header "Here's an update for south panel in east panel"
-      done()
 
   it "instantiates a pre-loaded component", ->
     expectToNotSee header "Pre-loaded window"
