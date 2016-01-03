@@ -266,7 +266,7 @@ You can access the instance of the Netzke controller via `Netzke::Base.controlle
 
 * Ruby >= 2.0.0
 * Rails ~> 4.2.0
-* Ext JS = 5.1.0
+* Ext JS = 5.1.1
 
 ## Installation
 
