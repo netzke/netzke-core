@@ -33,7 +33,7 @@ module Netzke
 
         # raw arguments from the client
         def remoting_args
-          @_remoting_args ||= @params[:data]
+          @_remoting_args ||= HashWithIndifferentAccess.new(@params.to_hash)[:data]
         end
       end
 

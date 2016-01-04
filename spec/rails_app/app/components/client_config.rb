@@ -3,7 +3,7 @@ class ClientConfig < Netzke::Base
     super
     c.layout = :hbox
     c.defaults = { height: "100%" }
-    c.some_option = client_config.some_option
+    c.some_option = client_config[:some_option]
     c.bbar = [:show_option_one, :show_option_two]
 
     child_config = { klass: HelloUser, flex: 1 }

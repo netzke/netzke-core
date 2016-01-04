@@ -3,7 +3,7 @@ module Netzke::Core
   class DslConfigBase < ActiveSupport::OrderedOptions
     def initialize(name, component)
       @component = component
-      @name = name.to_s
+      @name = self.name = name.to_s
     end
   end
 end

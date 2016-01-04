@@ -95,7 +95,7 @@ module Netzke::Core
     #     c.scope = { author_id: client_config.author_id }
     #   end
     def client_config
-      ActiveSupport::OrderedOptions.new.merge!(config.client_config)
+      @client_config ||= HashWithIndifferentAccess.new(config.client_config)
     end
 
     protected

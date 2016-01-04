@@ -156,7 +156,7 @@ module Netzke::Core
       component_name = component_name.to_sym
 
       ComponentConfig.new(component_name, self).tap do |cfg|
-        cfg.client_config = overrides[:client_config] || {}
+        cfg.client_config = HashWithIndifferentAccess.new(overrides[:client_config])
         cfg.item_id = overrides[:item_id]
 
         if respond_to?(:"#{component_name}_component")
