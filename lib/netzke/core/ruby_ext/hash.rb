@@ -58,6 +58,7 @@ class Hash
     else
       to_enum(:netzke_update_keys)
     end
+    self
   end
 
   def netzke_literalize_keys
