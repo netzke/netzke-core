@@ -12,7 +12,7 @@ class SimpleComponent < Netzke::Base
   end
 
   client_class do |c|
-    c.on_hello = l(<<-JS)
+    c.netzke_on_hello = l(<<-JS)
       function() {
         this.server.hello(function(response) { this.setTitle("Server says: " + response); });
       }
