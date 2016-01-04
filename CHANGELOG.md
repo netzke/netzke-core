@@ -1,4 +1,6 @@
-### New and improved
+# v1.0.0.0 - 2016-01-04
+
+## New and improved
 
 *   Routing (see README)
 
@@ -17,7 +19,7 @@
 
 *   Calling `callParent` in JS functions from the "mixins" will now properly call the previous override if that was defined; see `spec/rails_app/app/components/js_mixins.rb` for an example.
 
-### Breaking
+## Breaking changes
 
 *   A component's subfolders for client-class scripts and stylesheets have been consolidated from `javascripts`/`stylesheets` into `client`
 
@@ -27,11 +29,11 @@
 
 *   `Base.js_configure` has been renamed to `Base.client_class`. There's also no longer need to call it just for the purpose of including the default mixin (which is now `<component_name>/client/<component_name>.js`).
 
-*   Assigning inline JS functions inside the `client_class` (former `js_configure`) block no longer makes a JSON literal
-    of them; instead, wrap it with the `l` method accessible for all components:
+*   Assigning inline JS functions inside the `client_class` (former `js_configure`) block no longer automatically makes a JSON literal
+    of them; instead, you need to wrap it with the `l` method accessible for all components:
 
             client_class do |c|
-              c.on_refresh = l(<<-JS)
+              c.netzke_on_refresh = l(<<-JS)
                 function(){
                   this.setTitle("Refresh tool clicked");
                 }
@@ -101,7 +103,7 @@
 
         Unless a component is declared as eagerly loaded, its config is no longer accessible on the client side (which means component is meant to be dynamically loadable).
 
-*   Specifying `bbar` and other toolbars in `configure_client` (former `js_configure`) no longer works. Move them to the main `configure` method.
+*   Specifying `bbar` and other toolbars in `configure_client` (former `js_configure`) no longer works. They must now be in the main `configure` method.
 
 *   Default handler name for actions is now prefixed with `netzkeOn` instead of `on`. E.g., for `action :do_something`, the handler
     must be called `netzkeOnDoSomething`.
@@ -118,4 +120,5 @@
 
 *   `Base::Plugin` won't set `this.cmp` for you any longer, but rather receive it as a parameter for `init()`
 
+---
 Please check [0-12](https://github.com/netzke/netzke-core/blob/0-12/CHANGELOG.md) for previous changes.

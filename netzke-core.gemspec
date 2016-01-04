@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.author      = "Max Gorin"
   s.email       = "max@goodbitlabs.com"
   s.homepage    = "http://netzke.org"
-  s.summary     = "Client-server GUI components with Sencha Ext JS and Ruby on Rails"
-  s.description = "Build complex web GUI in a modular way"
+  s.summary     = "Client-server UI components with Sencha Ext JS and Ruby on Rails"
+  s.description = "Netzke helps you build complex web UI in a modular way"
 
   s.files         = Dir["{app,config,javascripts,lib,stylesheets,tasks}/**/*", "[A-Z]*", "init.rb"] - ["Gemfile.lock", "spec/rails_app/public/extjs"]
   s.test_files    = Dir["{test}/**/*"]
