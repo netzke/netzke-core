@@ -1,7 +1,8 @@
 class JsInclusion < Netzke::Base
   client_class do |c|
     c.require :extra_one, :extra_two
-    c.include :method_set_one, :method_set_two
+    c.include :method_set_one
+    c.include "#{Rails.root}/app/components/shared/method_set_two.js"
   end
 
   action :action_one
