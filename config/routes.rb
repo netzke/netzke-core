@@ -1,3 +1,5 @@
 Rails.application.routes.draw do
-  netzke unless Rails.application.routes.named_routes.routes[:netzke]
+  if Netzke::Core.default_routes
+    netzke unless Rails.application.routes.named_routes.routes[:netzke]
+  end
 end

@@ -14,6 +14,7 @@ module Netzke
   # The following configuration options are available:
   # * ext_path - absolute path to your Ext code root
   # * icons_uri - relative URI to the icons
+  # * default_routes - either to include netzke routes by default into Rails app
   module Core
     autoload :VERSION, 'netzke/core/version'
     autoload :DslConfigBase, 'netzke/core/dsl_config_base'
@@ -59,6 +60,9 @@ module Netzke
     @@client_notification_delay = 2000
 
     mattr_accessor :with_icons
+
+    mattr_accessor :default_routes
+    @@default_routes = true
 
     def self.setup
       yield self
