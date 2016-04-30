@@ -1,3 +1,7 @@
+# v1.0.1.0 - 2016-05-01
+
+*   New `Netzke::Core.default_routes` config option.
+
 # v1.0.0.0 - 2016-01-04
 
 ## New and improved
