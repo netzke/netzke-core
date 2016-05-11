@@ -6,14 +6,21 @@ module Netzke
   # You can configure Netzke::Core like this:
   #
   #     Netzke::Core.setup do |config|
-  #       config.ext_path = "/home/netzke/ext-4.1.1"
+  #       config.ext_path = "/home/netzke/ext-5.0.0"
   #       config.icons_uri = "/images/famfamfam/icons"
   #       # ...
   #     end
   #
   # The following configuration options are available:
-  # * ext_path - absolute path to your Ext code root
-  # * icons_uri - relative URI to the icons
+  # * ext_path - absolute path to your Ext library
+  # * ext_uri - relative URI to the Ext library (defaults to "/extjs")
+  # * icons_uri - relative URI to the icons (defaults to "/images/icons")
+  # * default_routes - whether to include default Netzke routes (defaults to true)
+  # * ext_javascripts - extra JS dependencies to be included in the app
+  # * ext_stylesheets - extra CSS dependencies to be included in the app
+  # * js_direct_max_retries - amount of retries that the direct remoting provider will attempt in case of failure
+  # (defaults to 0)
+  # * client_notification_delay - amount of time (in ms) feedback delay is being shown (defaults to 2000)
   module Core
     autoload :VERSION, 'netzke/core/version'
     autoload :DslConfigBase, 'netzke/core/dsl_config_base'
@@ -27,10 +34,6 @@ module Netzke
     autoload :CssConfig, 'netzke/core/css_config'
     autoload :ConfigToDslDelegator, 'netzke/core/config_to_dsl_delegator'
     autoload :JsonLiteral, 'netzke/core/json_literal'
-
-    # :ext (or :touch - when and if ever implemented)
-    mattr_accessor :platform
-    @@platform = :ext
 
     mattr_accessor :ext_javascripts
     @@ext_javascripts = []
@@ -50,15 +53,16 @@ module Netzke
 
     mattr_accessor :ext_path
 
-    # Amount of retries that the direct remoting provider will attempt in case of failure
     mattr_accessor :js_direct_max_retries
     @@js_direct_max_retries = 0
 
-    # Amount of time feedback delay is being shown
     mattr_accessor :client_notification_delay
     @@client_notification_delay = 2000
 
     mattr_accessor :with_icons
+
+    mattr_accessor :default_routes
+    @@default_routes = true
 
     def self.setup
       yield self
