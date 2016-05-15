@@ -27,13 +27,18 @@ Netzke.exception = function(msg) {
 (function(){
   var requiredVersionMajor = 5,
       requiredVersionMinor = 1,
+      requiredVersionMajorMax = 6,
+      requiredVersionMinorMax = 0,
       extVersion = Ext.getVersion('extjs'),
       currentVersionMajor = extVersion.getMajor(),
       currentVersionMinor = extVersion.getMinor(),
-      requiredString = "" + requiredVersionMajor + "." + requiredVersionMinor + ".x";
+      requiredString = "" + requiredVersionMajor + "." + requiredVersionMinor + ".x",
+      requiredStringMax = "" + requiredVersionMajorMax + "." + requiredVersionMinorMax + ".x";
 
   if (requiredVersionMajor != currentVersionMajor || requiredVersionMinor != currentVersionMinor) {
-    Netzke.warning("Ext JS " + requiredString + " required (you have " + extVersion.toString() + ").");
+    if (requiredVersionMajorMax != currentVersionMajor || requiredVersionMinorMax != currentVersionMinor) {
+      Netzke.warning("Ext JS " + requiredString + " OR " + requiredStringMax + " required (you have " + extVersion.toString() + ").");
+    }
   }
 })();
 

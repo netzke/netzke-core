@@ -9,6 +9,7 @@ module Netzke
       #   The theme to apply. E.g.:
       #
       #     <%= load_netzke theme: "classic" %>
+      #     <%= load_netzke version: 'extjs6', theme: "classic" %>
       #
       #   Themes shipped with Ext JS:
       #   * "neptune" (default in Netzke)
@@ -20,8 +21,9 @@ module Netzke
       #   Whether to include minified JS and styleshetes. By default is +false+ for Rails development env,
       #   +true+ otherwise
       def load_netzke(params = {})
+        params[:version] ||= 'extjs5'  # Pass 'extjs6' for ExtJS 6 support
         params[:minified] = !Rails.env.development? if params[:minified].nil?
-        params[:theme] ||= "triton"
+        params[:theme] ||= (params[:version] == 'extjs5' ?  'crisp' : 'triton')
 
         raw([netzke_html, netzke_css_include(params), netzke_css(params), netzke_js_include(params), netzke_js(params)].join("\n"))
       end
@@ -71,7 +73,12 @@ module Netzke
       # Link tags for all the required stylsheets
       def netzke_css_include(params)
         # ExtJS base
-        res = ["#{Netzke::Core.ext_uri}/build/classic/theme-#{params[:theme]}/resources/theme-#{params[:theme]}-all.css"]
+
+        res = if params[:version] == 'extjs5'
+                ["#{Netzke::Core.ext_uri}/packages/ext-theme-#{params[:theme]}/build/resources/ext-theme-#{params[:theme]}-all.css"]
+              else
+                ["#{Netzke::Core.ext_uri}/build/classic/theme-#{params[:theme]}/resources/theme-#{params[:theme]}-all.css"]
+              end
 
         # Netzke-related dynamic css
         res << netzke_ext_path
@@ -97,7 +104,13 @@ module Netzke
         res << (params[:minified] ? "#{Netzke::Core.ext_uri}/build/ext-all.js" : "#{Netzke::Core.ext_uri}/build/ext-all-debug.js")
 
         # Ext I18n
-        res << "#{Netzke::Core.ext_uri}/build/classic/locale/locale-#{I18n.locale}" if I18n.locale != :en
+        if I18n.locale != :en
+          res << if params[:version] == 'extjs5'
+                   "#{Netzke::Core.ext_uri}/packages/ext-locale/build/ext-locale-#{I18n.locale}"
+                  else
+                    "#{Netzke::Core.ext_uri}/build/classic/locale/locale-#{I18n.locale}"
+                  end
+        end
 
         # Netzke-related dynamic JavaScript
         res << netzke_ext_path
