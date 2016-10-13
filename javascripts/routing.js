@@ -53,10 +53,20 @@ Ext.define('Netzke.Core.Routing', {
   netzkeGetRoutes: function(){
     var out = {};
     for (var route in this.netzkeRoutes) {
-      var handlerName = this.netzkeRoutes[route],
-          handler = this[handlerName];
+      var handlerName = this.netzkeRoutes[route];
+      if(typeof(handlerName) == 'object' && handlerName.action) {
+        var handler = this[handlerName.action];
+      } else {
+        var handler = this[handlerName];
+      }
       if (!handler) Netzke.exception("Route handler " + handlerName + " is not defined");
-      out[route] = handler.bind(this);
+
+      out[route] = {
+        action: handler.bind(this)
+      }
+      if(typeof(handlerName) == 'object' && handlerName.conditions){
+        out[route].conditions = handlerName.conditions;
+      }
     }
     return out;
   }
