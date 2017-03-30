@@ -40,7 +40,11 @@ module Netzke
       extend ActiveSupport::Concern
 
       included do
-        send(:before_filter, :set_controller_and_session)
+        if Rails::VERSION::MAJOR > 4
+          send(:before_action, :set_controller_and_session)
+        else
+          send(:before_filter, :set_controller_and_session)
+        end
       end
 
       module ClassMethods
