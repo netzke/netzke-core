@@ -70,7 +70,7 @@ module Netzke
       def ext
         respond_to do |format|
           format.js {
-            render plain:  Netzke::Core::DynamicAssets.ext_js(form_authenticity_token)
+            render js: Netzke::Core::DynamicAssets.ext_js(form_authenticity_token)
           }
 
           format.css {
