@@ -33,14 +33,14 @@ module Netzke
 
         # raw arguments from the client
         def remoting_args
-          @_remoting_args ||= HashWithIndifferentAccess.new(@params.to_hash)[:data]
+          @_remoting_args ||= HashWithIndifferentAccess.new(data: @params[:data])[:data]
         end
       end
 
       extend ActiveSupport::Concern
 
       included do
-        send(:before_filter, :set_controller_and_session)
+        send(:before_action, :set_controller_and_session)
       end
 
       module ClassMethods
@@ -63,18 +63,18 @@ module Netzke
           response = direct_response(direct_request, invoke_endpoint(direct_request))
         end
 
-        render text: response.to_json, layout: false
+        render plain: response.to_json, layout: false
       end
 
       # On-the-fly generation of public/netzke/ext.[js|css]
       def ext
         respond_to do |format|
           format.js {
-            render :text => Netzke::Core::DynamicAssets.ext_js(form_authenticity_token)
+            render plain:  Netzke::Core::DynamicAssets.ext_js(form_authenticity_token)
           }
 
           format.css {
-            render :text => Netzke::Core::DynamicAssets.ext_css
+            render plain: Netzke::Core::DynamicAssets.ext_css
           }
         end
       end
@@ -124,9 +124,9 @@ module Netzke
           cmp_config[:client_config] = ActiveSupport::JSON.decode(params[:configs]).shift || {}
           component_instance = Netzke::Base.instance_by_config(cmp_config)
 
-          render text: component_instance.invoke_endpoint(sub_components.join("__"), [params]).netzke_jsonify.to_json, layout: false
+          render plain: component_instance.invoke_endpoint(sub_components.join("__"), [params]).netzke_jsonify.to_json, layout: false
         else
-          render text: { netzke_on_session_expired: [] }.to_json, layout: false
+          render plain: { netzke_on_session_expired: [] }.to_json, layout: false
         end
       end
 

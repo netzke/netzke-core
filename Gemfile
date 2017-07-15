@@ -2,14 +2,14 @@ source 'http://rubygems.org'
 
 gemspec
 
-gem 'rails', '~>4.2.0'
+gem 'rails', '~>5.1.0'
 gem 'sqlite3'
 gem 'yard'
 gem 'rake'
 
 group :test do
   gem 'rspec'
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 3.5.0'
   gem 'capybara'
   gem 'capybara-selenium'
   gem 'selenium-webdriver'
@@ -17,10 +17,10 @@ group :test do
 end
 
 group :development do
-  gem 'web-console', '~> 2.0'
+  gem 'web-console'
 end
 
 group :development, :test do
   gem 'pry-rails'
-  gem 'netzke-testing', github: 'netzke/netzke-testing', branch: 'master'
+  gem 'netzke-testing', github: 'thepry/netzke-testing', branch: 'ext-6-rails-5'
 end

@@ -12,6 +12,7 @@ require 'netzke/core/actions'
 require 'netzke/core/session'
 require 'netzke/core/core_i18n'
 require 'netzke/core/inheritance'
+require 'netzke/core/support'
 
 module Netzke
   # The base class for every Netzke component. Its main responsibilities include:
@@ -83,7 +84,8 @@ module Netzke
       @item_id = conf[:item_id] || @name
 
       # Make +client_config+ accessible in +configure+ before calling +super+
-      config.client_config = HashWithIndifferentAccess.new(conf.delete(:client_config))
+      client_config = Netzke::Support.permit_hash_params(conf.delete(:client_config))
+      config.client_config = HashWithIndifferentAccess.new(client_config)
 
       # Build complete component configuration
       configure(config)

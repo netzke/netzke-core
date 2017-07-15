@@ -121,7 +121,13 @@ module Netzke::Core
         component_name = params[:name].underscore.to_sym
 
         item_id = params[:item_id]
-        cmp_instance = component_instance(component_name, {item_id: item_id, client_config: params[:client_config]})
+        cmp_instance = component_instance(
+          component_name,
+          {
+            item_id: item_id,
+            client_config: Netzke::Support.permit_hash_params(params[:client_config])
+          }
+        )
 
         if cmp_instance
           js, css = cmp_instance.js_missing_code(cache), cmp_instance.css_missing_code(cache)
@@ -156,7 +162,7 @@ module Netzke::Core
       component_name = component_name.to_sym
 
       ComponentConfig.new(component_name, self).tap do |cfg|
-        cfg.client_config = HashWithIndifferentAccess.new(overrides[:client_config])
+        cfg.client_config = HashWithIndifferentAccess.new(Netzke::Support.permit_hash_params(overrides[:client_config]))
         cfg.item_id = overrides[:item_id]
 
         if respond_to?(:"#{component_name}_component")
