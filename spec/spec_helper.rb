@@ -14,8 +14,6 @@ require 'capybara/rails'
 require 'netzke/testing'
 
 RSpec.configure do |config|
-  puts Capybara.javascript_driver = :headless_chrome
-
   # config.include Netzke::Testing::Helpers
   Netzke::Testing.rspec_init(config)
 

@@ -1,3 +1,6 @@
+dist: trusty
+sudo: required
+
 language: ruby
 
 rvm:
@@ -8,15 +11,16 @@ addons:
   chrome: stable
 
 before_install:
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
   - gem install bundler
 
 before_script:
+  - export DISPLAY=:99.0
   - chmod 777 ./config/ci/before-travis.sh
   - ./config/ci/before-travis.sh
 
 script:
   - export DISPLAY=:99.0
+  - bundle
   - EXTJS_SRC=cdn bundle exec rake
 
 branches:
