@@ -4,10 +4,14 @@ rvm:
   - 1.9.3
   - 2.2.3
 
+addons:
+  chrome: stable
+
 before_install:
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
   - gem install bundler
 
-before_script: 
+before_script:
   - chmod 777 ./config/ci/before-travis.sh
   - ./config/ci/before-travis.sh
 
