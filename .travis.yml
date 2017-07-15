@@ -26,3 +26,4 @@ branches:
   only:
     - master
     - 0-12
+    - 2-0-0
