@@ -74,7 +74,7 @@ module Netzke
           }
 
           format.css {
-            render plain: Netzke::Core::DynamicAssets.ext_css
+            render html: Netzke::Core::DynamicAssets.ext_css
           }
         end
       end
