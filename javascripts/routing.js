@@ -47,7 +47,7 @@ Ext.define('Netzke.Core.Routing', {
 
   netzkeTriggerInitialRoute: function(){
     var initToken = Ext.util.History.getToken();
-    if (initToken) this.netzkeRouter.redirectTo(initToken, true);
+    if (initToken) { this.netzkeRouter.redirectTo(initToken, true); }
   },
 
   netzkeGetRoutes: function(){
@@ -56,8 +56,35 @@ Ext.define('Netzke.Core.Routing', {
       var handlerName = this.netzkeRoutes[route],
           handler = this[handlerName];
       if (!handler) Netzke.exception("Route handler " + handlerName + " is not defined");
-      out[route] = handler.bind(this);
+      out[route] = { action: handler.bind(this) };
     }
     return out;
   }
+});
+
+// TO DO FIX ME
+//
+Ext.define('Netzke.Core.RoutingTest', {
+  override: 'Ext.route.Route',
+
+  recognize: function(url) {
+    var me = this,
+        recognized = me.recognizes(url),
+        matches, urlParams;
+    // This doesn't allow to load resource recursively
+    // if (url === me.lastToken) {
+    //     //url matched the lastToken
+    //     return true;
+    // }
+    if (recognized) {
+        matches = me.matchesFor(url);
+        urlParams = url.match(me.matcherRegex);
+        urlParams.shift();
+        return Ext.applyIf(matches, {
+            historyUrl: url,
+            urlParams: urlParams
+        });
+    }
+    return false;
+  },
 });

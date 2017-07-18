@@ -25,8 +25,8 @@ Netzke.exception = function(msg) {
 
 // Check Ext JS version: both major and minor versions must be the same
 (function(){
-  var requiredVersionMajor = 5,
-      requiredVersionMinor = 1,
+  var requiredVersionMajor = 6,
+      requiredVersionMinor = 5,
       extVersion = Ext.getVersion('extjs'),
       currentVersionMajor = extVersion.getMajor(),
       currentVersionMinor = extVersion.getMinor(),
