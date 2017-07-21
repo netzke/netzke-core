@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'uglifier'
   s.add_dependency 'execjs'
+  s.add_dependency 'mime-types', "< 3"
 
   s.required_rubygems_version = ">= 1.3.4"
 end
