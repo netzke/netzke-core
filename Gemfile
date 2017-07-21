@@ -12,7 +12,7 @@ group :test do
   gem 'rspec-rails', '~> 3.5.0'
   gem 'capybara'
   gem 'capybara-selenium'
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '~> 3.4.4'
   gem 'chromedriver-helper'
 end
 
