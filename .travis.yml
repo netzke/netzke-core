@@ -16,11 +16,19 @@ before_script:
   - export DISPLAY=:99.0
   - chmod 777 ./config/ci/before-travis.sh
   - ./config/ci/before-travis.sh
+  - wget -O extjs.zip -q ${EXTJS:-http://cdn.sencha.com/ext/gpl/ext-6.0.0-gpl.zip}
+  - unzip -q extjs.zip
+  - if [ -d "ext-6.0.0" ]; then
+      mv ext-6.0.0 spec/rails_app/public/extjs;
+    fi
+  - if [ -d "ext-6.5.1" ]; then
+      mv ext-6.5.1 spec/rails_app/public/extjs;
+    fi
 
 script:
   - export DISPLAY=:99.0
   - bundle
-  - EXTJS_SRC=cdn bundle exec rake
+  - bundle exec rake
 
 branches:
   only:
