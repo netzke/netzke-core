@@ -62,29 +62,3 @@ Ext.define('Netzke.Core.Routing', {
   }
 });
 
-// TO DO FIX ME
-//
-Ext.define('Netzke.Core.RoutingTest', {
-  override: 'Ext.route.Route',
-
-  recognize: function(url) {
-    var me = this,
-        recognized = me.recognizes(url),
-        matches, urlParams;
-    // This doesn't allow to load resource recursively
-    // if (url === me.lastToken) {
-    //     //url matched the lastToken
-    //     return true;
-    // }
-    if (recognized) {
-        matches = me.matchesFor(url);
-        urlParams = url.match(me.matcherRegex);
-        urlParams.shift();
-        return Ext.applyIf(matches, {
-            historyUrl: url,
-            urlParams: urlParams
-        });
-    }
-    return false;
-  },
-});
