@@ -2,8 +2,7 @@ module Netzke
   module Railz
     class Engine < Rails::Engine
       initializer "netzke.core" do |app|
-        app.config.eager_load_paths -= ["#{app.config.root}/app/components"]
-        app.config.autoload_paths += ["#{app.config.root}/app/components"]
+        # app.config.eager_load_paths += ["#{app.config.root}/app/components"]
       end
 
       # before loading initializers
