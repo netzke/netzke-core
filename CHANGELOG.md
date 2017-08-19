@@ -2,7 +2,7 @@
 
 * Support for Ext JS 6.5
 * Support for Rails 5.1
-* New version convention: the first 2 numbers correspond to the major Ext JS and Rails versions respectively.
+* New versioning convention: the first 2 numbers correspond to the major Ext JS and Rails versions respectively.
 
 # v1.0.1.0 - 2016-05-01
 
