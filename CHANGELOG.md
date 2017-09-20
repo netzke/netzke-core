@@ -1,4 +1,4 @@
-# v6.5.0.0 - WIP
+# v6.5.0.0 - 2017-09-20
 
 * Support for Ext JS 6.5
 * Support for Rails 5.1
@@ -6,8 +6,7 @@
 
 # v1.0.1.0 - 2016-05-01
 
-*   New `Netzke::Core.default_routes` config option.
+* New `Netzke::Core.default_routes` config option.
 
 ---
-
-Please check [1-0-0](https://github.com/netzke/netzke-core/blob/1-0-0/CHANGELOG.md) for previous changes.
+Please check [1-0](https://github.com/netzke/netzke-core/blob/1-0/CHANGELOG.md) for previous changes.
