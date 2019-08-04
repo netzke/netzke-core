@@ -308,7 +308,7 @@ This assumes that the Ext JS library is located/symlinked in `spec/rails_app/pub
 
 Help developing Netzke by submitting a pull request when you think others can benefit from it.
 
-If you feel particularily generous, you can support the author by donating a couple bucks a week at [GitTip](https://www.gittip.com/mxgrn).
+If you feel particularly generous, you can support the author by donating a couple bucks a week at [GitTip](https://www.gittip.com/mxgrn).
 
 ## Useful links
 
